@@ -108,9 +108,13 @@ class Base_Exceptions extends \CI_Exceptions
 			show_404();
 		}
 
-		$directory = (get_instance()->router->directory != null) 
-			? get_instance()->router->directory 
-			: '';
+		$directory = '';
+
+		if (!is_cli()) {
+			$directory = (get_instance()->router->directory != null) 
+				? get_instance()->router->directory 
+				: '';
+		}
 		
 		$location = str_replace('../', '', (string) $directory);
 		
@@ -177,10 +181,14 @@ class Base_Exceptions extends \CI_Exceptions
 		if (empty($templates_path)) {
 			$templates_path = VIEWPATH . 'errors' . DIRECTORY_SEPARATOR;
 		}
-		
-		$directory = (get_instance()->router->directory != null) 
-			? get_instance()->router->directory 
-			: '';
+
+		$directory = '';
+
+		if (!is_cli()) {
+			$directory = (get_instance()->router->directory != null) 
+				? get_instance()->router->directory 
+				: '';
+		}
 		
 		$location = str_replace('../', '', (string) $directory);
 		
