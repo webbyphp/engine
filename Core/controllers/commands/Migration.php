@@ -435,6 +435,7 @@ class Migration extends ConsoleController
 		}
 
 		if (!$migration) {
+			
 			try {
 
 				$startTime = microtime(true);
@@ -537,7 +538,7 @@ class Migration extends ConsoleController
 			exit;
 		}
 
-		if ($saved) {
+		if (!$saved) {
 			echo $this->error("\n\tDatabase Schema ", 0). $this->info("[".$filename."]",0). $this->error(" Was Not Exported\n", 1);
 			exit;
 		}
