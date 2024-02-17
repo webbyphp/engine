@@ -70,7 +70,7 @@ class CI_Config {
 	 * @used-by	CI_Loader
 	 * @var		array
 	 */
-	public $_config_paths =	[APPPATH, ROOTPATH . 'config' . DIRECTORY_SEPARATOR];
+	public $_config_paths =	[COREPATH, ROOTPATH];
 
 	// --------------------------------------------------------------------
 
