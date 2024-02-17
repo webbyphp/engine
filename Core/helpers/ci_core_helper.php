@@ -1222,6 +1222,21 @@ if ( ! function_exists('use_model'))
      */
     function use_model($model, $name = '', $db_conn = false)
     {
+        $class = null;
+
+        if ((!empty($model) && class_exists($model))) {
+            $class = new $model();
+        }
+
+        if (is_object($class) && !empty($name)) {
+            class_alias(get_class($class), $name);
+            return new $name();
+        }
+
+        if (is_object($class)) {
+            return new $class();
+        }
+
         $model = has_dot($model);
 
         ci()->load->model($model, $name, $db_conn);
