@@ -1292,7 +1292,7 @@ if ( ! function_exists('objectify'))
      * @param array $array
      * @param bool $natural
      * @param string|object $class
-     * @return object|mixed
+     * @return object
      */
     function objectify(array $array, $natural = false, $class = 'stdClass')
     {
@@ -1318,7 +1318,7 @@ if ( ! function_exists('objectify'))
             return json_decode($array, null, 512, JSON_THROW_ON_ERROR);
         }
 
-        throw new \Exception("Parameter must be array", 1);
+        return (object)[]; // return empty object if condition not met
 
     }
 }
