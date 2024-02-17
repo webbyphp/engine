@@ -209,7 +209,7 @@ class MX_Router extends \CI_Router
 		// }
 
 		/* controller exists in commands directory? */
-		if (is_file(APPPATH . 'controllers/'.$commands_directory.'/' . ucfirst($module) . $ext)) {
+		if (is_file(COREPATH . 'controllers/'.$commands_directory.'/' . ucfirst($module) . $ext)) {
 			$directory = $module;
 		}
 
@@ -227,13 +227,13 @@ class MX_Router extends \CI_Router
 				}
 			}
 
-			if(is_file(APPPATH.'controllers/'.$module.'/'.ucfirst($directory).$ext))
+			if(is_file(COREPATH.'controllers/'.$module.'/'.ucfirst($directory).$ext))
 			{
 				$this->directory = $module.'/';
 				return array_slice($segments, 1);
 			}
 
-			if (is_file(APPPATH.'controllers/'.$commands_directory.'/'. ucfirst($directory) . $ext)) {
+			if (is_file(COREPATH.'controllers/'.$commands_directory.'/'. ucfirst($directory) . $ext)) {
 				$this->directory = $commands_directory.'/';
 				return $segments;
 			}
@@ -241,7 +241,7 @@ class MX_Router extends \CI_Router
 			/* application sub-sub-directory controller exists? */
 			if($controller)
 			{
-				if(is_file(APPPATH.'controllers/'.$module.'/'.$directory.'/'.ucfirst($controller).$ext))
+				if(is_file(COREPATH.'controllers/'.$module.'/'.$directory.'/'.ucfirst($controller).$ext))
 				{
 					$this->directory = $module.'/'.$directory.'/';
 					return array_slice($segments, 2);
@@ -262,14 +262,14 @@ class MX_Router extends \CI_Router
 		}
 
 		/* application controllers sub-directory exists? */
-		if (is_dir(APPPATH.'controllers/'.$module.'/'))
+		if (is_dir(COREPATH.'controllers/'.$module.'/'))
 		{
 			$this->directory = $module.'/';
 			return array_slice($segments, 1);
 		}
 
 		/* application controller exists? */
-		if (is_file(APPPATH.'controllers/'.ucfirst($module).$ext))
+		if (is_file(COREPATH.'controllers/'.ucfirst($module).$ext))
 		{
 			return $segments;
 		}

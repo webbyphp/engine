@@ -6,7 +6,7 @@ global $CFG;
 
 /* get module locations from config settings or use the default module location and offset */
 is_array(Modules::$locations = $CFG->item('modules_locations')) OR Modules::$locations = [
-	APPPATH.'modules/' => '../modules/',
+	COREPATH.'modules/' => '../modules/',
 ];
 
 /* PHP5 spl_autoload */
@@ -95,7 +95,7 @@ class Modules
 			if (empty($class)) return;
 	
 			/* set the module directory */
-			$path = APPPATH.'controllers/'.CI::$APP->router->directory;
+			$path = COREPATH.'controllers/'.CI::$APP->router->directory;
 			
 			/* load the controller class */
 			$class = $class.CI::$APP->config->item('controller_suffix');
@@ -127,14 +127,14 @@ class Modules
 		}
 		
 		/* autoload core classes */
-		if(is_file($location = APPPATH.'core/'.ucfirst($class).EXT)) 
+		if(is_file($location = COREPATH.'core/'.ucfirst($class).EXT)) 
 		{
 			include_once $location;
 			return;
 		}		
 		
 		/* autoload library classes */
-		if(is_file($location = APPPATH.'libraries/'.ucfirst($class).EXT)) 
+		if(is_file($location = COREPATH.'libraries/'.ucfirst($class).EXT)) 
 		{
 			include_once $location;
 			return;
