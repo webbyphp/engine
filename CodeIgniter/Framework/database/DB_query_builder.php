@@ -1205,10 +1205,10 @@ abstract class CI_DB_query_builder extends CI_DB_driver
 	/**
 	 * LIMIT
 	 *
-	 * @param	int	$value	LIMIT value
-	 * @param	int	$offset	OFFSET value
+	 * @param	int|null	$value	LIMIT value
+	 * @param	int|null	$offset	OFFSET value
 	 */
-	public function limit(int $value, int $offset = 0): \CI_DB_query_builder
+	public function limit(int|null $value, int|null $offset = 0): \CI_DB_query_builder
 	{
 		is_null($value) or $this->qb_limit = (int) $value;
 		empty($offset) or $this->qb_offset = (int) $offset;
