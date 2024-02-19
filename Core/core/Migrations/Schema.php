@@ -147,8 +147,13 @@ class Schema
 
         $exists = self::$ci->db->field_exists($name, $table);
         
-        if (!$exists) {
+        if (!$exists && is_cli()) {
             echo ConsoleColor::yellow("The " . $name . " field does not exist in the '".$table. "' table \n");
+            exit;
+        }
+
+        if (!$exists) {
+            echo "The " . $name . " field does not exist in the '".$table. "' table";
             exit;
         }
 
