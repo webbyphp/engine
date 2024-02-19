@@ -110,7 +110,7 @@ class Migration extends ConsoleController
 				$this->use->database();
 			speak_up();
 		} catch(\Exception $e) {
-			echo $this->error($e->getMessage());
+			echo $this->error("\n\t" . $e->getMessage() . "\n");
 			exit;
 		}
 	}
@@ -355,7 +355,7 @@ class Migration extends ConsoleController
 
 			foreach ($this->migrationFiles as $count => $file) {
 
-				echo $this->info("\tProcessing $file");
+				echo $this->info("\tProcessing $file \n");
 
 				$this->prepareUpMigration($file);
 
@@ -435,7 +435,6 @@ class Migration extends ConsoleController
 		}
 
 		if (!$migration) {
-			
 			try {
 
 				$startTime = microtime(true);
@@ -468,7 +467,7 @@ class Migration extends ConsoleController
 	}
 
 	/**
-	 * Export Migrated Schema As SQL
+	 * Export Database Schema As SQL
 	 * 
 	 * @param string $name
 	 * @param string $removeTables
@@ -495,7 +494,7 @@ class Migration extends ConsoleController
 		$dateGenerated = date('M d, Y') .' at '. date('H:i A');
 		$phpVersion = PHP_VERSION;
 
-		$desc = <<<DESC
+		$description = <<<DESC
 			-- Webby Schema Dump
 			-- Version: {$webbyVersion}
 			--
@@ -508,7 +507,7 @@ class Migration extends ConsoleController
 			SET time_zone = "+00:00";
 		DESC;
 
-		$content = $desc;
+		$content = $description;
 		$content .= "\r\n";
 
 		$filepath = ROOTPATH .'database'. DS . $this->schemaExportDirectory . DS;
@@ -538,7 +537,7 @@ class Migration extends ConsoleController
 			exit;
 		}
 
-		if (!$saved) {
+		if ($saved) {
 			echo $this->error("\n\tDatabase Schema ", 0). $this->info("[".$filename."]",0). $this->error(" Was Not Exported\n", 1);
 			exit;
 		}
@@ -546,7 +545,7 @@ class Migration extends ConsoleController
 	}
 
 	/**
-	 * Dump Migrated Schema
+	 * Dump All Database Schema As SQL
 	 *
 	 * @param string $name
 	 * @return void
@@ -565,7 +564,7 @@ class Migration extends ConsoleController
 		$dateGenerated = date('M d, Y') .' at '. date('H:i A');
 		$phpVersion = PHP_VERSION;
 
-		$desc = <<<DESC
+		$description = <<<DESC
 			-- Webby Database Dump
 			-- Version: {$webbyVersion}
 			--
@@ -578,7 +577,7 @@ class Migration extends ConsoleController
 			SET time_zone = "+00:00";
 		DESC;
 
-		$content = $desc;
+		$content = $description;
 		$content .= "\r\n";
 
 		$filepath = ROOTPATH .'database'. DS . $this->databaseDumpDirectory . DS;
@@ -595,41 +594,44 @@ class Migration extends ConsoleController
                 $content .= "\r\n";
 
 				$fields = $this->db->list_fields($table);
-				$table_data = $this->db->query('SELECT * FROM ' . $table)->result_array();
-				$insert_field = '';
-                $insert_values = '';
+				$tableData = $this->db->query('SELECT * FROM ' . $table)->result_array();
+				$insertField = '';
+                $insertValues = '';
 
-				if ($fields && $table_data) {
+				if ($fields && $tableData) {
 					
-					$insert_field .= "\r\n";
-					$insert_field .= 'INSERT INTO `' . $table . '` (';
+					$insertField .= "\r\n";
+					$insertField .= 'INSERT INTO `' . $table . '` (';
 					
                     foreach ($fields as $field) {
-                        $insert_field .= '`' . $field . '`,';
+                        $insertField .= '`' . $field . '`,';
                     }
 					
-                    $insert_field = substr($insert_field, 0, -1);
-                    $insert_field .= ')';
+                    $insertField = substr($insertField, 0, -1);
+                    $insertField .= ')';
 					
-                    $insert_values .= ' VALUES ';
-					$insert_values .= "\r\n";
+                    $insertValues .= ' VALUES ';
+					$insertValues .= "\r\n";
 
-                    foreach ($table_data as $table_row) {
-                        $insert_values .= '(';
-                        foreach ($table_row as $column => $value) {
-                            $insert_values .= "'" . addslashes($value) . "',";
+                    foreach ($tableData as $tableRow) {
+
+                        $tableData .= '(';
+
+                        foreach ($tableRow as $column => $value) {
+                            $insertValues .= "'" . addslashes($value) . "',";
                         }
-                        $insert_values = substr($insert_values, 0, -1);
-                        $insert_values .= '),';
-						$insert_values .= "\r\n";
+						
+                        $insertValues = substr($insertValues, 0, -1);
+                        $insertValues .= '),';
+						$insertValues .= "\r\n";
                     }
 
-                    $insert_values = substr($insert_values, 0, -3) . ';';
-					$insert_values .= "\r\n";
+                    $insertValues = substr($insertValues, 0, -3) . ';';
+					$insertValues .= "\r\n";
 
 				}
 
-				$content .= $insert_field . $insert_values;
+				$content .= $insertField . $insertValues;
 
 				$i++;
 			}
@@ -645,12 +647,12 @@ class Migration extends ConsoleController
 		$saved = write_file($filepath . $filename, $content);
 
 		if ($saved) {
-			echo $this->success("\n\tDatabase Schema ", 0). $this->info("[".$filename."]", 0). $this->success(" Exported successfully\n", 1);
+			echo $this->success("\n\tDatabase Schema With Data  ", 0). $this->info("[".$filename."]", 0). $this->success(" Has Been Dumped successfully\n", 1);
 			exit;
 		}
 
-		if ($saved) {
-			echo $this->error("\n\tDatabase Schema ", 0). $this->info("[".$filename."]",0). $this->error(" Was Not Exported\n", 1);
+		if (!$saved) {
+			echo $this->error("\n\tDatabase Schema With Data ", 0). $this->info("[".$filename."]",0). $this->error(" Was Not Dumped\n", 1);
 			exit;
 		}
 		
