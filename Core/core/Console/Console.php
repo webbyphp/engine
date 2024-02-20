@@ -808,7 +808,7 @@ class Console
 
         if ($key === '--up' || $key === '--down') {
 
-            if ($steps[0] !== '--use-file') {
+            if (isset($steps[0]) && $steps[0] !== '--use-file') {
                 $output =   " \n";
                 $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for run:migration --up or --down --use-file", 'light', 'red') . " \n";
                 echo $output . "\n";
@@ -896,7 +896,7 @@ class Console
 
             $command = Console::phpCommand() . 'migration/exportSchema/'.$filename;
 
-            if (isset($args[1]) && isset($steps[0])) {
+            if (isset($steps[0]) && isset($steps[1])) {
                 $filename = ($steps[1]) ?: $filename;
                 $command = Console::phpCommand() . 'migration/exportSchema/'.$filename;
             }
