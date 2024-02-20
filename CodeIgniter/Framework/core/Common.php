@@ -951,7 +951,7 @@ if ( ! function_exists('remove_invisible_characters'))
 				$str = '';
 			}
 
-			$str = preg_replace($non_displayables, '', $str, -1, $count);
+			$str = preg_replace($non_displayables, '', (string) $str, -1, $count);
 		}
 		while ($count);
 
