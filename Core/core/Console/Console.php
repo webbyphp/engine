@@ -815,6 +815,13 @@ class Console
                 exit;
             }
 
+            if (empty($steps[1])) {
+                $output =   " \n";
+                $output .=  ConsoleColor::white(" Please specify the filename to use for run:migration ", 'light', 'yellow') . " \n";
+                echo $output . "\n";
+                exit;
+            }
+
             $filename = $steps[1];
 
             if (!empty($filename)) {
