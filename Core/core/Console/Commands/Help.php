@@ -197,6 +197,12 @@ class Help extends Console
                 php webby run:migration --status
                 php webby run:migration --latest
                 php webby run:migration --truncate
+                php webby run:migration --export-schema or --xs
+                php webby run:migration --xs --name=name_for_exported_schema --remove=comma,seperated,table_names
+                php webby run:migration --export-schema --name=name_for_exported_schema
+                php webby run:migration --dump-database or --dd
+                php webby run:migration --dump-database --name=name_for_dumped_database
+                php webby run:migration --up --use-file=name_of_migration_file.php
                 
         MIGRATION;
     }
