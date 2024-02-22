@@ -132,6 +132,10 @@ class Console
             list($webby, $arg1, $arg2, $arg3, $arg4, $arg5) = $listArguments;
         }
 
+        if ($count === 7) {
+            list($webby, $arg1, $arg2, $arg3, $arg4, $arg5, $arg6) = $listArguments;
+        }
+
         if (!isset($webby)) 
         {
             static::noCommand();
