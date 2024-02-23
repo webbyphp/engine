@@ -111,7 +111,7 @@ class Base_Exceptions extends \CI_Exceptions
 		$directory = '';
 
 		if (!is_cli()) {
-			$directory = (get_instance()->router->directory != null) 
+			$directory = (get_instance()?->router?->directory != null) 
 				? get_instance()->router->directory 
 				: '';
 		}
@@ -185,7 +185,7 @@ class Base_Exceptions extends \CI_Exceptions
 		$directory = '';
 
 		if (!is_cli()) {
-			$directory = (get_instance()->router->directory != null) 
+			$directory = (get_instance()?->router?->directory != null)
 				? get_instance()->router->directory 
 				: '';
 		}
