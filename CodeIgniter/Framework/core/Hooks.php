@@ -119,6 +119,18 @@ class CI_Hooks
 	// --------------------------------------------------------------------
 
 	/**
+	 * Get all hooks
+	 *
+	 * @return mixed
+	 */
+	public function get()
+	{
+		return $this->hooks;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Call Hook
 	 *
 	 * Calls a particular hook. Called by CodeIgniter.php.
