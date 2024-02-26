@@ -158,6 +158,23 @@ class CI_Hooks
 	}
 
 	// --------------------------------------------------------------------
+	
+	/**
+	 * Alias to above method
+	 *
+	 * Calls a particular hook. Called by CodeIgniter.php.
+	 *
+	 * @uses	CI_Hooks::_run_hook()
+	 *
+	 * @param 	string	$which	Hook name
+	 * @return 	bool	true on success or false on failure
+	 */
+	public function callHook($which = '')
+	{
+		return $this->call_hook($which);
+	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Run Hook
