@@ -177,6 +177,58 @@ class CI_Hooks
 	// --------------------------------------------------------------------
 
 	/**
+	 * Add a hook to be executed.
+	 *
+	 * @param 	string  $action     The action to hook into.
+	 * @param 	callable $callback   The callback function to be executed.
+	 * @param 	string  $class      The class the callback belongs to.
+	 * @param 	int     $priority   The priority of the hook.
+	 * @param 	string  $filepath   The file path of the hook.
+	 * @param 	string  $filename   The filename of the hook.
+	 */
+	public function add($action, $callback, $class = '', $priority = 10, $filepath = ROOTPATH . 'config', $filename = 'hooks.php')
+	{
+		// Add the hook to the list of hooks to be executed.
+		$this->hooks[$action][] = [
+			'filepath' => $filepath, // The file path of the hook.
+			'filename' => $filename, // The filename of the hook.
+			'class'    => $class,    // The class the callback belongs to.
+			'function' => $callback, // The callback function to be executed.
+			'priority' => $priority  // The priority of the hook.
+		];
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Executes hooks for a given action.
+	 *
+	 * @param string $action The name of the action to execute hooks for.
+	 * @param array  $params An array of parameters to pass to the hooks.
+	 */
+	public function action($action, $params = [])
+	{
+		// Check if hooks exist for the given action
+		if (isset($this->hooks[$action])) {
+			
+			// Sort the hooks by priority from highest to lowest
+			usort($this->hooks[$action], function($first, $second) {
+				return $first['priority'] < $second['priority'];
+			});
+
+			// Add params set in do_action to each hook
+			foreach ($this->hooks[$action] as $key => $hook) {
+				$this->hooks[$action][$key]['params'] = $params;
+			}
+
+			// Call the hooks for the given action
+			$this->call_hook($action, $params);
+		}
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Run Hook
 	 *
 	 * Runs a particular hook
