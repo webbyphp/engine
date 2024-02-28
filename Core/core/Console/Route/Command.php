@@ -35,7 +35,7 @@ class Command
 	 * @param string $to
 	 * @param array $options
 	 * @param boolean $nested
-	 * @return void
+	 * @return mixed
 	 */
 	public static function cli($from, $to, $options = [], $nested = false)
 	{
