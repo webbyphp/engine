@@ -295,6 +295,33 @@ if ( ! function_exists('calendar'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('hooks'))
+{
+	/**
+	 * Helper function to load and return an instance of the Hooks class.
+	 *
+	 * This function loads and returns an instance of the Hooks class,
+	 * which is responsible for handling hooks in the application.
+	 *
+	 * @return Hooks An instance of the Hooks class.
+	 * 
+	 */
+	function hooks()
+	{
+		/**
+		 * Instance of the Hooks class.
+		 *
+		 * @var Hooks
+		 */
+		$hooks =& load_class('Hooks', 'core');
+
+		// Return the instance of the Hooks class.
+		return $hooks;
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('load_class'))
 {
 	/**
