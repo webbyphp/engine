@@ -859,8 +859,8 @@ class CI_Loader {
 		$this->_ci_library_paths = array_unique(array_merge($this->_ci_library_paths, [APPPATH, BASEPATH, THIRDPARTYPATH]));
 		$this->_ci_helper_paths = array_unique(array_merge($this->_ci_helper_paths, [APPPATH, BASEPATH, THIRDPARTYPATH]));
 		$this->_ci_model_paths = array_unique(array_merge($this->_ci_model_paths, [APPPATH, THIRDPARTYPATH]));
-		$this->_ci_view_paths = array_merge($this->_ci_view_paths, [APPPATH.'views/' => true]);
-		$config->_config_paths = array_unique(array_merge($config->_config_paths, [APPPATH]));
+		$this->_ci_view_paths = array_merge($this->_ci_view_paths, [APPROOT.'Views/' => true]);
+		$config->_config_paths = array_unique(array_merge($config->_config_paths, [COREPATH, ROOTPATH]));
 
 		return $this;
 	}

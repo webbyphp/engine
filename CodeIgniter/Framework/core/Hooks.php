@@ -216,7 +216,7 @@ class CI_Hooks
 				return $first['priority'] < $second['priority'];
 			});
 
-			// Add params set in do_action to each hook
+			// Add params set in calling function to each hook
 			foreach ($this->hooks[$action] as $key => $hook) {
 				$this->hooks[$action][$key]['params'] = $params;
 			}
