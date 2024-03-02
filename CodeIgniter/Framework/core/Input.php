@@ -284,6 +284,24 @@ class CI_Input
 		return false;
 	}
 	
+	// --------------------------------------------------------------------
+
+	/**
+	 * Fetch an item from the REQUEST array
+	 *
+	 * @param mixed $index
+	 * @param bool $xss_clean
+	 * @return mixed
+	 */
+	protected function index($index = null, $xss_clean = false)
+	{
+		$array = $_REQUEST;
+
+		return $this->_fetch_from_array($array, $index, $xss_clean);
+	}
+
+	// --------------------------------------------------------------------
+	
 	/**
 	 * Fetch only items from the REQUEST array
 	 *
