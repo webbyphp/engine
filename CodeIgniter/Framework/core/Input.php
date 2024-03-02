@@ -264,8 +264,10 @@ class CI_Input
 		return $this->_fetch_from_array($_POST, $index, $xss_clean);
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
-	 * Verify if an item from the POST array exists
+	 * Verify if an item from the REQUEST array exists
 	 *
 	 * @param	mixed	$index		Index for item to be checked from $_POST
 	 * @param	bool	$xss_clean	Whether to apply XSS filtering
@@ -273,7 +275,7 @@ class CI_Input
 	 */
 	public function has($index = null, $xss_clean = false)
 	{
-		$exists = $this->_fetch_from_array($_POST, $index, $xss_clean);
+		$exists = $this->_fetch_from_array($_REQUEST, $index, $xss_clean);
 
 		if ($exists) {
 			return true;
@@ -283,7 +285,7 @@ class CI_Input
 	}
 
 	/**
-	* Fetch only items from the POST array
+	 * Fetch only items from the REQUEST array
 	 *
 	 * @param	mixed	$indexes		Indexes for item to be fetched from $_POST
 	 * @param	bool	$xss_clean	Whether to apply XSS filtering
@@ -291,11 +293,13 @@ class CI_Input
 	 */
 	public function only(array $indexes = [], $xss_clean = false)
 	{
-		return $this->_fetch_from_array($_POST, $indexes, $xss_clean);
+		return $this->_fetch_from_array($_REQUEST, $indexes, $xss_clean);
 	}
 
+	// --------------------------------------------------------------------
+
 	/**
-	 * Fetch all except items given form the POST array
+	 * Fetch all except items given form the REQUEST array
 	 *
 	 * @param array $indexes
 	 * @param bool $xss_clean
@@ -303,7 +307,7 @@ class CI_Input
 	 */
 	public function except(array $indexes = [], $xss_clean = false)
 	{
-		$post = array_diff_key($_POST, array_flip($indexes));
+		$post = array_diff_key($_REQUEST, array_flip($indexes));
 
 		return $this->_fetch_from_array($post, null, $xss_clean);
 	}
