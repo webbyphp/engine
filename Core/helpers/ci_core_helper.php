@@ -303,6 +303,10 @@ if ( ! function_exists('url'))
             return void_url();
         }
 
+        if (Route::getName($uri)) {
+            return route()->named($uri);
+        }
+       
         // Detect if the $uri is string and starts with 'https://' or 'http://'
         if (is_string ($uri) && (strpos($uri, 'https://') === 0 || strpos($uri, 'http://') === 0)) {
             return $uri . $param;
