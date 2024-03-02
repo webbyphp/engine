@@ -100,10 +100,21 @@ if ( ! function_exists('current_url'))
 	 *
 	 * @return	string
 	 */
-	function current_url()
+	function current_url($with_query_strings = false)
 	{
 		$CI =& get_instance();
-		return $CI->config->site_url($CI->uri->uri_string());
+		
+		$url = $CI->config->site_url($CI->uri->uri_string());
+		
+		if (
+			$with_query_strings 
+			&& !empty($_SERVER['QUERY_STRING'])
+			&& (config_item('allow_get_array') !== false)
+		) {
+			$url .= '?' . $_SERVER['QUERY_STRING'];
+		}
+
+		return $url;
 	}
 }
 
