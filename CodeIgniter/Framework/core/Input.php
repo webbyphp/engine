@@ -1341,11 +1341,20 @@ class CI_Input
 	 */
 	public function __get($name)
 	{
-		if ($name === 'raw_input_stream') {
-			isset($this->_raw_input_stream) or $this->_raw_input_stream = file_get_contents('php://input');
+
+		if ($this->has($name)) {
+            return $this->index($name, true);
+        } elseif (
+			$name === 'raw_input_stream' 
+			|| $name === 'rawInputStream'
+			|| $name === 'getContent'
+		) {
+			isset($this->_raw_input_stream) || $this->_raw_input_stream = file_get_contents('php://input');
 			return $this->_raw_input_stream;
-		} elseif ($name === 'ip_address') {
-			return $this->ip_address;
-		}
+		} elseif ($name === 'ip_address' || $name === 'ipAddress') {
+			return $this->ipAddress();
+		} else {
+            return null;
+        }
 	}
 }
