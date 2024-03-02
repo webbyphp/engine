@@ -283,7 +283,7 @@ class CI_Input
 	}
 
 	/**
-	 * Fetch only items from the POST array
+	* Fetch only items from the POST array
 	 *
 	 * @param	mixed	$indexes		Indexes for item to be fetched from $_POST
 	 * @param	bool	$xss_clean	Whether to apply XSS filtering
@@ -490,7 +490,7 @@ class CI_Input
 		$this->originalName = $file['name'];
 		$this->originalMimeType = $file['type'];
 		$this->filesize = $file['size'];
-		$this->rawname = substr($this->originalName, 0, strrpos($this->originalName, DOT)-strlen($this->extension));
+		$this->rawname = substr($this->originalName, 0, strrpos($this->originalName, '.') - strlen($this->extension));
 
 		$filename = '';
 
@@ -1252,7 +1252,7 @@ class CI_Input
 		return $this->isAjaxRequest();
 	}
 
-    /**
+	/**
      * Checks request type.
      *
      * @param string $type HTTP verb
