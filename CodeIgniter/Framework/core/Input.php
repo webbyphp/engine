@@ -283,7 +283,7 @@ class CI_Input
 
 		return false;
 	}
-
+	
 	/**
 	 * Fetch only items from the REQUEST array
 	 *
@@ -1220,6 +1220,18 @@ class CI_Input
 	public function getRequestHeader($index, $xss_clean = false)
 	{
 		return $this->get_request_header($index, $xss_clean);
+	}
+
+	/**
+	 * Check if a specific header exists.
+	 *
+	 * @param string $header
+	 * @return bool
+	 */
+	public function hasHeader($header)
+	{
+		$headers = $this->requestHeaders();
+		return (bool) array_key_exists(strtolower($header), $headers);
 	}
 
 	// --------------------------------------------------------------------
