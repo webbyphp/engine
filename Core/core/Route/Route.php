@@ -98,6 +98,20 @@ class Route
 	protected static $namedRoutes  = [];
 
 	/**
+	 * From variable
+	 *
+	 * @var array
+	 */
+	protected static $from;
+
+	/**
+	 * Options variable
+	 *
+	 * @var array
+	 */
+	protected static $options  = [];
+
+	/**
 	 * Nested Group variable
 	 *
 	 * @var string
@@ -305,6 +319,24 @@ class Route
 	}
 
 	/**
+	 * Set a name for defined route
+	 * 
+	 * @param string $name
+	 * @return string|mixed
+	 */
+	public static function name($name)
+	{
+
+		if (isset(self::$namedRoutes[$name])) {
+			return self::$namedRoutes[$name];
+		} else {
+			static::$namedRoutes[$name] = static::$from;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Get a route with a given name
 	 *
 	 * @return static
@@ -312,6 +344,16 @@ class Route
 	public function named($name = '')
 	{
 		return !empty($name) ? static::name($name) : '';
+	}
+
+	/**
+	 * Get the name of the defined route.
+	 *
+	 * @return string The name of the route.
+	 */
+	public static function getName($name = '')
+	{
+		return (new static)->named($name);
 	}
 
 	/**
@@ -489,8 +531,8 @@ class Route
 		// Apply our routes
 		static::$temporaryRoutes[$from] = $to;
 
-		$prefix = is_null(static::$prefix) ? '' : static::$prefix . '/';
-		$group = is_null(static::$group) ? '' : static::$group . '/';
+		$prefix = is_null(static::$prefix) || empty(static::$prefix) ? '' : static::$prefix . '/';
+		$group = is_null(static::$group) || empty(static::$group) ? '' : static::$group . '/';
 
 		$from = static::$nestedGroup . $prefix . $group . $from;
 
@@ -509,12 +551,17 @@ class Route
 
 			static::$nestedGroup = '';
 		}
+
 	}
 
 
 	public static function any($from, $to, $options = [], $nested = false)
 	{
 		static::createRoute($from, $to, $options, $nested);
+
+		static::$options = $options;
+		// Return a new instance of the Route class
+		return new static;
 	}
 
 	/* --------------------------------------------------------------
@@ -522,81 +569,115 @@ class Route
      * ------------------------------------------------------------ */
 
 	/**
-	 * Get route
+	 * Route a GET request
 	 *
-	 * @param string $from
-	 * @param string $to
-	 * @return void
+	 * @param string $from The URI pattern to match
+	 * @param string $to The destination of the route
+	 * @param array $options An array of options for the route
+	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+	 * @return self The Route class instance
 	 */
 	public static function get($from, $to, $options = [], $nested = false)
 	{
+		// Check if the current request method is GET
 		if (static::methodIs('GET')) {
+			// Create the route
 			static::createRoute($from, $to, $options, $nested);
 		}
+
+		static::$options = $options;
+		// Return a new instance of the Route class
+		return new static;
 	}
 
 	/**
-	 * Post route
+	 * Route a POST request
 	 *
-	 * @param string $from
-	 * @param string $to
-	 * @return void
+	 * @param string $from The URI pattern to match
+	 * @param string $to The destination of the route
+	 * @param array $options An array of options for the route
+	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+	 * @return self The Route class instance
 	 */
 	public static function post($from, $to, $options = [], $nested = false)
 	{
 		if (static::methodIs('POST')) {
 			static::createRoute($from, $to, $options, $nested);
 		}
+
+		static::$options = $options;
+		// Return a new instance of the Route class
+		return new static;
 	}
 
 	/**
-	 * Put route
+	 * Route a PUT request
 	 *
-	 * @param string $from
-	 * @param string $to
-	 * @return void
+	 * @param string $from The URI pattern to match
+	 * @param string $to The destination of the route
+	 * @param array $options An array of options for the route
+	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+	 * @return self The Route class instance
 	 */
 	public static function put($from, $to, $options = [], $nested = false)
 	{
 		if (static::methodIs('PUT')) {
 			static::createRoute($from, $to, $options, $nested);
 		}
+
+		static::$options = $options;
+		// Return a new instance of the Route class
+		return new static;
 	}
 
 	/**
-	 * Delete route
+	 * Route a DELETE request
 	 *
-	 * @param string $from
-	 * @param string $to
-	 * @return void
+	 * @param string $from The URI pattern to match
+	 * @param string $to The destination of the route
+	 * @param array $options An array of options for the route
+	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+	 * @return self The Route class instance
 	 */
 	public static function delete($from, $to, $options = [], $nested = false)
 	{
 		if (static::methodIs('DELETE')) {
 			static::createRoute($from, $to, $options, $nested);
 		}
+
+		static::$options = $options;
+		// Return a new instance of the Route class
+		return new static;
 	}
 
 	/**
-	 * Patch route
+	 * Route a PATCH request
 	 *
-	 * @param string $from
-	 * @param string $to
-	 * @return void
+	 * @param string $from The URI pattern to match
+	 * @param string $to The destination of the route
+	 * @param array $options An array of options for the route
+	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+	 * @return self The Route class instance
 	 */
 	public static function patch($from, $to, $options = [], $nested = false)
 	{
 		if (static::methodIs('PATCH')) {
 			static::createRoute($from, $to, $options, $nested);
 		}
+
+		static::$options = $options;
+		// Return a new instance of the Route class
+		return new static;
 	}
 
 	/**
-	 * Head route
+	 * Route a HEAD request
 	 *
-	 * @param string $from
-	 * @param string $to
-	 * @return void
+	 * @param string $from The URI pattern to match
+	 * @param string $to The destination of the route
+	 * @param array $options An array of options for the route
+	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+	 * @return self The Route class instance
 	 */
 	public static function head($from, $to, $options = [], $nested = false)
 	{
@@ -606,14 +687,20 @@ class Route
 		) {
 			static::createRoute($from, $to, $options, $nested);
 		}
+
+		static::$options = $options;
+		// Return a new instance of the Route class
+		return new static;
 	}
 
 	/**
-	 * Options route
+	 * Route an OPTIONS request
 	 *
-	 * @param string $from
-	 * @param string $to
-	 * @return void
+	 * @param string $from The URI pattern to match
+	 * @param string $to The destination of the route
+	 * @param array $options An array of options for the route
+	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+	 * @return self The Route class instance
 	 */
 	public static function options($from, $to, $options = [], $nested = false)
 	{
@@ -623,6 +710,10 @@ class Route
 		) {
 			static::createRoute($from, $to, $options, $nested);
 		}
+
+		static::$options = $options;
+		// Return a new instance of the Route class
+		return new static;
 	}
 
 	/**
@@ -1074,21 +1165,6 @@ class Route
 	public static function module($name, Closure $callable = null)
 	{
 		static::group($name, $callable);
-	}
-
-	/**
-	 * Set a name for defined route
-	 * 
-	 * @param string $name
-	 * @return string|mixed
-	 */
-	public static function name($name)
-	{
-		if (isset(self::$namedRoutes[$name])) {
-			return self::$namedRoutes[$name];
-		}
-
-		return null;
 	}
 
 	/**
