@@ -1018,6 +1018,33 @@ if ( ! function_exists('html_escape'))
 	}
 }
 
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('esc'))
+{
+	/**
+	 * Returns HTML escaped variable.
+	 * Or escaped javascript literal
+	 * 
+	 * Alias to html_escape() function
+	 *
+	 * @param	mixed	$str The input string or array of strings to be escaped.
+	 * @param	bool	$double_encode	$double_encode set to false prevents escaping twice.
+	 * @return	mixed	The escaped string or array of strings as a result.
+	 */
+	function esc($str, $escape_js = false, $double_encode = true)
+	{
+		if (!empty($escape_js)) {
+			// Escape for JavaScript string literals.
+			// Useful for confirm() or alert() - but of course not document.write() or  similar
+			return addcslashes($str, "\"'\\\0..\037\/");
+		}
+
+		return html_escape($str, $double_encode);
+	}
+}
+
 // ------------------------------------------------------------------------
 
 if ( ! function_exists('_evaluated'))
