@@ -523,7 +523,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 *
 	 * @return	string
 	 */
-	protected function _from_tables()
+	protected function _from_tables(): string
 	{
 		if ( ! empty($this->qb_join) && count($this->qb_from) > 1)
 		{

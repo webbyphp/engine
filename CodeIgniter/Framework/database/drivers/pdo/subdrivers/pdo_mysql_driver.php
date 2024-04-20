@@ -352,7 +352,7 @@ class CI_DB_pdo_mysql_driver extends CI_DB_pdo_driver {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _truncate($table)
+	protected function _truncate($table): string
 	{
 		return 'TRUNCATE '.$table;
 	}
@@ -367,7 +367,7 @@ class CI_DB_pdo_mysql_driver extends CI_DB_pdo_driver {
 	 *
 	 * @return	string
 	 */
-	protected function _from_tables()
+	protected function _from_tables(): string
 	{
 		if ( ! empty($this->qb_join) && count($this->qb_from) > 1)
 		{
