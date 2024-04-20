@@ -1422,7 +1422,7 @@ abstract class CI_DB_query_builder extends CI_DB_driver
 			}
 		} else {
 			if (empty($set)) {
-				return ($this->db_debug) ? $this->display_error('insert_batch() called with no data') : false;
+				return ($this->db_debug) ? $this->display_error('db_data_required', 'insert_batch()') : false;
 			}
 
 			$this->set_insert_batch($set, '', $escape);
@@ -1799,7 +1799,7 @@ abstract class CI_DB_query_builder extends CI_DB_driver
 			}
 		} else {
 			if (empty($set)) {
-				return ($this->db_debug) ? $this->display_error('update_batch() called with no data') : false;
+				return ($this->db_debug) ? $this->display_error('db_data_required', 'update_batch()') : false;
 			}
 
 			$this->set_update_batch($set, $index);
