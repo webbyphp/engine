@@ -207,6 +207,45 @@ class CI_Config {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Alias for the item() method
+	 *
+	 * @param string|array $item The item to retrieve.
+	 * @param string $index Optional index for the item.
+	 * @return mixed The value of the specified item.
+	 */
+	public function get(string|array $item, string $index = '')
+	{
+		return $this->item($item, $index);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Check if the specified item exists.
+	 *
+	 * @param string $item The item to check for existence
+	 * @return bool Returns true if the item exists, otherwise false
+	 */
+	public function has(string $item)
+	{
+		return !empty($this->item($item));
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Retrieve all items from the configuration.
+	 *
+	 * @return array The array containing all items from the configuration.
+	 */
+	public function all()
+	{
+		return $this->config;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Fetch a config file item with slash appended (if not empty)
 	 *
 	 * @param	string		$item	Config item name
@@ -365,6 +404,20 @@ class CI_Config {
 	public function set_item(string $item, string $value): void
 	{
 		$this->config[$item] = $value;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Alias for the set_item() method
+	 *
+	 * @param string $item The name of the item.
+	 * @param string $value The value to set.
+	 * @return void
+	 */
+	public function set(string $item, string $value)
+	{
+		return $this->set_item($item, $value);
 	}
 
 }
