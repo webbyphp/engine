@@ -814,7 +814,7 @@ class CI_Upload {
 		{
 			if (false !== ($D = @getimagesize($path)))
 			{
-				$types = [1 => 'gif', 2 => 'jpeg', 3 => 'png'];
+				$types = [IMAGETYPE_GIF => 'gif', IMAGETYPE_JPEG => 'jpeg', IMAGETYPE_PNG => 'png', IMAGETYPE_WEBP => 'webp', IMAGETYPE_AVIF => 'avif'];
 
 				$this->image_width	= $D[0];
 				$this->image_height	= $D[1];
