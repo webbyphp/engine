@@ -164,6 +164,40 @@ if (!empty($assign_to_config['subclass_prefix'])) {
 }
 
 /*
+| -------------------------------------------------------------------------
+| Retrieve Subdomain
+| -------------------------------------------------------------------------
+| 
+| Retrieves the subdomain from the HTTP host address.
+| This code first retrieves the HTTP host address from the server variables.
+| Then, it extracts the subdomain from the host address by removing the part
+| after the last occurrence of a dot before the occurrence of a colon (if any),
+| and removing the part after the last occurrence of a dot.
+|
+| If the subdomain is not 'www' and is not an empty string,
+| it is defined as the subdomain of the host. Otherwise, it is defined as FALSE.
+|
+ */
+
+$SERVER_HTTP_HOST = !(PHP_SAPI === 'cli' or defined('STDIN'))
+	? $_SERVER['HTTP_HOST']
+	: '';
+
+// Extract subdomain from $SERVER_HTTP_HOST
+$SUBDOMAIN = substr(
+	$SERVER_HTTP_HOST,
+	0,
+	strrpos(substr($SERVER_HTTP_HOST, 0, strrpos($SERVER_HTTP_HOST, '.')), '.')
+);
+
+// Define subdomain
+if ($SUBDOMAIN !== 'www' && $SUBDOMAIN !== '') {
+ 	define('SUBDOMAIN', $SUBDOMAIN);
+} else {
+ 	define('SUBDOMAIN', FALSE);
+}
+
+/*
  * ------------------------------------------------------
  *  Should we use a Composer autoloader?
  * ------------------------------------------------------
