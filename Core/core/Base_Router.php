@@ -172,13 +172,14 @@ class Base_Router extends MX_Router
 
             // Convert wildcards to RegEx
             $key = str_replace(
-                [':any', ':num', ':uuid', ':alphanum', ':alpha'],
+                [':any', ':num', ':uuid', ':alphanum', ':alpha', ':subdomain'],
                 [
                     '[^/]+', 
                     '[0-9]+', 
                     '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
                     '[a-zA-Z]+[a-zA-Z0-9._]+$',
-                    '[a-zA-Z]+$'
+                    '[a-zA-Z]+$',
+                    '[-_0-9{$alpha}]+.'
                 ], 
                 $key
             );
@@ -222,6 +223,7 @@ class Base_Router extends MX_Router
         $key = str_replace('{uuid}', '(:uuid)', $key);
         $key = str_replace('{alpha}', '(:alpha)', $key);
         $key = str_replace('{alphanum}', '(:alphanum)', $key);
+        $key = str_replace('{subdomain}', '(:subdomain)', $key);
 
         $hasCurly = strpos($key, '{');
         $defaultKey = $key;
