@@ -10,6 +10,8 @@
 
 namespace Base\Console\Route;
 
+use Closure;
+
 class Command
 {
 
@@ -20,10 +22,10 @@ class Command
      * @param string $from
 	 * @param string $to
 	 * @param array $options
-	 * @param boolean $nested
+	 * @param callable|null $nested
      * @return void
      */
-    public static function set($from, $to, $options = [], $nested = false)
+    public static function set($from, $to, $options = [], ?Closure $nested = null)
 	{
 		\Base\Route\Route::any($from, $to, $options, $nested);
 	}
@@ -34,10 +36,10 @@ class Command
 	 * @param string $from
 	 * @param string $to
 	 * @param array $options
-	 * @param boolean $nested
+	 * @param callable|null $nested
 	 * @return mixed
 	 */
-	public static function cli($from, $to, $options = [], $nested = false)
+	public static function cli($from, $to, $options = [], ?Closure $nested = null)
 	{
 		\Base\Route\Route::cli($from, $to, $options, $nested);
 	}
