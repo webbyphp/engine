@@ -56,6 +56,13 @@ class Route
 	 */
 	protected static $defaultController = 'app';
 
+	/**
+	 * Defined Controller variable
+	 *
+	 * @var string
+	 */
+	protected static $definedController = 'app';
+
 
 	/**
 	 * Available Routes array
@@ -1193,14 +1200,13 @@ class Route
 		static::$subdomain = null;
 	}
 
-
 	/**
 	 * Set subdomain for routes.
 	 *
-	 * @param string|null $subdomain The subdomain to set. Null by default.
+	 * @param string $subdomain The subdomain to set. empty string by default.
 	 * @return static Returns a new instance of the class.
 	 */
-	public static function domain($subdomain = null)
+	public static function domain($subdomain = '', ?string $definedController = null)
 	{
 
 		[$name,] = explode('.', $subdomain);
@@ -1208,6 +1214,10 @@ class Route
 		static::$subdomain = $name;
 
 		$currentDomain = (new static)->getCurrentSubdomain();
+
+		if ($definedController !== null) {
+			static::$definedController = $definedController;
+		}
 
 		if ($currentDomain === static::$subdomain) {
 			static::$defaultController = static::$subdomain;
@@ -1410,7 +1420,9 @@ class Route
 			$route = static::availableRoutes();
 		}
 
-		$route['default_controller'] = static::$defaultController ?? 'app';
+		$route['default_controller'] = static::$definedController 
+			?? static::$defaultController 
+			?? 'app';
 
 		return array_merge(
 			$route,
