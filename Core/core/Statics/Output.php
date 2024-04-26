@@ -15,7 +15,7 @@ class Output
 
     public static function __callStatic($method, $arguments)
     {
-        return ToStatic::makeStatic(self::$instance, $method, $arguments);
+        return ToStatic::make(self::$instance, $method, $arguments);
     }
 
 }

@@ -2,20 +2,29 @@
 
 namespace Base\Statics;
 
+use Base\Statics\AbstractToStatic;
+
 /**
- * Class ToStatic
+ * The ToStatic class extends the AbstractToStatic class.
  *
- * This class extends ToStaticClass and contains static methods 
- * for making static method calls on instances, getting the fully 
- * qualified class name, getting constructor arguments, and calling 
- * methods on the root class with given arguments. It also handles the 
+ * This class is responsible for providing static method calls on instances,
+ * getting the fully qualified class name, getting constructor arguments, and
+ * calling methods on the root class with given arguments. It also handles the
  * case where the method does not exist by throwing a BadMethodCallException.
+ *
+ * @author Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  */
-class ToStatic extends ToStaticClass
+class ToStatic extends AbstractToStatic
 {
     
     /**
-     * @var array
+     * Holds the instances of the classes.
+     * 
+     * Each class is associated with an instance, which is stored in this array.
+     * 
+     * Keys are fully qualified class names and values are instances of the classes.
+     * 
+     * @var array Array of instances of the classes.
      */
     protected static $classInstances = [];
 
@@ -46,15 +55,16 @@ class ToStatic extends ToStaticClass
     }
 
     /**
-     * Make static method
+     * Create Static Method
      *
-     * @param string|object $instance The instance to call the method on, or the service identifier if $isService is true
+     * @param string|object $instance The instance to call the method on, 
+     * or the service identifier if $isService is true
      * @param string $method The method to call
      * @param array $arguments The arguments to pass to the method
      * @param bool $isService Indicates whether $instance is a service identifier
      * @return mixed The result of the method call
      */
-    public static function makeStatic(
+    public static function make(
         string|object $instance,
         string $method,
         array $arguments,

@@ -8,7 +8,7 @@ namespace Base\Statics;
  * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  * 
  */
-abstract class ToStaticClass
+abstract class AbstractToStatic
 {
     /**
      * Returns the fully qualified class name.
