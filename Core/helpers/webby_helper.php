@@ -1953,7 +1953,7 @@ if ( ! function_exists('honey_style'))
      * Styles the honey_pot container
      *
      * @param string $custom_style
-     * @return bool
+     * @return string
      */
     function honey_style($custom_style = '')
     {
