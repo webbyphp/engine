@@ -1203,10 +1203,11 @@ class Route
 	/**
 	 * Set subdomain for routes.
 	 *
-	 * @param string $subdomain The subdomain to set. empty string by default.
+	 * @param string $subdomain The subdomain to set.
+	 * @param string|null $definedController The default controller to set. null by default.
 	 * @return static Returns a new instance of the class.
 	 */
-	public static function domain($subdomain = '', ?string $definedController = null)
+	public static function domain(string $subdomain, ?string $definedController = null)
 	{
 
 		[$name,] = explode('.', $subdomain);
@@ -1215,8 +1216,21 @@ class Route
 
 		$currentDomain = (new static)->getCurrentSubdomain();
 
-		if ($definedController !== null) {
+		if (preg_match('/\{.*\}/', static::$subdomain)) {
+			static::$subdomain = "*";
+		}
+
+		if (($currentDomain === static::$subdomain) && ($definedController !== null)) {
 			static::$definedController = $definedController;
+		}
+
+		if ((static::$subdomain === '*') && ($definedController !== null)) {
+			static::$definedController = $definedController;
+			$currentDomain = Route::dynamic();
+		}
+
+		if ((static::$subdomain === '*') && ($definedController === null) && SUBDOMAIN !== false) {
+			$currentDomain = static::$subdomain = Route::dynamic();
 		}
 
 		if ($currentDomain === static::$subdomain) {
@@ -1225,6 +1239,18 @@ class Route
 
 		// Returns a new instance of the class.
 		return new static;
+	}
+
+	/**
+	 * Retrieve the current subdomain dynamically.
+	 *
+	 * @return string The current subdomain.
+	 */
+	protected static function dynamic()
+	{
+		// Create a new instance of the class 
+		// and get the current subdomain.
+		return (new static)->getCurrentSubdomain();
 	}
 
 	/**
