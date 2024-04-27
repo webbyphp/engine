@@ -61,7 +61,7 @@ if ( ! function_exists('word_limiter'))
 	 * @param	string	the end character. Usually an ellipsis
 	 * @return	string
 	 */
-	function word_limiter($str, $limit = 100, $end_char = '&#8230;')
+	function word_limiter($str = '', $limit = 100, $end_char = '&#8230;')
 	{
 		if (trim($str) === '')
 		{
@@ -94,7 +94,7 @@ if ( ! function_exists('character_limiter'))
 	 * @param	string	the end character. Usually an ellipsis
 	 * @return	string
 	 */
-	function character_limiter($str, $n = 500, $end_char = '&#8230;')
+	function character_limiter($str = '', $n = 500, $end_char = '&#8230;')
 	{
 		if (mb_strlen($str) < $n)
 		{
@@ -120,6 +120,8 @@ if ( ! function_exists('character_limiter'))
 				return (mb_strlen($out) === mb_strlen($str)) ? $out : $out.$end_char;
 			}
 		}
+
+		return $str;
 	}
 }
 
@@ -135,7 +137,7 @@ if ( ! function_exists('ascii_to_entities'))
 	 * @param	string	$str
 	 * @return	string
 	 */
-	function ascii_to_entities($str)
+	function ascii_to_entities($str = '')
 	{
 		$out = '';
 		$length = defined('MB_OVERLOAD_STRING')
@@ -203,7 +205,7 @@ if ( ! function_exists('entities_to_ascii'))
 	 * @param	bool
 	 * @return	string
 	 */
-	function entities_to_ascii($str, $all = true)
+	function entities_to_ascii($str = '', $all = true)
 	{
 		if (preg_match_all('/\&#(\d+)\;/', $str, $matches))
 		{
@@ -261,7 +263,7 @@ if ( ! function_exists('word_censor'))
 	 * @param	string	the optional replacement value
 	 * @return	string
 	 */
-	function word_censor($str, $censored, $replacement = '')
+	function word_censor($str = '', $censored, $replacement = '')
 	{
 		if ( ! is_array($censored))
 		{
@@ -319,7 +321,7 @@ if ( ! function_exists('highlight_code'))
 	 * @param	string	the text string
 	 * @return	string
 	 */
-	function highlight_code($str)
+	function highlight_code($str = '')
 	{
 		/* The highlight string function encodes and highlights
 		 * brackets so we need them to start raw.
@@ -377,7 +379,7 @@ if ( ! function_exists('highlight_phrase'))
 	 * @param	string	$tag_close	the closing tag to end the phrase with
 	 * @return	string
 	 */
-	function highlight_phrase($str, $phrase, $tag_open = '<mark>', $tag_close = '</mark>')
+	function highlight_phrase($str = '', $phrase, $tag_open = '<mark>', $tag_close = '</mark>')
 	{
 		return ($str !== '' && $phrase !== '')
 			? preg_replace('/('.preg_quote($phrase, '/').')/i'.(UTF8_ENABLED ? 'u' : ''), $tag_open.'\\1'.$tag_close, $str)
@@ -395,7 +397,7 @@ if ( ! function_exists('convert_accented_characters'))
 	 * @param	string	$str	Input string
 	 * @return	string
 	 */
-	function convert_accented_characters($str)
+	function convert_accented_characters($str = '')
 	{
 		static $array_from, $array_to;
 
@@ -444,7 +446,7 @@ if ( ! function_exists('word_wrap'))
 	 * @param	int	$charlim = 76	the number of characters to wrap at
 	 * @return	string
 	 */
-	function word_wrap($str, $charlim = 76)
+	function word_wrap($str = '', $charlim = 76)
 	{
 		// Set the character limit
 		is_numeric($charlim) OR $charlim = 76;
@@ -541,7 +543,7 @@ if ( ! function_exists('ellipsize'))
 	 * @param	string	ellipsis ; Default '...'
 	 * @return	string	ellipsized string
 	 */
-	function ellipsize($str, $max_length, $position = 1, $ellipsis = '&hellip;')
+	function ellipsize($str = '', $max_length, $position = 1, $ellipsis = '&hellip;')
 	{
 		// Strip tags
 		$str = trim(strip_tags($str));
