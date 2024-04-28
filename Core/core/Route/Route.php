@@ -61,7 +61,7 @@ class Route
 	 *
 	 * @var string
 	 */
-	protected static $definedController = 'app';
+	protected static $definedController = null;
 
 
 	/**
