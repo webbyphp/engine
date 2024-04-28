@@ -50,7 +50,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link		https://codeigniter.com/userguide3/general/controllers.html
  */
 #[AllowDynamicProperties]
-class CI_Controller extends stdClass {
+class CI_Controller extends stdClass
+{
 
 	/**
 	 * Reference to the CI singleton
@@ -78,6 +79,13 @@ class CI_Controller extends stdClass {
 	 *
 	 * @var	CI_Input
 	 */
+	public $input;
+
+	/**
+	 * CI_Input
+	 *
+	 * @var	CI_Input
+	 */
 	public $request;
 
 	/**
@@ -85,7 +93,14 @@ class CI_Controller extends stdClass {
 	 *
 	 * @var	CI_Output
 	 */
-	public $response;	
+	public $output;	
+
+	/**
+	 * CI_Output
+	 *
+	 * @var	CI_Output
+	 */
+	public $response;
 
 	/**
 	 * Class constructor
@@ -106,8 +121,8 @@ class CI_Controller extends stdClass {
 
 		$this->load =& load_class('Loader', 'core');
 		$this->use = $this->load;
-		$this->request = $this->input;
-		$this->response = $this->output;
+		$this->request =& load_class('Input', 'core');
+		$this->response =& load_class('Output', 'core');
 		$this->load->initialize();
 		log_message('info', 'Controller Class Initialized');
 	}
