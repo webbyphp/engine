@@ -26,7 +26,7 @@ class Console
 
     private static $composerCommand = 'composer ';
 
-    private const WEBBY_CLI_VERSION = '2.12.3';
+    private const WEBBY_CLI_VERSION = '2.12.4';
 
     private const DEFAULT_HOST = "localhost";
     
