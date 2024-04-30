@@ -71,21 +71,21 @@ class CI_Loader {
 	 *
 	 * @var	array
 	 */
-	protected $_ci_library_paths =	[APPPATH, BASEPATH, THIRDPARTYPATH];
+	protected $_ci_library_paths =	[COREPATH, BASEPATH, THIRDPARTYPATH];
 
 	/**
 	 * List of paths to load models from
 	 *
 	 * @var	array
 	 */
-	protected $_ci_model_paths =	[APPPATH, THIRDPARTYPATH];
+	protected $_ci_model_paths =	[COREPATH, THIRDPARTYPATH];
 
 	/**
 	 * List of paths to load helpers from
 	 *
 	 * @var	array
 	 */
-	protected $_ci_helper_paths =	[APPPATH, BASEPATH, THIRDPARTYPATH];
+	protected $_ci_helper_paths =	[COREPATH, BASEPATH, THIRDPARTYPATH];
 
 	/**
 	 * List of cached variables
@@ -296,7 +296,7 @@ class CI_Loader {
 		//       sub-optimal otherwise anyway.
 		if ( ! class_exists('CI_Model', false))
 		{
-			$app_path = APPPATH.'core'.DIRECTORY_SEPARATOR;
+			$app_path = COREPATH.'core'.DIRECTORY_SEPARATOR;
 			if (file_exists($app_path.'Model.php'))
 			{
 				require_once($app_path.'Model.php');
@@ -856,9 +856,9 @@ class CI_Loader {
 		}
 
 		// make sure the application default paths are still in the array
-		$this->_ci_library_paths = array_unique(array_merge($this->_ci_library_paths, [APPPATH, BASEPATH, THIRDPARTYPATH]));
-		$this->_ci_helper_paths = array_unique(array_merge($this->_ci_helper_paths, [APPPATH, BASEPATH, THIRDPARTYPATH]));
-		$this->_ci_model_paths = array_unique(array_merge($this->_ci_model_paths, [APPPATH, THIRDPARTYPATH]));
+		$this->_ci_library_paths = array_unique(array_merge($this->_ci_library_paths, [COREPATH, BASEPATH, THIRDPARTYPATH]));
+		$this->_ci_helper_paths = array_unique(array_merge($this->_ci_helper_paths, [COREPATH, BASEPATH, THIRDPARTYPATH]));
+		$this->_ci_model_paths = array_unique(array_merge($this->_ci_model_paths, [COREPATH, THIRDPARTYPATH]));
 		$this->_ci_view_paths = array_merge($this->_ci_view_paths, [APPROOT.'Views/' => true]);
 		$config->_config_paths = array_unique(array_merge($config->_config_paths, [COREPATH, ROOTPATH]));
 
@@ -1139,8 +1139,8 @@ class CI_Loader {
 
 		$paths = $this->_ci_library_paths;
 		array_pop($paths); // BASEPATH
-		array_pop($paths); // APPPATH (needs to be the first path checked)
-		array_unshift($paths, APPPATH);
+		array_pop($paths); // COREPATH (needs to be the first path checked)
+		array_unshift($paths, COREPATH);
 
 		foreach ($paths as $path)
 		{
@@ -1298,14 +1298,14 @@ class CI_Loader {
 	 */
 	protected function _ci_autoloader()
 	{
-		if (file_exists(APPPATH.'config/autoload.php'))
+		if (file_exists(COREPATH.'config/autoload.php'))
 		{
-			include(APPPATH.'config/autoload.php');
+			include(COREPATH.'config/autoload.php');
 		}
 
-		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/autoload.php'))
+		if (file_exists(COREPATH.'config/'.ENVIRONMENT.'/autoload.php'))
 		{
-			include(APPPATH.'config/'.ENVIRONMENT.'/autoload.php');
+			include(COREPATH.'config/'.ENVIRONMENT.'/autoload.php');
 		}
 
 		if ( ! isset($autoload))
