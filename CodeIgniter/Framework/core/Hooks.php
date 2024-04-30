@@ -99,12 +99,12 @@ class CI_Hooks
 		}
 
 		// Grab the "hooks" definition file.
-		if (file_exists(APPPATH . 'config/hooks.php')) {
-			include(APPPATH . 'config/hooks.php');
+		if (file_exists(COREPATH . 'config/hooks.php')) {
+			include(COREPATH . 'config/hooks.php');
 		}
 
-		if (file_exists(APPPATH . 'config/' . ENVIRONMENT . '/hooks.php')) {
-			include(APPPATH . 'config/' . ENVIRONMENT . '/hooks.php');
+		if (file_exists(COREPATH . 'config/' . ENVIRONMENT . '/hooks.php')) {
+			include(COREPATH . 'config/' . ENVIRONMENT . '/hooks.php');
 		}
 
 		// If there are no hooks, we're done.
@@ -267,7 +267,7 @@ class CI_Hooks
 			return false;
 		}
 
-		$filepath = APPPATH . $data['filepath'] . '/' . $data['filename'];
+		$filepath = COREPATH . $data['filepath'] . '/' . $data['filename'];
 
 		if (!file_exists($filepath)) {
 			$filepath = $data['filepath'] . '/' . $data['filename'];
