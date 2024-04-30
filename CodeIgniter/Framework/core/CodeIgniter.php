@@ -65,12 +65,12 @@ const CI_VERSION = '3.2.0';
  *  Load the framework constants
  * ------------------------------------------------------
  */
-if (file_exists(APPPATH . 'config/' . ENVIRONMENT . '/constants.php')) {
-	require_once(APPPATH . 'config/' . ENVIRONMENT . '/constants.php');
+if (file_exists(COREPATH . 'config/' . ENVIRONMENT . '/constants.php')) {
+	require_once(COREPATH . 'config/' . ENVIRONMENT . '/constants.php');
 }
 
-if (file_exists(APPPATH . 'config/constants.php')) {
-	require_once(APPPATH . 'config/constants.php');
+if (file_exists(COREPATH . 'config/constants.php')) {
+	require_once(COREPATH . 'config/constants.php');
 }
 
 /*
@@ -204,9 +204,9 @@ if ($SUBDOMAIN !== 'www' && $SUBDOMAIN !== '') {
  */
 if ($composer_autoload = config_item('composer_autoload')) {
 	if ($composer_autoload === true) {
-		file_exists(APPPATH . 'vendor/autoload.php')
-			? require_once(APPPATH . 'vendor/autoload.php')
-			: log_message('error', '$config[\'composer_autoload\'] is set to true but ' . APPPATH . 'vendor/autoload.php was not found.');
+		file_exists(COREPATH . 'vendor/autoload.php')
+			? require_once(COREPATH . 'vendor/autoload.php')
+			: log_message('error', '$config[\'composer_autoload\'] is set to true but ' . COREPATH . 'vendor/autoload.php was not found.');
 	} elseif (file_exists($composer_autoload)) {
 		require_once($composer_autoload);
 	} else {
@@ -405,8 +405,8 @@ function &get_instance()
 	return CI_Controller::get_instance();
 }
 
-if (file_exists(APPPATH . 'core/' . $CFG->config['subclass_prefix'] . 'Controller.php')) {
-	require_once APPPATH . 'core/' . $CFG->config['subclass_prefix'] . 'Controller.php';
+if (file_exists(COREPATH . 'core/' . $CFG->config['subclass_prefix'] . 'Controller.php')) {
+	require_once COREPATH . 'core/' . $CFG->config['subclass_prefix'] . 'Controller.php';
 }
 
 // Set a mark point for benchmarking
@@ -438,7 +438,7 @@ $class = ucfirst($RTR->class);
 $method = $RTR->method;
 
 // Specify default paths to load controllers when they are not module controllers
-$corePathController = APPPATH . 'controllers/' . $RTR->directory . $class . '.php';
+$corePathController = COREPATH . 'controllers/' . $RTR->directory . $class . '.php';
 $appRootController = APPROOT . 'Controllers/' . $RTR->directory . $class . '.php';
 
 if (
@@ -492,13 +492,13 @@ if ($e404) {
 		$error_class = ucfirst($error_class);
 
 		if (!class_exists($error_class, false)) {
-			if (file_exists(APPPATH . 'controllers/' . $RTR->directory . $error_class . '.php')) {
-				require_once(APPPATH . 'controllers/' . $RTR->directory . $error_class . '.php');
+			if (file_exists(COREPATH . 'controllers/' . $RTR->directory . $error_class . '.php')) {
+				require_once(COREPATH . 'controllers/' . $RTR->directory . $error_class . '.php');
 				$e404 = !class_exists($error_class, false);
 			}
 			// Were we in a directory? If so, check for a global override
-			elseif (!empty($RTR->directory) && file_exists(APPPATH . 'controllers/' . $error_class . '.php')) {
-				require_once(APPPATH . 'controllers/' . $error_class . '.php');
+			elseif (!empty($RTR->directory) && file_exists(COREPATH . 'controllers/' . $error_class . '.php')) {
+				require_once(COREPATH . 'controllers/' . $error_class . '.php');
 				if (($e404 = !class_exists($error_class, false)) === false) {
 					$RTR->directory = '';
 				}
