@@ -350,7 +350,7 @@ if ( ! function_exists('load_class'))
 
 		// Look for the class first in the local application/libraries folder
 		// then in the native system/libraries folder
-		foreach ([APPPATH, BASEPATH] as $path)
+		foreach ([COREPATH, BASEPATH] as $path)
 		{
 			if (file_exists($path.$directory.'/'.$class.'.php'))
 			{
@@ -366,13 +366,13 @@ if ( ! function_exists('load_class'))
 		}
 
 		// Is the request a class extension? If so we load it too
-		if (file_exists(APPPATH.$directory.'/'.config_item('subclass_prefix').$class.'.php'))
+		if (file_exists(COREPATH.$directory.'/'.config_item('subclass_prefix').$class.'.php'))
 		{
 			$name = config_item('subclass_prefix').$class;
 
 			if (class_exists($name, false) === false)
 			{
-				require_once(APPPATH.$directory.'/'.$name.'.php');
+				require_once(COREPATH.$directory.'/'.$name.'.php');
 			}
 		}
 
@@ -439,7 +439,7 @@ if ( ! function_exists('get_config'))
 
 		if (empty($config))
 		{
-			$file_path = APPPATH.'config/config.php';
+			$file_path = COREPATH.'config/config.php';
 			$found = false;
 			if (file_exists($file_path))
 			{
@@ -448,7 +448,7 @@ if ( ! function_exists('get_config'))
 			}
 
 			// Is the config file in the environment folder?
-			if (file_exists($file_path = APPPATH.'config/'.ENVIRONMENT.'/config.php'))
+			if (file_exists($file_path = COREPATH.'config/'.ENVIRONMENT.'/config.php'))
 			{
 				require($file_path);
 			}
@@ -517,13 +517,13 @@ if ( ! function_exists('get_mimes'))
 
 		if (empty($_mimes))
 		{
-			$_mimes = file_exists(APPPATH.'config/mimes.php')
-				? include(APPPATH.'config/mimes.php')
+			$_mimes = file_exists(COREPATH.'config/mimes.php')
+				? include(COREPATH.'config/mimes.php')
 				: [];
 
-			if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/mimes.php'))
+			if (file_exists(COREPATH.'config/'.ENVIRONMENT.'/mimes.php'))
 			{
-				$_mimes = array_merge($_mimes, include(APPPATH.'config/'.ENVIRONMENT.'/mimes.php'));
+				$_mimes = array_merge($_mimes, include(COREPATH.'config/'.ENVIRONMENT.'/mimes.php'));
 			}
 		}
 
