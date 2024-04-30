@@ -231,14 +231,14 @@ if ( ! function_exists('_get_smiley_array'))
 
 		if ( ! is_array($_smileys))
 		{
-			if (file_exists(APPPATH.'config/smileys.php'))
+			if (file_exists(COREPATH.'config/smileys.php'))
 			{
-				include(APPPATH.'config/smileys.php');
+				include(COREPATH.'config/smileys.php');
 			}
 
-			if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/smileys.php'))
+			if (file_exists(COREPATH.'config/'.ENVIRONMENT.'/smileys.php'))
 			{
-				include(APPPATH.'config/'.ENVIRONMENT.'/smileys.php');
+				include(COREPATH.'config/'.ENVIRONMENT.'/smileys.php');
 			}
 
 			if (empty($smileys) OR ! is_array($smileys))
