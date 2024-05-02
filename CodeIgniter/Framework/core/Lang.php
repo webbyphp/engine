@@ -179,6 +179,24 @@ class CI_Lang {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Use a language file
+	 *
+	 * @param	mixed	$langfile	Language file name
+	 * @param	string	$idiom		Language name (english, etc.)
+	 * @param	bool	$return		Whether to return the loaded array of translations
+	 * @param 	bool	$add_suffix	Whether to add suffix to $langfile
+	 * @param 	string	$alt_path	Alternative path to look for the language file
+	 *
+	 * @return	void|string[]	Array containing translations, if $return is set to true
+	 */
+	public function use($langfile, $idiom = '', $return = false, $add_suffix = true, $alt_path = '')
+	{
+		$this->load($langfile, $idiom, $return, $add_suffix, $alt_path);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Language line
 	 *
 	 * Fetches a single line of text from the language array
