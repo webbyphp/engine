@@ -59,7 +59,8 @@ class CI_Cache extends CI_Driver_Library {
 		'file',
 		'memcached',
 		'redis',
-		'wincache'
+		'wincache',
+		'sqlite'
 	];
 
 	/**
