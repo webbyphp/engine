@@ -42,5 +42,34 @@
 
 class CI_Cache_sqlite extends CI_Driver {
     
+    /**
+    * Path to the cache database file.
+    *
+    * @var string
+    */
+    protected $cache_path;
+   
+   /**
+    * Directory in which to save cache files
+    *
+    * @var string
+    */
+    protected $cache_file;
+   
+   /**
+    * Whether to automatically flush expired cache items.
+    *
+    * @var bool
+    */
+    protected $auto_flush;
+    
+   /**
+    * SQLite object.
+    *
+    * @var PDO
+    */
+    protected $sqlite;
+
+    
    
 }
