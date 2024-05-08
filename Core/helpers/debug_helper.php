@@ -118,6 +118,24 @@ if ( ! function_exists( 'dd' )) {
     }
 }
 
+if ( ! function_exists( 'dr' )) 
+{
+    /**
+     * Debug output for APIs
+     *
+     * @param mixed $dump
+     * @return void
+     */
+    function dr()
+    {
+        $dump = func_get_args();
+
+        strict_dev();
+        header('Content-Type: application/json'); echo json_encode($dump); exit;
+
+    }
+}
+
 if ( ! function_exists( 'pp' )) 
 {
     /**
@@ -134,8 +152,6 @@ if ( ! function_exists( 'pp' ))
         die();
     }
 }
-
-
 
 if ( ! function_exists( 'dump_json' )) 
 {
