@@ -358,6 +358,7 @@ class Create extends ConsoleController
                 return str_replace('{{ENUM}}', $className, $fileContent);
             break;
             case 'default_migration':
+            case 'anonymous_migration':
                 
                 $className = substr($className, strpos($className, "_") + 1);
                 $className = 'Migration_'. $className;
