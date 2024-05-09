@@ -250,6 +250,17 @@ class Cache extends \Base_Output
         return $items;
     }
 
+     /**
+     * Retrieve's the cached item
+     *
+     * @param string $key containing the identifier of the item to retrieve
+     * @return mixed the cached item or items
+     */
+    public function get($key)
+    {
+        return $this->getCacheItem($key);
+    }
+
     /**
      * Return time remaining until cached file expires
      *
