@@ -92,6 +92,17 @@ class Cache extends \Base_Output
     }
 
     /**
+     * Set Custom Path
+     *
+     * @param string $path
+     * @return mixed // return type will change
+     */
+    public function path($path = '')
+    {
+        return $this->setCachePath($path);
+    }
+
+    /**
      * Check's whether an item is cached or not
      *
      * @param string $key containing the identifier of the cached item
