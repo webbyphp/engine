@@ -283,7 +283,7 @@ class Cache extends \Base_Output
     /**
      * Return time remaining until cached file expires
      *
-     * @param [type] $key
+     * @param string $key
      * @return mixed
      */
     public function ttl($key)
@@ -304,6 +304,17 @@ class Cache extends \Base_Output
         @unlink($cachePath .sha1($key). $this->cacheExtension);
 
         return true;
+    }
+
+    /**
+     * Delete's the cached item
+     *
+     * @param string $key containing the identifier of the item to delete.
+     * @return mixed 
+     */
+    public function delete($key)
+    {
+        return $this->deleteCacheItem($key);
     }
 
     /* ----------------------------- For Checking and Pruning Cached Files ---------------------- */
