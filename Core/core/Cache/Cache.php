@@ -281,6 +281,17 @@ class Cache extends \Base_Output
     }
 
     /**
+     * Return time remaining until cached file expires
+     *
+     * @param [type] $key
+     * @return mixed
+     */
+    public function ttl($key)
+    {
+        return $this->getTTL($key);
+    }
+
+    /**
      * Delete's the cached item
      *
      * @param string $key containing the identifier of the item to delete.
