@@ -53,7 +53,21 @@ class Cache extends \Base_Output
         }
         
         return null;
-    }   
+    }
+    
+    /**
+     * Caches an item which can be retrieved by key
+     * 
+     * Alias to $this->cacheItem()
+     * 
+     * @param string $key identitifer to retrieve the data later
+     * @param mixed $value to be cached
+     * @return mixed
+     */
+    public function item($key, $value = null)
+    {
+        return $this->cacheItem($key, $value);
+    }
 
     /**
      * Set Custom Path
