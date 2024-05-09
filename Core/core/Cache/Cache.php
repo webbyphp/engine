@@ -40,6 +40,7 @@ class Cache extends \Base_Output
      *
      * @param string $key identitifer to retrieve the data later
      * @param mixed $value to be cached
+     * @return mixed
      */
     public function cacheItem($key, $value = null)
     {
