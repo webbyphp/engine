@@ -106,6 +106,7 @@ class Cache extends \Base_Output
      * Check's whether an item is cached or not
      *
      * @param string $key containing the identifier of the cached item
+     * @param int $ttl time to expire
      * @return bool whether the item is currently cached or not
      */
     public function isCached($key, $ttl = null)
@@ -135,6 +136,18 @@ class Cache extends \Base_Output
         }
 
         return true;
+    }
+
+    /**
+     * Check's whether an item is cached or not
+     *
+     * @param string $key containing the identifier of the cached item
+     * @param int $ttl time to expire
+     * @return bool whether the item is currently cached or not
+     */
+    public function exists($key, $ttl = null)
+    {
+        return $this->isCached($key, $ttl);
     }
 
     /**
@@ -179,6 +192,19 @@ class Cache extends \Base_Output
             log_message('error', $e->getMessage());
         }
 
+    }
+
+    /**
+     * Set Cache Item with Time to live
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param int $ttl
+     * @return void
+     */
+    public function save($key, $value, $ttl = null)
+    {
+        $this->setCacheItem($key, $value, $ttl);
     }
 
     /**
