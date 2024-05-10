@@ -397,6 +397,7 @@ class Cache extends \Base_Output
 
     /**
      * Returns the cache expiration timestamp for the specified path
+     * 
      * @param string $uri The URI path to check
      * @return int|boolean The expiration Unix timestamp or false if there is no cache
      */
@@ -439,6 +440,17 @@ class Cache extends \Base_Output
 
         // Return the timestamp
         return ($readableDate) ? date('d/m/Y H:i:s', $timestamp) : (int)trim($timestamp);
+    }
+    
+    /**
+     * Returns the cache expiration timestamp for the specified path
+     * 
+     * @param string $uri The URI path to check
+     * @return int|boolean The expiration Unix timestamp or false if there is no cache
+     */
+    public function data($uri, $readableDate = false)
+    {
+        return $this->getPathCacheExpiration($uri, $readableDate);
     }
 
     /* ----------------------------- Specific For Cached Web Views ---------------------- */
