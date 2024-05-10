@@ -14,7 +14,7 @@ class Cache extends \Base_Output
      *
      * @var integer
      */
-    public $expireAfter = 1800;
+    public $ttl = 1800;
 
     public $serializeWith = 'serialize';
 
@@ -116,7 +116,7 @@ class Cache extends \Base_Output
         $this->setCachePath(); // Set the correct cache path
 
         // Use the default expiration time if $ttl is not provided
-        $ttl = $ttl ?? $this->expireAfter;
+        $ttl = $ttl ?? $this->ttl;
 
         $cachePath = $this->filesCachePath();
 
@@ -160,7 +160,7 @@ class Cache extends \Base_Output
         $this->setCachePath(); // Set the correct cache path
 
         // Use the default expiration time if $ttl is not provided
-        $ttl = $ttl ?? $this->expireAfter;
+        $ttl = $ttl ?? $this->ttl;
 
         // Hash the key in order to ensure that the item
         // is stored with an appropriate file name in the file system.
@@ -271,7 +271,7 @@ class Cache extends \Base_Output
         $this->setCachePath(); // Set the correct cache path
 
         // Use the default expiration time if $ttl is not provided
-        $ttl = $ttl ?? $this->expireAfter;
+        $ttl = $ttl ?? $this->ttl;
         
         $cachedFile = $this->filesCachePath() . $key . $this->cacheExtension;
 
