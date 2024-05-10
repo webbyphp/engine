@@ -320,6 +320,21 @@ class Cache extends \Base_Output
     /* ----------------------------- For Checking and Pruning Cached Files ---------------------- */
 
     /**
+     * Clean's the cache
+     * @param string $uri
+     * @return void
+     */
+    public function clean($uri = '')
+    {
+        if (!empty($uri)) {
+            $this->clearPathCache($uri);
+        }
+
+        $this->clearAllCache();
+
+    }
+
+    /**
      * Clears the cache for the specified path
      * @param string $uri The URI path
      * @return bool true if successful, false if not
