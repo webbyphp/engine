@@ -172,7 +172,7 @@ class CI_Cache_sqlite extends CI_Driver {
    {
        try {
            // insert or replace data
-           $query = $this->sqlite->query("INSERT OR REPLACE INTO cache(id, data, expire) VALUES ('" . (string) $id . "', '" . serialize($data) . "', '" . (time() $ttl) . "')");
+           $query = $this->sqlite->query("INSERT OR REPLACE INTO cache(id, data, expire) VALUES ('" . (string) $id . "', '" . serialize($data) . "', '" . (time() + $ttl) . "')");
            
            // trigger auto-flush
            if ($this->auto_flush)
