@@ -11,8 +11,7 @@
 
 namespace Base\Json\Interfaces;
 
-interface Model {
-
+interface Model
+{
     public function useTable();
-
 }
