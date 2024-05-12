@@ -151,7 +151,7 @@ class Helper
         $array = (array) $object;
 
         foreach ($array as $key => $value) {
-            $arr[$key] = Helper::objectToArray($value);
+            $array[$key] = Helper::objectToArray($value);
         }
 
         return $array;
