@@ -297,6 +297,7 @@ class CI_Loader {
 		if ( ! class_exists('CI_Model', false))
 		{
 			$app_path = COREPATH.'core'.DIRECTORY_SEPARATOR;
+			
 			if (file_exists($app_path.'Model.php'))
 			{
 				require_once($app_path.'Model.php');
@@ -494,6 +495,20 @@ class CI_Loader {
 	public function view($view, $vars = [], $return = false)
 	{
 		return $this->_ci_load(['_ci_view' => $view, '_ci_vars' => $this->_ci_prepare_view_vars($vars), '_ci_return' => $return]);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Json Loader
+	 * Load json files and query it with the jsondb functionality
+	 * 
+	 * @param string $path
+	 * @return object
+	 */
+	public function json($path)
+	{
+		return use_json($path);
 	}
 
 	// --------------------------------------------------------------------
