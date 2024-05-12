@@ -99,6 +99,39 @@ if ( ! function_exists( 'use_db' ))
 	}
 }
 
+if ( ! function_exists( 'use_json' )) 
+{
+	/**
+	 * Creates a new instance of the
+	 * Base\Json\Db class and sets the path and filename.
+	 *
+	 * @param string $path The path to the JSON file.
+	 * @throws Exception If the file or file path is not set correctly.
+	 * @return Base\Json\Db The newly created instance of the Base\Json\Db class.
+	 */
+    function use_json($path = '')
+    {
+		$json = null;
+		
+        try {
+
+            $path = pathinfo($path);
+            $source = (object) $path;
+
+            $json = new Base\Json\Db();
+            $json->{'path'} = $source->dirname;
+
+            $json->from($source->basename);
+
+        } catch (Exception $e) {
+            throw new Exception('File or File path not set correctly');
+        }
+
+		return $json;
+
+    }
+}
+
 if ( ! function_exists( 'select_db' )) 
 {
     /**
