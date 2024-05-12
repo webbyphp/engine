@@ -389,7 +389,7 @@ class Plates
 	/**
 	 * Minify compiled html
 	 *
-	 * @return void
+	 * @return string
 	 */
 	protected function minifyHtml(string $content, bool $removeComments = true)
 	{
