@@ -14,7 +14,7 @@ class Helper
     /**
      * Get JSON Chunk
      *
-     * @param string $file
+     * @param string|mixed $file
      * @param integer $startDepth
      * @return mixed
      */
