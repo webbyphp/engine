@@ -525,6 +525,51 @@ class CI_DB_mysqli_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
+     * Returns an array of objects with index data
+     *
+     * @return stdClass[]
+     */
+    protected function index_data(string $table): array
+    {
+        $table = $this->protect_identifiers($table, true, null, false);
+
+        if (($query = $this->query('SHOW INDEX FROM ' . $table)) === false) {
+            show_error('Failed to get index data from database');
+        }
+
+        if (! $indexes = $query->result_array()) {
+            return [];
+        }
+
+        $keys = [];
+
+        foreach ($indexes as $index) {
+            if (empty($keys[$index['Key_name']])) {
+                $keys[$index['Key_name']]       = new stdClass();
+                $keys[$index['Key_name']]->name = $index['Key_name'];
+
+                if ($index['Key_name'] === 'PRIMARY') {
+                    $type = 'PRIMARY';
+                } elseif ($index['Index_type'] === 'FULLTEXT') {
+                    $type = 'FULLTEXT';
+                } elseif ($index['Non_unique']) {
+                    $type = $index['Index_type'] === 'SPATIAL' ? 'SPATIAL' : 'INDEX';
+                } else {
+                    $type = 'UNIQUE';
+                }
+
+                $keys[$index['Key_name']]->type = $type;
+            }
+
+            $keys[$index['Key_name']]->fields[] = $index['Column_name'];
+        }
+
+        return $keys;
+    }
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Error
 	 *
 	 * Returns an array containing code and message of the last
