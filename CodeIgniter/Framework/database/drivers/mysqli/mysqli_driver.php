@@ -570,6 +570,56 @@ class CI_DB_mysqli_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
+     * Returns an array of objects with Foreign key data
+     *
+     *
+     * @return stdClass[]
+     */
+    protected function foreign_key_data(string $table): array
+    {
+        $sql = '
+                    SELECT
+                        tc.CONSTRAINT_NAME,
+                        tc.TABLE_NAME,
+                        kcu.COLUMN_NAME,
+                        rc.REFERENCED_TABLE_NAME,
+                        kcu.REFERENCED_COLUMN_NAME
+                    FROM information_schema.TABLE_CONSTRAINTS AS tc
+                    INNER JOIN information_schema.REFERENTIAL_CONSTRAINTS AS rc
+                        ON tc.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+                        AND tc.CONSTRAINT_SCHEMA = rc.CONSTRAINT_SCHEMA
+                    INNER JOIN information_schema.KEY_COLUMN_USAGE AS kcu
+                        ON tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME
+                        AND tc.CONSTRAINT_SCHEMA = kcu.CONSTRAINT_SCHEMA
+                    WHERE
+                        tc.CONSTRAINT_TYPE = ' . $this->escape('FOREIGN KEY') . ' AND
+                        tc.TABLE_SCHEMA = ' . $this->escape($this->database) . ' AND
+                        tc.TABLE_NAME = ' . $this->escape($table);
+
+        if (($query = $this->query($sql)) === false) {
+            show_error('Failed to get foreign key data from database');
+        }
+        $query = $query->result_object();
+
+        $retVal = [];
+
+        foreach ($query as $row) {
+            $obj                      = new stdClass();
+            $obj->constraint_name     = $row->CONSTRAINT_NAME;
+            $obj->table_name          = $row->TABLE_NAME;
+            $obj->column_name         = $row->COLUMN_NAME;
+            $obj->foreign_table_name  = $row->REFERENCED_TABLE_NAME;
+            $obj->foreign_column_name = $row->REFERENCED_COLUMN_NAME;
+
+            $retVal[] = $obj;
+        }
+
+        return $retVal;
+    }
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Error
 	 *
 	 * Returns an array containing code and message of the last
