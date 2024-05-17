@@ -396,6 +396,38 @@ class CI_DB_mysqli_driver extends CI_DB {
 	}
 
 	// --------------------------------------------------------------------
+	
+	/**
+     * Escape Like String Direct
+     * There are a few instances where MySQLi queries cannot take the
+     * additional "ESCAPE x" parameter for specifying the escape character
+     * in "LIKE" strings, and this handles those directly with a backslash.
+     *
+     * @param string|string[] $str Input string
+     *
+     * @return string|string[]
+     */
+    public function escape_like_string_direct($str)
+    {
+        if (is_array($str)) {
+            foreach ($str as $key => $val) {
+                $str[$key] = $this->escape_like_string_direct($val);
+            }
+
+            return $str;
+        }
+
+        $str = $this->_escape_str($str);
+
+        // Escape LIKE condition wildcards
+        return str_replace(
+            [$this->_like_escape_chr, '%', '_'],
+            ['\\' . $this->_like_escape_chr, '\\' . '%', '\\' . '_'],
+            $str
+        );
+    }
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Affected Rows
@@ -435,7 +467,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 
 		if ($prefix_limit !== false && $this->dbprefix !== '')
 		{
-			return $sql." LIKE '".$this->escape_like_str($this->dbprefix)."%'";
+			return $sql." LIKE '".$this->escape_like_string_direct($this->dbprefix)."%'";
 		}
 
 		return $sql;
