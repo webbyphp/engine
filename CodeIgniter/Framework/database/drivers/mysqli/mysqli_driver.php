@@ -618,6 +618,30 @@ class CI_DB_mysqli_driver extends CI_DB {
     }
 
 	// --------------------------------------------------------------------
+	
+	/**
+     * Returns platform-specific SQL to disable foreign key checks.
+     *
+     * @return string
+     */
+    protected function disable_foreign_key_checks()
+    {
+        return 'SET FOREIGN_KEY_CHECKS=0';
+    }
+
+	// --------------------------------------------------------------------
+
+    /**
+     * Returns platform-specific SQL to enable foreign key checks.
+     *
+     * @return string
+     */
+    protected function enable_foreign_key_checks()
+    {
+        return 'SET FOREIGN_KEY_CHECKS=1';
+    }
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Error
