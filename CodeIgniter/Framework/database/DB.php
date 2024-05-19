@@ -54,8 +54,8 @@ function &DB($params = '')
 	if (is_string($params) && strpos($params, '://') === false) {
 		// Is the config file in the environment folder?
 		if (
-			!file_exists($file_path = APPPATH . 'config/' . ENVIRONMENT . '/database.php')
-			&& !file_exists($file_path = APPPATH . 'config/database.php')
+			!file_exists($file_path = COREPATH . 'config/' . ENVIRONMENT . '/database.php')
+			&& !file_exists($file_path = COREPATH . 'config/database.php')
 		) {
 			show_error('The configuration file database.php does not exist.');
 		}
@@ -66,7 +66,7 @@ function &DB($params = '')
 		// given that the controller instance already exists
 		if (class_exists('CI_Controller', false)) {
 			foreach (get_instance()->load->get_package_paths() as $path) {
-				if ($path !== APPPATH) {
+				if ($path !== COREPATH) {
 					if (file_exists($file_path = $path . 'config/' . ENVIRONMENT . '/database.php')) {
 						include($file_path);
 					} elseif (file_exists($file_path = $path . 'config/database.php')) {
