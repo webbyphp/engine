@@ -67,7 +67,7 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver {
 	 *
 	 * @var	array
 	 */
-	protected $_random_keyword = array('NEWID()', 'RAND(%d)');
+	protected $_random_keyword = ['NEWID()', 'RAND(%d)'];
 
 	/**
 	 * Quoted identifier flag
@@ -167,7 +167,7 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver {
 		$query = $this->query('SELECT CASE WHEN (@@OPTIONS | 256) = @@OPTIONS THEN 1 ELSE 0 END AS qi');
 		$query = $query->row_array();
 		$this->_quoted_identifier = empty($query) ? false : (bool) $query['qi'];
-		$this->_escape_char = ($this->_quoted_identifier) ? '"' : array('[', ']');
+		$this->_escape_char = ($this->_quoted_identifier) ? '"' : ['[', ']'];
 
 		return $this->conn_id;
 	}

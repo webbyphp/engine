@@ -83,7 +83,7 @@ class CI_DB_pdo_mysql_forge extends CI_DB_pdo_forge {
 	 *
 	 * @var	array
 	 */
-	protected $_unsigned		= array(
+	protected $_unsigned		= [
 		'TINYINT',
 		'SMALLINT',
 		'MEDIUMINT',
@@ -96,7 +96,7 @@ class CI_DB_pdo_mysql_forge extends CI_DB_pdo_forge {
 		'FLOAT',
 		'DECIMAL',
 		'NUMERIC'
-	);
+	];
 
 	/**
 	 * null value representation in CREATE/ALTER TABLE statements
@@ -179,7 +179,7 @@ class CI_DB_pdo_mysql_forge extends CI_DB_pdo_forge {
 			}
 		}
 
-		return array($sql.implode(',', $field));
+		return [$sql.implode(',', $field)];
 	}
 
 	// --------------------------------------------------------------------
@@ -243,7 +243,7 @@ class CI_DB_pdo_mysql_forge extends CI_DB_pdo_forge {
 				continue;
 			}
 
-			is_array($this->keys[$i]) OR $this->keys[$i] = array($this->keys[$i]);
+			is_array($this->keys[$i]) OR $this->keys[$i] = [$this->keys[$i]];
 
 			$sql .= ",\n\tKEY ".$this->db->escape_identifiers(implode('_', $this->keys[$i]))
 				.' ('.implode(', ', $this->db->escape_identifiers($this->keys[$i])).')';
