@@ -233,7 +233,7 @@ class CI_DB_pdo_ibm_driver extends CI_DB_pdo_driver {
 	 * @param	string	$sql	SQL Query
 	 * @return	string
 	 */
-	protected function _limit($sql)
+	protected function _limit($sql): string
 	{
 		$sql .= ' FETCH FIRST '.($this->qb_limit + $this->qb_offset).' ROWS ONLY';
 

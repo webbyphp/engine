@@ -301,7 +301,7 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver {
 	 * @param	string	$sql	$SQL Query
 	 * @return	string
 	 */
-	protected function _limit($sql)
+	protected function _limit($sql): string
 	{
 		$select = 'SELECT '.($this->qb_offset ? 'SKIP '.$this->qb_offset : '').'FIRST '.$this->qb_limit.' ';
 		return preg_replace('/^(SELECT\s)/i', $select, $sql, 1);

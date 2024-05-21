@@ -295,7 +295,7 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver {
 	 * @param	string	$sql	SQL Query
 	 * @return	string
 	 */
-	protected function _limit($sql)
+	protected function _limit($sql): string
 	{
 		// As of SQL Server 2012 (11.0.*) OFFSET is supported
 		if (version_compare($this->version(), '11', '>='))

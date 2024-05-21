@@ -271,7 +271,7 @@ class CI_DB_pdo_dblib_driver extends CI_DB_pdo_driver {
 	 * @param	string	$sql	SQL Query
 	 * @return	string
 	 */
-	protected function _limit($sql)
+	protected function _limit($sql): string
 	{
 		$limit = $this->qb_offset + $this->qb_limit;
 

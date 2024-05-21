@@ -191,9 +191,9 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver {
 	 * @param	string	$orderby
 	 * @param	string	$direction	ASC, DESC or RANDOM
 	 * @param	bool	$escape
-	 * @return	object
+	 * @return	object|\CI_DB_query_builder
 	 */
-	public function order_by($orderby, $direction = '', $escape = null)
+	public function order_by($orderby, $direction = '', $escape = null): \CI_DB_query_builder
 	{
 		$direction = strtoupper(trim($direction));
 		if ($direction === 'RANDOM')
@@ -377,7 +377,7 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver {
 	 * @param	string	$sql	SQL Query
 	 * @return	string
 	 */
-	protected function _limit($sql)
+	protected function _limit($sql): string
 	{
 		return $sql.' LIMIT '.$this->qb_limit.($this->qb_offset ? ' OFFSET '.$this->qb_offset : '');
 	}

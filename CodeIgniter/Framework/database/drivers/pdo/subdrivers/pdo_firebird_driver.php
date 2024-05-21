@@ -244,7 +244,7 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver {
 	 * @param	string	$sql	SQL Query
 	 * @return	string
 	 */
-	protected function _limit($sql)
+	protected function _limit($sql): string
 	{
 		// Limit clause depends on if Interbase or Firebird
 		if (stripos($this->version(), 'firebird') !== false)

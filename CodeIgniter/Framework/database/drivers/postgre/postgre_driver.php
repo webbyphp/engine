@@ -473,9 +473,9 @@ class CI_DB_postgre_driver extends CI_DB {
 	 * @param	string	$orderby
 	 * @param	string	$direction	ASC, DESC or RANDOM
 	 * @param	bool	$escape
-	 * @return	object
+	 * @return	object|\CI_DB_query_builder
 	 */
-	public function order_by($orderby, $direction = '', $escape = null)
+	public function order_by($orderby, $direction = '', $escape = null): \CI_DB_query_builder
 	{
 		$direction = strtoupper(trim($direction));
 		if ($direction === 'RANDOM')
