@@ -188,7 +188,7 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 	 * @param	array	$values	INSERT values
 	 * @return 	string
 	 */
-	protected function _replace($table, $keys, $values)
+	protected function _replace($table, $keys, $values): string
 	{
 		return 'INSERT OR '.parent::_replace($table, $keys, $values);
 	}
@@ -206,7 +206,7 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _truncate($table)
+	protected function _truncate($table): string
 	{
 		return 'DELETE FROM '.$table;
 	}
