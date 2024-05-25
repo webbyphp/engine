@@ -266,7 +266,7 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver {
 	 * @param	array	$values	INSERT values
 	 * @return 	string
 	 */
-	protected function _insert_batch($table, $keys, $values)
+	protected function _insert_batch($table, $keys, $values): string
 	{
 		$keys = implode(', ', $keys);
 		$sql = "INSERT ALL\n";
@@ -289,7 +289,7 @@ class CI_DB_pdo_oci_driver extends CI_DB_pdo_driver {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _delete($table)
+	protected function _delete($table): string
 	{
 		if ($this->qb_limit)
 		{

@@ -177,7 +177,7 @@ class CI_DB_pdo_4d_driver extends CI_DB_pdo_driver {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _delete($table)
+	protected function _delete($table): string
 	{
 		$this->qb_limit = false;
 		return parent::_delete($table);

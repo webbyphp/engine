@@ -270,7 +270,7 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _truncate($table)
+	protected function _truncate($table): string
 	{
 		return 'TRUNCATE TABLE ONLY '.$table;
 	}
@@ -285,7 +285,7 @@ class CI_DB_pdo_informix_driver extends CI_DB_pdo_driver {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _delete($table)
+	protected function _delete($table): string
 	{
 		$this->qb_limit = false;
 		return parent::_delete($table);

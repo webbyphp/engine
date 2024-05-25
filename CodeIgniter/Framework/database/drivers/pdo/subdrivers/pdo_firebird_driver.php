@@ -228,7 +228,7 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _delete($table)
+	protected function _delete($table): string
 	{
 		$this->qb_limit = false;
 		return parent::_delete($table);
@@ -273,7 +273,7 @@ class CI_DB_pdo_firebird_driver extends CI_DB_pdo_driver {
 	 * @param	array	$values	INSERT values
 	 * @return	string|bool
 	 */
-	protected function _insert_batch($table, $keys, $values)
+	protected function _insert_batch($table, $keys, $values): string
 	{
 		return ($this->db_debug) ? $this->display_error('db_unsupported_feature') : false;
 	}

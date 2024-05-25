@@ -275,7 +275,7 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _delete($table)
+	protected function _delete($table): string
 	{
 		if ($this->qb_limit)
 		{
@@ -356,7 +356,7 @@ class CI_DB_pdo_sqlsrv_driver extends CI_DB_pdo_driver {
 	 * @param	array	$values	INSERT values
 	 * @return	string|bool
 	 */
-	protected function _insert_batch($table, $keys, $values)
+	protected function _insert_batch($table, $keys, $values): string
 	{
 		// Multiple-value inserts are only supported as of SQL Server 2008
 		if (version_compare($this->version(), '10', '>='))
