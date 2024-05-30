@@ -166,10 +166,12 @@ class Help extends Console
 
             {$usage}
                 php webby create:migration <migration-file-name>
+                php webby create:migration <migration-file-name> --anonymous
             
             {$examples}
                 php webby create:migration create_books_table
                 php webby create:migration create_authors_table
+                php webby create:migration create_users_table --anonymous
 
         CREATEMIGRATION;
     }
@@ -907,9 +909,6 @@ class Help extends Console
             break;
             case 'clear:cache':
                 Help::clear_cache();
-            break;
-            case 'key:generate':
-                Help::keyGenerate();
             break;
             case 'create:migration':
                 Help::create_migration();
