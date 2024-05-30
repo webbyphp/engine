@@ -207,6 +207,7 @@ class Help extends Console
                 php webby run:migration --dump-database or --dd
                 php webby run:migration --dump-database --name=name_for_dumped_database
                 php webby run:migration --up --use-file=name_of_migration_file.php
+                php webby run:migration --down --use-file=name_of_migration_file.php
                 
         MIGRATION;
     }
