@@ -71,6 +71,7 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    create:rule") .  ConsoleColor::cyan("         Create a rule by specifying which module it belongs with")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:middleware") .  ConsoleColor::cyan("   Create a middleware by specifying the name")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:enum") .  ConsoleColor::cyan("         Create an enum by specifying the name and the type e.g. --real, --fake")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:migration") .  ConsoleColor::cyan("    Create a migration file by specifying the name and the type e.g. --anonymous, --default")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:jsondb") .  ConsoleColor::cyan("       Create a json database by specifying the name")  . " \n";
 
         echo $output . "\n";
