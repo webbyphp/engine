@@ -58,7 +58,7 @@ class TraverseClassFile
         $count = count($tokens);
         $i = 0;
         $namespace = '';
-        $namespace_ok = false;
+        $namespaceOk = false;
 
         while ($i < $count) {
             $token = $tokens[$i];
@@ -66,7 +66,7 @@ class TraverseClassFile
                 // Found namespace declaration
                 while (++$i < $count) {
                     if ($tokens[$i] === ';') {
-                        $namespace_ok = true;
+                        $namespaceOk = true;
                         $namespace = trim($namespace);
                         break;
                     }
@@ -77,12 +77,11 @@ class TraverseClassFile
             $i++;
         }
 
-        if (!$namespace_ok) {
+        if (!$namespaceOk) {
             return null;
         } else {
             return $namespace;
         }
-
     }
 
     /**
