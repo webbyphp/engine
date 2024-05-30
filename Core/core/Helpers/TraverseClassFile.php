@@ -87,26 +87,33 @@ class TraverseClassFile
 
     /**
      * Get the class name form file path using token
-     *
+     * if class is anonymous include the file path
+     * 
      * @param $filePathName
      *
      * @return  mixed
      */
     protected function getClassNameFromFile($filePathName)
     {
-        $php_code = file_get_contents($filePathName);
+        $src = file_get_contents($filePathName);
 
         $classes = array();
-        $tokens = token_get_all($php_code);
+        $tokens = token_get_all($src);
         $count = count($tokens);
 
         for ($i = 2; $i < $count; $i++) {
-            if ($tokens[$i - 2][0] == T_CLASS
+            if (
+                $tokens[$i - 2][0] == T_CLASS
                 && $tokens[$i - 1][0] == T_WHITESPACE
                 && $tokens[$i][0] == T_STRING
             ) {
-                $class_name = $tokens[$i][1];
-                $classes[] = $class_name;
+                $className = $tokens[$i][1];
+                $classes[] = $className;
+            }
+            // Anonymous class found
+            else if ($tokens[$i - 1][0] == T_NEW) {
+                $className = include $filePathName;
+                $classes[] = $className::class;
             }
         }
 
