@@ -198,6 +198,7 @@ class Help extends Console
                 php webby run:migration --rollback --step=1
                 php webby run:migration --reset
                 php webby run:migration --status
+                php webby run:migration --later
                 php webby run:migration --latest
                 php webby run:migration --truncate
                 php webby run:migration --export-schema or --xs
