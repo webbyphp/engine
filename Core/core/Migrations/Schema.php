@@ -197,4 +197,25 @@ class Schema
     {
         static::ci()->dbforge->drop_table($table, $ifExists);
     }
+
+    /**
+     * Enable foreign key checks.
+     *
+     * @return void
+     */
+    public static function enableForeignKeyChecks()
+    {
+        static::ci()->db->enable_foreign_key_checks();
+    }
+
+    /**
+     * Disable foreign key checks.
+     *
+     * @return void
+     */
+    public static function disableForeignKeyChecks()
+    {
+        static::ci()->db->disable_foreign_key_checks();
+    }
+
 }
