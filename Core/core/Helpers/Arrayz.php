@@ -108,7 +108,7 @@ class Arrayz
 	 * Convert object to callable
 	 *
 	 * @param array $source
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function __invoke($source = []): Arrayz
 	{
@@ -120,7 +120,7 @@ class Arrayz
 	 * Use Serialize Type
 	 *
 	 * @param string $type
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function use($type = 'serialize'): Arrayz
 	{
@@ -133,7 +133,7 @@ class Arrayz
 	 * Serialize With Json
 	 *
 	 * @param string $type
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function json(): Arrayz
 	{
@@ -146,7 +146,7 @@ class Arrayz
 	 * Serialize With Igbinary
 	 *
 	 * @param string $type
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function igbinary(): Arrayz
 	{
@@ -159,7 +159,7 @@ class Arrayz
 	 * Get cache data with item name
 	 *
 	 * @param string $item
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function cache($item): Arrayz
 	{
@@ -190,7 +190,7 @@ class Arrayz
 	 *
 	 * @param string|object|array $data
 	 * @param integer $ttl
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function set($data, $ttl = 1800): Arrayz
 	{
@@ -207,7 +207,7 @@ class Arrayz
 	/**
 	 * Delete an arrayz cache item
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function delete(): Arrayz
 	{
@@ -234,7 +234,7 @@ class Arrayz
 	 * Pick values from available key
 	 *
 	 * @param string $key
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function pick($key): Arrayz
 	{
@@ -256,7 +256,7 @@ class Arrayz
 	/**
 	 * Match and return the array. supports regex
 	 * 
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function pluck(): Arrayz
 	{
@@ -392,7 +392,7 @@ class Arrayz
 	 * 
 	 * @param3 return actual key of element
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 * 
 	 */
 	public function where(): Arrayz
@@ -428,7 +428,7 @@ class Arrayz
 	/**
 	 * Where like
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 * 
 	 */
 	public function whereLike(): Arrayz
@@ -502,7 +502,7 @@ class Arrayz
 	/**
 	 * Like SQL WhereIN . Supports operators.
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function whereIn(): Arrayz
 	{
@@ -601,7 +601,7 @@ class Arrayz
 	 * Converting Multidimensional Array into single 
 	 * array with/without null or empty 
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function collapse(): Arrayz
 	{
@@ -633,7 +633,7 @@ class Arrayz
 	 * Set the limit of array 
 	 * content to access
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function limit(): Arrayz
 	{
@@ -676,7 +676,7 @@ class Arrayz
 	 * @param  array $array
 	 * @param int $page
 	 * @param int $perPage
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function paginate($array, $page = 1, $perPage = 100): Arrayz
 	{
@@ -704,7 +704,7 @@ class Arrayz
 	 * By selecting single array will return flat array
 	 * @param1: 'id, name, address', must be comma seperated.
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function select(): Arrayz
 	{
@@ -881,7 +881,7 @@ class Arrayz
 	/**
 	 * Return array keys
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function keys(): Arrayz
 	{
@@ -892,7 +892,7 @@ class Arrayz
 	/**
 	 * Return array values
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function values(): Arrayz
 	{
@@ -904,7 +904,7 @@ class Arrayz
 	 * Set the keys to censor
 	 *
 	 * @param  array $keys Keys to censor
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function censorKeys($keys): Arrayz
 	{
@@ -921,7 +921,7 @@ class Arrayz
 	 * Set the value to replace censored key values with
 	 *
 	 * @param  mixed $ink What should replace the censored data
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function ink($ink = '**********'): Arrayz
 	{
@@ -932,7 +932,7 @@ class Arrayz
 	/**
 	 * Like SQL WhereIN . Supports operators.
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function whereNotIn(): Arrayz
 	{
@@ -1063,7 +1063,7 @@ class Arrayz
 	 * Merge array
 	 *
 	 * @param array ...$array
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function merge(...$array)
 	{
@@ -1087,7 +1087,7 @@ class Arrayz
 	 * 
 	 * @param string|array $key
 	 * @param string $value
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function push($key, $value = '', $asArray = false)
 	{
@@ -1123,7 +1123,7 @@ class Arrayz
 	/**
 	 * Make array unique
 	 *
-	 * @return Base\Helpers\Arrayz
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function unique()
 	{
