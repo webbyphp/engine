@@ -195,7 +195,7 @@ class Arrayz
 	public function set($data, $ttl = 1800): Arrayz
 	{
 		if (!empty($ttl)) {
-			$this->cache->expireAfter = $ttl;
+			$this->cache->ttl = $ttl;
 		}
 
 		$this->cache->serializeWith = $this->cacheAs;
