@@ -859,9 +859,9 @@ class Arrayz
 	}
 
 	/**
-	 * Return output to Array
+	 * Return output to Array or a Generator
 	 *
-	 * @return array
+	 * @return \Generator|array
 	 */
 	public function toArray()
 	{
@@ -871,7 +871,7 @@ class Arrayz
 	/**
 	 * Return output to Json
 	 *
-	 * @return array
+	 * @return string
 	 */
 	public function toJson()
 	{
@@ -1035,7 +1035,7 @@ class Arrayz
 	/**
 	 * Apply recursive array censorship to the source
 	 *
-	 * @return array
+	 * @return \Base\Helpers\Arrayz
 	 */
 	public function censor()
 	{
@@ -1087,7 +1087,7 @@ class Arrayz
 	 * 
 	 * @param string|array $key
 	 * @param string $value
-	 * @return \Base\Helpers\Arrayz
+	 * @return mixed
 	 */
 	public function push($key, $value = '', $asArray = false)
 	{
@@ -1139,7 +1139,7 @@ class Arrayz
 	 *  into a single level
 	 *
 	 *  @param     array    $array
-	 *  @return    array
+	 *  @return    \Base\Helpers\Arrayz
 	 */
 	public function flatten($toArray = false)
 	{
