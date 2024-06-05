@@ -28,41 +28,44 @@ class ConsoleController extends Controller
         }
     }
 
-    protected function success($text, $times = 1, $nextline = true)
+	private function message($text, $color = 'green', $times = 1, $nextline = true)
     {
         if ($nextline) {
-            return ConsoleColor::green($text) . $this->nextline($times);
+            return ConsoleColor::{$color}($text) . $this->nextline($times);
         }
 
-        return ConsoleColor::green($text);
+        return ConsoleColor::{$color}($text);
+    }
+
+	protected function response($text, $color = 'green', $times = 1, $nextline = true)
+	{
+		echo $this->message($text, $color, $times, $nextline);
+	}
+
+    protected function success($text, $times = 1, $nextline = true)
+    {
+        echo $this->message($text, 'green', $times, $nextline);
     }
 
     protected function info($text, $times = 1, $nextline = true)
     {
-        if ($nextline) {
-            return ConsoleColor::cyan($text) . $this->nextline($times);
-        }
-
-        return ConsoleColor::cyan($text);
+        echo $this->message($text, 'cyan', $times, $nextline);
     }
 
     protected function warning($text, $times = 1, $nextline = true)
     {
-        if ($nextline) {
-            return ConsoleColor::yellow($text) . $this->nextline($times);
-        }
-
-        return ConsoleColor::yellow($text);
+        echo $this->message($text, 'yellow', $times, $nextline);
     }
 
     protected function error($text, $times = 1, $nextline = true)
     {
-        if ($nextline) {
-            return ConsoleColor::red($text) . $this->nextline($times);
-        }
-
-        return ConsoleColor::red($text);
+        echo $this->message($text, 'red', $times, $nextline);
     }
+
+    protected function eol()
+	{
+		echo PHP_EOL;
+	}
 
     protected function nextline($times = 1)
     {
