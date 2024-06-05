@@ -299,23 +299,23 @@ class Arrayz
 	/**
      * Wrapper method for array_map
      *
-     * @param \Closure $closure
+     * @param callable $callback
      * @return array
      */
-    public function map(\Closure $closure): array
+    public function map(callable $callback): array
     {
-        return array_map($closure, $this->source);
+        return array_map($callback, $this->source);
     }
 
     /**
      * Wrapper method for array_filter
      *
-     * @param \Closure $closure
+     * @param callable $callback
      * @return array
      */
-    public function filter(\Closure $closure): array
+    public function filter(callable $callback): array
     {
-        return array_filter($this->source, $closure);
+        return array_filter($this->source, $callback);
     }
 
     /**
@@ -363,12 +363,12 @@ class Arrayz
     /**
      * Wrapper method for array_reduce
      *
-     * @param \Closure $callback
+     * @param callable $callback
      * @param mixed $initial
      * 
      * @return mixed
      */
-    public function reduce(\Closure $callback, mixed $initial = null): mixed
+    public function reduce(callable $callback, mixed $initial = null): mixed
     {
         return array_reduce($this->source, $callback, $initial);
     }
