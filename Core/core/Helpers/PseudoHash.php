@@ -114,7 +114,7 @@ class PseudoHash
     /**
      * Create a short hash and output it
      *
-     * @param int $number
+     * @param int|string $number
      * @param integer $length
      * @return string
      */
