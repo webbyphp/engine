@@ -624,7 +624,7 @@ class CI_DB_mysqli_driver extends CI_DB {
      *
      * @return string
      */
-    protected function disable_foreign_key_checks()
+    public function disable_foreign_key_checks()
     {
         return 'SET FOREIGN_KEY_CHECKS=0';
     }
@@ -636,7 +636,7 @@ class CI_DB_mysqli_driver extends CI_DB {
      *
      * @return string
      */
-    protected function enable_foreign_key_checks()
+    public function enable_foreign_key_checks()
     {
         return 'SET FOREIGN_KEY_CHECKS=1';
     }

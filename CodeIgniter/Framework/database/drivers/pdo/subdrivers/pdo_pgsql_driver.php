@@ -322,7 +322,7 @@ class CI_DB_pdo_pgsql_driver extends CI_DB_pdo_driver {
 	 * @param	string	$index	WHERE key
 	 * @return	string
 	 */
-	protected function _update_batch($table, $values, $index)
+	protected function _update_batch(string $table, array $values, string $index): string
 	{
 		$ids = [];
 		foreach ($values as $key => $val)

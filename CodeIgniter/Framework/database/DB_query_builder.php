@@ -2156,9 +2156,9 @@ abstract class CI_DB_query_builder extends CI_DB_driver
 	 * Generates a query string based on which functions were used.
 	 * Should not be called directly.
 	 *
-	 * @param	bool	$select_override
+	 * @param	bool|string	$select_override
 	 */
-	protected function _compile_select(bool $select_override = false): string
+	protected function _compile_select(bool|string $select_override = false): string
 	{
 		// Combine any cached components with the current statements
 		$this->_merge_cache();
