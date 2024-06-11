@@ -44,17 +44,39 @@ require_once ROOTPATH . 'config/autoload.php';
 
 /*
 | -------------------------------------------------------------------
+|  App PSR4 Autoloader
+| -------------------------------------------------------------------
+| Location of classes with namespaces autoloader:
+| These files will be autoloaded from the APPROOT
+| to help Webby's core functionality
+|
+|  require_once COREPATH.'config/psr4.php';
+|
+ */
+require_once COREPATH . 'config/psr4.php';
+
+/*
+| -------------------------------------------------------------------
 |  Webby Autoloader
 | -------------------------------------------------------------------
 | Location of core autoloaders:
 | These files have been autoloaded
 | to help Webby's core functionality
 |
-|  require_once ROOTPATH.'core/core_loader.php';
+|  require_once COREPATH.'config/core_loader.php';
 |
  */
-require_once ROOTPATH . 'core/core_loader.php';
+require_once COREPATH . 'config/core_loader.php';
 
+/*
+| -------------------------------------------------------------------
+|  Initialize $autoload variable
+| -------------------------------------------------------------------
+|
+|  $autoload = [];
+|
+*/
+$autoload = [];
 
 /*
 | -------------------------------------------------------------------
@@ -158,4 +180,4 @@ $autoload['language'] = $language;
 |
 |	$autoload['model'] = ['first_model' => 'first'];
 */
-$autoload['model'] = [$models, $core_models];
+$autoload['model'] = [$models];

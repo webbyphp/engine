@@ -3,6 +3,17 @@ defined('COREPATH') or exit('No direct script access allowed');
 
 /*
 |--------------------------------------------------------------------------
+| Controller Namespace
+|--------------------------------------------------------------------------
+|
+| This item allows you to set namespace to controllers.
+|
+|	$config['controller_namespace'] = 'App\\Controllers';
+*/
+$config['controller_namespace'] = 'App\\Controllers';
+
+/*
+|--------------------------------------------------------------------------
 | Include Default Configuration file
 |--------------------------------------------------------------------------
 |
@@ -15,7 +26,7 @@ include_once ROOTPATH . 'config/config.php';
 |--------------------------------------------------------------------------
 |
  */
-include_once ROOTPATH . 'core/configurator.php';
+include_once COREPATH . 'config/configurator.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +34,7 @@ include_once ROOTPATH . 'core/configurator.php';
 |--------------------------------------------------------------------------
 |
  */
-include_once ROOTPATH . 'core/modular.php';
+include_once ROOTPATH . 'bootstrap/modular.php';
 
 /*
 |--------------------------------------------------------------------------
