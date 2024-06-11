@@ -26,7 +26,7 @@ if ( ! function_exists('ci'))
      * @param array $params
      * @return object CodeIgniter Instance
      */
-    function ci(string $class = null, array $params = [])
+    function ci(?string $class = null, array $params = [])
     {
         if ($class === null) {
             return Instance::create();
@@ -85,7 +85,7 @@ if ( ! function_exists('app'))
       * @param array $params
       * @return object 
       */
-    function app(string $class = null, array $params = [])
+    function app(?string $class = null, array $params = [])
     {
 
         if ($class === null) {
@@ -234,7 +234,7 @@ if ( ! function_exists('env'))
      *
      * @return mixed
      */
-    function env(string $key, $default = null, $set = false)
+    function env(string $key, ?string $default = null, $set = false)
     {
         $value = getenv($key);
         if ($value === false) {
@@ -299,14 +299,12 @@ if ( ! function_exists('url'))
      */
     function url($uri = '', $param = '', $protocol = null)
     {
+        $uri = ltrim($uri, '/');
+        
         if ($uri === 'void') {
             return void_url();
         }
 
-        if (Route::getName($uri)) {
-            return route()->named($uri);
-        }
-       
         // Detect if the $uri is string and starts with 'https://' or 'http://'
         if (is_string ($uri) && (strpos($uri, 'https://') === 0 || strpos($uri, 'http://') === 0)) {
             return $uri . $param;
@@ -319,6 +317,10 @@ if ( ! function_exists('url'))
 
         if (is_array($uri)) {
             return site_url($uri, $protocol);
+        }
+
+        if (Route::getName($uri)) {
+            $uri = route()->named($uri);
         }
 
         $uri = dot2slash($uri);
@@ -542,7 +544,11 @@ if ( ! function_exists('files'))
             return $_FILES[$index];
         }
 
-        return $_FILES;
+        if ($index === '') {
+            return $_FILES;
+        }
+
+        return null;
     }
 }
 
@@ -552,9 +558,9 @@ if ( ! function_exists('has_file'))
      * Check if file to upload is not empty
      *
      * @param string $file
-     * @return boolean
+     * @return bool
      */
-    function has_file($file)
+    function has_file($file = '')
     {
         if ($file !== '' && isset($_FILES[$file])) {
             $file = $_FILES[$file];

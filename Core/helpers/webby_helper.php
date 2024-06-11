@@ -10,10 +10,6 @@ defined('COREPATH') or exit('No direct script access allowed');
  *	@author			Kwame Oteng Appiah-Nti
  */
 
-// ------------------------------------------------------------------------
-
-use Base\Helpers\TimeTravel;
-
 /* ------------------------------- Random Code Generation Functions ---------------------------------*/
 
 if ( ! function_exists('unique_code')) 
@@ -394,7 +390,7 @@ if ( ! function_exists('cache'))
     function cache($key = null, $value = null, $cache_path = '', $ttl = 1800)
     {
         $cache = new Base\Cache\Cache;
-        $cache->expireAfter = $ttl;
+        $cache->ttl = $ttl;
 
         if ($key === null) {
             return $cache;
@@ -1058,7 +1054,7 @@ if ( ! function_exists('add_array'))
      * @param string $element
      * @param string $symbol
      * @param boolean $return_string
-     * @return array
+     * @return array|string
      */
     function add_array($array, $element, $symbol = null, $return_string = false)
     {
@@ -1750,7 +1746,7 @@ if ( ! function_exists('time_ago'))
             }
         }
 
-        return;
+        return 'just now';
     }
 }
 
@@ -1759,11 +1755,11 @@ if ( ! function_exists('travel'))
     /**
      * Travel through time
      *
-     * @return mixed
+     * @return \Base\Helpers\TimeTravel
      */
     function travel()
     {
-        return (new TimeTravel);
+        return new \Base\Helpers\TimeTravel;
     }
 }
 
@@ -1778,6 +1774,326 @@ if ( ! function_exists('format'))
 	function format()
 	{
 		return new \Base\Helpers\Format;
+	}
+}
+
+/* ------------------------------- Misc Functions ---------------------------------*/
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('retry'))
+{
+	/**
+	 *  Attempt to execute an operation a given number of times
+	 *
+	 *  @param     int         $attempts
+	 *  @param     callable    $callback
+	 *  @param     integer     $sleep
+	 *  @return    mixed
+	 *
+	 *  @throws    \Exception
+	 */
+	function retry($attempts, callable $callback, $sleep = 0)
+	{
+		$attempts--;	//	Decrement the number of attempts
+
+		beginning:
+		try
+		{
+			return $callback();
+		}
+		catch (Exception $e)
+		{
+			if ( ! $attempts)
+			{
+				throw $e;
+			}
+
+			$attempts--;	//	Decrement the number of attempts
+
+			if ($sleep)
+			{
+				usleep($sleep * 1000);
+			}
+
+			goto beginning;
+		}
+	}
+}
+
+if ( ! function_exists('trait_uses_recursive'))
+{
+	/**
+	 *  Returns all traits used by a trait and its traits
+	 *
+	 *  @param     string    $trait
+	 *  @return    array
+	 */
+	function trait_uses_recursive($trait)
+	{
+		$traits = class_uses($trait);
+
+		foreach ($traits as $trait)
+		{
+			$traits += trait_uses_recursive($trait);
+		}
+
+		return $traits;
+	}
+}
+
+if ( ! function_exists('class_uses_recursive'))
+{
+	/**
+	 *  Return all traits used by a class, it's subclasses and trait of their traits
+	 *
+	 *  @param     string    $class
+	 *  @return    array
+	 */
+	function class_uses_recursive($class)
+	{
+		$result = [];
+
+		foreach (array_merge([$class => $class], class_parents($class)) as $class)
+		{
+			$result += trait_uses_recursive($class);
+		}
+
+		return array_unique($result);
+	}
+}
+
+if ( ! function_exists('dbase'))
+{
+	/**
+	 *  Database Loader
+	 *
+	 *  @param     string      $group
+	 *  @return    object|bool
+	 */
+	function dbase($group = '')
+	{
+		return app('load')->database($group, true);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('decrypt'))
+{
+	/**
+	 *  Decrypt a given string
+	 *
+	 *  @param     string    $value
+	 *  @return    string
+	 */
+	function decrypt($value)
+	{
+		return app('encryption')->decrypt($value);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('device'))
+{
+	/**
+	 *  Get the agent string or one of this device information: browser
+	 *  name, browser version, mobile device, robot name, plataform or
+	 *  the referrer
+	 *
+	 *  @param     string    $key
+	 *  @return    string
+	 */
+	function device($key = NULL)
+	{
+		if (is_null($key))
+		{
+			return app('user_agent')->agent_string();
+		}
+
+		$devices = ['browser', 'version', 'mobile', 'robot', 'platform', 'referrer'];
+
+		if (in_array($key, $devices))
+		{
+			return app('user_agent')->{$key}();
+		}
+
+		return NULL;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('dot'))
+{
+	/**
+	 *  Flatten a multi-dimensional associative array with dots
+	 *
+	 *  @param     array     $array
+	 *  @param     string    $prepend
+	 *  @return    array
+	 */
+	function dot($array, $prepend = '')
+	{
+		$results = [];
+
+		foreach ($array as $key => $value)
+		{
+			if (is_array($value))
+			{
+				$results = array_merge($results, dot($value, $prepend.$key.'.'));
+			}
+			else
+			{
+				$results[$prepend.$key] = $value;
+			}
+		}
+
+		return $results;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('dump'))
+{
+	/**
+	 *  Dump the passed variables
+	 *
+	 *  @return    mixed
+	 */
+	function dump()
+	{
+		array_map(function ($data)
+		{
+			var_dump($data);
+		},
+		func_get_args());
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('e'))
+{
+	/**
+	 *  Escape HTML entities in a string
+	 *
+	 *  @param     string    $value
+	 *  @return    string
+	 */
+	function e($value)
+	{
+		return htmlentities($value, ENT_QUOTES, 'UTF-8', false);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('email'))
+{
+	/**
+	 *  Send an email
+	 *
+	 *  @param     string    $to
+	 *  @param     string    $subject
+	 *  @param     string    $message
+	 *  @return    bool|object
+	 */
+	function email($to = NULL, $subject = NULL, $message = NULL)
+	{
+		if (is_null($to))
+		{
+			return app('email');
+		}
+
+		app('email')->to($to)->subject($subject)->message($message);
+
+		return app('email')->send();
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('encrypt'))
+{
+	/**
+	 *  Encrypt a given string
+	 *
+	 *  @param     string    $value
+	 *  @return    string
+	 */
+	function encrypt($value)
+	{
+		return app('encryption')->encrypt($value);
+	}
+}
+
+if ( ! function_exists('mark'))
+{
+	/**
+	 *  Set a benchmark marker or calculate the time difference between
+	 *  two marked points.
+	 *
+	 *  @param     string    $point1
+	 *  @param     string    $point2
+	 *  @return    void|string
+	 */
+	function mark($point1, $point2 = NULL)
+	{
+		if (is_null($point2))
+		{
+			get_instance()->benchmark->mark($point1);
+		}
+		else
+		{
+			return get_instance()->benchmark->elapsed_time($point1, $point2);
+		}
+	}
+}
+
+if ( ! function_exists('query'))
+{
+	/**
+	 *  Execute the query
+	 *
+	 *  @param     string     $sql
+	 *  @param     array      $binds
+	 *  @param     boolean    $return_object
+	 *  @return    mixed
+	 */
+	function query($sql, $bind = false, $return_object = NULL)
+	{
+		return dbase()->query($sql, $bind, $return_object);
+	}
+}
+
+if ( ! function_exists('with'))
+{
+	/**
+	 *  Return the given object (useful for chaining)
+	 *
+	 *  @param     mixed    $object
+	 *  @return    mixed
+	 */
+	function with($object)
+	{
+		return $object;
+	}
+}
+
+if ( ! function_exists('value'))
+{
+	/**
+	 *  Return the default value of the given value
+	 *
+	 *  @param     mixed    $value
+	 *  @return    mixed
+	 */
+	function value($value)
+	{
+		return $value instanceof Closure ? $value() : $value;
 	}
 }
 

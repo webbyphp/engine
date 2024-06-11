@@ -26,11 +26,7 @@ if ( ! function_exists('public_path'))
             return FCPATH . $path;
         }
 
-        if (empty($path)) {
-            return FCPATH;
-        }
-
-        return;
+        return FCPATH;
     }
 }
 
@@ -59,8 +55,7 @@ if ( ! function_exists('app_path'))
         }
 
         if ( ! empty($path) && !is_dir(APPROOT . $path)) {
-            return;
-            // throw new Exception("Path ". $path . " cannot be found");
+            throw new Exception("Path ". $path . " cannot be found");
         }
 
         return APPROOT;
@@ -91,7 +86,7 @@ if ( ! function_exists('writable_path'))
             return WRITABLEPATH . $path;
         }
 
-        return;
+        return WRITABLEPATH;
     }
 }
 
