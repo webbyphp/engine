@@ -1,0 +1,46 @@
+use Base\Seeder\Seeder;
+
+class {{SEEDER}} extends Seeder 
+{
+
+    private $table = '';
+
+    public function __construct() 
+	{
+        parent::__construct();
+
+        // $this->db->truncate($this->table); // truncate table
+	}
+
+    public function run() 
+    {
+
+        //seed records manually
+
+        $data = [/* records here */];
+
+        $this->db->insert($this->table, $data);
+
+        // seed many records using faker or sample data
+
+        $limit = 10; // total records 
+
+        $this->display("Seeding {$limit} records", Seeder::INFO, 2);
+
+        for ($i = 0; $i < $limit; $i++) {
+
+
+            $data = [
+                'column_one' => 'some value', /* e.g $this->faker->unique()->userName */
+                'column_two' => 'some value',
+            ];
+
+            $this->db->insert($this->table, $data);
+
+        }
+
+        $this->eol();
+    }
+}
+
+/* End of {{SEEDER}} seeder file */

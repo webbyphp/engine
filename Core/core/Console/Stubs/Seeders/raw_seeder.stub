@@ -1,0 +1,24 @@
+use Base\Seeder\Seeder;
+
+class {{SEEDER}} extends Seeder 
+{
+
+    private $table = '';
+
+    public function __construct() 
+	{
+        parent::__construct();
+
+        // $this->db->truncate($this->table); // truncate table
+	}
+    
+    public function run() 
+    {
+
+        // implement your seed logic here
+    
+    }
+
+}
+
+/* End of {{SEEDER}} seeder file */
