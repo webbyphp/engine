@@ -39,20 +39,23 @@ class Help extends Console
 
         $output .=  " \n";
         $output .=  ConsoleColor::yellow(" Available Commands:") . " \n";
-        $output .=  ConsoleColor::light_purple("    serve") .  ConsoleColor::cyan("               Serve your application with Webby Server")  . " \n";
+        $output .=  ConsoleColor::light_purple("    serve") .  ConsoleColor::cyan("               Serve your application with Webby server")  . " \n";
         $output .=  ConsoleColor::light_purple("    quit") .  ConsoleColor::cyan("                Quit Webby server or specify a given port to quit server on")  . " \n";
-        $output .=  ConsoleColor::light_purple("    run:migration") .  ConsoleColor::cyan("       Run and manage migrations for databases")  . " \n";
-        $output .=  ConsoleColor::light_purple("    list:routes") .  ConsoleColor::cyan("         List all available routes")  . " \n";
-        $output .=  ConsoleColor::light_purple("    app:off") .  ConsoleColor::cyan("             Turn maintenance mode on")  . " \n";
         $output .=  ConsoleColor::light_purple("    app:on") .  ConsoleColor::cyan("              Turn maintenance mode off")  . " \n";
+        $output .=  ConsoleColor::light_purple("    app:off") .  ConsoleColor::cyan("             Turn maintenance mode on")  . " \n";
         $output .=  ConsoleColor::light_purple("    app:to-production") .  ConsoleColor::cyan("   Make application ready for production mode")  . " \n";
         $output .=  ConsoleColor::light_purple("    app:to-testing") .  ConsoleColor::cyan("      Make application ready for testing mode")  . " \n";
         $output .=  ConsoleColor::light_purple("    app:to-development") .  ConsoleColor::cyan("  Make application ready for development mode")  . " \n";
+        $output .=  ConsoleColor::light_purple("    app:baseurl") .  ConsoleColor::cyan("         Set base url of application")  . " \n";
+        $output .=  ConsoleColor::light_purple("    list:routes") .  ConsoleColor::cyan("         List all available routes")  . " \n";
         $output .=  ConsoleColor::light_purple("    resource:link") .  ConsoleColor::cyan("       Create a symlink for the resources folder in public")  . " \n";
-        $output .=  ConsoleColor::light_purple("    use:command") .  ConsoleColor::cyan("         This enables you to access console controllers to perform cli tasks")  . " \n";
-        $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("            Initialize your project to use git")  . " \n";
-        $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("       Update sylynder engine")  . " \n";
+        $output .=  ConsoleColor::light_purple("    use:command") .  ConsoleColor::cyan("         Enables you to access console controllers to perform cli tasks")  . " \n";
+        $output .=  ConsoleColor::light_purple("    run:migration") .  ConsoleColor::cyan("       Run and manage migrations for databases")  . " \n";
+        $output .=  ConsoleColor::light_purple("    db:seed") .  ConsoleColor::cyan("             Runs all or specified seeder to populate database tables")  . " \n";
+        $output .=  ConsoleColor::light_purple("    db:truncate") .  ConsoleColor::cyan("         Truncates a specified database table")  . " \n";
         $output .=  ConsoleColor::light_purple("    clear:cache") .  ConsoleColor::cyan("         Clear specific cached files")  . " \n";
+        $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("       Update sylynder engine")  . " \n";
+        $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("            Initialize your project to use git")  . " \n";
         
         $output .=  " \n";
         $output .=  ConsoleColor::yellow(" Generator Commands:") . " \n";
@@ -72,6 +75,7 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    create:middleware") .  ConsoleColor::cyan("   Create a middleware by specifying the name")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:enum") .  ConsoleColor::cyan("         Create an enum by specifying the name and the type e.g. --real, --fake")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:migration") .  ConsoleColor::cyan("    Create a migration file by specifying the name and the type e.g. --anonymous, --default")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:seeder") .  ConsoleColor::cyan("       Create a seeder file by specifying the name and the type e.g. --raw, --sample")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:jsondb") .  ConsoleColor::cyan("       Create a json database by specifying the name")  . " \n";
 
         echo $output . "\n";
@@ -212,6 +216,77 @@ class Help extends Console
         MIGRATION;
     }
 
+    private static function create_seeder()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<CREATESEEDER
+            {$welcome}
+            {$description}
+                Create seeder files to be used
+
+            {$usage}
+                php webby create:seeder <seeder-file-name>
+                php webby create:seeder <seeder-file-name> --raw
+                php webby create:seeder <seeder-file-name> --sample
+            
+            {$examples}
+                php webby create:seeder work
+                php webby create:seeder WorkSeeder
+                php webby create:seeder Users --raw
+                php webby create:seeder UsersSeeder --sample
+
+        CREATESEEDER;
+    }
+
+    private static function seed()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<SEEDER
+            {$welcome}
+            {$description}
+                Runs all or a specific seeder to populate database tables.
+
+            {$usage}
+                php webby db:seed
+                php webby db:seed --with=<seeder_name>
+            
+            {$examples}
+                php webby db:seed
+                php webby db:seed --with=work <without adding seeder>
+                php webby db:seed --with=WorkSeeder <with seeder and uppercased>
+
+        SEEDER;
+    }
+
+    private static function truncate()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<TRUNCATE
+            {$welcome}
+            {$description}
+                Truncates a specified database table
+
+            {$usage}
+                php webby db:truncate --table=<table_name>
+            
+            {$examples}
+                php webby db:truncate --table=users
+
+        TRUNCATE;
+    }
+
     private static function listRoutes()
     {
         $welcome     = static::welcome();
@@ -337,6 +412,29 @@ class Help extends Console
                 php webby app:to-production
 
         APPTOPRODUCTION;
+    }
+
+    private static function baseUrl()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<BASEURL
+            {$welcome}
+            {$description}
+                Set base url of application
+
+            {$usage}
+                php webby app:baseurl --default
+                php webby app:baseurl <url-to-use>
+
+            {$examples}
+                php webby app:baseurl --default
+                php webby app:baseurl http://local.io:3000/
+
+        BASEURL;
     }
 
     private static function resourceLink()
@@ -556,14 +654,14 @@ class Help extends Console
             {$examples}
                 * Add controllers to App/Controllers directory *
                 php webby create:controller --name=cars
-                php webby create:controller --name=cars --addcontroller
+                php webby create:controller --name=cars --add-suffix
                 php webby create:controller --name=cars --dir <directory-name>
 
                 * Add module controllers *
                 php webby create:controller web:books --name=books
                 php webby create:controller web:console --name=schedule
                 php webby create:controller api:v1 --name=send
-                php webby create:controller web:books --name=authors --addcontroller
+                php webby create:controller web:books --name=authors --add-suffix
 
         CREATECONTROLLER;
     }
@@ -586,7 +684,7 @@ class Help extends Console
             {$examples}
                 * Add models to App/Models directory *
                 php webby create:model --name=books
-                php webby create:model --name=books --easy --remove-model
+                php webby create:model --name=books --easy --remove-suffix
                 php webby create:model --name=books --easy --dir <directory-name>
 
                 * Add module models *
@@ -883,6 +981,12 @@ class Help extends Console
             case 'run:migration':
                 Help::migration();
             break;
+            case 'db:seed':
+                Help::seed();
+            break;
+            case 'db:truncate':
+                Help::truncate();
+            break;
             case 'list:routes':
                 Help::listRoutes();
             break;
@@ -901,6 +1005,9 @@ class Help extends Console
             case 'app:to-production':
                 Help::AppToProduction();
             break;
+            case 'app:baseurl':
+                Help::baseUrl();
+            break;
             case 'resource:link':
                 Help::resourceLink();
             break;
@@ -915,6 +1022,9 @@ class Help extends Console
             break;
             case 'create:migration':
                 Help::create_migration();
+            break;
+            case 'create:seeder':
+                Help::create_seeder();
             break;
             case 'create:module':
                 Help::create_module();

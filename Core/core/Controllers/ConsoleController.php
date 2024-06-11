@@ -37,9 +37,14 @@ class ConsoleController extends Controller
         return ConsoleColor::{$color}($text);
     }
 
-	protected function response($text, $color = 'green', $times = 1, $nextline = true)
+	private function response($text, $color = 'green', $times = 1, $nextline = true)
 	{
 		echo $this->message($text, $color, $times, $nextline);
+	}
+
+    protected function display($text, $color = 'green', $times = 1, $nextline = true)
+	{
+		echo $this->response($text, $color, $times, $nextline);
 	}
 
     protected function success($text, $times = 1, $nextline = true)

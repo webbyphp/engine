@@ -134,6 +134,13 @@ class Create extends ConsoleController
      */
     private $migration = 'Migrations';
 
+    /**
+     * Seeders variable
+     *
+     * @var string
+     */
+    private $seeder = 'Seeders';
+
     public function __construct()
     {
         parent::__construct();
@@ -163,6 +170,19 @@ class Create extends ConsoleController
     {
         $output = "";
         $output .= ConsoleColor::yellow($message);
+        echo $output . "\n";
+    }
+
+    /**
+     * Info Console Output
+     *
+     * @param string $message
+     * @return void
+     */
+    private function infoOutput($message = 'Info')
+    {
+        $output = "";
+        $output .= ConsoleColor::cyan($message);
         echo $output . "\n";
     }
 
@@ -229,11 +249,12 @@ class Create extends ConsoleController
         } else {
 
             $text = ($type === 'package_controller') 
-                ? " Sorry, Controllers must be created manually in packages \n Even so, it's not advisable to create them here."
+                ? " Sorry, Controllers must be created manually in packages \n Even so, it's not advisable to create them here. \n"
                 : " Cannot find " . $type . " stub" ;
             $output =   " \n";
             $output .=  ConsoleColor::white($text, 'light', 'red') . " \n";
             echo $output . "\n";
+            
             return false;
         }
     }
@@ -364,6 +385,11 @@ class Create extends ConsoleController
                 $className = 'Migration_'. $className;
 
                 return str_replace('{{MIGRATION}}', $className, $fileContent);
+            break;
+            case 'raw_seeder':
+            case 'sample_seeder':
+            case 'default_seeder':
+                return str_replace('{{SEEDER}}', $className, $fileContent);
             break;
             default:
                 ConsoleColor::white(" Sorry no file was created", 'light', 'red');
@@ -1022,7 +1048,7 @@ class Create extends ConsoleController
         $controllerDirectory = $moduleDirectory .DS. $this->controller;
         $controllerName = ucwords($controllerName);
         
-        if ($addController == '--addcontroller') {
+        if ($addController == '--add-suffix') {
             $controllerName = Inflector::singularize($controllerName) . 'Controller';
         }
 
@@ -1057,7 +1083,7 @@ class Create extends ConsoleController
         $controllerName = ucwords($controllerName);
         $fileType = "web_controller";
 
-        if ($addController == '--addcontroller') {
+        if ($addController == '--add-suffix') {
             $controllerName = Inflector::singularize($controllerName) . 'Controller';
         }
         
@@ -1121,8 +1147,8 @@ class Create extends ConsoleController
 
         $modelDirectory = $this->createAppRootDirectory($this->model);
 
-        if ($removeModel == '--remove-model') {
-            $modelName = $modelName;
+        if ($removeModel == '--remove-suffix') {
+            $modelName = str_replace(['Model', 'model'], '', $modelName);
         } else {
             $modelName = Inflector::singularize($modelName) . 'Model';
         }
@@ -1138,12 +1164,13 @@ class Create extends ConsoleController
 
         if ($modelDirectory && is_dir($modelDirectory)) {
             $filePath = $modelDirectory . DS . $modelName;
+            $modelType = ($modelType == 'models') ?: '--easy';
             $modelType = str_replace('-', '', $modelType);
             $created = $this->createFile($filePath, strtolower($modelType . '_') . 'model', $this->model);
         }
 
         if ($created) {
-            $this->successOutput(ucfirst($modelName) . " " .ucfirst($modelType) . " Model created successfully ");
+            $this->successOutput(ucfirst($modelName) . " " .ucfirst($modelType) . " Model created successfully in " . $location);
             return;
         }
     }
@@ -1187,8 +1214,8 @@ class Create extends ConsoleController
         $modelDirectory = $moduleDirectory . DS . $this->model;
         $modelName = ucwords($modelName);
         
-        if ($removeModel == '--remove-model') {
-            $modelName = $modelName;
+        if ($removeModel == '--remove-suffix') {
+            $modelName = str_replace(['Model', 'model'], '', $modelName);
         } else {
             $modelName = Inflector::singularize($modelName) . 'Model';
         }
@@ -1676,6 +1703,38 @@ class Create extends ConsoleController
 
         if ($created) {
             $this->successOutput($migrationName . " Migration file created successfully ");
+            return;
+        }
+    }
+
+    public function createSeeder($name = '', $defaultType = '--default')
+    {
+        $seederName = $name;
+        $created = '';
+
+        $seederType = str_replace('-', '', $defaultType);
+        $seederType = ucfirst($seederType);
+
+        $seederDirectory = ROOTPATH . 'database/seeders';
+
+        $seederName = ucwords($seederName);
+
+        $seederName = ucfirst(str_replace(['Seeder', 'seeder'], '', $seederName));
+        $seederName .= 'Seeder';
+
+        if (file_exists($seederDirectory . DS . $seederName . $this->fileExtention)) {
+            $this->failureOutput(ucfirst($seederName) . " file exists already in the seeders directory");
+            return;
+        }
+
+        if ($seederDirectory && is_dir($seederDirectory)) {
+            $filePath = $seederDirectory . DS . $seederName;
+            $seederType = str_replace('-', '', $seederType);
+            $created = $this->createFile($filePath, strtolower($seederType).'_seeder', $this->seeder);
+        }
+
+        if ($created) {
+            $this->successOutput($seederName . " file created successfully ");
             return;
         }
     }
