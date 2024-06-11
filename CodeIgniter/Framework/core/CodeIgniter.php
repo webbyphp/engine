@@ -433,6 +433,35 @@ $BM->mark('loading_time:_base_classes_end');
  *  controller methods that begin with an underscore.
  */
 
+/**
+ * Get namespaced controller info
+ *
+ * @param string $class controller classname in original CodeIgniter
+ * @param string $dir   $RTR->directory
+ * @return array [fqcn, class path]
+ */
+function getNamespacedController($class, $dir = null)
+{
+
+	$namespace = config_item('controller_namespace');
+	$isModule = '../../';
+
+	$isCLI = PHP_SAPI === 'cli' or defined('STDIN');
+
+	if (str_contains($dir, $isModule) || $isCLI) {
+		return ['fqcn' => $class,'path' => ''];
+	}
+
+	if ($namespace && !empty($dir)) {
+		$class = $namespace . '\\' . str_replace('/', '\\', $dir) . $class;
+	}
+
+	$path = APPROOT . 'Controllers/' . $dir . $class . '.php';
+
+	return ['fqcn' => $class,'path' => $path];
+
+}
+
 $e404 = false;
 $class = ucfirst($RTR->class);
 $method = $RTR->method;
@@ -440,6 +469,9 @@ $method = $RTR->method;
 // Specify default paths to load controllers when they are not module controllers
 $corePathController = COREPATH . 'controllers/' . $RTR->directory . $class . '.php';
 $appRootController = APPROOT . 'Controllers/' . $RTR->directory . $class . '.php';
+
+// Controller name with namespace
+$class = getNamespacedController($class, $RTR->directory)['fqcn'];
 
 if (
 	(empty($class) or !file_exists($corePathController))
