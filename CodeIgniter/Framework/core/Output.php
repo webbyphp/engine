@@ -38,6 +38,8 @@
  */
 defined('BASEPATH') or exit('No direct script access allowed');
 
+use Base\Htmx\Htmx;
+
 /**
  * Output Class
  *
@@ -51,6 +53,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 class CI_Output
 {
+	use Htmx;
 
 	/**
 	 * Final output string
@@ -500,6 +503,21 @@ class CI_Output
 		return $this;
 	}
 
+	/**
+	 * Set HTTP Status Code
+	 * 
+	 * This is an alias for setStatusHeader
+	 *
+	 * @param	int	$code	Status code (default: 200)
+	 * @param	string	$text	Optional message
+	 * @return	CI_Output
+	 */
+	public function setStatusCode($code = 200, $text = '')
+	{
+		$this->setStatusHeader($code, $text);
+		return $this;
+	}
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -515,7 +533,7 @@ class CI_Output
      */
     public function withHeader($name, $value)
     {
-        $this->setHeader("{$name}: {$value}");
+        $this->setHeader("{$name}: {$value}", true);
         
         return $this;
     }
@@ -535,9 +553,171 @@ class CI_Output
      */
     public function withAddedHeader($name, $value)
     {
-        $this->withHeader($name, $value);
+        $this->setHeader("{$name}: {$value}");
         
         return $this;
+    }
+
+	// ---------------------------HTMX Methods-----------------------------
+
+	/**
+     * Replaces the current URL in the location bar.
+     *
+     * @return self;
+     */
+    public function hxReplaceUrl(?string $url = null)
+    {
+        $this->withHeader('HX-Replace-Url', $url ?? 'false');
+
+        return $this;
+    }
+
+    /**
+     * Allows you to specify how the response will be swapped.
+     *
+     * @return self;
+     */
+    public function hxReswap(string $method)
+    {
+        $this->validateSwap($method, 'HX-Reswap');
+
+        $this->withHeader('HX-Reswap', $method);
+
+        return $this;
+    }
+
+    /**
+     * A CSS selector that updates the target of the content
+     * update to a different element on the page.
+     *
+     * @return self;
+     */
+    public function hxRetarget(string $selector)
+    {
+        $this->withHeader('HX-Retarget', $selector);
+
+        return $this;
+    }
+
+    /**
+     * A CSS selector that allows you to choose which part
+     * of the response is used to be swapped in.
+     *
+     * @return self;
+     */
+    public function hxReselect(string $selector)
+    {
+        $this->withHeader('HX-Reselect', $selector);
+
+        return $this;
+    }
+
+    /**
+     * Allows you to trigger client side events.
+     *
+     * @return self;
+     */
+    public function hxTriggerClientEvent(string $name, array|string $params = '', string $after = 'receive')
+    {
+        $header = match ($after) {
+            'receive' => 'HX-Trigger',
+            'settle'  => 'HX-Trigger-After-Settle',
+            'swap'    => 'HX-Trigger-After-Swap',
+            default   => throw new InvalidArgumentException('A value for "after" argument must be one of: "receive", "settle", or "swap".'),
+        };
+
+        if ($this->getHeader($header)) {
+            $data = json_decode($this->getHeader($header), true);
+            if ($data === null) {
+                throw new InvalidArgumentException(sprintf('%s header value should be a valid JSON.', $header));
+            }
+            $data[$name] = $params;
+        } else {
+            $data = [$name => $params];
+        }
+
+        $this->withHeader($header, json_encode($data));
+
+        return $this;
+    }
+
+	/**
+     * Pushes a new url into the history stack.
+     *
+     * @return self;
+     */
+    public function hxPushUrl(?string $url = null)
+    {
+        $this->withHeader('HX-Push-Url', $url ?? false);
+
+        return $this;
+    }
+
+	// Redirect Methods
+
+	/**
+     * Sets the HX-Location to redirect
+     * without reloading the whole page.
+     */
+    public function hxLocation(
+        string $path,
+        ?string $source = null,
+        ?string $event = null,
+        ?string $target = null,
+        ?string $swap = null,
+        ?array $values = null,
+        ?array $headers = null
+    ) {
+        $data = ['path' => '/' . ltrim($path, '/')];
+
+        if ($source !== null) {
+            $data['source'] = $source;
+        }
+
+        if ($event !== null) {
+            $data['event'] = $event;
+        }
+
+        if ($target !== null) {
+            $data['target'] = $target;
+        }
+
+        if ($swap !== null) {
+            $this->validateSwap($swap);
+            $data['swap'] = $swap;
+        }
+
+        if (! empty($values)) {
+            $data['values'] = $values;
+        }
+
+        if (! empty($headers)) {
+            $data['headers'] = $headers;
+        }
+
+        return $this->setStatusCode(200)->withHeader('HX-Location', json_encode($data));
+    }
+
+    /**
+     * Sets the HX-Redirect to URI to redirect to.
+     *
+     * @param string $uri The URI to redirect to
+     */
+    public function hxRedirect(string $uri)
+    {
+        if (! str_starts_with($uri, 'http')) {
+            $uri = site_url($uri);
+        }
+
+        return $this->setStatusCode(200)->withHeader('HX-Redirect', $uri);
+    }
+
+    /**
+     * Sets the HX-Refresh to true.
+     */
+    public function hxRefresh()
+    {
+        return $this->setStatusCode(200)->withHeader('HX-Refresh', true);
     }
 
 	// --------------------------------------------------------------------
@@ -691,7 +871,7 @@ class CI_Output
 
 		$elapsed = $BM->elapsed_time('total_execution_time_start', 'total_execution_time_end');
 
-		if ($this->parse_exec_vars === true) {
+		if ($this->parse_exec_vars === true && !empty($output)) {
 
 			if ($output === null) {
 				$output = '';

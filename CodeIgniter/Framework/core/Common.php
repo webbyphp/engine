@@ -165,6 +165,16 @@ if ( ! function_exists('is'))
 			return get_instance()->input->is_ajax_request();
 		}
 
+		if ($key == 'htmx' || $key === 'HTMX')
+		{
+			return get_instance()->input->isHtmx();
+		}
+
+		if ($key == 'boosted' || $key === 'BOOSTED')
+		{
+			return get_instance()->input->isBoosted();
+		}
+
 		if ($key == 'get')
 		{
 			return (get_instance()->input->server('REQUEST_METHOD') === 'GET');
@@ -303,7 +313,7 @@ if ( ! function_exists('hooks'))
 	 * This function loads and returns an instance of the Hooks class,
 	 * which is responsible for handling hooks in the application.
 	 *
-	 * @return Hooks An instance of the Hooks class.
+	 * @return CI_Hooks An instance of the Hooks class.
 	 * 
 	 */
 	function hooks()
@@ -311,7 +321,7 @@ if ( ! function_exists('hooks'))
 		/**
 		 * Instance of the Hooks class.
 		 *
-		 * @var Hooks
+		 * @var CI_Hooks
 		 */
 		$hooks =& load_class('Hooks', 'core');
 
@@ -1017,7 +1027,6 @@ if ( ! function_exists('html_escape'))
 		return htmlspecialchars($var, ENT_QUOTES, config_item('charset'), $double_encode);
 	}
 }
-
 
 // ------------------------------------------------------------------------
 

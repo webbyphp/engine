@@ -273,9 +273,10 @@ class CI_Input
 	 * @param	bool	$xss_clean	Whether to apply XSS filtering
 	 * @return	bool
 	 */
-	public function has($index = null, $xss_clean = false)
+	public function has($index = null)
 	{
-		$exists = $this->_fetch_from_array($_REQUEST, $index, $xss_clean);
+		$array = clean($_REQUEST);
+		$exists = in_array($index, array_keys($array));
 
 		if ($exists) {
 			return true;
@@ -301,7 +302,7 @@ class CI_Input
 	}
 
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Fetch only items from the REQUEST array
 	 *
@@ -405,11 +406,12 @@ class CI_Input
 	 * Get all current uploaded files using $_FILES
 	 * through Http Post 
 	 *
-	 * @return array
+	 * @param string $index
+	 * @return mixed
 	 */
-	public function files()
+	public function files($index = '')
 	{
-		return $_FILES;
+		return files($index);
 	}
 
 	/**
@@ -420,14 +422,7 @@ class CI_Input
 	 */
 	public function hasFile($file = '')
 	{
-		
-		if ($file !== '' && isset($_FILES[$file])) {
-			$file = $_FILES[$file];
-		}
-
-		return (empty($file['name']))
-			? false
-			: true;
+		return has_file($file);
 	}
 
 	/**
@@ -1325,9 +1320,112 @@ class CI_Input
 	public function method($upper = false)
 	{
 		return ($upper)
-			? strtoupper($this->server('REQUEST_METHOD'))
-			: strtolower($this->server('REQUEST_METHOD'));
+			? strtoupper((string)$this->server('REQUEST_METHOD'))
+			: strtolower((string)$this->server('REQUEST_METHOD'));
 	}
+
+	// ---------------------------HTMX Methods-----------------------------
+	
+	/**
+     * Indicates that the request is triggered by Htmx.
+     */
+    public function isHtmx(): bool
+    {
+        return $this->hxHeaderToBool('HX-Request');
+    }
+
+    /**
+     * Indicates that the request is via an element using hx-boost.
+     */
+    public function isBoosted(): bool
+    {
+        return $this->hxHeaderToBool('HX-Boosted');
+    }
+
+    /**
+     * True if the request is for history restoration
+     * after a miss in the local history cache.
+     */
+    public function isHistoryRestoreRequest(): bool
+    {
+        return $this->hxHeaderToBool('HX-History-Restore-Request');
+    }
+
+    /**
+     * The current (htmx) URL of the browser.
+     */
+    public function currentHxUrl(): ?string
+    {
+        return $this->hxHeader('HX-Current-Url');
+    }
+
+    /**
+     * The user response to an hx-prompt.
+     */
+    public function hxPrompt(): ?string
+    {
+        return $this->hxHeader('HX-Prompt');
+    }
+
+    /**
+     * The id of the target element if it exists.
+     */
+    public function hxTarget(): ?string
+    {
+        return $this->hxHeader('HX-Target');
+    }
+
+    /**
+     * The id of the triggered element if it exists.
+     */
+    public function hxTrigger(): ?string
+    {
+        return $this->hxHeader('HX-Trigger');
+    }
+
+    /**
+     * The name of the triggered element if it exists.
+     */
+    public function hxTriggerName(): ?string
+    {
+        return $this->hxHeader('HX-Trigger-Name');
+    }
+
+    /**
+     * The value of the header is a JSON serialized
+     * version of the event that triggered the request.
+     *
+     * @see https://htmx.org/extensions/event-header/
+     */
+    public function getTriggeringEvent(bool $toArray = true): array|object|null
+    {
+        if (! $this->getRequestHeader('Triggering-Event')) {
+            return null;
+        }
+
+        return json_decode($this->getRequestHeader('Triggering-Event'), $toArray);
+    }
+	 
+    /**
+     * Get an Htmx header value
+     */
+    private function hxHeader(string $header): ?string
+    {
+        if (!$this->getRequestHeader($header)) {
+            return null;
+        }
+
+        return $this->getRequestHeader($header);
+    }
+
+	/**
+     * Cast Htmx header to bool
+     */
+    private function hxHeaderToBool(string $header): bool
+    {
+        return $this->getRequestHeader($header)
+            && $this->getRequestHeader($header) === 'true';
+    }
 
 	// ------------------------------------------------------------------------
 
