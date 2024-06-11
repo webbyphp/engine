@@ -140,4 +140,11 @@ class CI_Controller extends stdClass
 		return self::$instance;
 	}
 
+	/**
+	 * Get CI or Current Controller _output() method
+	 *
+	 * @return	void
+	 */
+	// public function _output($output) {}
+
 }
