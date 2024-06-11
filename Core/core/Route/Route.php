@@ -262,13 +262,14 @@ class Route
 	 * To method
 	 *
 	 * @param string $uri
+	 * @param string|bool $param
 	 * @return mixed
 	 */
 	public function to($uri = '', $param = '')
 	{
 		$uri = $this->toSlash($uri);
 
-		if (!empty($param)) {
+		if (!empty($param) && !is_bool($param)) {
 			$uri = $uri . '/' . $param;
 		}
 
@@ -276,6 +277,10 @@ class Route
 
 		if (empty($this->uri) || is_null($this->uri)) {
 			return $this->uri = '';
+		}
+
+		if ($param === true) {
+			redirect($uri);
 		}
 
 		return $this;
@@ -293,7 +298,7 @@ class Route
 
 		$referer = $_SESSION['_webby_previous_url'] ?? ci()->input->server('HTTP_REFERER', FILTER_SANITIZE_URL);
 
-		$referer = $referer ?? site_url('/');
+		$referer ??= site_url('/');
 
 		if (empty($uri)) {
 			$this->uri = $referer;
@@ -366,7 +371,11 @@ class Route
 	 */
 	public function named($name = '')
 	{
-		return !empty($name) ? static::name($name) : '';
+		if (!empty($name) && array_key_exists($name, Route::getNamedRoutes())) {
+            $name = static::name($name);
+        }
+
+		return $name;
 	}
 
 	/**
@@ -377,6 +386,16 @@ class Route
 	public static function getName($name = '')
 	{
 		return (new static)->named($name);
+	}
+
+	/**
+	 * Retrieves the named routes.
+	 *
+	 * @return array The named routes.
+	 */
+	public static function getNamedRoutes()
+	{
+		return static::$namedRoutes;
 	}
 
 	/**
@@ -505,13 +524,14 @@ class Route
 	 * Create and Generate All Routes
 	 *
 	 * @param string $from
-	 * @param string $to
+	 * @param string|array|callable $to
 	 * @param array $options
 	 * @param callable|null $nested
 	 * @return void
 	 */
 	protected static function createRoute($from, $to, $options = [], ?Closure $nested = null)
 	{
+
 		$parameterfy = false;
 
 		// Allow for array based routes and other symbol routes
@@ -544,6 +564,8 @@ class Route
 		if (preg_match("/(->|@|::)/i", $to)) {
 			$to = str_replace(['->', '::', '@'], ['/', '/', '/'], $to);
 		}
+		
+		$from = ltrim($from, '/'); // trim preceding slash
 
 		// Do we have a namespace?
 		if (static::$namespace) {
@@ -656,7 +678,7 @@ class Route
 	 * Route any HTTP request
 	 *
 	 * @param string $from The URI pattern to match
-	 * @param string $to The destination of the route
+	 * @param string|array|callable $to The destination of the route
 	 * @param array $options An array of options for the route
 	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
 	 * @return self The Route class instance
@@ -674,7 +696,7 @@ class Route
 	 * Route a GET request
 	 *
 	 * @param string $from The URI pattern to match
-	 * @param string $to The destination of the route
+	 * @param string|array|callable $to The destination of the route
 	 * @param array $options An array of options for the route
 	 * @param callable|null $nested A callable function to group nested routes, or boolean to check if it's nested
 	 * @return self The Route class instance
@@ -696,7 +718,7 @@ class Route
 	 * Route a POST request
 	 *
 	 * @param string $from The URI pattern to match
-	 * @param string $to The destination of the route
+	 * @param string|array|callable $to The destination of the route
 	 * @param array $options An array of options for the route
 	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
 	 * @return self The Route class instance
@@ -716,7 +738,7 @@ class Route
 	 * Route a PUT request
 	 *
 	 * @param string $from The URI pattern to match
-	 * @param string $to The destination of the route
+	 * @param string|array|callable $to The destination of the route
 	 * @param array $options An array of options for the route
 	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
 	 * @return self The Route class instance
@@ -736,7 +758,7 @@ class Route
 	 * Route a DELETE request
 	 *
 	 * @param string $from The URI pattern to match
-	 * @param string $to The destination of the route
+	 * @param string|array|callable $to The destination of the route
 	 * @param array $options An array of options for the route
 	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
 	 * @return self The Route class instance
@@ -756,7 +778,7 @@ class Route
 	 * Route a PATCH request
 	 *
 	 * @param string $from The URI pattern to match
-	 * @param string $to The destination of the route
+	 * @param string|array|callable $to The destination of the route
 	 * @param array $options An array of options for the route
 	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
 	 * @return self The Route class instance
@@ -776,7 +798,7 @@ class Route
 	 * Route a HEAD request
 	 *
 	 * @param string $from The URI pattern to match
-	 * @param string $to The destination of the route
+	 * @param string|array|callable $to The destination of the route
 	 * @param array $options An array of options for the route
 	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
 	 * @return self The Route class instance
@@ -799,7 +821,7 @@ class Route
 	 * Route an OPTIONS request
 	 *
 	 * @param string $from The URI pattern to match
-	 * @param string $to The destination of the route
+	 * @param string|array|callable $to The destination of the route
 	 * @param array $options An array of options for the route
 	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
 	 * @return self The Route class instance
@@ -1271,7 +1293,7 @@ class Route
 	 * Group routes
 	 *
 	 * @param string $from
-	 * @param string $to
+	 * @param Closure $to
 	 * 
 	 */
 	public static function group(?Closure $callable = null)
@@ -1294,7 +1316,7 @@ class Route
 	 * Group Module routes
 	 *
 	 * @param string $from
-	 * @param string $to
+	 * @param Closure $to
 	 * 
 	 */
 	public static function module($name, Closure $callable = null)
@@ -1382,7 +1404,7 @@ class Route
 		}
 
 		if (in_array('delete', $method)) {
-			static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
+			static::delete("{$name}/delete/(:any)", $moc . '/delete/$1');
 		}
 	}
 
@@ -1446,8 +1468,10 @@ class Route
 			$route = static::availableRoutes();
 		}
 
+		$routeDefaultController = $route['default_controller'];
+
 		$route['default_controller'] = static::$definedController 
-			?? static::$defaultController 
+			?? ($routeDefaultController ?? static::$defaultController)
 			?? 'app';
 
 		return array_merge(
