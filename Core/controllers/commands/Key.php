@@ -64,6 +64,10 @@ class Key extends ConsoleController
 
         $content = $dotenv->getContent();
 
+        if (strstr($content, '#' . $this->keyword)) {
+            $dotenv->setContent(str_replace('#'. $this->keyword, $this->keyword, $content));
+        }
+        
         if (strstr($content, '# ' . $this->keyword)) {
             $dotenv->setContent(str_replace('# '. $this->keyword, $this->keyword, $content));
         }

@@ -55,6 +55,42 @@ class DotEnvWriter
     }
 
     /**
+     * Check if key exists.
+     *
+     * @param string $keyword The key to check.
+     *
+     * @return bool Returns true if the key exists, false otherwise.
+     */
+    public function check(string $keyword): bool
+    {
+        return $this->exists($keyword);
+    }
+
+    /**
+     * Prepare key.
+     *
+     * This function prepares a key by removing it from the content.
+     * It removes the key from the content by replacing it with an empty string.
+     * It removes the key both when it is preceded by a newline character and when it is preceded by nothing.
+     *
+     * @param string $keyword The key to be prepared.
+     * @return bool Returns true if the key exists after preparation, false otherwise.
+     */
+    public function prepareKey(string $keyword): bool
+    {
+        // Get the current content
+        $content = $this->content;
+
+        $pattern = '#(^|\R)' . preg_quote($keyword, '#') . '#';
+        $this->content = preg_replace($pattern, '\1', $content);
+        $pattern = '#(^|\R) ' . preg_quote($keyword, '#') . '#';
+        $this->content = preg_replace($pattern, '\1', $this->content);
+        $this->write();
+
+        return $this->exists($keyword);
+    }
+
+    /**
      * Check if the variable exists
      * @param string $key Environment variable key
      * @return bool
