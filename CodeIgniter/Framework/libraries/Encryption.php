@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -98,16 +99,6 @@ class CI_Encryption {
 	 * @var	array
 	 */
 	protected $_modes = [
-		'mcrypt' => [
-			'cbc' => 'cbc',
-			'ecb' => 'ecb',
-			'ofb' => 'nofb',
-			'ofb8' => 'ofb',
-			'cfb' => 'ncfb',
-			'cfb8' => 'cfb',
-			'ctr' => 'ctr',
-			'stream' => 'stream'
-		],
 		'openssl' => [
 			'cbc' => 'cbc',
 			'ecb' => 'ecb',
@@ -152,11 +143,10 @@ class CI_Encryption {
 	public function __construct(array $params = [])
 	{
 		$this->_drivers = [
-			'mcrypt'  => defined('MCRYPT_DEV_URANDOM'),
 			'openssl' => extension_loaded('openssl')
 		];
 
-		if ( ! $this->_drivers['mcrypt'] && ! $this->_drivers['openssl'])
+		if ( ! $this->_drivers['openssl'])
 		{
 			show_error('Encryption: Unable to find an available encryption driver.');
 		}
@@ -205,7 +195,7 @@ class CI_Encryption {
 		{
 			$this->_driver = ($this->_drivers['openssl'] === true)
 				? 'openssl'
-				: 'mcrypt';
+				: 'none'; // none encryption driver means no encryption available
 
 			log_message('debug', "Encryption: Auto-configured driver '".$this->_driver."'.");
 		}
@@ -214,65 +204,6 @@ class CI_Encryption {
 		empty($params['key']) OR $this->_key = $params['key'];
 		$this->{'_'.$this->_driver.'_initialize'}($params);
 		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Initialize MCrypt
-	 *
-	 * @param	array	$params	Configuration parameters
-	 * @return	void
-	 */
-	protected function _mcrypt_initialize($params)
-	{
-		if ( ! empty($params['cipher']))
-		{
-			$params['cipher'] = strtolower($params['cipher']);
-			$this->_cipher_alias($params['cipher']);
-
-			if ( ! in_array($params['cipher'], mcrypt_list_algorithms(), true))
-			{
-				log_message('error', 'Encryption: MCrypt cipher '.strtoupper($params['cipher']).' is not available.');
-			}
-			else
-			{
-				$this->_cipher = $params['cipher'];
-			}
-		}
-
-		if ( ! empty($params['mode']))
-		{
-			$params['mode'] = strtolower($params['mode']);
-			if ( ! isset($this->_modes['mcrypt'][$params['mode']]))
-			{
-				log_message('error', 'Encryption: MCrypt mode '.strtoupper($params['mode']).' is not available.');
-			}
-			else
-			{
-				$this->_mode = $this->_modes['mcrypt'][$params['mode']];
-			}
-		}
-
-		if (isset($this->_cipher, $this->_mode))
-		{
-			if (is_resource($this->_handle)
-				&& (strtolower(mcrypt_enc_get_algorithms_name($this->_handle)) !== $this->_cipher
-					OR strtolower(mcrypt_enc_get_modes_name($this->_handle)) !== $this->_mode)
-			)
-			{
-				mcrypt_module_close($this->_handle);
-			}
-
-			if ($this->_handle = mcrypt_module_open($this->_cipher, '', $this->_mode, ''))
-			{
-				log_message('info', 'Encryption: MCrypt cipher '.strtoupper($this->_cipher).' initialized in '.strtoupper($this->_mode).' mode.');
-			}
-			else
-			{
-				log_message('error', 'Encryption: Unable to initialize MCrypt with cipher '.strtoupper($this->_cipher).' in '.strtoupper($this->_mode).' mode.');
-			}
-		}
 	}
 
 	// --------------------------------------------------------------------
@@ -347,10 +278,6 @@ class CI_Encryption {
 				return false;
 			}
 		}
-		elseif (defined('MCRYPT_DEV_URANDOM'))
-		{
-			return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
-		}
 
 		$is_secure = null;
 		$key = openssl_random_pseudo_bytes($length, $is_secure);
@@ -388,71 +315,6 @@ class CI_Encryption {
 		{
 			isset($params['hmac_key']) OR $params['hmac_key'] = $this->hkdf($this->_key, 'sha512', null, null, 'authentication');
 			return hash_hmac($params['hmac_digest'], $data, $params['hmac_key'], ! $params['base64']).$data;
-		}
-
-		return $data;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Encrypt via MCrypt
-	 *
-	 * @param	string	$data	Input data
-	 * @param	array	$params	Input parameters
-	 * @return	string
-	 */
-	protected function _mcrypt_encrypt($data, $params)
-	{
-		if ( ! is_resource($params['handle']))
-		{
-			return false;
-		}
-
-		// The greater-than-1 comparison is mostly a work-around for a bug,
-		// where 1 is returned for ARCFour instead of 0.
-		$iv = (($iv_size = mcrypt_enc_get_iv_size($params['handle'])) > 1)
-			? $this->create_key($iv_size)
-			: null;
-
-		if (mcrypt_generic_init($params['handle'], $params['key'], $iv) < 0)
-		{
-			if ($params['handle'] !== $this->_handle)
-			{
-				mcrypt_module_close($params['handle']);
-			}
-
-			return false;
-		}
-
-		// Use PKCS#7 padding in order to ensure compatibility with OpenSSL
-		// and other implementations outside of PHP.
-		if (in_array(strtolower(mcrypt_enc_get_modes_name($params['handle'])), ['cbc', 'ecb'], true))
-		{
-			$block_size = mcrypt_enc_get_block_size($params['handle']);
-			$pad = $block_size - (self::strlen($data) % $block_size);
-			$data .= str_repeat(chr($pad), $pad);
-		}
-
-		// Work-around for yet another strange behavior in MCrypt.
-		//
-		// When encrypting in ECB mode, the IV is ignored. Yet
-		// mcrypt_enc_get_iv_size() returns a value larger than 0
-		// even if ECB is used AND mcrypt_generic_init() complains
-		// if you don't pass an IV with length equal to the said
-		// return value.
-		//
-		// This probably would've been fine (even though still wasteful),
-		// but OpenSSL isn't that dumb and we need to make the process
-		// portable, so ...
-		$data = (mcrypt_enc_get_modes_name($params['handle']) !== 'ECB')
-			? $iv.mcrypt_generic($params['handle'], $data)
-			: mcrypt_generic($params['handle'], $data);
-
-		mcrypt_generic_deinit($params['handle']);
-		if ($params['handle'] !== $this->_handle)
-		{
-			mcrypt_module_close($params['handle']);
 		}
 
 		return $data;
@@ -550,68 +412,6 @@ class CI_Encryption {
 		isset($params['key']) OR $params['key'] = $this->hkdf($this->_key, 'sha512', null, self::strlen($this->_key), 'encryption');
 
 		return $this->{'_'.$this->_driver.'_decrypt'}($data, $params);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Decrypt via MCrypt
-	 *
-	 * @param	string	$data	Encrypted data
-	 * @param	array	$params	Input parameters
-	 * @return	string
-	 */
-	protected function _mcrypt_decrypt($data, $params)
-	{
-		if ( ! is_resource($params['handle']))
-		{
-			return false;
-		}
-
-		// The greater-than-1 comparison is mostly a work-around for a bug,
-		// where 1 is returned for ARCFour instead of 0.
-		if (($iv_size = mcrypt_enc_get_iv_size($params['handle'])) > 1)
-		{
-			if (mcrypt_enc_get_modes_name($params['handle']) !== 'ECB')
-			{
-				$iv = self::substr($data, 0, $iv_size);
-				$data = self::substr($data, $iv_size);
-			}
-			else
-			{
-				// MCrypt is dumb and this is ignored, only size matters
-				$iv = str_repeat("\x0", $iv_size);
-			}
-		}
-		else
-		{
-			$iv = null;
-		}
-
-		if (mcrypt_generic_init($params['handle'], $params['key'], $iv) < 0)
-		{
-			if ($params['handle'] !== $this->_handle)
-			{
-				mcrypt_module_close($params['handle']);
-			}
-
-			return false;
-		}
-
-		$data = mdecrypt_generic($params['handle'], $data);
-		// Remove PKCS#7 padding, if necessary
-		if (in_array(strtolower(mcrypt_enc_get_modes_name($params['handle'])), ['cbc', 'ecb'], true))
-		{
-			$data = self::substr($data, 0, -ord($data[self::strlen($data)-1]));
-		}
-
-		mcrypt_generic_deinit($params['handle']);
-		if ($params['handle'] !== $this->_handle)
-		{
-			mcrypt_module_close($params['handle']);
-		}
-
-		return $data;
 	}
 
 	// --------------------------------------------------------------------
@@ -731,20 +531,6 @@ class CI_Encryption {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Get MCrypt handle
-	 *
-	 * @param	string	$cipher	Cipher name
-	 * @param	string	$mode	Encryption mode
-	 * @return	resource
-	 */
-	protected function _mcrypt_get_handle($cipher, $mode)
-	{
-		return mcrypt_module_open($cipher, '', $mode, '');
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * Get OpenSSL handle
 	 *
 	 * @param	string	$cipher	Cipher name
@@ -764,7 +550,7 @@ class CI_Encryption {
 	/**
 	 * Cipher alias
 	 *
-	 * Tries to translate cipher names between MCrypt and OpenSSL's "dialects".
+	 * Tries to translate cipher names to OpenSSL's "dialects".
 	 *
 	 * @param	string	$cipher	Cipher name
 	 * @return	void
@@ -776,16 +562,6 @@ class CI_Encryption {
 		if (empty($dictionary))
 		{
 			$dictionary = [
-				'mcrypt' => [
-					'aes-128' => 'rijndael-128',
-					'aes-192' => 'rijndael-128',
-					'aes-256' => 'rijndael-128',
-					'des3-ede3' => 'tripledes',
-					'bf' => 'blowfish',
-					'cast5' => 'cast-128',
-					'rc4' => 'arcfour',
-					'rc4-40' => 'arcfour'
-				],
 				'openssl' => [
 					'rijndael-128' => 'aes-128',
 					'tripledes' => 'des-ede3',
@@ -926,6 +702,10 @@ class CI_Encryption {
 	 */
 	protected static function substr($str, $start, $length = null)
 	{
+		if (empty($str)) {
+			throw new Exception('$str cannot be empty');			
+		}
+
 		if (self::$func_overload)
 		{
 			// mb_substr($str, $start, null, '8bit') returns an empty

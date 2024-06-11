@@ -122,6 +122,13 @@ class CI_Form_validation
 	public $validation_data	= [];
 
 	/**
+	 * Validated data
+	 *
+	 * @var array
+	 */
+	public $validated_data	= [];
+
+	/**
 	 * Standard Date format
 	 * @var string
 	 */
@@ -379,7 +386,7 @@ class CI_Form_validation
 	 * Lets users set their own error messages on the fly. Note:
 	 * The key name has to match the function name that it corresponds to.
 	 *
-	 * @param	array
+	 * @param	array|string
 	 * @param	string
 	 * @return	CI_Form_validation
 	 */
@@ -507,7 +514,7 @@ class CI_Form_validation
       * Get All Validated Fields Except Specified Fields
       *
       * @param mixed $request
-      * @return array
+      * @return CI_Form_validation
       */
      public function useExcept(array $except)
 	 {
@@ -518,7 +525,9 @@ class CI_Form_validation
 			unset($fields[$key]);
 		}
 
-		return $fields;
+		$this->validation_data = $fields;
+
+		return $this;
 	 }
 
 	 // --------------------------------------------------------------------
@@ -527,7 +536,7 @@ class CI_Form_validation
 	  * Get Only Specified Fields From The Validated Fields
 	  *
 	  * @param array $only
-	  * @return array
+	  * @return CI_Form_validation
 	  */
 	 public function useOnly(array $only)
 	 {
@@ -536,7 +545,9 @@ class CI_Form_validation
 
 		$fields = $this->validation_data;
 
-		return array_intersect_key($fields, array_flip($only));
+		$this->validation_data = array_intersect_key($fields, array_flip($only));
+
+		return $this;
 
 	 }
 
@@ -662,24 +673,10 @@ class CI_Form_validation
 		return ($total_errors === 0);
 	}
 
-	/**
-	 * Alias to the method above
-	 *
-	 * This function does all the work.
-	 *
-	 * @deprecated	2.1.1	use true() instead, alias to the run() method
-	 * @param	string	$group
-	 * @return	bool
-	 */
-	public function check($group = '')
-	{
-		return $this->run($group);
-	}
+	// --------------------------------------------------------------------
 
 	/**
 	 * Alias to the run() method
-	 *
-	 * This function does all the work.
 	 *
 	 * @param	string	$group
 	 * @return	bool
@@ -687,6 +684,23 @@ class CI_Form_validation
 	public function true($group = '')
 	{
 		return $this->run($group);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Checks if the validation fails
+	 *
+	 * @param	string	$group
+	 * @return	bool
+	 */
+	public function fails($group = '')
+	{
+		// return $this->run($group);
+
+		$failed = $this->run($group);
+
+		return $failed === false;
 	}
 
 	// --------------------------------------------------------------------
@@ -703,10 +717,13 @@ class CI_Form_validation
 	 * @param array $data
 	 * @return array
 	 */
-	public function apply($functions, $fields = null, $data = []) 
+    public function apply($functions, $fields = null, $data = []) 
     {
+		if (empty($data) && !empty($this->validation_data)) {
+			$data = $this->validation_data;
+		}
 
-        $data = clean($data) ?: clean($this->CI->load->input->post());
+        $data = !empty($data) ? clean($data): clean($this->CI->load->input->post());
 
         if (is_null($fields)) {
             $fields = array_keys($data); // Use all available fields
@@ -730,8 +747,28 @@ class CI_Form_validation
             }
         }
 
+		$this->validated_data = $data;
+
         return $data;
     }
+
+	/**
+	 * Retrieves the validated data.
+	 *
+	 * @return array|object The validated data.
+	 */
+	public function data($object = false)
+	{
+		if (empty($this->validated_data)) {
+			$this->validated_data = $this->validation_data;
+		}
+
+		if ($object === true) {
+			return (object) $this->validated_data;
+		}
+
+		return $this->validated_data;
+	}
 
 	// --------------------------------------------------------------------
 
@@ -1601,7 +1638,7 @@ class CI_Form_validation
 	 *
 	 * @return bool
 	 */
-	public function is_exactly(string $value = null, string $list): bool
+	public function is_exactly(?string $value = null, ?string $list = null): bool
 	{
 		return $this->in_list($value, $list);
 	}
@@ -1692,7 +1729,7 @@ class CI_Form_validation
 	 *
 	 * @return bool
 	 */
-	public function valid_date(string $str = null, string $format = null): bool
+	public function valid_date(?string $str = null, ?string $format = null): bool
 	{
 		if (empty($format))
 		{
@@ -1990,7 +2027,7 @@ class CI_Form_validation
 	 */
 	public function exists($str, $field)
 	{
-		$this->is_unique($str, $field);
+		return $this->is_unique($str, $field);
 	}
 
 	// --------------------------------------------------------------------

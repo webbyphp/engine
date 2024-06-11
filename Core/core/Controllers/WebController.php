@@ -80,6 +80,8 @@ class WebController extends Controller
      */
     protected function toOutside($to = '')
     {
+        $this->use->config('forbidden');
+        
         if (!contains('https://', $to) or !contains('http://', $to)) {
             $to = empty($to) ? "" : 'https://' . $to;
         } else {

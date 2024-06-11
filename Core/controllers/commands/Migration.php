@@ -135,17 +135,17 @@ class Migration extends ConsoleController
 
 				$this->dbforge->add_field([
 					'id' => [
-						'type' => 'INT',
+						'type' => 'BIGINT',
 						'unsigned' => true,
 						'auto_increment' => true,
-						'constraint' => 11,
+						'constraint' => 20,
 					],
 					'migration' => [
 						'type' => 'VARCHAR(256)'
 					],
 					'batch' => [
-						'type' => 'INT',
-						'constraint' => 11,
+						'type' => 'BIGINT',
+						'constraint' => 20,
 					],
 					'run_at' => [
 						'type' => 'timestamp'

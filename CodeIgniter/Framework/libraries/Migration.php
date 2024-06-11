@@ -63,7 +63,7 @@ class CI_Migration {
 	 *
 	 * @var	bool
 	 */
-	protected $_migration_type = 'sequential';
+	protected $_migration_type = 'timestamp';
 
 	/**
 	 * Path to migration classes
@@ -166,13 +166,30 @@ class CI_Migration {
 		// If the migrations table is missing, make it
 		if ( ! $this->db->table_exists($this->_migration_table))
 		{
+
 			$this->dbforge->add_field([
-				'version' => ['type' => 'BIGINT', 'constraint' => 20],
-			]);
+				'id' => [
+					'type' => 'BIGINT',
+					'unsigned' => true,
+					'auto_increment' => true,
+					'constraint' => 20,
+				],
+				'migration' => [
+					'type' => 'VARCHAR(256)'
+				],
+				'batch' => [
+					'type' => 'BIGINT',
+					'constraint' => 20,
+				],
+				'run_at' => [
+					'type' => 'timestamp'
+				]
+			])
+			->add_key('id', true)
+			->add_key('migration');
 
 			$this->dbforge->create_table($this->_migration_table, true);
 
-			$this->db->insert($this->_migration_table, ['version' => 0]);
 		}
 
 		// Do we auto migrate to the latest migration?

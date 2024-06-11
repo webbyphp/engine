@@ -32,6 +32,8 @@ class Console
     
     private const DEFAULT_PORT = 8085;
 
+    private const UIP = '0.0.0.0';
+
     private static $sylynderEngine = 'sylynder/engine';
 
     public static function phpCommand()
@@ -208,6 +210,9 @@ class Console
             break;
             case 'app:to-development':
                 static::runSystemCommand(Console::phpCommand() . 'environment/development');
+            break;
+            case 'app:baseurl':
+                static::runSystemCommand(Console::phpCommand() . 'baseurl/host/' . $arg2);
             break;
             case 'resource:link':
                 static::consoleEnv();
@@ -783,6 +788,7 @@ class Console
         }
 
         $name = str_replace(['-', '='], '', $name);
+        $type = str_replace(['-', '='], '', $type);
 
         if ($name === '') {
             $output =   " \n";
@@ -952,6 +958,84 @@ class Console
 
         $output =   " \n";
         $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for run:migration", 'light', 'red') . " \n";
+        echo $output . "\n";
+        exit;
+    }
+
+    protected static function createSeeder(...$args)
+    {
+        $name = '';
+        $type = '';
+
+        if (isset($args[0])) {
+            $name = $args[0];
+        }
+
+        if (isset($args[1])) {
+            $type = $args[1];
+        }
+
+        $name = str_replace(['-', '='], '', $name);
+        $type = str_replace(['-', '='], '', $type);
+
+        if ($name === '') {
+            $output =   " \n";
+            $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:seeder", 'light', 'red') . " \n";
+            echo $output . "\n";
+            exit;
+        }
+
+        $command = Console::phpCommand() . 'create/createseeder/' . $name . '/' . $type;
+        static::runSystemCommand($command);
+    }
+
+    protected static function runSeeder(...$args)
+    {
+        $key = $args[0];
+
+        if ($key == null) {
+            $command = Console::phpCommand() . 'seed/multiple';
+            static::runSystemCommand($command);
+            exit;
+        }
+
+        if (!empty($key)) {
+            $key = explode('=', $key);
+        }
+
+        if ($key[0] === '--with') {
+
+            $filename = $key[1] ?? '';
+
+             if (!empty($filename)) {
+                $command = Console::phpCommand() . 'seed/single/' . $filename;
+                static::runSystemCommand($command);
+                exit;
+            }
+
+        }
+
+        if ($key[0] === '--table') {
+
+            $tablename = $key[1] ?? '';
+
+            if (!empty($tablename)) {
+                $command = Console::phpCommand() . 'seed/truncate/' . $tablename;
+                static::runSystemCommand($command);
+                exit;
+            }
+
+            if (empty($tablename)) {
+                $output =   " \n";
+                $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for db:truncate", 'light', 'red') . " \n";
+                echo $output . "\n";
+                exit;
+            }
+
+        }
+
+        $output =   " \n";
+        $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for db:seed", 'light', 'red') . " \n";
         echo $output . "\n";
         exit;
     }
@@ -1140,16 +1224,58 @@ class Console
         $project_dir = static::$rootpath; //__DIR__;
         $dir = realpath($project_dir . '/public/');
 
+        if ($host === 'expose') {
+            $host = self::UIP;
+        }
+
         $output =  ConsoleColor::green("\n\tPHP Built-In Web Server Started for Webby \n\n");
         $output .= ConsoleColor::green("\tNavigate to ");
         $output .= ConsoleColor::cyan("http://{$host}:{$port} ");
         $output .= ConsoleColor::green("to view your project.\n");
+
+        if ($host === self::UIP) {
+
+           $clientIp = static::getLocalIPAddress();
+
+            $output .= ConsoleColor::green("\n\tYou can also access your project at ");
+            $output .= ConsoleColor::cyan("http://{$clientIp}:{$port} \n");
+        }
+
         $output .= ConsoleColor::yellow("\n\tPress Ctrl+C to stop Webby Server!");
         " \n";
 
         echo ConsoleColor::green($output) . "\n\n";
 
         static::runSystemCommand('php -S ' . $host .':' . $port . ' -t "' . $dir . '"');
+
+    }
+
+    private static function getOS()
+    {
+        return (stripos(PHP_OS, "WIN") === 0) ? "WINDOWS" : "UNIX";
+    }
+
+    /**
+     * Get the local IP address based on the operating system.
+     *
+     * @return string The local IP address or '127.0.o.1'.
+     */
+    private static function getLocalIPAddress() 
+    {
+
+        if (static::getOS() === 'WINDOWS') {
+            // Windows OS
+            $output = shell_exec('ipconfig');
+            preg_match('/IPv4 Address[.\s]*:\s*([\d.]+)/', $output, $matches);
+        } else {
+            // Unix-like OS (Linux, macOS)
+            $output = shell_exec('ifconfig');
+            preg_match('/inet (?!127\.0\.0\.1)(\d+\.\d+\.\d+\.\d+)/', $output, $matches);
+        }
+    
+        $localIp = isset($matches[1]) ? $matches[1] : '127.0.0.1';
+
+        return $localIp;
     }
 
     /**
@@ -1188,16 +1314,14 @@ class Console
 
         echo ConsoleColor::yellow("\n\tDone! \n\n");
 
-        $os = (stripos(PHP_OS, "WIN") === 0) ? "WINDOWS" : "UNIX";
-
         static::consoleEnv();
 
-        if ($os === "WINDOWS") {
+        if (static::getOS() === "WINDOWS") {
             static::quitWindows($port);
             exit;
         }
 
-        if ($os === "UNIX") {
+        if (static::getOS() === "UNIX") {
             static::quitUnix($port);
             exit;
         }

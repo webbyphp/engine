@@ -49,6 +49,17 @@ class Base_Exceptions extends \CI_Exceptions
 			$templates_path = VIEWPATH . 'errors' . DIRECTORY_SEPARATOR;
 		}
 
+		$is_json_request = get_instance()->request->server('CONTENT_TYPE');
+
+		if (str_contains($is_json_request ?? '', 'application/json')) {
+
+			get_instance()->output->json([
+				"Severity: "    => $severity ?? 'Error',
+				"Message: "     => (is_array($message) ? implode("\n\t", $message) : $message),
+			], 500);
+
+		}
+
 		if (is_cli()) {
 			$message = "\t" . (is_array($message) ? implode("\n\t", $message) : $message);
 			$template = 'cli' . DIRECTORY_SEPARATOR . $template;
@@ -118,7 +129,7 @@ class Base_Exceptions extends \CI_Exceptions
 		
 		$location = str_replace('../', '', (string) $directory);
 		
-		$filepath = function_exists('session') ? session('__view_path') : $exception->getFile();
+		$filepath = function_exists('session') && !empty(session('__view_path')) ? session('__view_path') : $exception->getFile();
 		$line = $exception->getLine();
 		$message = $exception->getMessage();
 		$num = $exception->getCode();
@@ -135,8 +146,21 @@ class Base_Exceptions extends \CI_Exceptions
                 $num = self::PARSE_ERROR;
             }
 
-			$_error =& load_class('Exceptions', 'core');
+			$_error = load_class('Exceptions', 'core');
 			$_error->log_exception($num, $message, $filepath, $line);
+
+		}
+
+		$is_json_request = get_instance()->request->server('CONTENT_TYPE');
+
+		if (str_contains($is_json_request ?? '', 'application/json')) {
+
+			get_instance()->output->json([
+				"Severity: "    => $severity ?? 'Error',
+				"Message: "     => $message,
+				"Filename: "    => $filepath,
+				"Line Number: " => $line,
+			], 500);
 
 		}
 		
@@ -198,9 +222,22 @@ class Base_Exceptions extends \CI_Exceptions
 		if (_evaluated($filepath)) {
 
 			$evaluated = true;
-			$file = function_exists('session') ? session('__view_path') : '';
-			$_error =& load_class('Exceptions', 'core');
+			$file = function_exists('session') && !empty(session('__view_path')) ? session('__view_path') : '';
+			$_error = load_class('Exceptions', 'core');
 			$_error->log_exception($severity, $message, $file, $line);
+
+		}
+
+		$is_json_request = get_instance()->request->server('CONTENT_TYPE');
+
+		if (str_contains($is_json_request ?? '', 'application/json')) {
+
+			get_instance()->output->json([
+				"Severity: "    => $severity,
+				"Message: "     => $message,
+				"Filename: "    => $filepath,
+				"Line Number: " => $line,
+			], 500);
 
 		}
 
