@@ -78,7 +78,7 @@ class CI_Javascript {
 
 		extract($defaults);
 
-		$this->CI =& get_instance();
+		$this->CI = get_instance();
 
 		// load the requested js library
 		$this->CI->load->library('Javascript/'.$js_library_driver, ['autoload' => $autoload]);

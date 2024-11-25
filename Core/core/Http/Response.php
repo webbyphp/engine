@@ -82,7 +82,7 @@ class Response
     function __construct() 
     {
         // CodeIgniter initialization
-        $this->ci = Instance::create();
+        $this->ci = get_instance();
     }
     
     /**

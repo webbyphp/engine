@@ -76,7 +76,7 @@ class CI_Cache_sqlite extends CI_Driver {
     public function __construct() 
     {
        
-        $CI =& get_instance();
+        $CI = get_instance();
         
         // Get cache_path from config if available.
         $path = $CI->config->item('cache_path');

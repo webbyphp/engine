@@ -28,7 +28,7 @@ class Cache extends \Base_Output
     {
         parent::__construct();
 
-        $this->ci =& get_instance();
+        $this->ci = get_instance();
     }
 
     /* ----------------------------- For Custom Caching and Retrieving ---------------------- */

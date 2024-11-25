@@ -47,7 +47,7 @@ class Request
     public function __construct() 
     {
         // CodeIgniter initialization
-        $this->ci = Instance::create();
+        $this->ci = get_instance();
     }
 
     /**

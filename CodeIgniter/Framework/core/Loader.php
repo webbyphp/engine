@@ -270,7 +270,7 @@ class CI_Loader {
 			return $this;
 		}
 
-		$CI =& get_instance();
+		$CI = get_instance();
 		if (isset($CI->$name))
 		{
 			throw new RuntimeException('The model name you are loading is the name of a resource that is already being used: '.$name);
@@ -378,7 +378,7 @@ class CI_Loader {
 	public function database($params = '', $return = false, $query_builder = null)
 	{
 		// Grab the super object
-		$CI =& get_instance();
+		$CI = get_instance();
 
 		// Do we even need to load the database class?
 		if ($return === false && $query_builder === null && isset($CI->db) && is_object($CI->db) && ! empty($CI->db->conn_id))
@@ -398,7 +398,8 @@ class CI_Loader {
 		$CI->db = '';
 
 		// Load the DB class
-		$CI->db =& DB($params, $query_builder);
+		$CI->db = DB($params);
+		// $CI->db =& DB($params, $query_builder);
 		return $this;
 	}
 
@@ -413,7 +414,7 @@ class CI_Loader {
 	 */
 	public function dbutil($db = null, $return = false)
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 
 		if ( ! is_object($db) OR ! ($db instanceof CI_DB))
 		{
@@ -445,7 +446,7 @@ class CI_Loader {
 	 */
 	public function dbforge($db = null, $return = false)
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 		if ( ! is_object($db) OR ! ($db instanceof CI_DB))
 		{
 			class_exists('CI_DB', false) OR $this->database();
@@ -939,7 +940,7 @@ class CI_Loader {
 
 		// This allows anything loaded using $this->load (views, files, etc.)
 		// to become accessible from within the Controller and Model functions.
-		$_ci_CI =& get_instance();
+		$_ci_CI = get_instance();
 		foreach (get_object_vars($_ci_CI) as $_ci_key => $_ci_var)
 		{
 			if ( ! isset($this->$_ci_key))
@@ -1069,7 +1070,8 @@ class CI_Loader {
 				isset($this->_ci_varmap[$property]) && $property = $this->_ci_varmap[$property];
 			}
 
-			$CI =& get_instance();
+			$CI = get_instance();
+
 			if (isset($CI->$property))
 			{
 				log_message('debug', $class.' class already loaded. Second attempt ignored.');
@@ -1142,7 +1144,7 @@ class CI_Loader {
 				isset($this->_ci_varmap[$property]) && $property = $this->_ci_varmap[$property];
 			}
 
-			$CI =& get_instance();
+			$CI = get_instance();
 			if ( ! isset($CI->$property))
 			{
 				return $this->_ci_init_library($library_name, $prefix, $params, $object_name);
@@ -1280,7 +1282,7 @@ class CI_Loader {
 		}
 
 		// Don't overwrite existing properties
-		$CI =& get_instance();
+		$CI = get_instance();
 		if (isset($CI->$object_name))
 		{
 			if ($CI->$object_name instanceof $class_name)
@@ -1425,7 +1427,7 @@ class CI_Loader {
 	 */
 	protected function &_ci_get_component($component)
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 		return $CI->$component;
 	}
 }

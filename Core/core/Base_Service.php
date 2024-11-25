@@ -15,7 +15,7 @@ class Base_Service
 
     function __get($key)
     {
-        $CI = &get_instance();
+        $CI = get_instance();
         return $CI->$key;
     }
 }

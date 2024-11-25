@@ -197,7 +197,7 @@ class CI_Unit_test {
 			$result = $this->result();
 		}
 
-		$CI =& get_instance();
+		$CI = get_instance();
 		$CI->load->language('unit_test');
 
 		$this->_parse_template();
@@ -272,7 +272,7 @@ class CI_Unit_test {
 	 */
 	public function result($results = [])
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 		$CI->load->language('unit_test');
 
 		if (count($results) === 0)

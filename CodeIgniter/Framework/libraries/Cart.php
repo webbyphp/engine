@@ -99,7 +99,7 @@ class CI_Cart {
 	public function __construct($params = [])
 	{
 		// Set the super object to a local variable for use later
-		$this->CI =& get_instance();
+		$this->CI = get_instance();
 
 		// Are any config settings being passed manually?  If so, set them
 		$config = is_array($params) ? $params : [];

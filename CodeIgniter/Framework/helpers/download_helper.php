@@ -100,7 +100,7 @@ if ( ! function_exists('force_download'))
 			}
 
 			// Load the mime types
-			$mimes =& get_mimes();
+			$mimes = get_mimes();
 
 			// Only change the default MIME if we can find one
 			if (isset($mimes[$extension]))

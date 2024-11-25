@@ -152,7 +152,7 @@ class CI_Output
 		isset(self::$func_overload) or self::$func_overload = (!is_php('8.0') && extension_loaded('mbstring') && @ini_get('mbstring.func_overload'));
 
 		// Get mime types for later
-		$this->mimes = &get_mimes();
+		$this->mimes = get_mimes();
 
 		log_message('info', 'Output Class Initialized');
 	}
@@ -840,12 +840,12 @@ class CI_Output
 		// Note:  We use load_class() because we can't use $CI =& get_instance()
 		// since this function is sometimes called by the caching mechanism,
 		// which happens before the CI super object is available.
-		$BM = &load_class('Benchmark', 'core');
-		$CFG = &load_class('Config', 'core');
+		$BM = load_class('Benchmark', 'core');
+		$CFG = load_class('Config', 'core');
 
 		// Grab the super object if we can.
 		if (class_exists('CI_Controller', false)) {
-			$CI = &get_instance();
+			$CI = get_instance();
 		}
 
 		// --------------------------------------------------------------------
@@ -964,7 +964,7 @@ class CI_Output
 	 */
 	public function _write_cache($output)
 	{
-		$CI = &get_instance();
+		$CI = get_instance();
 		$path = $CI->config->item('cache_path');
 		$cache_path = ($path === '') ? APPPATH . 'cache' . DIRECTORY_SEPARATOR : rtrim($path, '/\\') . DIRECTORY_SEPARATOR;
 
@@ -1123,7 +1123,7 @@ class CI_Output
 	 */
 	public function delete_cache($uri = '')
 	{
-		$CI = &get_instance();
+		$CI = get_instance();
 		$cache_path = $CI->config->item('cache_path');
 		if ($cache_path === '') {
 			$cache_path = APPPATH . 'cache/';

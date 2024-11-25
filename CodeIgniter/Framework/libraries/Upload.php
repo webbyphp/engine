@@ -293,8 +293,8 @@ class CI_Upload {
 	{
 		empty($config) OR $this->initialize($config, false);
 
-		$this->_mimes =& get_mimes();
-		$this->_CI =& get_instance();
+		$this->_mimes = get_mimes();
+		$this->_CI = get_instance();
 
 		log_message('info', 'Upload Class Initialized');
 	}

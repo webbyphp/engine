@@ -107,7 +107,7 @@ class CI_Jquery extends CI_Javascript {
 	 */
 	public function __construct($params)
 	{
-		$this->CI =& get_instance();
+		$this->CI = get_instance();
 		extract($params);
 
 		if ($autoload === true)

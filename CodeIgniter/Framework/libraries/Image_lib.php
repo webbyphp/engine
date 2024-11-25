@@ -1845,7 +1845,7 @@ class CI_Image_lib {
 	 */
 	public function set_error($msg)
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 		$CI->lang->load('imglib');
 
 		if (is_array($msg))

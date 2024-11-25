@@ -31,13 +31,13 @@ class Base_Output extends \CI_Output
      */
     private function cacheCustomPath()
     {
-        $ci =& get_instance();
+        $ci = get_instance();
         return $ci->config->item('cache_path') . $this->customPath . DIRECTORY_SEPARATOR;
     }
 
     public function filesCachePath()
     {
-        $ci =& get_instance();
+        $ci = get_instance();
         $cachePath = (!empty($this->customPath)) ? $this->customPath : $this->defaultPath;
         return $ci->config->item('cache_path') . $cachePath . DIRECTORY_SEPARATOR;
     }
@@ -51,7 +51,7 @@ class Base_Output extends \CI_Output
     public function _write_cache($output)
     {
         
-        $ci =& get_instance();
+        $ci = get_instance();
         
         $path = $ci->config->item('web_cache_path');
         $cachePath = ($path === '') ? $ci->config->item('cache_path') . $this->defaultPath . DIRECTORY_SEPARATOR : rtrim($path, '/\\') . DIRECTORY_SEPARATOR;
@@ -219,7 +219,7 @@ class Base_Output extends \CI_Output
      */
     public function delete_cache($uri = '')
     {
-        $ci = &get_instance();
+        $ci = get_instance();
         
         $cachePath = $this->filesCachePath();
 

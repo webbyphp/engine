@@ -228,7 +228,7 @@ $BM->mark('loading_time:_base_classes_start');
  *  Instantiate the hooks class
  * ------------------------------------------------------
  */
-$EXT = &load_class('Hooks', 'core');
+$EXT = load_class('Hooks', 'core');
 
 /*
  * ------------------------------------------------------
@@ -247,7 +247,7 @@ $EXT->call_hook('pre_system');
  * depending on another class that uses it.
  *
  */
-$CFG = &load_class('Config', 'core');
+$CFG = load_class('Config', 'core');
 
 // Do we have any manually set config items in the index.php file?
 if (isset($assign_to_config) && is_array($assign_to_config)) {
@@ -261,7 +261,7 @@ if (isset($assign_to_config) && is_array($assign_to_config)) {
  *  Instantiate the hooks class
  * ------------------------------------------------------
  */
-$EXT = &load_class('Hooks', 'core', $CFG);
+$EXT = load_class('Hooks', 'core', $CFG);
 
 /*
  * ------------------------------------------------------
@@ -331,28 +331,28 @@ require_once(BASEPATH . 'core/compat/standard.php');
  *  Instantiate the UTF-8 class
  * ------------------------------------------------------
  */
-$UNI = &load_class('Utf8', 'core');
+$UNI = load_class('Utf8', 'core');
 
 /*
  * ------------------------------------------------------
  *  Instantiate the URI class
  * ------------------------------------------------------
  */
-$URI = &load_class('URI', 'core');
+$URI = load_class('URI', 'core');
 
 /*
  * ------------------------------------------------------
  *  Instantiate the routing class and set the routing
  * ------------------------------------------------------
  */
-$RTR = &load_class('Router', 'core', isset($routing) ? $routing : null);
+$RTR = load_class('Router', 'core', isset($routing) ? $routing : null);
 
 /*
  * ------------------------------------------------------
  *  Instantiate the output class
  * ------------------------------------------------------
  */
-$OUT = &load_class('Output', 'core');
+$OUT = load_class('Output', 'core');
 
 /*
  * ------------------------------------------------------
@@ -368,21 +368,21 @@ if ($EXT->call_hook('cache_override') === false && $OUT->_display_cache($CFG, $U
  * Load the security class for xss and csrf support
  * -----------------------------------------------------
  */
-$SEC = &load_class('Security', 'core');
+$SEC = load_class('Security', 'core');
 
 /*
  * ------------------------------------------------------
  *  Load the Input class and sanitize globals
  * ------------------------------------------------------
  */
-$IN	= &load_class('Input', 'core');
+$IN	= load_class('Input', 'core');
 
 /*
  * ------------------------------------------------------
  *  Load the Language class
  * ------------------------------------------------------
  */
-$LANG = &load_class('Lang', 'core');
+$LANG = load_class('Lang', 'core');
 
 /*
  * ------------------------------------------------------
@@ -400,7 +400,7 @@ require_once BASEPATH . 'core/Controller.php';
  *
  * @return CI_Controller
  */
-function &get_instance()
+function get_instance()
 {
 	return CI_Controller::get_instance();
 }

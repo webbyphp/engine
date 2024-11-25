@@ -927,7 +927,7 @@ class XML_RPC_Response
 	 */
 	public function decode($array = null)
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 
 		if (is_array($array))
 		{
@@ -1566,7 +1566,7 @@ class XML_RPC_Message extends CI_Xmlrpc
 	 */
 	public function output_parameters(array $array = [])
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 
 		if ( ! empty($array))
 		{

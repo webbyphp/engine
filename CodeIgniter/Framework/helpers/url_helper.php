@@ -102,7 +102,7 @@ if ( ! function_exists('current_url'))
 	 */
 	function current_url($with_query_strings = false)
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 		
 		$url = $CI->config->site_url($CI->uri->uri_string());
 		

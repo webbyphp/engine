@@ -34,7 +34,7 @@ class Base_Action
             return $this->$key;
         }
 
-        $CI = &get_instance();
+        $CI = get_instance();
         return $CI->$key;
     }
 

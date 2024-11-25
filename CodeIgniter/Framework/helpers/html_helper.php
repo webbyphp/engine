@@ -277,7 +277,7 @@ if ( ! function_exists('link_tag'))
 	 */
 	function link_tag($href = '', $rel = 'stylesheet', $type = 'text/css', $title = '', $media = '', $index_page = false)
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 		$link = '<link ';
 
 		if (is_array($href))
@@ -382,7 +382,7 @@ if ( ! function_exists('br'))
 	/**
 	 * Generates HTML BR tags based on number supplied
 	 *
-	 * @deprecated	3.0.0	Use str_repeat() instead
+	 * Helper function as br() you can use str_repeat() instead
 	 * @param	int	$count	Number of times to repeat the tag
 	 * @return	string
 	 */

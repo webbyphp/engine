@@ -127,7 +127,7 @@ class CI_Log {
 	 */
 	public function __construct()
 	{
-		$config =& get_config();
+		$config = get_config();
 
 		isset(self::$func_overload) OR self::$func_overload = ( ! is_php('8.0') && extension_loaded('mbstring') && @ini_get('mbstring.func_overload'));
 

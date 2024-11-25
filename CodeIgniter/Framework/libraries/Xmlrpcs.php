@@ -220,7 +220,7 @@ class CI_Xmlrpcs extends CI_Xmlrpc {
 
 		if ($data === '')
 		{
-			$CI =& get_instance();
+			$CI = get_instance();
 			if ($CI->input->method() === 'post')
 			{
 				$data = $CI->input->raw_input_stream;

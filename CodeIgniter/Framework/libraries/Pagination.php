@@ -343,7 +343,7 @@ class CI_Pagination {
 	 */
 	public function __construct($params = [])
 	{
-		$this->CI =& get_instance();
+		$this->CI = get_instance();
 		$this->CI->load->language('pagination');
 		foreach (['first_link', 'next_link', 'prev_link', 'last_link'] as $key)
 		{

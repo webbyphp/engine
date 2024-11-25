@@ -293,7 +293,7 @@ if ( ! function_exists('calendar'))
 	function calendar($config = [])
 	{
 
-		$calendar =& load_class('Calendar');
+		$calendar = load_class('Calendar');
 
 		if (!empty($config)) {
 			$calendar->initialize($config);
@@ -323,7 +323,7 @@ if ( ! function_exists('hooks'))
 		 *
 		 * @var CI_Hooks
 		 */
-		$hooks =& load_class('Hooks', 'core');
+		$hooks = load_class('Hooks', 'core');
 
 		// Return the instance of the Hooks class.
 		return $hooks;
@@ -621,8 +621,8 @@ if ( ! function_exists('show_error'))
 			$exit_status = 1; // EXIT_ERROR
 		}
 
-		$_error =& load_class('Exceptions', 'core');
-		echo $_error->show_error($heading, $message, 'error_general', $status_code);
+		// $_error = load_class('Exceptions', 'core');
+		// echo $_error->show_error($heading, $message, 'error_general', $status_code);
 		exit($exit_status);
 	}
 }
@@ -671,7 +671,7 @@ if ( ! function_exists('log_message'))
 		if ($_log === null)
 		{
 			// references cannot be directly assigned to static variables, so we use an array
-			$_log[0] =& load_class('Log', 'core');
+			$_log[0] = load_class('Log', 'core');
 		}
 
 		$_log[0]->write_log($level, $message);

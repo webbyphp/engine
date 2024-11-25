@@ -116,13 +116,13 @@ class CI_Controller extends stdClass
 		// so that CI can run as one big super object.
 		foreach (is_loaded() as $var => $class)
 		{
-			$this->$var =& load_class($class);
+			$this->$var = load_class($class);
 		}
 
-		$this->load =& load_class('Loader', 'core');
-		$this->use = $this->load;
-		$this->request =& load_class('Input', 'core');
-		$this->response =& load_class('Output', 'core');
+		$this->load = load_class('Loader', 'core');
+		$this->use =& $this->load;
+		$this->request = load_class('Input', 'core');
+		$this->response = load_class('Output', 'core');
 		$this->load->initialize();
 		log_message('info', 'Controller Class Initialized');
 	}
@@ -135,7 +135,7 @@ class CI_Controller extends stdClass
 	 * @static
 	 * @return	object
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
 		return self::$instance;
 	}

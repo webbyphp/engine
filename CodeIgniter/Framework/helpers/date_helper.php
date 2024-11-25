@@ -177,7 +177,7 @@ if ( ! function_exists('timespan'))
 	 */
 	function timespan($seconds = 1, $time = '', $units = 7)
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 		$CI->lang->load('date');
 
 		is_numeric($seconds) OR $seconds = 1;
@@ -571,7 +571,7 @@ if ( ! function_exists('timezone_menu'))
 	 */
 	function timezone_menu($default = 'UTC', $class = '', $name = 'timezones', $attributes = '')
 	{
-		$CI =& get_instance();
+		$CI = get_instance();
 		$CI->lang->load('date');
 
 		$default = ($default === 'GMT') ? 'UTC' : $default;

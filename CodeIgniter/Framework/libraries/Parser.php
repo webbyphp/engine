@@ -78,7 +78,7 @@ class CI_Parser {
 	 */
 	public function __construct()
 	{
-		$this->CI =& get_instance();
+		$this->CI = get_instance();
 		log_message('info', 'Parser Class Initialized');
 	}
 

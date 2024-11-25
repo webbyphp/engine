@@ -84,7 +84,7 @@ class CI_Session_database_driver extends CI_Session_driver implements CI_Session
 	{
 		parent::__construct($params);
 
-		$CI = &get_instance();
+		$CI = get_instance();
 		isset($CI->db) or $CI->load->database();
 		$this->_db = $CI->db;
 
