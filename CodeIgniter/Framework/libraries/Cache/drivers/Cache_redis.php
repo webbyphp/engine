@@ -36,7 +36,6 @@
  * @since	Version 3.0.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * CodeIgniter Redis Caching Class
@@ -126,7 +125,7 @@ class CI_Cache_redis extends CI_Driver
 			}
 		}
 
-		$CI =& get_instance();
+		$CI = get_instance();
 
 		if ($CI->config->load('redis', true, true))
 		{

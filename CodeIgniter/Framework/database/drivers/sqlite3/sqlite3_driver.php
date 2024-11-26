@@ -325,7 +325,7 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _truncate($table)
+	protected function _truncate($table): string
 	{
 		return 'DELETE FROM '.$table;
 	}
