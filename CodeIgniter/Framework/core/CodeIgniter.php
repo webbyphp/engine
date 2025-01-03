@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * CodeIgniter
  *
@@ -80,49 +82,6 @@ if (file_exists(COREPATH . 'config/constants.php')) {
  */
 require_once(BASEPATH . 'core/Common.php');
 
-
-/*
- * ------------------------------------------------------
- * Security procedures
- * ------------------------------------------------------
- */
-
-if (!is_php('5.4')) {
-	ini_set('magic_quotes_runtime', 0);
-
-	if ((bool) ini_get('register_globals')) {
-		$_protected = [
-			'_SERVER',
-			'_GET',
-			'_POST',
-			'_FILES',
-			'_REQUEST',
-			'_SESSION',
-			'_ENV',
-			'_COOKIE',
-			'GLOBALS',
-			'HTTP_RAW_POST_DATA',
-			'ci_directory',
-			'core_directory',
-			'view_directory',
-			'_protected',
-			'_registered'
-		];
-
-		$_registered = ini_get('variables_order');
-		foreach (['E' => '_ENV', 'G' => '_GET', 'P' => '_POST', 'C' => '_COOKIE', 'S' => '_SERVER'] as $key => $superglobal) {
-			if (strpos($_registered, $key) === false) {
-				continue;
-			}
-
-			foreach (array_keys($$superglobal) as $var) {
-				if (isset($GLOBALS[$var]) && !in_array($var, $_protected, true)) {
-					$GLOBALS[$var] = null;
-				}
-			}
-		}
-	}
-}
 
 
 /*
