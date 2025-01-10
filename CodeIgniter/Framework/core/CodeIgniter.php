@@ -45,18 +45,24 @@ defined('BASEPATH') || exit('No direct script access allowed');
  *
  * Loads the base classes and executes the request.
  *
- * @package		CodeIgniter
+ * @package	CodeIgniter
  * @subpackage	CodeIgniter
  * @category	Front-controller
- * @author		EllisLab Dev Team
- * @link		https://codeigniter.com/userguide3/
+ * @author	EllisLab Dev Team
+ * @link	https://codeigniter.com/userguide3/
  */
 
 /**
  * CodeIgniter Version
- * 
- * Extended Version 0.2.4
- * 
+ *
+ * @var	string
+ *
+ */
+const CI_VERSION = '3.1.11';
+
+/**
+ * Sylynder Engine Version
+ *
  * @var	string
  *
  */
