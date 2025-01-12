@@ -38,7 +38,7 @@ class Error
 						E_USER_NOTICE |
 						E_DEPRECATED |
 						E_USER_DEPRECATED |
-						E_STRICT
+						2048 // E_STRICT - which has been deprecated
 					) );
 			}
 
