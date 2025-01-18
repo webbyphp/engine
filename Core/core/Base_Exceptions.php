@@ -129,7 +129,7 @@ class Base_Exceptions extends \CI_Exceptions
 		
 		$location = str_replace('../', '', (string) $directory);
 		
-		$filepath = function_exists('session') && !empty(session('__view_path')) ? session('__view_path') : $exception->getFile();
+		$filepath = $exception->getFile();
 		$line = $exception->getLine();
 		$message = $exception->getMessage();
 		$num = $exception->getCode();
@@ -222,7 +222,7 @@ class Base_Exceptions extends \CI_Exceptions
 		if (_evaluated($filepath)) {
 
 			$evaluated = true;
-			$file = function_exists('session') && !empty(session('__view_path')) ? session('__view_path') : '';
+			$file = '';
 			$_error = load_class('Exceptions', 'core');
 			$_error->log_exception($severity, $message, $file, $line);
 
