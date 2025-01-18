@@ -102,10 +102,10 @@ register_shutdown_function('_shutdown_handler');
 if (config_item('beautiful_error_handler')) {
 	
 	// Require Beautiful ErrorHandler
-	require_once "ErrorHandler.php";
+	require_once __DIR__ . DS . "ErrorHandler.php";
 
 	// Use Beautiful Error Handler
-	new ErrorHandler;
+	new CI_ErrorHandler;
 }
 
 /*
