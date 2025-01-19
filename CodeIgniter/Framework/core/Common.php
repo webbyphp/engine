@@ -592,6 +592,8 @@ if ( ! function_exists('is_cli'))
 
 // ------------------------------------------------------------------------
 
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('show_error'))
 {
 	/**
@@ -610,7 +612,40 @@ if ( ! function_exists('show_error'))
 	 */
 	function show_error($message, $status_code = 500, $heading = 'An Error Was Encountered')
 	{
+		$context = detect_request_context();
 		$status_code = abs($status_code);
+
+		switch ($context) {
+          	case 'web':
+              // Create exception for ErrorHandler
+              $exception = new Exception($message, $status_code);
+              $errorHandler = get_error_handler_instance();
+              $errorHandler->handleException($exception);
+              return;
+		  	case 'api':
+				// display_api_error($severity, $message, $filepath, $line);
+			  $exception = new Exception($message, $status_code);
+              $errorHandler = get_error_handler_instance();
+              $errorHandler->handleException($exception);
+              return;
+
+			case 'cli':
+			  $exception = new Exception($message, $status_code);
+              $errorHandler = get_error_handler_instance();
+              $errorHandler->handleException($exception);
+              return;
+			// 	display_cli_error($severity, $message, $filepath, $line);
+			// 	break;
+
+			//   case 'api':
+			//     //   display_api_error($heading, $message, $status_code);
+			//       break;
+
+			//   case 'cli':
+			//     //   display_cli_error($heading, $message, $status_code);
+			//       break;
+      }
+
 		if ($status_code < 100)
 		{
 			$exit_status = $status_code + 9; // 9 is EXIT__AUTO_MIN
@@ -644,7 +679,9 @@ if ( ! function_exists('show_404'))
 	 */
 	function show_404($page = '', $log_error = true)
 	{
-		$_error =& load_class('Exceptions', 'core');
+		$context = detect_request_context();
+
+		$_error = load_class('Exceptions', 'core');
 		$_error->show_404($page, $log_error);
 		exit(4); // EXIT_UNKNOWN_FILE
 	}
@@ -858,13 +895,16 @@ if ( ! function_exists('_error_handler'))
 	{
 		$is_error = (((E_ERROR | E_PARSE | E_COMPILE_ERROR | E_CORE_ERROR | E_USER_ERROR) & $severity) === $severity);
 
+		// Detect request context
+        $context = detect_request_context(); // 'cli', 'api', or 'web'
+
 		// When an error occurred, set the status header to '500 Internal Server Error'
 		// to indicate to the client something went wrong.
 		// This can't be done within the $_error->show_php_error method because
 		// it is only called when the display_errors flag is set (which isn't usually
 		// the case in a production environment) or when errors are ignored because
 		// they are above the error_reporting threshold.
-		if ($is_error)
+		if ($is_error && $context !== 'cli')
 		{
 			set_status_header(500);
 		}
@@ -876,13 +916,32 @@ if ( ! function_exists('_error_handler'))
 			return;
 		}
 
-		$_error =& load_class('Exceptions', 'core');
+		$_error = load_class('Exceptions', 'core');
 		$_error->log_exception($severity, $message, $filepath, $line);
 
 		// Should we display the error?
-		if (str_ireplace(['off', 'none', 'no', 'false', 'null'], '', ini_get('display_errors')))
+		if (str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors')))
 		{
 			$_error->show_php_error($severity, $message, $filepath, $line);
+		}
+
+		// Handle display based on context
+		if (should_display_errors()) {
+			switch ($context) {
+				case 'web':
+					// Use ErrorHandler class instead of CI templates
+					$errorHandler = get_error_handler_instance();
+					$errorHandler->handleError($severity, $message, $filepath, $line, []);
+					return; // ErrorHandler handles exit
+
+				case 'api':
+					display_api_error($severity, $message, $filepath, $line);
+					break;
+
+				case 'cli':
+					display_cli_error($severity, $message, $filepath, $line);
+					break;
+			}
 		}
 
 		// If the error is fatal, the execution of the script should be stopped because
@@ -911,12 +970,36 @@ if ( ! function_exists('_exception_handler'))
 	 */
 	function _exception_handler($exception)
 	{
-		$_error =& load_class('Exceptions', 'core');
-		$_error->log_exception('Error', 'Exception: '.$exception->getMessage(), $exception->getFile(), $exception->getLine());
+		$context = detect_request_context();
 
-		is_cli() OR set_status_header(500);
+		$_error = load_class('Exceptions', 'core');
+		$_error->log_exception('error', 'Exception: '.$exception->getMessage(), $exception->getFile(), $exception->getLine());
+
+		// is_cli() OR set_status_header(500);
+
+		if ($context !== 'cli') {
+          set_status_header(500);
+      	}
+
+		if (should_display_errors()) {
+          switch ($context) {
+              case 'web':
+                  $errorHandler = get_error_handler_instance();
+                  $errorHandler->handleException($exception);
+                  return;
+
+              case 'api':
+                  display_api_exception($exception);
+                  break;
+
+              case 'cli':
+                  display_cli_exception($exception);
+                  break;
+			}
+		}
+
 		// Should we display the error?
-		if (str_ireplace(['off', 'none', 'no', 'false', 'null'], '', ini_get('display_errors')))
+		if (str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors')))
 		{
 			$_error->show_exception($exception);
 		}
@@ -951,6 +1034,651 @@ if ( ! function_exists('_shutdown_handler'))
 			_error_handler($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
 		}
 	}
+}
+
+// --------------------------------------------------------------------
+
+if ( ! function_exists('detect_request_context'))
+{
+	function detect_request_context()
+  	{
+        // CLI detection
+		if (php_sapi_name() === 'cli' || defined('STDIN')) {
+			return 'cli';
+		}
+
+		// $input = load_class('Input', 'core');
+
+		// API detection
+		if (is_api_request() /*|| has_json_accept_header() || is_api_route()*/) {
+			return 'api';
+		}
+
+		return 'web';
+  	}
+}
+
+// --------------------------------------------------------------------
+
+if ( ! function_exists('get_error_handler_instance'))
+{
+	function get_error_handler_instance($config = [])
+  	{
+		static $handler = null;
+
+		if ($handler === null) {
+
+			require_once(__DIR__ . '/ErrorHandler.php');
+
+			$handler = new \CI_ErrorHandler($config ?? [
+				'environment' => ENVIRONMENT,
+				'debug' => (ENVIRONMENT !== 'production'),
+				'enable_ajax_errors' => true
+			]);
+		}
+
+		return $handler;
+  	}
+}
+
+/**
+ * Enhanced Error Handling Functions for CodeIgniter 3
+ * 
+ * This file contains improved error handling functions that integrate
+ * the ErrorHandler.php class and provide context-aware error responses
+ * for CLI, API, and web requests.
+ */
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('detect_request_context'))
+{
+    /**
+     * Detect Request Context (CLI/API/Web)
+     * 
+     * Determines the type of request being handled to format errors appropriately
+     * 
+     * @return string 'cli', 'api', or 'web'
+     */
+    function detect_request_context()
+    {
+        // CLI context
+        if (php_sapi_name() === 'cli' || (defined('STDIN') && is_resource(STDIN)))
+        {
+            return 'cli';
+        }
+        
+        // API context detection
+        if (is_api_request())
+        {
+            return 'api';
+        }
+        
+        // Default to web context
+        return 'web';
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('is_api_request'))
+{
+    /**
+     * Check if current request is an API request
+     * 
+     * @return bool
+     */
+    function is_api_request()
+    {
+        // Check for AJAX requests
+        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+        {
+            return true;
+        }
+		
+        // Check Accept header for JSON
+        if (isset($_SERVER['HTTP_ACCEPT']))
+        {
+
+            $accept = strtolower($_SERVER['HTTP_ACCEPT']);
+            if (strpos($accept, 'application/json') !== false ||
+                // strpos($accept, 'application/xml') !== false ||
+                strpos($accept, 'text/json') !== false)
+            {
+                return true;
+            }
+        }
+
+		// Check Accept header for XML and Content-Type is XML
+        if (isset($_SERVER['HTTP_ACCEPT']) && isset($_SERVER['CONTENT_TYPE']))
+        {
+
+            $accept = strtolower($_SERVER['HTTP_ACCEPT']);
+			$contentType = strtolower($_SERVER['CONTENT_TYPE']);
+
+            if (strpos($accept, 'application/xml') !== false &&
+                strpos($contentType, 'application/xml') !== false)
+            {
+                return true;
+            }
+        }
+
+		// Check Content-Type header for API requests
+        if (isset($_SERVER['CONTENT_TYPE']))
+        {
+            $contentType = strtolower($_SERVER['CONTENT_TYPE']);
+            if (strpos($contentType, 'application/json') !== false ||
+                strpos($contentType, 'application/xml') !== false)
+            {
+                return true;
+            }
+        }
+        
+        // Check for common API route patterns
+        if (isset($_SERVER['REQUEST_URI']))
+        {
+            $uri = strtolower($_SERVER['REQUEST_URI']);
+            if (strpos($uri, '/api/') !== false || 
+                strpos($uri, '/rest/') !== false ||
+                preg_match('/\.(json|xml)(\?|$)/', $uri))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('get_enhanced_error_handler'))
+{
+    /**
+     * Get or create enhanced error handler instance
+     * 
+     * @return \CI_ErrorHandler
+     */
+    function get_enhanced_error_handler()
+    {
+        static $errorHandler = null;
+        
+        if ($errorHandler === null)
+        {
+            // Load the ErrorHandler class if not already loaded
+            if (!class_exists('ErrorHandler'))
+            {
+                require_once(__DIR__ . 'ErrorHandler.php');
+            }
+            
+            // Create enhanced configuration
+            $config = [
+                'environment' => ENVIRONMENT,
+                'debug' => (ENVIRONMENT !== 'production'),
+                'enable_ajax_errors' => true,
+                'log_errors' => true,
+                'show_request_data' => (ENVIRONMENT === 'development'),
+                'dark_theme' => true
+            ];
+            
+            $errorHandler = new \CI_ErrorHandler($config);
+        }
+        
+        return $errorHandler;
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('enhanced_error_handler'))
+{
+    /**
+     * Enhanced Error Handler
+     * 
+     * Improved version of _error_handler that uses ErrorHandler class
+     * and provides context-aware error responses
+     * 
+     * @param int    $severity
+     * @param string $message
+     * @param string $filepath
+     * @param int    $line
+     * @return void
+     */
+    function enhanced_error_handler($severity, $message, $filepath, $line)
+    {
+        $is_error = (((E_ERROR | E_PARSE | E_COMPILE_ERROR | E_CORE_ERROR | E_USER_ERROR) & $severity) === $severity);
+        $context = detect_request_context();
+        
+        // Set status header for web/api requests
+        if ($is_error && $context !== 'cli')
+        {
+            set_status_header(500);
+        }
+        
+        // Check if we should ignore the error
+        if (($severity & error_reporting()) !== $severity)
+        {
+            return;
+        }
+        
+        // Log the error using CI's logging system
+        $_error = load_class('Exceptions', 'core');
+        $_error->log_exception($severity, $message, $filepath, $line);
+        
+        // Handle error display based on context
+        if (should_display_errors())
+        {
+            switch ($context)
+            {
+                case 'cli':
+                    display_cli_error($severity, $message, $filepath, $line);
+                    break;
+                    
+                case 'api':
+                    display_api_error($severity, $message, $filepath, $line);
+                    break;
+                    
+                case 'web':
+                default:
+                    // Use ErrorHandler class for web errors
+                    $errorHandler = get_enhanced_error_handler();
+                    $errorHandler->handleError($severity, $message, $filepath, $line, []);
+                    return; // ErrorHandler handles exit
+            }
+        }
+        
+        // Exit for fatal errors
+        if ($is_error)
+        {
+            exit(1);
+        }
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('enhanced_exception_handler'))
+{
+    /**
+     * Enhanced Exception Handler
+     * 
+     * Improved version of _exception_handler that uses ErrorHandler class
+     * and provides context-aware exception responses
+     * 
+     * @param Exception $exception
+     * @return void
+     */
+    function enhanced_exception_handler($exception)
+    {
+        $context = detect_request_context();
+        
+        // Log the exception
+        $_error = load_class('Exceptions', 'core');
+        $_error->log_exception('error', 'Exception: '.$exception->getMessage(), $exception->getFile(), $exception->getLine());
+        
+        // Set status header for web/api requests
+        if ($context !== 'cli')
+        {
+            set_status_header(500);
+        }
+        
+        // Handle exception display based on context
+        if (should_display_errors())
+        {
+            switch ($context)
+            {
+                case 'cli':
+                    display_cli_exception($exception);
+                    break;
+                    
+                case 'api':
+                    display_api_exception($exception);
+                    break;
+                    
+                case 'web':
+                default:
+                    // Use ErrorHandler class for web exceptions
+                    $errorHandler = get_enhanced_error_handler();
+                    $errorHandler->handleException($exception);
+                    return; // ErrorHandler handles exit
+            }
+        }
+        
+        exit(1);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('enhanced_show_error'))
+{
+    /**
+     * Enhanced Show Error Function
+     * 
+     * Context-aware version of show_error that uses ErrorHandler class
+     * for web requests and appropriate formatting for CLI/API
+     * 
+     * @param string $message
+     * @param int    $status_code
+     * @param string $heading
+     * @return void
+     */
+    function enhanced_show_error($message, $status_code = 500, $heading = 'An Error Was Encountered')
+    {
+        $context = detect_request_context();
+        $status_code = abs($status_code);
+        
+        if ($status_code < 100)
+        {
+            $exit_status = $status_code + 9;
+            $status_code = 500;
+        }
+        else
+        {
+            $exit_status = 1;
+        }
+        
+        switch ($context)
+        {
+            case 'cli':
+                display_cli_show_error($heading, $message, $status_code);
+                break;
+                
+            case 'api':
+                display_api_show_error($heading, $message, $status_code);
+                break;
+                
+            case 'web':
+            default:
+                // Create a mock exception to use with ErrorHandler
+                $exception = new Exception($message, $status_code);
+                $errorHandler = get_enhanced_error_handler();
+                $errorHandler->handleException($exception);
+                return; // ErrorHandler handles exit
+        }
+        
+        exit($exit_status);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('should_display_errors'))
+{
+    /**
+     * Check if errors should be displayed
+     * 
+     * @return bool
+     */
+    function should_display_errors()
+    {
+        return str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors')) ||
+               ENVIRONMENT === 'development';
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('display_cli_error'))
+{
+    /**
+     * Display error for CLI context
+     * 
+     * @param int    $severity
+     * @param string $message
+     * @param string $filepath
+     * @param int    $line
+     * @return void
+     */
+    function display_cli_error($severity, $message, $filepath, $line)
+    {
+        $errorTypes = [
+            E_ERROR => 'Fatal Error',
+            E_WARNING => 'Warning',
+            E_PARSE => 'Parse Error',
+            E_NOTICE => 'Notice',
+            E_CORE_ERROR => 'Core Error',
+            E_CORE_WARNING => 'Core Warning',
+            E_COMPILE_ERROR => 'Compile Error',
+            E_COMPILE_WARNING => 'Compile Warning',
+            E_USER_ERROR => 'User Error',
+            E_USER_WARNING => 'User Warning',
+            E_USER_NOTICE => 'User Notice',
+            E_RECOVERABLE_ERROR => 'Recoverable Error',
+            E_DEPRECATED => 'Deprecated',
+            E_USER_DEPRECATED => 'User Deprecated'
+        ];
+        
+        $errorType = isset($errorTypes[$severity]) ? $errorTypes[$severity] : 'Unknown Error';
+        
+        $output = "\n" . str_repeat('=', 60) . "\n";
+        $output .= "PHP " . $errorType . "\n";
+        $output .= str_repeat('=', 60) . "\n";
+        $output .= "Message: " . $message . "\n";
+        $output .= "File: " . $filepath . "\n";
+        $output .= "Line: " . $line . "\n";
+        $output .= "Time: " . date('Y-m-d H:i:s') . "\n";
+        $output .= str_repeat('=', 60) . "\n\n";
+        
+        // Add stack trace if available
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        if (!empty($trace))
+        {
+            $output .= "Stack Trace:\n";
+            $output .= str_repeat('-', 40) . "\n";
+            foreach (array_slice($trace, 1, 10) as $i => $frame)
+            {
+                $file = isset($frame['file']) ? $frame['file'] : 'unknown';
+                $line = isset($frame['line']) ? $frame['line'] : 0;
+                $function = isset($frame['function']) ? $frame['function'] : 'unknown';
+                $class = isset($frame['class']) ? $frame['class'] . '::' : '';
+                
+                $output .= sprintf("#%d %s%s() called at %s:%d\n", $i, $class, $function, $file, $line);
+            }
+            $output .= str_repeat('-', 40) . "\n\n";
+        }
+        
+        fwrite(STDERR, $output);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('display_api_error'))
+{
+    /**
+     * Display error for API context
+     * 
+     * @param int    $severity
+     * @param string $message
+     * @param string $filepath
+     * @param int    $line
+     * @return void
+     */
+    function display_api_error($severity, $message, $filepath, $line)
+    {
+        $errorTypes = [
+            E_ERROR => 'fatal_error',
+            E_WARNING => 'warning',
+            E_PARSE => 'parse_error',
+            E_NOTICE => 'notice',
+            E_CORE_ERROR => 'core_error',
+            E_CORE_WARNING => 'core_warning',
+            E_COMPILE_ERROR => 'compile_error',
+            E_COMPILE_WARNING => 'compile_warning',
+            E_USER_ERROR => 'user_error',
+            E_USER_WARNING => 'user_warning',
+            E_USER_NOTICE => 'user_notice',
+            E_RECOVERABLE_ERROR => 'recoverable_error',
+            E_DEPRECATED => 'deprecated',
+            E_USER_DEPRECATED => 'user_deprecated'
+        ];
+        
+        $errorType = isset($errorTypes[$severity]) ? $errorTypes[$severity] : 'unknown_error';
+        
+        $response = [
+            'error' => true,
+            'type' => $errorType,
+            'message' => $message,
+            'timestamp' => date('c'),
+            'request_id' => uniqid()
+        ];
+        
+        // Add debug information in development
+        if (ENVIRONMENT === 'development')
+        {
+            $response['debug'] = [
+                'file' => $filepath,
+                'line' => $line,
+                'severity' => $severity,
+                'trace' => array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 1, 5)
+            ];
+        }
+        
+        // Clear any previous output
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('display_cli_exception'))
+{
+    /**
+     * Display exception for CLI context
+     * 
+     * @param Exception $exception
+     * @return void
+     */
+    function display_cli_exception($exception)
+    {
+        $output = "\n" . str_repeat('=', 60) . "\n";
+        $output .= "UNCAUGHT EXCEPTION\n";
+        $output .= str_repeat('=', 60) . "\n";
+        $output .= "Type: " . get_class($exception) . "\n";
+        $output .= "Message: " . $exception->getMessage() . "\n";
+        $output .= "File: " . $exception->getFile() . "\n";
+        $output .= "Line: " . $exception->getLine() . "\n";
+        $output .= "Code: " . $exception->getCode() . "\n";
+        $output .= "Time: " . date('Y-m-d H:i:s') . "\n";
+        $output .= str_repeat('=', 60) . "\n\n";
+        
+        // Add stack trace
+        $output .= "Stack Trace:\n";
+        $output .= str_repeat('-', 40) . "\n";
+        $output .= $exception->getTraceAsString() . "\n";
+        $output .= str_repeat('-', 40) . "\n\n";
+        
+        fwrite(STDERR, $output);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('display_api_exception'))
+{
+    /**
+     * Display exception for API context
+     * 
+     * @param Exception $exception
+     * @return void
+     */
+    function display_api_exception($exception)
+    {
+        $response = [
+            'error' => true,
+            'type' => 'exception',
+            'exception_class' => get_class($exception),
+            'message' => $exception->getMessage(),
+            'code' => $exception->getCode(),
+            'timestamp' => date('c'),
+            'request_id' => uniqid()
+        ];
+        
+        // Add debug information in development
+        if (ENVIRONMENT === 'development')
+        {
+            $response['debug'] = [
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+                'trace' => array_slice($exception->getTrace(), 0, 10)
+            ];
+        }
+        
+        // Clear any previous output
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('display_cli_show_error'))
+{
+    /**
+     * Display show_error for CLI context
+     * 
+     * @param string $heading
+     * @param string $message
+     * @param int    $status_code
+     * @return void
+     */
+    function display_cli_show_error($heading, $message, $status_code)
+    {
+        $output = "\n" . str_repeat('=', 60) . "\n";
+        $output .= strtoupper($heading) . " (HTTP {$status_code})\n";
+        $output .= str_repeat('=', 60) . "\n";
+        $output .= $message . "\n";
+        $output .= "Time: " . date('Y-m-d H:i:s') . "\n";
+        $output .= str_repeat('=', 60) . "\n\n";
+        
+        fwrite(STDERR, $output);
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('display_api_show_error'))
+{
+    /**
+     * Display show_error for API context
+     * 
+     * @param string $heading
+     * @param string $message
+     * @param int    $status_code
+     * @return void
+     */
+    function display_api_show_error($heading, $message, $status_code)
+    {
+        $response = [
+            'error' => true,
+            'type' => 'application_error',
+            'heading' => $heading,
+            'message' => $message,
+            'status_code' => $status_code,
+            'timestamp' => date('c'),
+            'request_id' => uniqid()
+        ];
+        
+        // Clear any previous output
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        http_response_code($status_code);
+        header('Content-Type: application/json');
+        echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    }
 }
 
 // --------------------------------------------------------------------
