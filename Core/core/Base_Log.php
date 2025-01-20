@@ -16,10 +16,11 @@ class Base_Log extends \CI_Log {
     public $_levels = [	
 		'USER' => '1',
 		'APP' => '2',
-		'ERROR' => '3',
-		'INFO' => '4',  
-		'DEBUG' => '5',  
-		'ALL' => '6'
+		'DEV' => '3',
+		'ERROR' => '4',
+		'INFO' => '5',
+		'DEBUG' => '6',
+		'ALL' => '7'
 	];
     
     public function __construct()
@@ -116,7 +117,27 @@ class Base_Log extends \CI_Log {
 		}
 
 		if ($level === 'USER') {
-			$filepath = APP_LOG_PATH.strtolower($level).'-log-'.date('Y-m-d').'.'.$this->_file_ext;
+			$filepath = USER_LOG_PATH.strtolower($level).'-log-'.date('Y-m-d').'.'.$this->_file_ext;
+		}
+
+		if ($level === 'DEV') {
+			$filepath = DEBUG_LOG_PATH.strtolower($level).'-log-'.date('Y-m-d').'.'.$this->_file_ext;
+		}
+
+		if ($level === 'ERROR') {
+			$filepath = ERROR_LOG_PATH.strtolower($level).'-log-'.date('Y-m-d').'.'.$this->_file_ext;
+		}
+
+		if ($level === 'INFO') {
+			$filepath = INFO_LOG_PATH.strtolower($level).'-log-'.date('Y-m-d').'.'.$this->_file_ext;
+		}
+
+		if ($level === 'DEBUG') {
+			$filepath = DEBUG_LOG_PATH.strtolower($level).'-log-'.date('Y-m-d').'.'.$this->_file_ext;
+		}
+
+		if ($level === 'ALL') {
+			$filepath = LOG_PATH.'log-'.date('Y-m-d').'.'.$this->_file_ext;
 		}
 
 		return $filepath;

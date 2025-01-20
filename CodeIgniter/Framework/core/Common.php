@@ -718,49 +718,70 @@ if ( ! function_exists('log_message'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('log_as'))
+if ( ! function_exists('logmsg'))
 {
 	/**
+	 * Debug Log logmsg()
+	 * 
 	 * An implementation of the function above
 	 *
 	 * We use this to access the very common logs
-	 * like user, app, and error messages to be logged.
+	 * like user, app, dev and error messages to be logged.
 	 *
-	 * @param	string	the error level: 'error', 'debug' or 'info'
-	 * @param	string	the error message
 	 * @return	object
 	 */
-	function log_as()
+	function logmsg()
 	{
 	    $log = new class {
 			
-			// Log levels available
-			// 'USER' => '1',
-			// 'APP' => '2',
-			// 'ERROR' => '3',
-			// 'INFO' => '4',  
-			// 'DEBUG' => '5',  
-			// 'ALL' => '6'
-	        public function app($message)
+			/**
+			 * Log levels available
+			 * 'USER' => '1',
+			 * 'APP' => '2',
+			 * 'DEV' => '3',
+			 * 'ERROR' => '4',
+			 * 'INFO' => '5', 
+			 * 'DEBUG' => '6', 
+			 * 'ALL' => '7'
+			 * 
+			 * @param string $message
+			 * @param string $errorLevel
+			 * @return string
+			 */
+	        public function app(string $message)
 	        {
 	            log_message('app', $message);
 
 	            return $message;
 	        }
 
-	        public function user($message)
+	        public function user(string $message)
 	        {
 	            log_message('user', $message);
 
 	            return $message;
 	        }
 
-	        public function error($message)
+			public function dev(string $message)
+	        {
+	            log_message('dev', $message);
+
+	            return $message;
+	        }
+
+	        public function error(string $message)
 	        {
 	            log_message('error', $message);
 
 	            return $message;
 	        }
+
+			public function log(string $message, string $errorLevel)
+			{
+				log_message($errorLevel, $message);
+
+				return $errorLevel . ' | ' . $message;
+			}
 
 	    };
 

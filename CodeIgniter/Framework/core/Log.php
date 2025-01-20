@@ -101,7 +101,7 @@ class CI_Log {
 	 *
 	 * @var array
 	 */
-	protected $_levels = ['ERROR' => 1, 'DEBUG' => 2, 'INFO' => 3, 'ALL' => 4];
+	protected $_levels = ['ERROR' => 4, 'INFO' => 5, 'DEBUG' => 6, 'ALL' => 7];
 
 	/**
 	 * mbstring.func_overload flag
@@ -202,7 +202,7 @@ class CI_Log {
 			// Only add protection to php files
 			if ($this->_file_ext === 'php')
 			{
-				$message .= "<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>\n\n";
+				$message .= "<?php defined('BASEPATH') || exit('No direct script access allowed'); ?>\n\n";
 			}
 		}
 
