@@ -174,7 +174,7 @@ if ( ! function_exists( 'start_profiler' ))
     /**
      * Enable Profiler
      *
-     * @return CI_Output
+     * @return void
      */
     function start_profiler()
     {
@@ -188,7 +188,7 @@ if ( ! function_exists( 'stop_profiler' ))
     /**
      * Disable Profiler
      *
-     * @return CI_Output
+     * @return void
      */
     function stop_profiler()
     {
@@ -206,7 +206,7 @@ if ( ! function_exists( 'section_profiler' ))
      * Profiler section display.
      *
      * @param   array   $sections   Profiler sections
-     * @return  CI_Output
+     * @return  void
      */
     function section_profiler($config = null)
     {
@@ -261,7 +261,7 @@ if ( ! function_exists( 'show_time_elasped' ))
      *
      * @param string $start_key
      * @param string $end_key
-     * @return void
+     * @return mixed
      */
     function show_time_elasped($start_key = 'start', $end_key = 'end')
     {
