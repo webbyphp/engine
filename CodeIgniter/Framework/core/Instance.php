@@ -1,7 +1,5 @@
 <?php
 
-namespace Base\CodeIgniter;
-
 /**
  * CodeIgniter Instance
  *
@@ -13,7 +11,7 @@ namespace Base\CodeIgniter;
  * @author  Rougin Gutib <rougingutib@gmail.com>
  * @author  Oteng Kwame Appiah-Nti <developerkwame@gmail.com>
  */
-class Instance
+class CI_Instance
 {
     /**
      * Creates an instance of CodeIgniter 
@@ -30,7 +28,7 @@ class Instance
         $server = empty($server) ? $_SERVER : $server;
 
         // $ci is CodeIgniter for short
-        $ci = new CodeIgniter($globals, $server);
+        $ci = new \CI_CodeIgniter($globals, $server);
 
         return $ci->instance();
     }

@@ -2,8 +2,6 @@
 
 namespace Base\Http;
 
-use Base\CodeIgniter\Instance;
-
 /**
  * Request Component
  * 

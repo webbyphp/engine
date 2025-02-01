@@ -11,7 +11,6 @@
 namespace Base\Helpers;
 
 use Exception;
-use Base\CodeIgniter\Instance;
 
 class Format
 {

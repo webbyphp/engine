@@ -12,18 +12,16 @@
  * @author  Rougin Gutib <rougingutib@gmail.com>
  * @author  Oteng Kwame Appiah-Nti <developerkwame@gmail.com>
  * @license MIT
- * @version 0.1
+ * @version 1.0.0
  */
 
-namespace Base\CodeIgniter;
-use Exception;
-
-class CodeIgniter {
+class CI_CodeIgniter
+{
 
     /**
      * Version of this library
      */
-    const VERSION = '0.2';
+    const VERSION = '1.0.0';
 
     /**
      * Internal storage of CodeIgniter 
@@ -170,11 +168,11 @@ class CodeIgniter {
      */
     protected function config()
     {
-        $this->globals['CFG'] =& load_class('Config', 'core');
+        $this->globals['CFG'] = load_class('Config', 'core');
 
-        $this->globals['UNI'] =& load_class('Utf8', 'core');
+        $this->globals['UNI'] = load_class('Utf8', 'core');
 
-        $this->globals['SEC'] =& load_class('Security', 'core');
+        $this->globals['SEC'] = load_class('Security', 'core');
 
         $this->core();
     }

@@ -4,7 +4,6 @@ namespace Base\Http;
 
 use Exception;
 use Base\Http\HttpStatus;
-use Base\CodeIgniter\Instance;
 
 /**
  * Response Component based on CI_Output
