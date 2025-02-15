@@ -1,8 +1,8 @@
-<?php (defined('COREPATH')) OR exit('No direct script access allowed');
+<?php
 
-/* load MX core classes */
-require_once dirname(__FILE__).'/Lang.php';
-require_once dirname(__FILE__).'/Config.php';
+namespace Base\HMVC;
+
+use CI_Instance;
 
 /**
  * Modular Extensions - HMVC
@@ -11,10 +11,10 @@ require_once dirname(__FILE__).'/Config.php';
  * @link	http://codeigniter.com
  *
  * Description:
- * This library extends the CodeIgniter CI_Controller class and creates an application 
- * object allowing use of the HMVC design pattern.
+ * This library replaces the CodeIgniter Controller class
+ * and adds features allowing use of modules and the HMVC design pattern.
  *
- * Install this file as application/third_party/MX/Base.php
+ * Install this file as application/third_party/MX/Controller.php
  *
  * @copyright	Copyright (c) 2015 Wiredesignz
  * @version 	5.5
@@ -37,24 +37,34 @@ require_once dirname(__FILE__).'/Config.php';
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **/
-class CI extends \CI_Controller
+
+#[\AllowDynamicProperties]
+class ModuleController
 {
-	public static $APP;
+	public $autoload = [];
+	public $load;
+	public $use;
+
+	public function __construct() 
+	{
+		$ci = CI_Instance::create();
+
+		$class = str_replace($ci->config->item('controller_suffix'), '', get_class($this));
+		log_message('debug', "{$class} ModuleController Initialized");
+		Modules::$registry[$class] = $this;
+
+		/* copy a loader instance and initialize */
+		$this->load = clone load_class('Loader');
+		$this->use =& $this->load;
+		$this->load->initialize();	
+
+		/* autoload module items */
+		$this->load->_autoloader($this->autoload);
+	}
 	
-	public function __construct() {
-		
-		/* assign the application instance */
-		self::$APP = $this;
-		
-		global $LANG, $CFG;
-		
-		/* re-assign language and config for modules */
-		if ( ! $LANG instanceof MX_Lang) $LANG = new MX_Lang;
-		if ( ! $CFG instanceof MX_Config) $CFG = new MX_Config;
-		
-		parent::__construct();
+	public function __get($class) 
+	{
+		$ci = CI_Instance::create();
+		return $ci->$class;
 	}
 }
-
-/* create the application object */
-new CI;

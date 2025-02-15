@@ -1,16 +1,16 @@
-<?php (defined('COREPATH')) OR exit('No direct script access allowed');
+<?php
 
-(defined('EXT')) OR define('EXT', '.php');
+namespace Base\HMVC;
 
 global $CFG;
+
+/* PHP5 spl_autoload */
+spl_autoload_register('\Base\HMVC\Modules::autoload');
 
 /* get module locations from config settings or use the default module location and offset */
 is_array(Modules::$locations = $CFG->item('modules_locations')) OR Modules::$locations = [
 	COREPATH.'modules/' => '../modules/',
 ];
-
-/* PHP5 spl_autoload */
-spl_autoload_register('Modules::autoload');
 
 /**
  * Modular Extensions - HMVC
@@ -80,7 +80,7 @@ class Modules
 	/** Load a module controller **/
 	public static function load($module) 
 	{
-		(is_array($module)) ? list($module, $params) = with_each($module) : $params = null;	
+		(is_array($module)) ? [$module, $params] = with_each($module) : $params = null;	
 		
 		/* get the requested controller class name */
 		$alias = strtolower(basename($module));
@@ -89,16 +89,16 @@ class Modules
 		if ( ! isset(self::$registry[$alias])) 
 		{
 			/* find the controller */
-			list($class) = CI::$APP->router->locate(explode('/', $module));
+			[$class] = ci()->router->locate(explode('/', $module));
 	
 			/* controller cannot be located */
 			if (empty($class)) return;
 	
 			/* set the module directory */
-			$path = COREPATH.'controllers/'.CI::$APP->router->directory;
+			$path = COREPATH.'controllers/'.ci()->router->directory;
 			
 			/* load the controller class */
-			$class = $class.CI::$APP->config->item('controller_suffix');
+			$class = $class.ci()->config->item('controller_suffix');
 			self::load_file(ucfirst($class), $path);
 			
 			/* create and register the new controller */
@@ -116,25 +116,25 @@ class Modules
 		if (strstr($class, 'CI_') OR strstr($class, config_item('subclass_prefix'))) return;
 
 		/* autoload Modular Extensions MX core classes */
-		if (strstr($class, 'MX_')) 
-		{
-			if (is_file($location = dirname(__FILE__).'/'.substr($class, 3).EXT)) 
-			{
-				include_once $location;
-				return;
-			}
-			show_error('Failed to load MX core class: '.$class);
-		}
+		// if (strstr($class, 'MX_')) 
+		// {
+		// 	if (is_file($location = dirname(__FILE__).'/'.substr($class, 3).PHPEXT)) 
+		// 	{
+		// 		include_once $location;
+		// 		return;
+		// 	}
+		// 	show_error('Failed to load MX core class: '.$class);
+		// }
 		
 		/* autoload core classes */
-		if(is_file($location = COREPATH.'core/'.ucfirst($class).EXT)) 
+		if(is_file($location = COREPATH.'core/'.ucfirst($class).PHPEXT)) 
 		{
 			include_once $location;
 			return;
 		}		
 		
 		/* autoload library classes */
-		if(is_file($location = COREPATH.'libraries/'.ucfirst($class).EXT)) 
+		if(is_file($location = COREPATH.'libraries/'.ucfirst($class).PHPEXT)) 
 		{
 			include_once $location;
 			return;
@@ -144,8 +144,8 @@ class Modules
 	/** Load a module file **/
 	public static function load_file($file, $path, $type = 'other', $result = true)	
 	{
-		$file = str_replace(EXT, '', $file);		
-		$location = $path.$file.EXT;
+		$file = str_replace(PHPEXT, '', $file);		
+		$location = $path.$file.PHPEXT;
 		
 		if ($type === 'other') 
 		{			
@@ -181,7 +181,7 @@ class Modules
 		$segments = explode('/', $file);
 
 		$file = array_pop($segments);
-		$file_ext = (pathinfo($file, PATHINFO_EXTENSION)) ? $file : $file.EXT;
+		$file_ext = (pathinfo($file, PATHINFO_EXTENSION)) ? $file : $file.PHPEXT;
 		
 		$path = ltrim(implode('/', $segments).'/', '/');	
 		$module ? $modules[$module] = $path : $modules = [];
@@ -191,7 +191,7 @@ class Modules
 			$modules[array_shift($segments)] = ltrim(implode('/', $segments).'/','/');
 		}	
 
-		foreach (Modules::$locations as $location => $offset) 
+		foreach (\Base\HMVC\Modules::$locations as $location => $offset) 
 		{					
 			foreach($modules as $module => $subpath) 
 			{			
