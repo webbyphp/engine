@@ -2,10 +2,20 @@
 defined('COREPATH') or exit('No direct script access allowed');
 
 /* load the MX_Router class */
-require_once ENGINEPATH . "MX/Router.php";
+// require_once ENGINEPATH . "MX/Router.php";
 
-class Base_Router extends MX_Router
+use Base\HMVC\Modules;
+
+class Base_Router extends CI_Router
 {
+
+    public $router;
+
+	public $module;
+
+	private $located = 0;
+	
+	private $controller;
 
     /**
      * Construct
@@ -14,6 +24,11 @@ class Base_Router extends MX_Router
     {
         parent::__construct();
     }
+
+    public function fetch_module()
+	{
+		return $this->module;
+	}
 
     /**
      * Set the route mapping
@@ -78,14 +93,14 @@ class Base_Router extends MX_Router
                         if (is_dir($key . $entry)) {
 
                             // Use route in modules config directory
-                            $rfile = Modules::find('Routes' . EXT, $entry, 'Config/');
+                            $rfile = Modules::find('Routes' . PHPEXT, $entry, 'Config/');
 
                             if ($rfile[0]) {
                                 include($rfile[0] . $rfile[1]);
                             }
 
                             // Use route types and their corresponding file names in modules routes directory
-                            $routeTypes = ['Routes/Web' . EXT, 'Routes/Api' . EXT, 'Routes/Console' . EXT];
+                            $routeTypes = ['Routes/Web' . PHPEXT, 'Routes/Api' . PHPEXT, 'Routes/Console' . PHPEXT];
 
                             // Loop through route types and include corresponding files if found
                             foreach ($routeTypes as $routeType) {
@@ -199,6 +214,8 @@ class Base_Router extends MX_Router
                     $val = preg_replace('#^' . $key . '$#', $val, $uri);
                 }
 
+                $val = $val ??= '';
+
                 $this->_set_request(explode('/', $val));
                 return;
             }
@@ -234,6 +251,318 @@ class Base_Router extends MX_Router
 
         return $key;
     }
+
+    protected function _set_request($segments = [])
+	{
+		if ($this->translate_uri_dashes === true)
+		{
+			foreach(range(0, 2) as $v)
+			{
+				isset($segments[$v]) && $segments[$v] = str_replace('-', '_', $segments[$v]);
+			}
+		}
+		
+		$segments = $this->locate($segments);
+
+		if($this->located == -1)
+		{
+			$this->_set_404override_controller();
+			return;
+		}
+
+		if(empty($segments))
+		{
+			$this->_set_default_controller();
+			return;
+		}
+
+		$this->set_class($segments[0]);
+		
+		if (isset($segments[1]))
+		{
+			$this->set_method($segments[1]);
+		}
+		else
+		{
+			$segments[1] = 'index';
+		}
+       
+		array_unshift($segments, null);
+		unset($segments[0]);
+		$this->uri->rsegments = $segments;
+	}
+	
+	protected function _set_404override_controller()
+	{
+		$this->_set_module_path($this->routes['404_override']);
+	}
+
+	protected function _set_default_controller()
+	{
+		if (empty($this->directory))
+		{
+			/* set the default controller module path */
+			$this->_set_module_path($this->default_controller);
+		}
+
+		parent::_set_default_controller();
+		
+		if(empty($this->class))
+		{
+			$this->_set_404override_controller();
+		}
+	}
+
+	/** Locate the controller **/
+	public function locate($segments)
+	{
+		$this->located = 0;
+		$ext = $this->config->item('controller_suffix').PHPEXT;
+		$commandsDirectory = "Commands";
+		$controllersDirectory = "Controllers";
+
+		/* use module route if available */
+		if (isset($segments[0]) && $routes = Modules::parse_routes($segments[0], implode('/', $segments)))
+		{
+			$segments = $routes;
+		}
+
+		/* get the segments array elements */
+		list($module, $directory, $controller) = array_pad($segments, 3, null);
+
+		if ($module === $controllersDirectory) {
+			list($module, $directory, $controller) = array_pad($segments, 3, null);
+		}
+
+		if ($module === $commandsDirectory) {
+			list($module, $controller) = array_pad($segments, 2, null);
+		}
+
+		if (str_contains((string) $directory, 'command')) {
+			$directory = str_replace('command','Command', (string) $directory);
+			$controller = str_replace('command','Command', (string) $controller);
+		}
+
+		$module ??= '';
+		$directory ??= '';
+		$controller ??= '';
+		
+		/* check modules */
+		foreach (Modules::$locations as $location => $offset)
+		{
+
+			$hasCommand = str_contains((string) $directory, 'Command');
+
+			if ($module === $controllersDirectory) {
+				$location = APPROOT;
+				$source = $location . ucfirst($module) . '/';
+				$controller_location = ucfirst($module) . '/';
+			} else if ($module === $commandsDirectory) {
+				$source = $location . ucfirst($module) . '/';
+				$controller_location = ucfirst($module) . '/';
+			} else if ($hasCommand) {
+				$source = $location . ucfirst($module) . '/Commands/';
+				$controller_location = ucfirst($module) . '/Commands/';
+				$controller = $controller ?? '';
+			} else {
+				$source = $location . ucfirst($module) . '/Controllers/';
+				$controller_location = ucfirst($module) . '/Controllers/';
+				$controller = $controller ?? '';
+			}
+
+			/* module exists? */
+			if (is_dir($source))
+			{
+				$this->module = ucfirst($module);
+				$this->directory = $offset . $controller_location;
+				$this->controller = $controller;
+
+				if ($module === $controllersDirectory) {
+					$offset = str_replace('/Console/','/Controllers/', $offset);
+					$this->directory = $offset;
+				}
+
+				/* module sub-controller exists? */
+				if ($directory)
+				{
+					/* App/Controllers sub-directory controller exists? */
+					if (is_file($source.ucfirst($directory).'/'.ucfirst($controller).$ext))
+					{	
+						$source .= ucfirst($directory).'/';
+						$this->directory .= ucfirst($directory).'/';
+
+						/* verify sub-directory controller exists? */
+						if ($controller)
+						{
+							if (is_file($source.ucfirst($controller).$ext))
+							{
+								$this->located = 3;
+								return array_slice($segments, 2);
+							}
+							else $this->located = -1;
+						}
+					}
+					/* module sub-directory exists? */
+					else if (is_dir($source.ucfirst($directory).'/'))
+					{	
+						$source .= ucfirst($directory).'/';
+						$this->directory .= ucfirst($directory).'/';
+
+						/* module sub-directory controller exists? */
+						if ($controller)
+						{
+							if (is_file($source.ucfirst($controller).$ext))
+							{
+								$this->located = 3;
+								return array_slice($segments, 2);
+							}
+							else $this->located = -1;
+						}
+					}
+					else if (is_file($source.ucfirst($directory).$ext))
+					{
+						$this->located = 2;
+						return array_slice($segments, 1);
+					}
+					else $this->located = -1;
+				}
+				
+				/* module controller exists? */
+				if (is_file($source.ucfirst($module).$ext))
+				{
+					$this->located = 1;
+					return $segments;
+				}
+
+				/* controller exists in commands directory? */
+				if (is_file($source . '/' . ucfirst($this->controller) . $ext)) {
+					$this->located = 1;
+					return $segments;
+				}
+			}
+		}
+		
+		if ( !empty($this->directory)) return;
+
+		// /* controller exists in App/Controllers directory? */
+		// if (is_file(APPROOT . 'Controllers/' . ucfirst($module) . $ext)) {
+		// 	$directory = $module;
+		// }
+
+		/* controller exists in commands directory? */
+		if (is_file(COREPATH . 'controllers/'.$commandsDirectory.'/' . ucfirst($module) . $ext)) {
+			$directory = $module;
+		}
+
+		/* application sub-directory controller exists? */
+		if ($directory)
+		{
+
+			/* controller exists in App/Controllers sub-sub-directory? */
+			if ($controller)
+			{
+				if (is_file(APPROOT.'Controllers/'.ucfirst($module).'/'.ucfirst($directory).'/'.ucfirst($controller).$ext))
+				{
+					$this->directory = ucfirst($module).'/'.ucfirst($directory).'/';
+					return array_slice($segments, 2);
+				}
+			}
+
+			if (is_file(COREPATH.'controllers/'.$module.'/'.ucfirst($directory).$ext))
+			{
+				$this->directory = $module.'/';
+				return array_slice($segments, 1);
+			}
+
+			if (is_file(COREPATH.'controllers/'.$commandsDirectory.'/'. ucfirst($directory) . $ext)) {
+				$this->directory = $commandsDirectory.'/';
+				return $segments;
+			}
+
+			/* application sub-sub-directory controller exists? */
+			if ($controller)
+			{
+				if (is_file(COREPATH.'controllers/'.$module.'/'.$directory.'/'.ucfirst($controller).$ext))
+				{
+					$this->directory = $module.'/'.$directory.'/';
+					return array_slice($segments, 2);
+				}
+			}
+
+		}
+
+		/* controller exists in App/Controllers sub-directory? */
+		if (is_dir(APPROOT . 'Controllers/' . ucfirst($module) .'/')) {
+			$this->directory = ucfirst($module).'/';
+			return array_slice($segments, 1);
+		}
+
+		/* controller exists in App/Controllers directory? */
+		if (is_file(APPROOT . 'Controllers/' . ucfirst($module) . $ext)) {
+			return $segments;
+		}
+
+		/* application controllers sub-directory exists? */
+		if (is_dir(COREPATH.'controllers/'.$module.'/'))
+		{
+			$this->directory = $module.'/';
+			return array_slice($segments, 1);
+		}
+
+		/* application controller exists? */
+		if (is_file(COREPATH.'controllers/'.ucfirst($module).$ext))
+		{
+			return $segments;
+		}
+		
+		$this->located = -1;
+	}
+
+	/* set module path */
+	protected function _set_module_path(&$_route)
+	{
+		if ( ! empty($_route))
+		{
+			// Are module/directory/controller/method segments being specified?
+			$sgs = sscanf($_route, '%[^/]/%[^/]/%[^/]/%s', $module, $directory, $class, $method);
+
+			// set the module/controller directory location if found
+			if ($this->locate([$module, $directory, $class]))
+			{
+				//reset to class/method
+				switch ($sgs)
+				{
+					case 1:	$_route = $module.'/index';
+						break;
+					case 2: $_route = ($this->located < 2) ? $module.'/'.$directory : $directory.'/index';
+						break;
+					case 3: $_route = ($this->located == 2) ? $directory.'/'.$class : $class.'/index';
+						break;
+					case 4: $_route = ($this->located == 3) ? $class.'/'.$method : $method.'/index';
+						break;
+				}
+			}
+		}
+	}
+
+	public function set_class($class)
+	{
+		$suffix = strval($this->config->item('controller_suffix'));
+		
+		$string_position = !empty($suffix) ? strpos($class, $suffix) : false;
+		
+		$class = str_contains($class,'command')
+			? ucfirst(str_replace('command', 'Command', $class))
+			: $class;
+
+		if ($string_position === false)
+		{
+			$class .= $suffix;
+		}
+		
+		parent::set_class($class);
+
+	}
 
 }
 /* end of file Base_Router.php */
