@@ -4,6 +4,11 @@ namespace Base\Cache;
 
 class Cache extends \Base_Output
 {
+    /**
+     * CodeIgniter instance
+     *
+     * @var object
+     */
     protected $ci;
 
     private $thisDirectory = 'files';
@@ -250,7 +255,7 @@ class Cache extends \Base_Output
         return $items;
     }
 
-     /**
+    /**
      * Retrieve's the cached item
      *
      * @param string $key containing the identifier of the item to retrieve
