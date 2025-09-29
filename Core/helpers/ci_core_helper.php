@@ -323,7 +323,7 @@ if ( ! function_exists('url'))
             $uri = route()->named($uri);
         }
 
-        $uri = dot2slash($uri);
+        $uri = dotToslash($uri);
 
         if (!empty($param) && $protocol === null) {
             return site_url($uri.'/'. $param);
@@ -381,7 +381,7 @@ if ( ! function_exists('is_active'))
      */
     function is_active($link, $class = null)
     {
-        $link = dot2slash($link);
+        $link = dotToslash($link);
 
         if ($class != null) {
             return ci()->uri->uri_string() == $link ? $class : '';

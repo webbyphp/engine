@@ -208,7 +208,7 @@ class Route
 	 */
 	public static function toSlash($string): string
 	{
-		$string = is_array($string) ? $string : dot2slash($string);
+		$string = is_array($string) ? $string : dotToslash($string);
 
 		if (strstr($string, '.')) {
 			$string = str_replace('.', '/', $string);

@@ -43,7 +43,7 @@ if ( ! function_exists('view'))
      */
     function view($view_path, $view_data = [], $return = false)
     {
-        $view_path = dot2slash($view_path);
+        $view_path = dotToslash($view_path);
 
         if (config('view')['view_engine'] === '') {
             return app()->use->view($view_path, $view_data, $return);
@@ -103,7 +103,7 @@ if ( ! function_exists('mail_view'))
         $layout = null;
         $view = null;
 
-        $mail_view_path = dot2slash($mail_view_path);
+        $mail_view_path = dotToslash($mail_view_path);
 
         if (strstr($mail_view_path, '::')) {
             $mail_view_path = strtoarr('::', $mail_view_path);

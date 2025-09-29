@@ -114,7 +114,7 @@ if ( ! function_exists('resource'))
      */
     function resource($path = null, $item = null)
     {
-        $path = dot2slash($path);
+        $path = dotToslash($path);
 
         if ( ! is_null($path)) {
             $path = 'resources' . DIRECTORY_SEPARATOR . $path;

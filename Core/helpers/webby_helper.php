@@ -410,62 +410,75 @@ if ( ! function_exists('cache'))
 
 /* ------------------------------- String Functions ---------------------------------*/
 
-if ( ! function_exists('dot2slash')) 
+if ( ! function_exists('dotToslash'))
 {
     /**
-     * Check if dot exists in string
-     * and replace with forward slash
+     * Replace dots with forward slashes in a string.
      *
-     * @param string $string
-     * @return string
+     * @param string $string The input string
+     * @return string The string with dots replaced by forward slashes
      */
-    function dot2slash(string $string)
+    function dotToslash(string $string): string
     {
-        if (strstr($string, '.')) {
-            $string = str_replace('.', '/', $string);
-        }
-
-        return $string;
+        return str_replace('.', '/', $string);
     }
 }
 
-if ( ! function_exists('has_dot')) 
+if ( ! function_exists('convertDotsToSlashes'))
 {
+    /**
+     * Recursively convert dots to forward slashes in strings, arrays, or mixed data.
+     * 
+     * This function handles:
+     * - Strings: converts dots to slashes
+     * - Arrays: recursively processes all values
+     * - Other types: returns unchanged
+     *
+     * @param mixed $input The input data (string, array, or other)
+     * @return mixed The processed data with dots converted to slashes
+     */
+    function convertDotsToSlashes($input)
+    {
+        if (is_string($input)) {
+            return dotToslash($input);
+        }
+        
+        if (is_array($input)) {
+            return array_map('convertDotsToSlashes', $input);
+        }
+        
+        // Return other types unchanged
+        return $input;
+    }
+}
+
+if ( ! function_exists('convertDotsInArray')) 
+{
+    // Alternative version with more specific typing for arrays
 
     /**
-     * Check if dot exists in string
-     * Also checks if string is array
-     * and replace with forward slash
-     * 
-     * 
+     * Convert dots to slashes in an array of strings.
+     *
+     * @param array<string> $strings Array of strings to process
+     * @return array<string> Array with dots converted to slashes
+     */
+    function convertDotsInArray(array $strings): array
+    {
+        return array_map('dotToslash', $strings);
+    }
+}
+
+
+if ( ! function_exists('has_dot')) 
+{
+    /**
+     * Alias to convertDotsToSlashes() instead
      * @param mixed $string
      * @return mixed
      */
-    function has_dot($string)
+    function has_dot(mixed $string): mixed
     {
-        $output = [];
-
-        if (is_array($string)) {
-
-            foreach ($string as $key => $value)
-            {
-                
-                if (is_int($key))
-                {
-                    $output[] = dot2slash($value);
-                }
-                else
-                {
-                    $output[] = dot2slash($value);
-                }
-            }
-        }
-
-        if (!is_array($string)) {
-            $output = dot2slash($string);
-        }
-
-        return $output;
+        return convertDotsToSlashes($string);
     }
 }
 
