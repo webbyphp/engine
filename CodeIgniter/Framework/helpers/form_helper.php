@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -748,6 +749,11 @@ if ( ! function_exists('set_select'))
 		{
 			return ($default === true) ? ' selected="selected"' : '';
 		}
+
+		// elseif(app()->session->tempdata($field))
+		// {
+		// 	return ($default === true) ? ' selected="selected"' : '';
+		// }
 
 		$value = (string) $value;
 		if (is_array($input))
