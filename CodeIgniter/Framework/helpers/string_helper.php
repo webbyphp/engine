@@ -199,7 +199,7 @@ if ( ! function_exists('random_string'))
 	 *
 	 * @param	string	type of random string.  basic, alpha, alnum, numeric, nozero, unique, md5, encrypt and sha1
 	 * @param	int	number of characters
-	 * @return	string
+	 * @return	mixed
 	 */
 	function random_string($type = 'alnum', $len = 8)
 	{
@@ -285,6 +285,88 @@ if ( ! function_exists('alternator'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('camel_case'))
+{
+	/**
+	 *  Convert a string to camel case
+	 *
+	 *  @param     string    $str
+	 *  @return    string
+	 */
+	function camel_case($str)
+	{
+		static $camel_cache = [];
+
+		if (isset($camel_cache[$str]))
+		{
+			return $camel_cache[$str];
+		}
+
+		return $camel_cache[$str] = lcfirst(studly_case($str));
+	}
+}
+
+// ------------------------------------------------------------------------
+
+
+
+if ( ! function_exists('charset'))
+{
+	/**
+	 *  Get the accepted character sets or a particular character set
+	 *
+	 *  @param     string         $key
+	 *  @return    array|boolean
+	 */
+	function charset($key = NULL)
+	{
+		if (is_null($key))
+		{
+			return app('user_agent')->charsets();
+		}
+
+		return app('user_agent')->accept_charset($key);
+	}
+}
+
+if ( ! function_exists('kebab_case'))
+{
+	/**
+	 *  Convert a string to kebab case
+	 *
+	 *  @param     string    $str
+	 *  @return    string
+	 */
+	function kebab_case($str)
+	{
+		return snake_case($str, '-');
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('length'))
+{
+	/**
+     *  Return the length of the given string
+     *
+     *  @param     string    $value
+     *  @param     string    $encoding
+     *  @return    integer
+     */
+	function length($value, $encoding = NULL)
+	{
+		if ( ! is_null($encoding))
+		{
+			return mb_strlen($value, $encoding);
+		}
+
+		return mb_strlen($value);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('repeater'))
 {
 	/**
@@ -300,5 +382,427 @@ if ( ! function_exists('repeater'))
 	function repeater($data, $num = 1)
 	{
 		return ($num > 0) ? str_repeat($data, $num) : '';
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('slug_case'))
+{
+	/**
+	 *  Convert the given string to slug case
+	 *
+	 *  @param     string     $value
+	 *  @param     string     $separator
+	 *  @param     boolean    $lowercase
+	 *  @return    string
+	 */
+	function slug_case($str, $separator = '-', $lowercase = true)
+	{
+		$str = helper('text.convert_accented_characters', [$str]);
+
+		return helper('url.url_title', [$str, $separator, $lowercase]);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('snake_case'))
+{
+	/**
+	 *  Convert a string to snake case
+	 *
+	 *  @param     string    $str
+	 *  @param     string    $delimiter
+	 *  @return    string
+	 */
+	function snake_case($str, $delimiter = '_')
+	{
+		static $snake_cache = [];
+		$key = $str.$delimiter;
+
+		if (isset($snake_cache[$key]))
+		{
+			return $snake_cache[$key];
+		}
+
+		if ( ! ctype_lower($str))
+		{
+			$str = preg_replace('/\s+/u', '', $str);
+			$str = preg_replace('/(.)(?=[A-Z])/u', '$1'.$delimiter, $str);
+		}
+
+		return $snake_cache[$key] = mb_strtolower($str, 'UTF-8');
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_after'))
+{
+	/**
+	 *  Return the remainder of a string after a given value
+	 *
+	 *  @param     string    $str
+	 *  @param     string    $search
+	 *  @return    string
+	 */
+	function str_after($str, $search)
+	{
+		if ( ! is_bool(strpos($str, $search)))
+		{
+			return substr($str, strpos($str, $search) + strlen($search));
+		}
+
+		return $str;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_after_last'))
+{
+	/**
+	 *  Return the remainder of a string after the last given value
+	 *
+	 *  @param     string    $str
+	 *  @param     string    $search
+	 *  @return    string
+	 */
+	function str_after_last($str, $search)
+	{
+		if ( ! is_bool(strrevpos($str, $search)))
+		{
+			return substr($str, strrevpos($str, $search) + strlen($search));
+		}
+
+		return $str;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_before'))
+{
+	/**
+	 *  Return the string before the given value
+	 *
+	 *  @param     string    $str
+	 *  @param     string    $search
+	 *  @return    string
+	 */
+	function str_before($str, $search)
+	{
+		return substr($str, 0, strpos($str, $search));
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_before_last'))
+{
+	/**
+	 *  Return the string before the last given value
+	 *
+	 *  @param     string    $str
+	 *  @param     string    $search
+	 *  @return    string
+	 */
+	function str_before_last($str, $search)
+	{
+		return substr($str, 0, strrevpos($str, $search));
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_between'))
+{
+	/**
+	 *  Return the string between the given values
+	 *
+	 *  @param     string    $str
+	 *  @param     string    $search1
+	 *  @param     string    $search2
+	 *  @return    string
+	 */
+	function str_between($str, $search1, $search2)
+	{
+		return str_before(str_after($str, $search1), $search2);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_between_last'))
+{
+	/**
+	 *  Return the string between the last given values
+	 *
+	 *  @param     string    $str
+	 *  @param     string    $search1
+	 *  @param     string    $search2
+	 *  @return    string
+	 */
+	function str_between_last($str, $search1, $search2)
+	{
+		return str_after_last(str_before_last($str, $search2), $search1);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_contains'))
+{
+	/**
+	 *  Determine if a given string contains a given substring
+	 *
+	 *  @param     string          $haystack
+	 *  @param     string|array    $needles
+	 *  @return    boolean
+	 */
+	function str_contains($haystack, $needles)
+	{
+		foreach ((array) $needles as $needle)
+		{
+			if ($needle != '' && mb_strpos($haystack, $needle) !== false)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_finish'))
+{
+	/**
+	 *  Cap a string with a single instance of a given value
+	 *
+	 *  @param     string    $str
+	 *  @param     string    $cap
+	 *  @return    string
+	 */
+	function str_finish($str, $cap)
+	{
+		$quoted = preg_quote($cap, '/');
+
+		return preg_replace('/(?:'.$quoted.')+$/u', '', $str).$cap;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_is'))
+{
+	/**
+	 *  Determine if a given string matches a given pattern
+	 *
+	 *  @param     string    $pattern
+	 *  @param     string    $value
+	 *  @return    boolean
+	 */
+	function str_is($pattern, $value)
+	{
+		if ($pattern == $value)
+		{
+			return true;
+		}
+
+		$pattern = preg_quote($pattern, '#');
+
+		//	Asterisks are translated into zero-or-more regular expression wildcards
+		//	to make it convenient to check if the strings starts with the given
+		//	pattern such as "library/*", making any string check convenient.
+		$pattern = str_replace('\*', '.*', $pattern);
+
+		return (bool) preg_match('#^'.$pattern.'\z#u', $value);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_limit'))
+{
+	/**
+	 *  Ellipsize a string
+	 *
+	 *  @param     string     $str
+	 *  @param     integer    $max_length
+	 *  @param     integer    $position
+	 *  @param     string     $ellipsis
+	 *  @return    string
+	 */
+	function str_limit($str, $max_length = 100, $position = 1, $ellipsis = '&hellip;')
+	{
+		return helper('text.ellipsize', [$str, $max_length, $position, $ellipsis]);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_random'))
+{
+	/**
+	 *  Create a "Random" String
+	 *
+	 *  @param     integer    $length
+	 *  @param     string     $type
+	 *  @return    string
+	 */
+	function str_random($length = 16, $type = 'alnum')
+	{
+		return helper('string.random_string', [$type, $length]);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('int_random'))
+{
+	/**
+	 *  Create a "Random" Integer
+	 *
+	 *  @param     integer    $length
+	 *  @param     string     $type
+	 *  @return    string
+	 */
+	function int_random($length = 6, $str = false){
+		if (is_bool($str)) {
+			$chars = ($str) ? '123456789ABCDEFGHJKLMNPQRSTUVWXYZ' : '0123456789' ;
+		} else {
+			$chars = $str;
+		}
+		
+      $clen   = strlen( $chars )-1;
+      $id  = '';
+      for ($i = 0; $i < $length; $i++) {
+              $id .= $chars[mt_rand(0,$clen)];
+      }
+      return ($id);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('str_replace_array'))
+{
+	/**
+	 *  Replace a given value in the string sequentially with an array
+	 *
+	 *  @param     string    $search
+	 *  @param     array     $replace
+	 *  @param     string    $subject
+	 *  @return    string
+	 */
+	function str_replace_array($search, array $replace, $subject)
+	{
+		foreach ($replace as $value)
+		{
+			$subject = preg_replace('/'.$search.'/', $value, $subject, 1);
+		}
+
+		return $subject;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('strrevpos'))
+{
+	/**
+	 *  Find the position of the last occurrence of a substring in a string
+	 *
+	 *  @param     string         $haystack
+	 *  @param     string         $needle
+	 *  @return    string|boolean
+	 */
+	function strrevpos($haystack, $needle)
+	{
+		$revpos = strpos(strrev($haystack), strrev($needle));
+
+		if ($revpos !== false)
+		{
+			return strlen($haystack) - $revpos - strlen($needle);
+		}
+
+		return false;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('studly_case'))
+{
+	/**
+	 *  Convert a string to studly caps case
+	 *
+	 *  @param     string    $str
+	 *  @return    string
+	 */
+	function studly_case($str)
+	{
+		static $studly_cache = [];
+		$key = $str;
+
+		if (isset($studly_cache[$key]))
+		{
+			return $studly_cache[$key];
+		}
+
+		$value = ucwords(str_replace(['-', '_'], ' ', $str));
+
+		return str_replace(' ', '', $value);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('title_case'))
+{
+	/**
+	 *  Convert the given string to title case
+	 *
+	 *  @param     string    $str
+	 *  @return    string
+	 */
+	function title_case($str)
+	{
+		return mb_convert_case($str, MB_CASE_TITLE, 'UTF-8');
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('upper_case'))
+{
+	/**
+	 *  Convert the given string to upper case
+	 *
+	 *  @param     string    $str
+	 *  @return    string
+	 */
+	function upper_case($str)
+	{
+		return strtoupper($str);
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('lower_case'))
+{
+	/**
+	 *  Convert the given string to lower case
+	 *
+	 *  @param     string    $str
+	 *  @return    string
+	 */
+	function lower_case($str)
+	{
+		return strtolower($str);
 	}
 }

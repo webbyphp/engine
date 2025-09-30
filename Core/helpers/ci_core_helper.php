@@ -1267,6 +1267,30 @@ if ( ! function_exists('use_helper'))
 
         ci()->load->helper($helper);
     }
+
+    /**
+	 *  Load any CI3 helper with dot notation
+	 *
+	 *  @param     string    $name
+	 *  @param     array     $params
+	 *  @return    mixed
+	 */
+	function helper($name, $params)
+	{
+		//	Separate 'file' and 'helper' by dot notation
+		[$helper, $function] = array_pad(
+            explode('.', $name), 2, null
+        );
+
+		//	If using dot notation
+		if ($function !== null)
+		{
+			get_instance()->load->helper($helper);
+			$helper = $function;
+		}
+
+		return call_user_func_array($helper, $params);
+    }
 }
 
 if ( ! function_exists('use_rule')) 
