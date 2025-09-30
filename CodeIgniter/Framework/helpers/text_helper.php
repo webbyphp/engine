@@ -263,7 +263,7 @@ if ( ! function_exists('word_censor'))
 	 * @param	string	the optional replacement value
 	 * @return	string
 	 */
-	function word_censor($str = '', $censored, $replacement = '')
+	function word_censor($str = '', $censored = [], $replacement = '')
 	{
 		if ( ! is_array($censored))
 		{
@@ -379,7 +379,7 @@ if ( ! function_exists('highlight_phrase'))
 	 * @param	string	$tag_close	the closing tag to end the phrase with
 	 * @return	string
 	 */
-	function highlight_phrase($str = '', $phrase, $tag_open = '<mark>', $tag_close = '</mark>')
+	function highlight_phrase($str = '', $phrase = '', $tag_open = '<mark>', $tag_close = '</mark>')
 	{
 		return ($str !== '' && $phrase !== '')
 			? preg_replace('/('.preg_quote($phrase, '/').')/i'.(UTF8_ENABLED ? 'u' : ''), $tag_open.'\\1'.$tag_close, $str)
@@ -543,7 +543,7 @@ if ( ! function_exists('ellipsize'))
 	 * @param	string	ellipsis ; Default '...'
 	 * @return	string	ellipsized string
 	 */
-	function ellipsize($str = '', $max_length, $position = 1, $ellipsis = '&hellip;')
+	function ellipsize($str = '', $max_length = '', $position = 1, $ellipsis = '&hellip;')
 	{
 		// Strip tags
 		$str = trim(strip_tags($str));

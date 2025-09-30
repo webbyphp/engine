@@ -62,7 +62,7 @@ if ( ! function_exists('directory_map'))
 	 * @param	int	$directory_depth	Depth of directories to traverse
 	 *						(0 = fully recursive, 1 = current dir, etc)
 	 * @param	bool	$hidden			Whether to show hidden files
-	 * @return	array
+	 * @return	array|bool
 	 */
 	function directory_map($source_dir, $directory_depth = 0, $hidden = false)
 	{
