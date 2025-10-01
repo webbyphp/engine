@@ -971,14 +971,14 @@ if ( ! function_exists('ends_with'))
 if ( ! function_exists('arrayz')) 
 {
     /**
-     *  Instantiate the Arrayz Class
+     * Helper function for Arrayz Class
      *
-     *  @param     array     $array
-     *  @return    object
+     * @param array $items
+     * @return Base\Helpers\Arrayz
      */
-    function arrayz($array = [])
+    function arrayz(mixed $items = []): Base\Helpers\Arrayz
     {
-        return(new \Base\Helpers\Arrayz($array));
+        return Base\Helpers\Arrayz::make($items);
     }
 }
 
