@@ -200,7 +200,7 @@ if ( ! function_exists('array_dot'))
 		{
 			if (is_array($value))
 			{
-				$results = array_merge($results, dot($value, $prepend.$key.'.'));
+				$results = array_merge($results, array_dot($value, $prepend.$key.'.'));
 			}
 			else
 			{
