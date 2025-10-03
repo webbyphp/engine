@@ -1946,3 +1946,468 @@ if ( ! function_exists('function_usable'))
 		return false;
 	}
 }
+
+// -------------------------------------- Diety Functions ---------------------------
+
+// Global container instance
+$GLOBALS['service_container'] = null;
+
+if ( ! function_exists('container')) 
+{
+	/**
+	 * Get the global service container instance
+	 * 
+	 * @return CI_ServiceContainer
+	 */
+	function container(): CI_ServiceContainer
+	{
+		if ( ! isset($GLOBALS['service_container'])) {
+			// Load the ServiceContainer class if not already loaded
+			if ( ! class_exists('CI_ServiceContainer', FALSE)) {
+				require_once BASEPATH . 'core/ServiceContainer.php';
+			}
+			$GLOBALS['service_container'] = new CI_ServiceContainer();
+		}
+
+		return $GLOBALS['service_container'];
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('ci')) 
+{
+    /**
+     * CodeIgniter Instance function
+     * Powered with loading internal libraries
+     * in an expressive manner
+     * 
+     * @param string $class
+     * @param array $params
+     * @return object CodeIgniter Instance
+     */
+    function ci(?string $class = null, array $params = [])
+    {
+        if ($class === null) {
+            return get_instance();
+        }
+
+        if ($class === 'database') {
+            get_instance()->use->database();
+            return get_instance()->db;
+        }
+
+        //	Special cases 'user_agent' and 'unit_test' are loaded
+		//	with diferent names
+		if ($class !== 'user_agent') {
+            $library = ($class == 'unit_test') ? 'unit' : $class;
+		} else {
+            $library = 'agent';
+		}
+
+        $ci = ci();
+
+        //	Library not loaded
+		if ( ! isset($ci->$library)) {
+            
+            //	Special case 'cache' is a driver
+			if ($class == 'cache') {
+				$ci->load->driver($class, $params);
+            }
+            
+            // Let's guess it's a library
+			$ci->load->library($class, $params);
+        } 
+        
+        //	Special name for 'unit_test' is 'unit'
+		if ($class == 'unit_test') {
+			return $ci->unit;
+		}
+		//	Special name for 'user_agent' is 'agent'
+        elseif ($class == 'user_agent') {
+			return $ci->agent;
+		}	
+        
+        if (! ends_with($class, '_model') || !ends_with($class, '_m')) {
+			return $ci->$class;
+		} else {
+			$class = ($params == []) ? $class : $params ;
+			return $ci->$class;
+        }
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('app')) 
+{
+	/**
+	 * Updated app helper function
+	 * 
+	 * @param string|null $abstract
+	 * @param array $parameters
+	 * @return mixed
+	 */
+	function app(?string $abstract = null, array $parameters = []): mixed
+	{
+		// If no parameters, return CI instance for backward compatibility
+		if ($abstract === null) {
+			return get_instance();
+		}
+
+		// Special case: return container instance
+		if ($abstract === 'container' || $abstract === 'service_container') {
+			return container();
+		}
+
+		$container = container();
+		$ci = null;
+
+		try {
+        	return $container->get($abstract, $parameters);
+		} catch (Exception $e) {
+			$ci = ci();
+		}
+
+		// Handle special CI cases first (for performance)
+		switch ($abstract) {
+			case 'database':
+				if (!isset($ci->db)) {
+					$ci->load->database();
+				}
+				return $ci->db;
+
+			case 'load':
+				return $ci->load;
+
+			case 'input':
+				return $ci->input;
+
+			case 'output':
+				return $ci->output;
+
+			case 'config':
+				return $ci->config;
+
+			case 'session':
+				return $ci->session;
+		}
+
+		// Fallback to CI instance properties
+		if (isset($ci->{$abstract})) {
+			return $ci->{$abstract};
+		}
+
+		$getClass = explode('/', has_dot($abstract));
+		$classType = count($getClass);
+		$className = ($classType == 2) ? $getClass[1]: $getClass[0];
+
+		if (
+			ends_with($abstract, '_model') 
+			|| ends_with($abstract, '_m')
+			|| contains('Model', $abstract)) {
+
+			use_model($abstract); // load model
+
+			return ci()->{$className}; // return model object
+		}
+
+		if (contains('Action', $abstract)) {
+			use_action($abstract); // load action
+			return $ci->{$className}; // return action object
+		}
+
+		// Try direct class instantiation
+		if (class_exists($abstract)) {
+			return empty($parameters) ? new $abstract() : new $abstract($parameters);
+		}
+
+		// Try container resolution first
+		if ($container->has($abstract)) {
+			return $container->get($abstract, $parameters);
+		}
+
+		// let's assume it's a model without
+		// the above conditions
+		// If it does not exists we will load a library
+		// Or discover it as a service
+		// Not a good implementation but it works
+		try {
+			$ci->load->model(has_dot($abstract));
+		} catch (Exception $e) {
+			(!empty($ci->{$abstract}) && is_object($ci->{$abstract})) 
+				? $ci->{$abstract} 
+				: $ci->load->library(has_dot($abstract));
+		}
+
+        if (!is_object($ci->{$className})) {
+            return ci(has_dot($abstract), $parameters);
+        }
+
+		if (isset($ci->{$className})) {
+			return $ci->{$className};
+		}
+
+		// Final fallback - try container resolution (might throw exception)
+		return $container->get($abstract, $parameters);
+
+	}
+
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('service')) 
+{
+    /**
+     * Easy access to services
+     *
+     * @param string $class
+     * @param string $alias
+     * @param mixed $params
+     * @return object
+     */
+    function service(string $class = '', string $alias = '', $params = [])
+    {
+
+		// Special case: return container instance
+		if ($class === 'container' || $class === 'service_container') {
+			return container();
+		}
+
+		$container = container();
+		$ci = null;
+
+		try {
+        	return $container->get($class, $params);
+		} catch (Exception $e) {
+			$ci = ci();
+		}
+
+        $getClass = explode('/', has_dot($class));
+        $classType = count($getClass);
+        $className = ($classType == 2) ? $getClass[1] : $getClass[0];
+        
+        if (contains('Service', $class)) {
+			(!empty($alias)) 
+				? use_service($class, $alias) 
+				: use_service($class);
+            return (!empty($alias)) ? $ci->{$alias} : $ci->{$className};
+        }
+
+        $app_services = $ci->config->item('app_services');
+
+        if (array_key_exists($class, $app_services)) {
+
+            $class = isset($app_services[$class]) ? $app_services[$class] : [];
+
+            return (is_object(new $class()))
+                ? (!empty($params) ?: (new $class($params))) : (new $class());
+
+        }
+
+        $webby_services = $ci->config->item('webby_services');
+
+        if (array_key_exists($class, $webby_services)) {
+            
+            $class = isset($webby_services[$class]) ? $webby_services[$class] : [];
+
+            $class = has_dot($class);
+
+            use_service($class, $className);
+
+            return $ci->{$className};
+        }
+
+        if (is_object($class) && !empty($alias)) {
+            class_alias(get_class($class), $alias);
+            return new $alias;
+        }
+
+        if (is_object(new $class()) && !empty($alias)) {
+            $class = new $class($params);
+            class_alias(get_class($class), $alias);
+            return new $alias;
+        }
+
+        if (is_object(new $class())) {
+            return new $class;
+        }
+
+        (!empty($alias)) ? use_service($className, $alias) : use_service($className);
+
+        return (!empty($alias)) ? $ci->{$alias} : $ci->{$className};
+
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('env')) 
+{
+    /**
+     * Allows user to retrieve values from the environment
+     * variables that have been set. Especially useful for
+     * retrieving values set from the .env file for
+     * use in config files.
+     *
+     * @param string $key
+     * @param string   $default
+     *
+     * @return mixed
+     */
+    function env(string $key, ?string $default = null, $set = false)
+    {
+        $value = getenv($key);
+
+        if ($value === false) {
+            $value = $_ENV[$key] ?? $_SERVER[$key] ?? false;
+        }
+
+        // Not found? Return the default value
+        if ($value === false && $set === false) {
+            return $default;
+        }
+
+        // Not found? Then set to $_ENV
+        if ($value === false && $set === true) {
+            $value = $_ENV[$key] = $default;
+        }
+
+        $env = new DotEnv(ROOTPATH);
+
+        $value = $env->prepareVariable($value);
+
+        // Handle any boolean values
+        switch (strtolower($value)) {
+            case 'true':
+                return true;
+            case 'false':
+                return false;
+            case 'empty':
+                return '';
+            case 'null':
+                return null;
+        }
+
+        return $value;
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('bind')) 
+{
+    function bind($abstract, $concrete) {
+        return container()->bind($abstract, $concrete);
+    }
+}
+
+if ( ! function_exists('singleton')) 
+{
+    function singleton($abstract, $concrete) {
+        return container()->singleton($abstract, $concrete);
+    }
+}
+
+if ( ! function_exists('class_basename'))
+{
+	/**
+	 *  Get the class 'basename' of the given object/class
+	 *
+	 *  @param     string|object    $class
+	 *  @return    string
+	 */
+	function class_basename($class)
+	{
+		$class = is_object($class) ? get_class($class) : $class;
+
+		return basename(str_replace('\\', '/', $class));
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('class_uses_recursive'))
+{
+	/**
+	 *  Return all traits used by a class, it's subclasses and trait of their traits
+	 *
+	 *  @param     string    $class
+	 *  @return    array
+	 */
+	function class_uses_recursive($class)
+	{
+		$result = [];
+
+		foreach (array_merge([$class => $class], class_parents($class)) as $class)
+		{
+			$result += trait_uses_recursive($class);
+		}
+
+		return array_unique($result);
+	}
+}
+
+if ( ! function_exists('trait_uses_recursive'))
+{
+	/**
+	 *  Returns all traits used by a trait and its traits
+	 *
+	 *  @param     string    $trait
+	 *  @return    array
+	 */
+	function trait_uses_recursive($trait)
+	{
+		$traits = class_uses($trait);
+
+		foreach ($traits as $trait)
+		{
+			$traits += trait_uses_recursive($trait);
+		}
+
+		return $traits;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('retry'))
+{
+	/**
+	 *  Attempt to execute an operation a given number of times
+	 *
+	 *  @param     int         $attempts
+	 *  @param     callable    $callback
+	 *  @param     integer     $sleep
+	 *  @return    mixed
+	 *
+	 *  @throws    \Exception
+	 */
+	function retry($attempts, callable $callback, $sleep = 0)
+	{
+		$attempts--;	//	Decrement the number of attempts
+
+		beginning:
+		try
+		{
+			return $callback();
+		}
+		catch (Exception $e)
+		{
+			if ( ! $attempts)
+			{
+				throw $e;
+			}
+
+			$attempts--;	//	Decrement the number of attempts
+
+			if ($sleep)
+			{
+				usleep($sleep * 1000);
+			}
+
+			goto beginning;
+		}
+	}
+}
