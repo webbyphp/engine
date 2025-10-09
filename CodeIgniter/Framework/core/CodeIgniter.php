@@ -385,11 +385,11 @@ $BM->mark('loading_time:_base_classes_end');
  *  The Router class has already validated the request,
  *  leaving us with 3 options here:
  *
- *	1) an empty class name, if we reached the default
- *	   controller, but it didn't exist;
- *	2) a query string which doesn't go through a
- *	   file_exists() check
- *	3) a regular request for a non-existing page
+ * 	1) an empty class name, if we reached the default
+ * 	   controller, but it didn't exist;
+ * 	2) a query string which doesn't go through a
+ * 	   file_exists() check
+ * 	3) a regular request for a non-existing page
  *
  *  We handle all of these as a 404 error.
  *

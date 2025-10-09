@@ -308,6 +308,8 @@ class CI_Router {
 			$method = 'index';
 		}
 
+		$class ??= '';
+
 		if ( ! file_exists(COREPATH.'controllers/'.$this->directory.ucfirst($class).'.php'))
 		{
 			// This will trigger 404 later

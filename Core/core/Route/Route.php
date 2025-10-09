@@ -1197,7 +1197,6 @@ class Route
 		return $to;
 	}
 
-
 	/**
 	 * Sets a default route closure to be executed 
 	 * when no specific route is matched.
@@ -1319,7 +1318,7 @@ class Route
 	 * @param Closure $to
 	 * 
 	 */
-	public static function module($name, Closure $callable = null)
+	public static function module($name, ?Closure $callable = null)
 	{
 		static::prefix($name, $callable);
 	}
@@ -1404,7 +1403,7 @@ class Route
 		}
 
 		if (in_array('delete', $method)) {
-			static::delete("{$name}/delete/(:any)", $moc . '/delete/$1');
+			static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
 		}
 	}
 
@@ -1468,16 +1467,21 @@ class Route
 			$route = static::availableRoutes();
 		}
 
-		$routeDefaultController = $route['default_controller'];
+		$defaultController = $routes['default_controller'] ?? null;
 
-		$route['default_controller'] = static::$definedController 
-			?? ($routeDefaultController ?? static::$defaultController)
-			?? 'app';
+		$assignedController = static::$definedController 
+			?? $defaultController 
+			?? static::$defaultController;
 
-		return array_merge(
+		$routes = array_merge(
 			$route,
 			static::$routes,
 		);
+
+		$routes['default_controller'] = $assignedController ?? $route['default_controller'];
+
+		return $routes;
+
 	}
 
 	/**
@@ -1500,7 +1504,7 @@ class Route
 	public static function import(string $routeFile, $outsourced = false): void
 	{
 		if (!$outsourced) {
-			include_once(ROOTPATH . 'routes' . DS . $routeFile . EXT);
+			include_once(ROOTPATH . 'routes' . DS . $routeFile . PHPEXT);
 		}
 
 		if ($outsourced) {
