@@ -464,16 +464,16 @@ if (
 		$e404 = true;
 	}
 	/**
-	 * DO NOT CHANGE THIS, NOTHING ELSE WORKS!
-	 *
-	 * - method_exists() returns true for non-public methods, which passes the previous elseif
-	 * - is_callable() returns false for PHP 4-style constructors, even if there's a __construct()
-	 * - method_exists($class, '__construct') won't work because CI_Controller::__construct() is inherited
-	 * - People will only complain if this doesn't work, even though it is documented that it shouldn't.
-	 *
-	 * ReflectionMethod::isConstructor() is the ONLY reliable check,
-	 * knowing which method will be executed as a constructor.
-	 */
+     * DO NOT CHANGE THIS, NOTHING ELSE WORKS!
+     *
+     * - method_exists() returns true for non-public methods, which passes the previous elseif
+     * - is_callable() returns false for PHP 4-style constructors, even if there's a __construct()
+     * - method_exists($class, '__construct') won't work because CI_Controller::__construct() is inherited
+     * - People will only complain if this doesn't work, even though it is documented that it shouldn't.
+     *
+     * ReflectionMethod::isConstructor() is the ONLY reliable check,
+     * knowing which method will be executed as a constructor.
+     */
 	else {
 		$reflection = new ReflectionMethod($class, $method);
 		if (!$reflection->isPublic() or $reflection->isConstructor()) {
