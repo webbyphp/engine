@@ -150,9 +150,11 @@ $SERVER_HTTP_HOST = !(PHP_SAPI === 'cli' or defined('STDIN'))
 
 // Extract subdomain from $SERVER_HTTP_HOST
 $SUBDOMAIN = substr(
-	$SERVER_HTTP_HOST,
+	(string) $SERVER_HTTP_HOST,
 	0,
-	strrpos(substr($SERVER_HTTP_HOST, 0, strrpos($SERVER_HTTP_HOST, '.')), '.')
+	(int) strrpos(substr((string) $SERVER_HTTP_HOST, 0, (int) strrpos((string) $SERVER_HTTP_HOST, ".")), 
+	'.'
+	)
 );
 
 // Define subdomain
