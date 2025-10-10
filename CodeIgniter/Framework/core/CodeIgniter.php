@@ -475,7 +475,7 @@ if (
      * knowing which method will be executed as a constructor.
      */
 	else {
-		$reflection = new ReflectionMethod($class, $method);
+		$reflection = ReflectionMethod::createFromMethodName($class . '::' . $method);
 		if (!$reflection->isPublic() or $reflection->isConstructor()) {
 			$e404 = true;
 		}
@@ -548,6 +548,15 @@ $CI = new $class();
  * ------------------------------------------------------
  */
 $EXT->call_hook('post_controller_constructor');
+
+/*
+ * ------------------------------------------------------
+ *  Run Middlewares (AFTER constructor completes)
+ * ------------------------------------------------------
+ */
+if (method_exists($CI, '_runMiddlewares')) {
+    $CI->_runMiddlewares();
+}
 
 /*
  * ------------------------------------------------------
