@@ -457,7 +457,7 @@ class Route
 	 * @return mixed
 	 * 
 	 */
-	public function withInput($post = [])
+	public function withInput($post = [], $redirect = false)
 	{
 		ci()->use->library('session');
 
@@ -468,9 +468,11 @@ class Route
 		ci()->session->set_tempdata('old', $post, 10);
 		ci()->session->set_tempdata('form_error', form_error_array(), 10);
 
-		if (!empty($this->getUri())) {
+		if ($redirect && !empty($this->getUri())) {
 			return $this->redirect();
 		}
+
+		return $this;
 
 	}
 
@@ -484,6 +486,17 @@ class Route
 	public function allRoutes()
 	{
 		return self::getRouter()->routes;
+	}
+
+	/**
+	 * Get currently defined routes in the
+	 * routes directory
+	 *
+	 * @return array
+	 */
+	public static function getRoutes()
+	{
+		return static::$routes;
 	}
 
 	/**
@@ -516,6 +529,135 @@ class Route
 		return static::$apiRoutes = $GLOBALS['api_routes'];
 	}
 
+	/**
+     * Assign middleware to the last created route
+     *
+     * @param mixed ...$middlewares
+     * @return static
+     */
+    public static function middleware(...$middlewares)
+    {
+
+        if (!empty(static::$from)) {
+            // Store middlewares for this route
+            if (!isset(static::$routeMiddlewares[static::$from])) {
+                static::$routeMiddlewares[static::$from] = [];
+            }
+            static::$routeMiddlewares[static::$from] = array_merge(
+                static::$routeMiddlewares[static::$from],
+                $middlewares
+            );
+        }
+        
+        return new static;
+
+    }
+
+	/**
+     * Register a middleware group
+     *
+     * @param string $name
+     * @param array $middlewares
+     * @return void
+     */
+    public static function registerMiddlewareGroup($name, array $middlewares)
+    {
+        static::$middlewareGroups[$name] = $middlewares;
+    }
+
+    /**
+     * Get middleware group
+     *
+     * @param string $name
+     * @return array
+     */
+    public static function getMiddlewareGroup($name)
+    {
+        return static::$middlewareGroups[$name] ?? [];
+    }
+
+    /**
+     * Apply middleware group to routes
+     *
+     * @param string $group
+     * @param Closure $callback
+     * @return void
+     */
+	public static function middlewareGroup($group, Closure $callback)
+    {
+        $middlewares = static::getMiddlewareGroup($group);
+        static::$currentMiddlewares = array_merge(static::$currentMiddlewares, $middlewares);
+        
+        call_user_func($callback);
+        
+        // Remove the middlewares after callback
+        static::$currentMiddlewares = array_diff(static::$currentMiddlewares, $middlewares);
+    }
+
+	public static function getRouteMiddlewares(?string $route = '')
+    {
+
+        // Direct match
+        if (isset(static::$routeMiddlewares[$route])) {
+            return static::$routeMiddlewares[$route];
+        }
+
+        // Try to match with regex patterns
+        foreach (static::$routeMiddlewares as $pattern => $middlewares) {
+            // Convert route pattern to regex
+            $regex = static::convertRouteToRegex($pattern);
+
+            if (preg_match($regex, $route)) {
+                return $middlewares;
+            }
+        }
+
+        return [];
+    }
+
+	/**
+     * Convert route pattern to regex for matching
+     *
+     * @param string $pattern
+     * @return string
+     */
+    protected static function convertRouteToRegex($pattern)
+    {
+		$hasCurly = strpos($pattern, '{');
+        $defaultKey = $pattern;
+
+        // Escape forward slashes
+		$pattern = str_replace('/', '\/', $pattern);
+        
+        // Replace (:num) with regex
+        $pattern = str_replace(['(:num)', '{id}', '{num}'], '([0-9]+)', $pattern);
+        
+        // Replace (:alpha) with regex
+        $pattern = str_replace(['(:alpha)', '{alpha}'], '([a-zA-Z]+)', $pattern);
+        
+        // Replace (:alphanum) with regex
+        $pattern = str_replace(['(:alphanum)', '{alphanum}'], '([a-zA-Z0-9]+)', $pattern);
+        
+		$pattern = ($hasCurly && !(strpos($defaultKey, '{id}')))
+				? preg_replace('/\{(.+?)\}/', '(:any)', $pattern)
+				: $pattern;
+
+		// Replace (:any) with regex
+        $pattern = str_replace('(:any)', '([^\/]+)', $pattern);
+
+        return '/^' . $pattern . '$/';
+    }
+
+    /**
+     * Get all route middlewares
+     *
+     * @return array
+     */
+    public static function getAllRouteMiddlewares()
+    {
+        return static::$routeMiddlewares;
+    }
+
 	/* --------------------------------------------------------------
      * BASIC ROUTING
      * ------------------------------------------------------------ */
@@ -524,15 +666,36 @@ class Route
 	 * Create and Generate All Routes
 	 *
 	 * @param string $from
-	 * @param string|array|callable $to
+	 * @param string|Closure $to
 	 * @param array $options
 	 * @param callable|null $nested
 	 * @return void
 	 */
 	protected static function createRoute($from, $to, $options = [], ?Closure $nested = null)
 	{
-
 		$parameterfy = false;
+
+		// Handle closure callbacks
+		if ($to instanceof Closure) {
+			static::$routes[$from] = function() use ($to) {
+				$CI = get_instance();
+				$result = $to();
+				if (is_string($result)) {
+					$CI->output->set_output($result);
+				}
+				return $result;
+			};
+
+			// Store the route pattern
+            static::$from = $from;
+            
+            // Add current middlewares if in a middleware group
+            if (!empty(static::$currentMiddlewares)) {
+                static::$routeMiddlewares[$from] = static::$currentMiddlewares;
+            }
+
+			return;
+		}
 
 		// Allow for array based routes and other symbol routes
 		if (!is_array($to) && strstr($to, '.')) {
@@ -594,6 +757,32 @@ class Route
 
 		static::$routes[$from] = $to;
 
+		// Add current middlewares if in a middleware group
+        if (!empty(static::$currentMiddlewares)) {
+            if (!isset(static::$routeMiddlewares[$from])) {
+                static::$routeMiddlewares[$from] = [];
+            }
+            static::$routeMiddlewares[$from] = array_merge(
+                static::$routeMiddlewares[$from],
+                static::$currentMiddlewares
+            );
+        }
+
+        // Store middlewares from options
+        if (isset($options['middleware'])) {
+            $middlewares = is_array($options['middleware']) 
+                ? $options['middleware'] 
+                : [$options['middleware']];
+            
+            if (!isset(static::$routeMiddlewares[$from])) {
+                static::$routeMiddlewares[$from] = [];
+            }
+            static::$routeMiddlewares[$from] = array_merge(
+                static::$routeMiddlewares[$from],
+                $middlewares
+            );
+        }
+
 		// Do we have a nested function?
 		if ($nested && is_callable($nested) && static::$nestedDepth === 0) {
 			static::$nestedGroup    .= rtrim($from, '/') . '/';
@@ -602,6 +791,20 @@ class Route
 
 			static::$nestedGroup = '';
 		}
+	}
+
+	/**
+	 * Execute a closure route
+	 *
+	 * @param string $route
+	 * @return mixed
+	 */
+	protected static function executeClosure($route)
+	{
+		if (isset(static::$routes[$route]) && static::$routes[$route] instanceof Closure) {
+			return call_user_func(static::$routes[$route]);
+		}
+		return null;
 	}
 
 	/**
