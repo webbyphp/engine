@@ -1,8 +1,8 @@
 <?php
 
-namespace Base\Statics;
+namespace Base\Taps;
 
-use  Base\Statics\ToStatic;
+use  Base\Taps\ToTap;
 
 class Input
 {
@@ -11,11 +11,11 @@ class Input
      *
      * @var \CI_Input string
      */
-    protected static $instance = 'input';
+    protected static $instance = \CI_Input::class;
 
     public static function __callStatic($method, $arguments)
     {
-        return ToStatic::make(self::$instance, $method, $arguments);
+        return ToTap::make(self::$instance, $method, $arguments);
     }
 
 }

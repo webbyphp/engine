@@ -1,8 +1,8 @@
 <?php
 
-namespace Base\Statics;
+namespace Base\Taps;
 
-use  Base\Statics\ToStatic;
+use  Base\Taps\ToTap;
 
 class Output
 {
@@ -15,7 +15,7 @@ class Output
 
     public static function __callStatic($method, $arguments)
     {
-        return ToStatic::make(self::$instance, $method, $arguments);
+        return ToTap::make(self::$instance, $method, $arguments);
     }
 
 }

@@ -1,14 +1,14 @@
 <?php
 
-namespace Base\Statics;
+namespace Base\Taps;
 
 /**
- * ToStatic Abstract Class
+ * MakeTap Abstract Class
  *
  * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  * 
  */
-abstract class AbstractToStatic
+abstract class MakeTap
 {
     /**
      * Returns the fully qualified class name.
