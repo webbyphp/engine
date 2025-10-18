@@ -11,7 +11,7 @@
 
 namespace Base\Console;
 
-class Console 
+class Console
 {
 
     protected static $phpCommand = '';
@@ -29,7 +29,7 @@ class Console
     private const WEBBY_CLI_VERSION = '2.12.4';
 
     private const DEFAULT_HOST = "localhost";
-    
+
     private const DEFAULT_PORT = 8085;
 
     private const UIP = '0.0.0.0';
@@ -43,7 +43,7 @@ class Console
 
     /** 
      * Grab available defined user constants
-    */
+     */
     protected static function userConstants()
     {
         return (object) get_defined_constants(true)['user'];
@@ -57,7 +57,7 @@ class Console
     protected static function welcome()
     {
         // static::$cliversion = defined('WEBBY_VERSION') ? WEBBY_VERSION : static::userConstants()->WEBBY_CLI_VERSION;
-        
+
         static::$cliversion = defined('WEBBY_VERSION') ? WEBBY_VERSION : self::WEBBY_CLI_VERSION;
 
         return ConsoleColor::cyan("Welcome to Webby PHP Framework") . " " . ConsoleColor::green(static::$cliversion) . "\n";
@@ -149,14 +149,14 @@ class Console
             case '--help':
             case '-h':
                 static::consoleEnv();
-                
+
                 if (!empty($arg2)) {
                     \Base\Console\Commands\Help::whichHelp($arg2);
                     exit;
                 }
 
                 \Base\Console\Commands\Help::runHelp();
-            break;
+                break;
             case '--version':
             case '-v':
                 static::consoleEnv();
@@ -167,7 +167,7 @@ class Console
                 }
 
                 echo static::version();
-            break;
+                break;
             case '--env':
                 static::consoleEnv();
 
@@ -177,7 +177,7 @@ class Console
                 }
 
                 \Base\Console\Commands\Help::runHelp();
-            break;
+                break;
             case 'key:generate':
                 static::consoleEnv();
                 static::runSystemCommand(Console::phpCommand() . 'key/prepare');
@@ -188,14 +188,14 @@ class Console
                 }
 
                 static::runSystemCommand(Console::phpCommand() . 'key');
-            break;
+                break;
             case 'migrate':
                 static::consoleEnv();
                 static::runSystemCommand(Console::phpCommand() . 'migrate');
-            break;
+                break;
             case 'list:routes':
                 static::runSystemCommand(Console::phpCommand() . 'routes');
-            break;
+                break;
             case 'app:on':
                 static::runSystemCommand(Console::phpCommand() . 'maintenance/on');
             break;
@@ -204,16 +204,16 @@ class Console
             break;
             case 'app:to-production':
                 static::runSystemCommand(Console::phpCommand() . 'environment/production');
-            break;
+                break;
             case 'app:to-testing':
                 static::runSystemCommand(Console::phpCommand() . 'environment/testing');
-            break;
+                break;
             case 'app:to-development':
                 static::runSystemCommand(Console::phpCommand() . 'environment/development');
-            break;
+                break;
             case 'app:baseurl':
                 static::runSystemCommand(Console::phpCommand() . 'baseurl/host/' . $arg2);
-            break;
+                break;
             case 'resource:link':
                 static::consoleEnv();
                 static::runSystemCommand(Console::phpCommand() . 'create/resourcelink');
@@ -224,19 +224,19 @@ class Console
                     exit;
                 }
                 static::runSystemCommand(Console::phpCommand() . $arg2);
-            break;
+                break;
             case 'git:init':
                 static::consoleEnv();
                 static::runSystemCommand('git init');
-            break;
+                break;
             case 'create:package':
                 static::consoleEnv();
                 static::createPackage($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:module':
                 static::consoleEnv();
                 static::createModule($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:controller':
                 static::consoleEnv();
                 static::createController($arg2, $arg3, $arg4);
@@ -244,43 +244,43 @@ class Console
             case 'create:command':
                 static::consoleEnv();
                 static::createCommand($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:model':
                 static::consoleEnv();
                 static::createModel($arg2, $arg3, $arg4, $arg5);
-            break;
+                break;
             case 'create:view':
                 static::consoleEnv();
                 static::createView($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:service':
                 static::consoleEnv();
                 static::createService($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:action':
                 static::consoleEnv();
                 static::createAction($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:library':
                 static::consoleEnv();
                 static::createLibrary($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:helper':
                 static::consoleEnv();
                 static::createHelper($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:form':
                 static::consoleEnv();
                 static::createForm($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:rule':
                 static::consoleEnv();
                 static::createRule($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:middleware':
                 static::consoleEnv();
                 static::createMiddleware($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'create:enum':
                 static::consoleEnv();
                 static::createEnum($arg2, $arg3, $arg4);
@@ -288,7 +288,7 @@ class Console
             case 'create:migration':
                 static::consoleEnv();
                 static::createMigration($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'run:migration':
                 static::consoleEnv();
                 static::runMigration($arg2, $arg3, $arg4);
@@ -297,11 +297,11 @@ class Console
                 static::consoleEnv();
                 $installOption = 'require ';
                 static::runSystemCommand(static::$composerCommand . $installOption . static::$sylynderEngine);
-            break;
+                break;
             case 'create:jsondb':
                 static::consoleEnv();
                 static::createJsonDb($arg2, $arg3, $arg4);
-            break;
+                break;
             case 'install:package':
                 static::consoleEnv();
                 $installOption = 'require ';
@@ -320,10 +320,10 @@ class Console
             break;
             default:
                 static::noCommand();
-            break;
+                break;
         }
     }
-    
+
     protected static function createPackage(...$args)
     {
         $name = '';
