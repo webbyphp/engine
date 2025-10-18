@@ -291,6 +291,10 @@ class Console
                 break;
             case 'run:migration':
                 static::consoleEnv();
+                static::runSystemCommand(Console::phpCommand() . 'migrate');
+                break;
+            case 'migrate':
+                static::consoleEnv();
                 static::runMigration($arg2, $arg3, $arg4);
             break;
             case 'update:engine':
@@ -865,14 +869,14 @@ class Console
 
             if (isset($steps[0]) && $steps[0] !== '--use-file') {
                 $output =   " \n";
-                $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for run:migration --up or --down --use-file", 'light', 'red') . " \n";
+                $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for migrate --up or --down --use-file", 'light', 'red') . " \n";
                 echo $output . "\n";
                 exit;
             }
 
             if (empty($steps[1])) {
                 $output =   " \n";
-                $output .=  ConsoleColor::white(" Please specify the filename to use for run:migration ", 'light', 'yellow') . " \n";
+                $output .=  ConsoleColor::white(" Please specify the filename to use for migrate ", 'light', 'yellow') . " \n";
                 echo $output . "\n";
                 exit;
             }
@@ -893,7 +897,7 @@ class Console
 
             if (!empty($steps[0]) && $steps[0] !== '--step') {
                 $output =   " \n";
-                $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for run:migration --rollback", 'light', 'red') . " \n";
+                $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for migrate --rollback", 'light', 'red') . " \n";
                 echo $output . "\n";
                 exit;
             }
@@ -915,7 +919,7 @@ class Console
             }
 
             $output =   " \n";
-            $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for run:migration --rollback", 'light', 'red') . " \n";
+            $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for migrate --rollback", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
 
@@ -956,44 +960,44 @@ class Console
             $removeTables = '';
             $filename = date('Y-m-d-His');
 
-            $command = Console::phpCommand() . 'migration/exportSchema/'.$filename;
+            $command = Console::phpCommand() . 'migration/exportSchema/' . $filename;
 
             if (isset($steps[0]) && isset($steps[1])) {
                 $filename = ($steps[1]) ?: $filename;
-                $command = Console::phpCommand() . 'migration/exportSchema/'.$filename;
+                $command = Console::phpCommand() . 'migration/exportSchema/' . $filename;
             }
 
             if (isset($args[2]) && !empty($args[2])) {
                 $list = explode('=', $args[2]);
-                $removeTables = str_replace(',','__', $list[1]);
+                $removeTables = str_replace(',', '__', $list[1]);
                 $filename = $steps[1];
-                $command = Console::phpCommand() . 'migration/exportSchema/'.$filename.'/'.$removeTables;
+                $command = Console::phpCommand() . 'migration/exportSchema/' . $filename . '/' . $removeTables;
             }
-            
+
             static::runSystemCommand($command);
             exit;
         }
 
         if ($key === '--dump-database' || $key === '--dd') {
-            
+
             $name = date('Y-m-d-His');
 
-            $command = Console::phpCommand() . 'migration/dumpDb/'.$name;
+            $command = Console::phpCommand() . 'migration/dumpDb/' . $name;
 
             if (isset($args[1]) && !empty($args[1])) {
                 $step = explode('=', $args[1]);
                 $name = $step[1];
-                $command = Console::phpCommand() . 'migration/dumpDb/'.$name;
+                $command = Console::phpCommand() . 'migration/dumpDb/' . $name;
             }
 
             static::runSystemCommand($command);
             exit;
         }
 
-        if ($key != null ) {
+        if ($key != null) {
             $steps = explode('=', $key);
         }
-        
+
         if ($steps[0] === '--step' && !empty($steps[1]) && is_numeric($steps[1])) {
             $steps = $steps[1];
             $command = Console::phpCommand() . 'migration/run/' . $steps;
@@ -1002,7 +1006,7 @@ class Console
         }
 
         $output =   " \n";
-        $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for run:migration", 'light', 'red') . " \n";
+        $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for migrate", 'light', 'red') . " \n";
         echo $output . "\n";
         exit;
     }
