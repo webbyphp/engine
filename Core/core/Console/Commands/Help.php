@@ -49,8 +49,7 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    app:baseurl") .  ConsoleColor::cyan("         Set base url of application")  . " \n";
         $output .=  ConsoleColor::light_purple("    list:routes") .  ConsoleColor::cyan("         List all available routes")  . " \n";
         $output .=  ConsoleColor::light_purple("    resource:link") .  ConsoleColor::cyan("       Create a symlink for the resources folder in public")  . " \n";
-        $output .=  ConsoleColor::light_purple("    use:command") .  ConsoleColor::cyan("         Enables you to access console controllers to perform cli tasks")  . " \n";
-        $output .=  ConsoleColor::light_purple("    run:migration") .  ConsoleColor::cyan("       Run and manage migrations for databases")  . " \n";
+        $output .=  ConsoleColor::light_purple("    migrate") .  ConsoleColor::cyan("             Run and manage migrations for databases")  . " \n";
         $output .=  ConsoleColor::light_purple("    db:seed") .  ConsoleColor::cyan("             Runs all or specified seeder to populate database tables")  . " \n";
         $output .=  ConsoleColor::light_purple("    db:truncate") .  ConsoleColor::cyan("         Truncates a specified database table")  . " \n";
         $output .=  ConsoleColor::light_purple("    clear:cache") .  ConsoleColor::cyan("         Clear specific cached files")  . " \n";
@@ -194,25 +193,25 @@ class Help extends Console
                 Perform migration functionalities on your migration files.
 
             {$usage}
-                php webby run:migration
+                php webby migrate
             
             {$examples}
-                php webby run:migration
-                php webby run:migration --step=1
-                php webby run:migration --rollback --step=1
-                php webby run:migration --reset
-                php webby run:migration --status
-                php webby run:migration --later
-                php webby run:migration --latest
-                php webby run:migration --truncate
-                php webby run:migration --export-schema or --xs
-                php webby run:migration --xs --name=name_for_exported_schema --remove=comma,seperated,table_names
-                php webby run:migration --export-schema --name=name_for_exported_schema
-                php webby run:migration --dump-database or --dd
-                php webby run:migration --dump-database --name=name_for_dumped_database
-                php webby run:migration --up --use-file=name_of_migration_file.php
-                php webby run:migration --down --use-file=name_of_migration_file.php
-                
+                php webby migrate
+                php webby migrate --step=1
+                php webby migrate --rollback --step=1
+                php webby migrate --reset
+                php webby migrate --status
+                php webby migrate --later
+                php webby migrate --latest
+                php webby migrate --truncate
+                php webby migrate --export-schema or --xs
+                php webby migrate --xs --name=name_for_exported_schema --remove=comma,seperated,table_names
+                php webby migrate --export-schema --name=name_for_exported_schema
+                php webby migrate --dump-database or --dd
+                php webby migrate --dump-database --name=name_for_dumped_database
+                php webby migrate --up --use-file=name_of_migration_file.php
+                php webby migrate --down --use-file=name_of_migration_file.php
+ 
         MIGRATION;
     }
 
@@ -978,7 +977,7 @@ class Help extends Console
             case 'key:generate':
                 Help::keyGenerate();
             break;
-            case 'run:migration':
+            case 'migrate':
                 Help::migration();
             break;
             case 'db:seed':
