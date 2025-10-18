@@ -239,8 +239,8 @@ class Console
                 break;
             case 'create:controller':
                 static::consoleEnv();
-                static::createController($arg2, $arg3, $arg4);
-            break;
+                static::createController($arg2, $arg3, $arg4, $arg5);
+                break;
             case 'create:command':
                 static::consoleEnv();
                 static::createCommand($arg2, $arg3, $arg4);
@@ -370,9 +370,9 @@ class Console
         $module = $args[0];
         $commandName = '';
 
-        $nonModuleCommand = str_contains($args[0], '--name');
+        $nonModuleCommand = str_contains($args[0], ':');
 
-        if ($nonModuleCommand) {
+        if ($nonModuleCommand !== true) {
             $args[2] = $args[1];
             $args[1] = $args[0];
         }
@@ -382,28 +382,28 @@ class Console
 
         $addCommand = '';
 
-        if ($command[0] !== '--name') {
+        if ($command[0] === '') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:command", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
         }
 
-        if (isset($command[1])) {
-            $commandName = $command[1];
+        if (isset($command[0])) {
+            $commandName = $command[0];
         }
 
         if (isset($args[2])) {
             $addCommand = $args[2];
         }
 
-        if ($nonModuleCommand) {
+        if ($nonModuleCommand !== true) {
             $command = Console::phpCommand() . 'create/createnonmodulecommand/' . $commandName . '/' . $addCommand;
             static::runSystemCommand($command);
             return;
         }
-        
-        $module = str_replace('=',':', $module);
+
+        $module = str_replace('=', ':', $module);
         $command = Console::phpCommand() . 'create/createcommand/' . $module . '/' . $commandName . '/' . $addCommand;
         static::runSystemCommand($command);
     }
@@ -413,13 +413,16 @@ class Console
         $module = $args[0];
         $controllerName = '';
         $location = "Controllers";
-        $lastArg = $args[2];
+        $lastArg = !empty($args[3]) ? $args[3] : $args[2];
 
-        $nonModuleController = str_contains($module, '--name');
+        $nonModuleController = str_contains($module, ':');
 
-        if ($nonModuleController) {
-            $args[2] = $args[1];
-            $args[1] = $args[0];
+        if ($nonModuleController !== true) {
+            $vars = $args;
+            $args[1] = $vars[0];
+            $args[2] = $vars[1];
+            $args[3] = $vars[2];
+            $args[4] = $vars[3];
         }
 
         $controller = str_replace('=', ':', $args[1]);
@@ -427,33 +430,35 @@ class Console
 
         $addController = '';
 
-        if ($controller[0] !== '--name') {
+        if ($controller[0] === '') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:controller", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
         }
 
-        if (isset($controller[1])) {
-            $controllerName = $controller[1];
+        if (isset($controller[0])) {
+            $controllerName = $controller[0];
         }
 
         if (isset($args[2])) {
             $addController = $args[2];
         }
 
-        if ($args[2] == '--dir') {
+        if (isset($args[2]) && $args[2] == '--dir') {
             $location = $lastArg;
+        } elseif (isset($args[3]) && $args[3] == '--dir') {
+            $location = '--dir' .':'. $lastArg;
         }
 
-        if ($nonModuleController) {
-            $location = str_replace('/','_', $location);
+        if ($nonModuleController !== true) {
+            $location = str_replace('/', '_', $location);
             $command = Console::phpCommand() . 'create/createnonmodulecontroller/' . $controllerName . '/' . $addController . '/' . $location;
             static::runSystemCommand($command);
             return;
         }
-        
-        $module = str_replace('=',':', $module);
+
+        $module = str_replace('=', ':', $module);
         $command = Console::phpCommand() . 'create/createcontroller/' . $module . '/' . $controllerName . '/' . $addController;
         static::runSystemCommand($command);
     }
@@ -465,12 +470,14 @@ class Console
         $location = "Models";
         $lastArg = $args[3];
 
-        $nonModuleModel = str_contains($module, '--name');
+        $nonModuleModel = str_contains($module, ':');
 
-        if ($nonModuleModel) {
-            $args[3] = $args[2];
-            $args[2] = $args[1];
-            $args[1] = $args[0];
+        if ($nonModuleModel !== true) {
+            $vars = $args;
+            $args[1] = $vars[0];
+            $args[2] = $vars[1];
+            $args[3] = $vars[2];
+            $args[4] = $vars[3];
         }
 
         $model = str_replace('=', ':', $args[1]);
@@ -479,30 +486,30 @@ class Console
         $modelType = '';
         $removeModel = '';
 
-        if ($model[0] !== '--name') {
+        if ($model[0] === '') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:model", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
         }
 
-        if (isset($model[1])) {
-            $modelName = $model[1];
+        if (isset($model[0])) {
+            $modelName = $model[0];
         }
 
         if (isset($args[2])) {
             $modelType = $args[2];
         }
-        
+
         if (isset($args[3])) {
             $removeModel = $args[3];
         }
 
-        if ($args[3] == '--dir') {
+        if (isset($args[3]) && $args[3] == '--dir') {
             $location = $lastArg;
         }
-        
-        if ($modelType == '--remove-model') {
+
+        if ($modelType == '--remove-suffix') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:model", 'light', 'red') . " \n";
             echo $output . "\n";
@@ -516,15 +523,15 @@ class Console
             exit;
         }
 
-        if ($nonModuleModel) {
-            $location = str_replace('/','_', $location);
-            $command = Console::phpCommand() . 'create/createnonmodulemodel/' . $modelName . '/' . $modelType. '/' . $removeModel. '/' . $location;
+        if ($nonModuleModel !== true) {
+            $location = str_replace('/', '_', $location);
+            $command = Console::phpCommand() . 'create/createnonmodulemodel/' . $modelName . '/' . $modelType . '/' . $removeModel . '/' . $location;
             static::runSystemCommand($command);
             return;
         }
 
         $module = str_replace('=', ':', $module);
-        $command = Console::phpCommand() . 'create/createmodel/' . $module . '/' . $modelName . '/' . $modelType. '/' . $removeModel;
+        $command = Console::phpCommand() . 'create/createmodel/' . $module . '/' . $modelName . '/' . $modelType . '/' . $removeModel;
         static::runSystemCommand($command);
     }
 
@@ -533,18 +540,27 @@ class Console
         $module = $args[0];
         $serviceName = '';
 
+        $nonModuleService = str_contains($module, ':');
+
+        $module = ($nonModuleService === false) ? 'empty' : $module;
+
+        if ($module === 'empty') {
+            $vars = $args;
+            $args[1] = $vars[0];
+        }
+
         $service = str_replace('=', ':', $args[1]);
         $service = explode(':', $service);
 
-        if ($service[0] !== '--name') {
+        if ($service[0] === '') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:service", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
         }
 
-        if (isset($service[1])) {
-            $serviceName = $service[1];
+        if (isset($service[0])) {
+            $serviceName = $service[0];
         }
 
         $module = str_replace('=', ':', $module);
@@ -557,20 +573,30 @@ class Console
         $module = $args[0];
         $actionName = '';
 
+        $nonModuleAction = str_contains($module, ':');
+
+        $module = ($nonModuleAction === false) ? 'empty' : $module;
+
+        if ($module === 'empty') {
+            $vars = $args;
+            $args[1] = $vars[0];
+            $args[2] = $vars[1];
+        }
+
         $action = str_replace('=', ':', $args[1]);
         $action = explode(':', $action);
 
         $actionType = '';
 
-        if ($action[0] !== '--name') {
+        if ($action[0] === '') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:action", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
         }
 
-        if (isset($action[1])) {
-            $actionName = $action[1];
+        if (isset($action[0])) {
+            $actionName = $action[0];
         }
 
         if (isset($args[2])) {
@@ -587,18 +613,27 @@ class Console
         $module = $args[0];
         $libraryName = '';
 
+        $nonModuleLibrary = str_contains($module, ':');
+
+        $module = ($nonModuleLibrary === false) ? 'empty' : $module;
+
+        if ($module === 'empty') {
+            $vars = $args;
+            $args[1] = $vars[0];
+        }
+
         $library = str_replace('=', ':', $args[1]);
         $library = explode(':', $library);
 
-        if ($library[0] !== '--name') {
+        if ($library[0] === '') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax for create:library", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
         }
 
-        if (isset($library[1])) {
-            $libraryName = $library[1];
+        if (isset($library[0])) {
+            $libraryName = $library[0];
         }
 
         $module = str_replace('=', ':', $module);
@@ -611,20 +646,30 @@ class Console
         $module = $args[0];
         $helperName = '';
 
+        $nonModuleHelper = str_contains($module, ':');
+
+        $module = ($nonModuleHelper === false) ? 'empty' : $module;
+
+        if ($module === 'empty') {
+            $vars = $args;
+            $args[1] = $vars[0];
+            $args[2] = $vars[1];
+        }
+
         $helper = str_replace('=', ':', $args[1]);
         $helper = explode(':', $helper);
 
         $helperType = '';
 
-        if ($helper[0] !== '--name') {
+        if ($helper[0] === '') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:helper", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
         }
 
-        if (isset($helper[1])) {
-            $helperName = $helper[1];
+        if (isset($helper[0])) {
+            $helperName = $helper[0];
         }
 
         if (isset($args[2])) {
@@ -644,15 +689,15 @@ class Console
         $form = str_replace('=', ':', $args[1]);
         $form = explode(':', $form);
 
-        if ($form[0] !== '--name') {
+        if ($form[0] === '') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:form", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
         }
 
-        if (isset($form[1])) {
-            $formName = $form[1];
+        if (isset($form[0])) {
+            $formName = $form[0];
         }
 
         $module = str_replace('=', ':', $module);
@@ -674,15 +719,15 @@ class Console
         $rule = str_replace('=', ':', $args[1]);
         $rule = explode(':', $rule);
 
-        if ($rule[0] !== '--name') {
+        if ($rule[0] === '') {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:rule", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
         }
 
-        if (isset($rule[1])) {
-            $ruleName = $rule[1];
+        if (isset($rule[0])) {
+            $ruleName = $rule[0];
         }
 
         $module = str_replace('=', ':', $module);
@@ -852,7 +897,7 @@ class Console
                 echo $output . "\n";
                 exit;
             }
-            
+
             if (!empty($steps[1]) && is_numeric($steps[1])) {
                 $step = $steps[1];
             }
@@ -862,7 +907,7 @@ class Console
                 static::runSystemCommand($command);
                 exit;
             }
-  
+
             if (!empty($step) && is_numeric($step)) {
                 $command = Console::phpCommand() . 'migration/rollback/' . $step;
                 static::runSystemCommand($command);
@@ -1077,6 +1122,8 @@ class Console
         static::runSystemCommand($command);
     }
 
+    public static function handleTestCommand(...$args) {}
+
     protected static function clearCache(...$args)
     {
         $type = $args[0];
@@ -1153,7 +1200,7 @@ class Console
     private static function setenv(): void
     {
         static::$rootpath = static::userConstants()->WEBBY_ROOTPATH;
-        
+
         $envExampleFile =  static::$rootpath . '/.env.example';
         $envFile = static::$rootpath . '/.env';
 
@@ -1175,11 +1222,11 @@ class Console
      * Run system command
      *
      * @param string $command
-     * @return void
+     * @return mixed
      */
-    public static function runSystemCommand($command = ''): void
+    public static function runSystemCommand($command = ''): mixed
     {
-        system($command);
+        return system($command);
     }
 
     /**
@@ -1191,7 +1238,7 @@ class Console
     private static function serve($args = []): void
     {
         static::$rootpath = static::userConstants()->WEBBY_ROOTPATH;
-        
+
         $host = static::DEFAULT_HOST;
         $port = 0;
         $number = static::DEFAULT_PORT;
@@ -1290,7 +1337,7 @@ class Console
 
         $count = $ttq;
         $port = static::DEFAULT_PORT;
-        
+
         if (isset($args[2]) && $args[2] === '--port') {
             $port = (int)$args[3];
         }
@@ -1304,9 +1351,8 @@ class Console
         }
 
         echo ConsoleColor::yellow("\n\tQuitting Webby Server on Port: {$port} \n\t\t");
-        
-        while($count > 0)
-        {
+
+        while ($count > 0) {
             echo ConsoleColor::yellow(".");
             sleep(1);
             $count--;
@@ -1373,7 +1419,7 @@ class Console
      */
     private static function quitUnix($port = self::DEFAULT_PORT)
     {
-        
+
         $PID = 0;
 
         // Find the Process ID
