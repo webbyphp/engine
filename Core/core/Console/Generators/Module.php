@@ -4,12 +4,19 @@ namespace Base\Console\Generators;
 
 use Base\Console\Commands\MakeDirectory;
 
+/**
+ * 
+ * On Hold
+ * 
+ */
 class Module 
 {
     private $web      = 'Web';
     private $console  = 'Console';
     private $packages = 'Packages';
     private $api      = 'Api';
+
+    private $make;
 
     public function __construct()
     {

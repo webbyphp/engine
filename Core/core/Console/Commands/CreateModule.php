@@ -4,12 +4,18 @@ namespace Base\Console\Commands;
 
 use Base\Console\Commands\MakeDirectory;
 
+/**
+ * 
+ * On Hold
+ * 
+ */
 class CreateModule 
 {
     private $web      = 'Web';
     private $console  = 'Console';
     private $packages = 'Packages';
     private $api      = 'Api';
+    private $make;
 
     public function __construct()
     {
