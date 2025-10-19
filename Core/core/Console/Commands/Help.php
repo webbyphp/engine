@@ -533,6 +533,7 @@ class Help extends Console
                 php webby clear:cache --arrayz
                 php webby clear:cache --plates
                 php webby clear:cache --web
+                php webby clear:cache --config
 
 
         CLEARCACHE;

@@ -1188,6 +1188,15 @@ class Console
             exit;
         }
 
+        if ($type == '--config') {
+
+            $type = str_replace('-', '', $type);
+
+            $command = Console::phpCommand() . 'cache/clearcachedconfig/' . $type;
+            static::runSystemCommand($command);
+            exit;
+        }
+
         $output =   " \n";
         $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for clear:cache", 'light', 'red') . " \n";
         echo $output . "\n";
