@@ -296,7 +296,19 @@ class Console
             case 'migrate':
                 static::consoleEnv();
                 static::runMigration($arg2, $arg3, $arg4);
-            break;
+                break;
+            case 'create:seeder':
+                static::consoleEnv();
+                static::createSeeder($arg2, $arg3, $arg4);
+                break;
+            case 'db:seed':
+                static::consoleEnv();
+                static::runSeeder($arg2, $arg3, $arg4);
+                break;
+            case 'db:truncate':
+                static::consoleEnv();
+                static::runSeeder($arg2, $arg3, $arg4);
+                break;
             case 'update:engine':
                 static::consoleEnv();
                 $installOption = 'require ';
@@ -1056,7 +1068,7 @@ class Console
 
             $filename = $key[1] ?? '';
 
-             if (!empty($filename)) {
+            if (!empty($filename)) {
                 $command = Console::phpCommand() . 'seed/single/' . $filename;
                 static::runSystemCommand($command);
                 exit;
