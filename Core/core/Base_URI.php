@@ -7,7 +7,6 @@ class Base_URI extends \CI_URI
 	public function __construct()
 	{
 		parent::__construct();
-		$this->maintenanceMode();
 	}
 
 	/**
@@ -122,41 +121,6 @@ class Base_URI extends \CI_URI
 		}
 
 		exit;
-	}
-
-	/**
-	 * Set app maintenance mode
-	 *
-	 * @return void
-	 */
-	private function maintenanceMode()
-	{
-		if (is_cli()) {
-			$this->config->set_item('maintenance_mode', true);
-		}
-
-		if (
-			$this->config->item('maintenance_mode') === "false" 
-			|| $this->config->item('app_status') === false
-		) {
-
-			$maintenance_view = $this->config->item('maintenance_view');
-
-			log_message('app', 'Accessing maintenance mode from this ip address: ' . $this->getVisitIP());
-			
-			(is_cli()) ? exit('In Maintenance Mode') :
-
-			http_response_code(503); // Set response code
-			header('Retry-After: 3600'); // Set retry time
-
-			if (file_exists(APP_MAINTENANCE_PATH . $maintenance_view)) {
-				include_once(APP_MAINTENANCE_PATH . $maintenance_view);
-			} else {
-				show_error('Please make sure the maintenance view exists and that you have added a file extension e.g(.html,.php) to maintenance view', 500);
-			}
-
-			exit;
-		} 
 	}
 
 	/**
