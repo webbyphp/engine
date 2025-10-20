@@ -52,6 +52,8 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    migrate") .  ConsoleColor::cyan("             Run and manage migrations for databases")  . " \n";
         $output .=  ConsoleColor::light_purple("    db:seed") .  ConsoleColor::cyan("             Runs all or specified seeder to populate database tables")  . " \n";
         $output .=  ConsoleColor::light_purple("    db:truncate") .  ConsoleColor::cyan("         Truncates a specified database table")  . " \n";
+        $output .=  ConsoleColor::light_purple("    list:routes") .  ConsoleColor::cyan("         List all available routes")  . " \n";
+        $output .=  ConsoleColor::light_purple("    clear:session") .  ConsoleColor::cyan("       Clear specific session type")  . " \n";
         $output .=  ConsoleColor::light_purple("    clear:cache") .  ConsoleColor::cyan("         Clear specific cached files")  . " \n";
         $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("       Update sylynder engine")  . " \n";
         $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("            Initialize your project to use git")  . " \n";
@@ -539,6 +541,30 @@ class Help extends Console
         CLEARCACHE;
     }
 
+    private static function clear_session()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<CLEARSESSION
+            {$welcome}
+            {$description}
+                Clear session by specifying type of session.
+
+            {$usage}
+                php webby clear:session [options]
+
+            {$examples}
+                php webby clear:session 
+                php webby clear:session --files
+                php webby clear:session --db
+
+
+        CLEARSESSION;
+    }
+
     private static function create_module()
     {
         $welcome     = static::welcome();
@@ -1019,6 +1045,9 @@ class Help extends Console
             break;
             case 'clear:cache':
                 Help::clear_cache();
+            break;
+            case 'clear:session':
+                Help::clear_session();
             break;
             case 'create:migration':
                 Help::create_migration();

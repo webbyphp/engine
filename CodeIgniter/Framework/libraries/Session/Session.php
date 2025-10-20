@@ -328,7 +328,8 @@ class CI_Session
 		ini_set('session.use_cookies', 1);
 		ini_set('session.use_only_cookies', 1);
 
-		$this->_configure_sid_length();
+		// $this->_configure_sid_length();
+		$this->_polyfill_configure_sid_length();
 	}
 
 	// ------------------------------------------------------------------------
@@ -392,6 +393,24 @@ class CI_Session
 		}
 
 		$this->_sid_regexp .= '{' . $sid_length . '}';
+	}
+
+	protected function _polyfill_configure_sid_length()
+	{
+		$bits_per_character = (int) ini_get('session.sid_bits_per_character');
+        $sid_length        = (int) ini_get('session.sid_length');
+
+        // We force the PHP defaults.
+        if (PHP_VERSION_ID < 90000) {
+            if ($bits_per_character !== 4) {
+                ini_set('session.sid_bits_per_character', '4');
+            }
+            if ($sid_length !== 32) {
+                ini_set('session.sid_length', '32');
+            }
+        }
+
+        $this->_sid_regexp = '[0-9a-f]{32}';
 	}
 
 	// ------------------------------------------------------------------------

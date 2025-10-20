@@ -471,10 +471,10 @@ if ( ! function_exists('old'))
      * Use it as an alias and fill in for 
      * CodeIgniter's set_value function
      *
-     * @param	string	$field		Field name
-     * @param	string	$default	Default value
-     * @param	bool	$html_escape	Whether to escape HTML special characters or not
-     * @return	string
+     * @param   string  $field      Field name
+     * @param   string  $default    Default value
+     * @param   bool    $html_escape    Whether to escape HTML special characters or not
+     * @return  string
      * 
      */
     function old($field, $default = '', $html_escape = true)
@@ -496,9 +496,9 @@ if ( ! function_exists('old_radio'))
      * when returning form validation 
      * with input fields in a session
      *
-     * @param	string	$field	Field name
-     * @param	string	$value	Field value
-     * @return	string
+     * @param   string  $field  Field name
+     * @param   string  $value  Field value
+     * @return  string
      * 
      */
     function old_radio($field, $value = '')

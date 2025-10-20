@@ -290,7 +290,7 @@ if ( ! function_exists('success_message'))
      * @param string $message
      * @return string
      */
-    function success_message(string $message = null)  
+    function success_message(?string $message = null)  
     {
 
         if ($message !== null) {
@@ -310,7 +310,7 @@ if ( ! function_exists('error_message'))
      * @param string $message
      * @return string
      */
-    function error_message(string $message = null)  
+    function error_message(?string $message = null)  
     {
 
         if ($message !== null) {
@@ -330,7 +330,7 @@ if ( ! function_exists('info_message'))
      * @param string $message
      * @return string
      */
-    function info_message(string $message = null)  
+    function info_message(?string $message = null)  
     {
 
         if ($message !== null) {
@@ -350,7 +350,7 @@ if ( ! function_exists('warn_message'))
      * @param string $message
      * @return string
      */
-    function warn_message(string $message = null)  
+    function warn_message(?string $message = null)  
     {
 
         if ($message !== null) {

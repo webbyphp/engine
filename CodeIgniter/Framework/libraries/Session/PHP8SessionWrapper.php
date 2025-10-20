@@ -90,12 +90,12 @@ class CI_PHP8SessionWrapper implements SessionHandlerInterface, SessionUpdateTim
 		return $this->driver->gc($maxlifetime);
 	}
 
-	public function updateTimestamp(string $id, string $data): bool
+	public function updateTimestamp($id, $data): bool
 	{
 		return $this->driver->updateTimestamp($id, $data);
 	}
 
-	public function validateId(string $id): bool
+	public function validateId($id): bool
 	{
 		return $this->driver->validateId($id);
 	}
