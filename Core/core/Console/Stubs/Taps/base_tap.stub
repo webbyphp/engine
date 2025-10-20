@@ -1,0 +1,26 @@
+namespace App\Taps;
+
+use Base\Taps\ToTap;
+use App\Taps\DefaultClass; //Replace this with the class you wish to use
+
+class {{TAP}}
+{
+
+    protected static $instance = DefaultClass::class;  // Example::class
+
+    public static function use($class = 'some/codeigniter/class')
+    {
+        // Set the static property
+        self::$instance = $class;
+
+        // Return the class itself to enable method chaining
+        return new static;
+    } 
+
+    public static function __callStatic($method, $arguments)
+    {
+        return ToTap::make(self::$instance, $method, $arguments);
+    }
+
+}
+/* End of {{TAP}} tab file */

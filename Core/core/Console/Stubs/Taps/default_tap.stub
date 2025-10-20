@@ -1,0 +1,15 @@
+namespace App\Taps;
+
+use Base\Taps\ToTap;
+use CI_OUTPUT;
+
+class {{TAP}} extends ToTap
+{
+
+    public static function getFullyQualifiedClass()
+    {
+        return CI_OUTPUT::class;
+    }
+
+}
+/* End of {{TAP}} tab file */

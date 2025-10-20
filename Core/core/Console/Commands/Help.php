@@ -55,6 +55,7 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    list:routes") .  ConsoleColor::cyan("         List all available routes")  . " \n";
         $output .=  ConsoleColor::light_purple("    clear:session") .  ConsoleColor::cyan("       Clear specific session type")  . " \n";
         $output .=  ConsoleColor::light_purple("    clear:cache") .  ConsoleColor::cyan("         Clear specific cached files")  . " \n";
+        $output .=  ConsoleColor::light_purple("    use:command") .  ConsoleColor::cyan("         Enables you to access console controllers to perform cli tasks")  . " \n";
         $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("       Update sylynder engine")  . " \n";
         $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("            Initialize your project to use git")  . " \n";
         
@@ -63,21 +64,22 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    key:generate") .  ConsoleColor::cyan("        Generates an encryption key in the .env file")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:module") .  ConsoleColor::cyan("       Create a module by specifying which sub-directories to use e.g --mvc, --c, --m")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:package") .  ConsoleColor::cyan("      Create a package by specifying which sub-directories to use e.g --mvc, --c, --m, --s")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:command") .  ConsoleColor::cyan("      Create command by specifying which module it belongs with")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:controller") .  ConsoleColor::cyan("   Create a controller by specifying which module it belongs with")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:model") .  ConsoleColor::cyan("        Create a model by specifying which module it belongs with")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:view") .  ConsoleColor::cyan("         Create a view by specifying which path and file name to give or a module it belongs with.")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:service") .  ConsoleColor::cyan("      Create a service by specifying which module it belongs with")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:action") .  ConsoleColor::cyan("       Create an action by specifying which module it belongs with")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:library") .  ConsoleColor::cyan("      Create a library by specifying which module it belongs with")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:helper") .  ConsoleColor::cyan("       Create a helper by specifying which module it belongs with")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:form") .  ConsoleColor::cyan("         Create a form by specifying which module it belongs with")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:rule") .  ConsoleColor::cyan("         Create a rule by specifying which module it belongs with")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:command") .  ConsoleColor::cyan("      Create a command class")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:controller") .  ConsoleColor::cyan("   Create a controller class")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:model") .  ConsoleColor::cyan("        Create a model class")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:view") .  ConsoleColor::cyan("         Create a view file in a module or specify a directory")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:service") .  ConsoleColor::cyan("      Create a service class")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:action") .  ConsoleColor::cyan("       Create an action class")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:library") .  ConsoleColor::cyan("      Create a library class")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:tap") .  ConsoleColor::cyan("          Create a tap class")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:helper") .  ConsoleColor::cyan("       Create a helper class")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:form") .  ConsoleColor::cyan("         Create a form class")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:rule") .  ConsoleColor::cyan("         Create a rule file")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:middleware") .  ConsoleColor::cyan("   Create a middleware by specifying the name")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:enum") .  ConsoleColor::cyan("         Create an enum by specifying the name and the type e.g. --real, --fake")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:migration") .  ConsoleColor::cyan("    Create a migration file by specifying the name and the type e.g. --anonymous, --default")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:seeder") .  ConsoleColor::cyan("       Create a seeder file by specifying the name and the type e.g. --raw, --sample")  . " \n";
-        $output .=  ConsoleColor::light_purple("    create:jsondb") .  ConsoleColor::cyan("       Create a json database by specifying the name")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:enum") .  ConsoleColor::cyan("         Create an enum with name and type e.g. --real, --fake")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:migration") .  ConsoleColor::cyan("    Create a migration with name and type e.g. --anonymous, --default")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:seeder") .  ConsoleColor::cyan("       Create a seeder file with name and type e.g. --raw, --sample")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:jsondb") .  ConsoleColor::cyan("       Create a json database with the name")  . " \n";
 
         echo $output . "\n";
     }
@@ -640,7 +642,7 @@ class Help extends Console
         echo <<<CREATECOMMAND
             {$welcome}
             {$description}
-                Create command by specifying which module it belongs with
+                Create command class
 
             {$usage}
                 php webby create:command <module-type:module-name> <command-name> <options>
@@ -928,6 +930,29 @@ class Help extends Console
         CREATEENUM;
     }
 
+    private static function create_tap()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<CREATETAP
+            {$welcome}
+            {$description}
+                Create a tap class to use as a facade
+
+            {$usage}
+                php webby create:tap <tap-name> <tap-type>
+
+            {$examples}
+                php webby create:tap users
+                php webby create:tap content --base
+                php webby create:tap books --model
+            
+        CREATETAP;
+    }
+
     private static function update_engine()
     {
         $welcome     = static::welcome();
@@ -1096,6 +1121,9 @@ class Help extends Console
             break;
             case 'create:enum':
                 Help::create_enum();
+            break;
+            case 'create:tap':
+                Help::create_tap();
             break;
             case 'update:engine':
                 Help::update_engine();

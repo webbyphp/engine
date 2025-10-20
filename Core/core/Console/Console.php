@@ -284,7 +284,11 @@ class Console
             case 'create:enum':
                 static::consoleEnv();
                 static::createEnum($arg2, $arg3, $arg4);
-            break;
+                break;
+            case 'create:tap':
+                static::consoleEnv();
+                static::createTap($arg2, $arg3, $arg4);
+                break;
             case 'create:migration':
                 static::consoleEnv();
                 static::createMigration($arg2, $arg3, $arg4);
@@ -813,6 +817,36 @@ class Console
         static::runSystemCommand($command);
     }
 
+    protected static function createTap(...$args)
+    {
+        $name = '';
+        $type = '';
+
+        if (isset($args[0])) {
+            $name = $args[0];
+        }
+
+        if (isset($args[1])) {
+            $type = $args[1];
+        }
+
+        if ($name === '') {
+            $output =   " \n";
+            $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:tap", 'light', 'red') . " \n";
+            echo $output . "\n";
+            exit;
+        }
+
+        if (strpos($name, '-') !== false) {
+            $output =   " \n";
+            $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:tap", 'light', 'red') . " \n";
+            echo $output . "\n";
+            exit;
+        }
+
+        $command = Console::phpCommand() . 'create/createtap/' . $name . '/' . $type;
+        static::runSystemCommand($command);
+    }
     protected static function createJsonDb(...$args)
     {
         $name = '';

@@ -1,0 +1,15 @@
+namespace App\Taps;
+
+use Base\Taps\ToTap;
+
+class {{TAP}}
+{
+    protected static $instance = '{{TAP}}_model';
+
+    public static function __callStatic($method, $arguments)
+    {
+        return ToTap::make(self::$instance, $method, $arguments);
+    }
+
+}
+/* End of {{TAP}} tab file */
