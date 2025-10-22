@@ -282,6 +282,182 @@ class CI_DB_result
 
 	// --------------------------------------------------------------------
 
+	 /**
+     * Generate results one row at a time (memory efficient)
+     * 
+     * @param string $type - 'object', 'array', or custom class name
+     * @return Generator
+     */
+    public function result_generator($type = 'object')
+    {
+        if ($this->num_rows === 0) {
+            return;
+        }
+        
+        // Reset to beginning
+        $this->data_seek(0);
+        
+        while ($row = $this->_fetch_object()) {
+            switch ($type) {
+                case 'array':
+                    yield (array) $row;
+                    break;
+                case 'object':
+                    yield $row;
+                    break;
+                default:
+                    // Custom class instantiation
+                    if (class_exists($type)) {
+                        $custom_object = new $type();
+                        foreach ($row as $key => $value) {
+                            $custom_object->$key = $value;
+                        }
+                        yield $custom_object;
+                    } else {
+                        yield $row;
+                    }
+                    break;
+            }
+        }
+    }
+
+	// --------------------------------------------------------------------
+
+	/**
+     * Generate results in batches (configurable chunk size)
+     * 
+     * @param int $batch_size
+     * @param string $type
+     * @return Generator
+     */
+    public function batch_generator($batch_size = 1000, $type = 'object')
+    {
+        if ($this->num_rows === 0) {
+            return;
+        }
+        
+        $this->data_seek(0);
+        $batch = [];
+        $count = 0;
+        
+        while ($row = $this->_fetch_object()) {
+            $processed_row = match($type) {
+                'array' => (array) $row,
+                'object' => $row,
+                default => class_exists($type) ? $this->_create_custom_object($row, $type) : $row
+            };
+            
+            $batch[] = $processed_row;
+            $count++;
+            
+            if ($count >= $batch_size) {
+                yield $batch;
+                $batch = [];
+                $count = 0;
+            }
+        }
+        
+        // Yield remaining items
+        if (!empty($batch)) {
+            yield $batch;
+        }
+    }
+
+	// --------------------------------------------------------------------
+    
+    /**
+     * Generate key-value pairs (useful for dropdowns, lookups)
+     * 
+     * @param string $key_field
+     * @param string $value_field
+     * @return Generator
+     */
+    public function key_value_generator($key_field, $value_field = null)
+    {
+        if ($this->num_rows === 0) {
+            return;
+        }
+        
+        $this->data_seek(0);
+        
+        while ($row = $this->_fetch_object()) {
+            $key = $row->$key_field ?? null;
+            $value = $value_field ? ($row->$value_field ?? null) : $row;
+            
+            if ($key !== null) {
+                yield $key => $value;
+            }
+        }
+    }
+    
+	// --------------------------------------------------------------------
+
+    /**
+     * Generate with custom processing function
+     * 
+     * @param callable $processor
+     * @return Generator
+     */
+    public function processed_generator(callable $processor)
+    {
+        if ($this->num_rows === 0) {
+            return;
+        }
+        
+        $this->data_seek(0);
+        
+        while ($row = $this->_fetch_object()) {
+            $processed = $processor($row);
+            if ($processed !== null) {
+                yield $processed;
+            }
+        }
+    }
+    
+	// --------------------------------------------------------------------
+
+    /**
+     * Generate with filtering
+     * 
+     * @param callable $filter
+     * @param string $type
+     * @return Generator
+     */
+    public function filtered_generator(callable $filter, $type = 'object')
+    {
+        if ($this->num_rows === 0) {
+            return;
+        }
+        
+        $this->data_seek(0);
+        
+        while ($row = $this->_fetch_object()) {
+            if ($filter($row)) {
+                yield match($type) {
+                    'array' => (array) $row,
+                    'object' => $row,
+                    default => class_exists($type) ? $this->_create_custom_object($row, $type) : $row
+                };
+            }
+        }
+    }
+
+	// --------------------------------------------------------------------
+	
+	/**
+     * Helper method to create custom objects
+     */
+    private function _create_custom_object($row, $class_name)
+    {
+        $object = new $class_name();
+        foreach ($row as $key => $value) {
+            $object->$key = $value;
+        }
+        return $object;
+    }
+
+	// --------------------------------------------------------------------
+
 	/**
 	 * Row
 	 *
@@ -346,7 +522,7 @@ class CI_DB_result
 	 *
 	 * @param	int	$n
 	 * @param	string	$type
-	 * @return	object
+	 * @return	object|null
 	 */
 	public function custom_row_object($n, $type)
 	{
@@ -369,7 +545,7 @@ class CI_DB_result
 	 * Returns a single result row - object version
 	 *
 	 * @param	int	$n
-	 * @return	object
+	 * @return	object|null
 	 */
 	public function row_object($n = 0)
 	{
@@ -391,7 +567,7 @@ class CI_DB_result
 	 * Returns a single result row - array version
 	 *
 	 * @param	int	$n
-	 * @return	array
+	 * @return	array|null
 	 */
 	public function row_array($n = 0)
 	{

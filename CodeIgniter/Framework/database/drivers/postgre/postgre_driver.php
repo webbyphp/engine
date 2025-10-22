@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -529,7 +530,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 * @param	string	$index	WHERE key
 	 * @return	string
 	 */
-	protected function _update_batch($table, $values, $index)
+	protected function _update_batch($table, $values, $index): string
 	{
 		$ids = [];
 		foreach ($values as $key => $val)
@@ -568,7 +569,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 * @param	string	$table
 	 * @return	string
 	 */
-	protected function _delete($table)
+	protected function _delete($table): string
 	{
 		$this->qb_limit = false;
 		return parent::_delete($table);
@@ -584,7 +585,7 @@ class CI_DB_postgre_driver extends CI_DB {
 	 * @param	string	$sql	SQL Query
 	 * @return	string
 	 */
-	protected function _limit($sql)
+	protected function _limit($sql): string
 	{
 		return $sql.' LIMIT '.$this->qb_limit.($this->qb_offset ? ' OFFSET '.$this->qb_offset : '');
 	}

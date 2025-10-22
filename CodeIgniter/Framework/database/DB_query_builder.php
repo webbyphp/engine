@@ -1471,7 +1471,7 @@ abstract class CI_DB_query_builder extends CI_DB_driver
 	 * @param	mixed
 	 * @param	string
 	 * @param	bool
-	 * @return	CI_DB_query_builder
+	 * @return	CI_DB_query_builder|null
 	 */
 	public function set_insert_batch($key, $value = '', $escape = null)
 	{
@@ -2108,8 +2108,8 @@ abstract class CI_DB_query_builder extends CI_DB_driver
 	 *
 	 * Used to track SQL statements written with aliased tables.
 	 *
-	 * @param	string	The table to inspect
-	 * @return	string
+	 * @param	string|array	The table to inspect
+	 * @return	mixed
 	 */
 	protected function _track_aliases($table)
 	{
@@ -2350,7 +2350,7 @@ abstract class CI_DB_query_builder extends CI_DB_driver
 	 * Takes an object as input and converts the class variables to array key/vals
 	 *
 	 * @param	object
-	 * @return	array
+	 * @return	array|object
 	 */
 	protected function _object_to_array($object)
 	{
@@ -2379,8 +2379,8 @@ abstract class CI_DB_query_builder extends CI_DB_driver
 	 *
 	 * Takes an object as input and converts the class variables to array key/vals
 	 *
-	 * @param	object
-	 * @return	array
+	 * @param	object|array
+	 * @return	array|object
 	 */
 	protected function _object_to_array_batch($object)
 	{

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -62,6 +63,7 @@ class CI_Model {
 	 * syntax as controllers.
 	 *
 	 * @param	string	$key
+	 * @return 	mixed
 	 */
 	public function __get($key)
 	{

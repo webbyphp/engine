@@ -330,18 +330,32 @@ class CI_Loader {
 		{
 			foreach ($this->_ci_model_paths as $mod_path)
 			{
-				if ( ! file_exists($mod_path.'models/'.$path.$model.'.php'))
+				$possible_paths = [
+					$mod_path.'models/'.$path.$model.'.php',
+					$mod_path.'Models/'.$path.$model.'.php', // added support for capital "M"
+				];
+
+				$found = false;
+				foreach ($possible_paths as $file)
 				{
-					continue;
+					if (file_exists($file))
+					{
+						require_once($file);
+
+						if ( ! class_exists($model, false))
+						{
+							throw new RuntimeException($file." exists, but doesn't declare class ".$model);
+						}
+
+						$found = true;
+						break; // stop checking once loaded
+					}
 				}
 
-				require_once($mod_path.'models/'.$path.$model.'.php');
-				if ( ! class_exists($model, false))
+				if ($found)
 				{
-					throw new RuntimeException($mod_path."models/".$path.$model.".php exists, but doesn't declare class ".$model);
+					break; // stop looping through $mod_path once loaded
 				}
-
-				break;
 			}
 
 			if ( ! class_exists($model, false))
@@ -389,7 +403,7 @@ class CI_Loader {
 
 		if ($return === true)
 		{
-			return DB($params, $query_builder);
+			return DB($params);
 		}
 
 		// Initialize the db variable. Needed to prevent

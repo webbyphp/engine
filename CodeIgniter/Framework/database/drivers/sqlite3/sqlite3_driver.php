@@ -307,7 +307,7 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	 * @param	array	$values	INSERT values
 	 * @return	string
 	 */
-	protected function _replace($table, $keys, $values)
+	protected function _replace($table, $keys, $values): string
 	{
 		return 'INSERT OR '.parent::_replace($table, $keys, $values);
 	}
