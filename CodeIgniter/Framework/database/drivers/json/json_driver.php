@@ -114,6 +114,16 @@ class CI_DB_json_driver extends CI_DB_driver {
 	 */
 	private $binds = [];
 
+     /**
+     * @var int|null The number of results to limit the query to.
+     */
+    protected $limit = null;
+
+    /**
+     * @var int The offset for the results.
+     */
+    protected $offset = 0;
+
 	// --------------------------------------------------------------------
 
     /**
@@ -167,6 +177,14 @@ class CI_DB_json_driver extends CI_DB_driver {
     private $returnObject = false;
 
     /**
+     * Flag to determine return result format
+     *
+     * @var boolean
+     */
+    protected $result_format = 'object';
+
+
+    /**
      * Merge variable
      *
      * @var
@@ -218,22 +236,22 @@ class CI_DB_json_driver extends CI_DB_driver {
     /**
      * Write Error Constant
      */
-    private const WRITE_ERROR = EXIT_UNKNOWN_FILE;
+    protected const WRITE_ERROR = EXIT_UNKNOWN_FILE;
 
     /**
      * JSON File Extension Constant
      */
-    private const JSON_FILE_EXTENSION = '.json';
+    protected const JSON_FILE_EXTENSION = '.json';
 
     /**
      * XML File Extension Constant
      */
-    private const XML_FILE_EXTENSION = '.xml';
+    protected const XML_FILE_EXTENSION = '.xml';
 
     /**
      * SQL File Extension Constant
      */
-    private const SQL_FILE_EXTENSION = '.sql';
+    protected const SQL_FILE_EXTENSION = '.sql';
 
     public $jsonEncodeOption = JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT;
 
@@ -316,7 +334,7 @@ class CI_DB_json_driver extends CI_DB_driver {
             }
 
             try {
-                mkdir($directory, 0700, true);
+                mkdir( $directory, 0700, true);
                 return true;
             } catch (\Exception $ex) {
                 return false;
@@ -491,6 +509,20 @@ class CI_DB_json_driver extends CI_DB_driver {
         }
         
         return $total = count($elements);
+    }
+
+    /**
+     * Limit the number of results
+     *
+     * @param int $limit The maximum number of records to return.
+     * @param int $offset The starting point in the record set.
+     * @return object Returns the current instance of the class for method chaining.
+     */
+    public function limit($limit, $offset = 0)
+    {
+        $this->limit = (int) $limit;
+        $this->offset = (int) $offset;
+        return $this;
     }
 
     /**
@@ -707,7 +739,7 @@ class CI_DB_json_driver extends CI_DB_driver {
         }
 
         $firstRow = current($this->content);
-        
+        $firstRow = arrayfy($firstRow);
         $this->content = [];
 
         if (!empty($firstRow)) {
@@ -1067,13 +1099,41 @@ class CI_DB_json_driver extends CI_DB_driver {
     }
 
     /**
+     * Set the return format to an array.
+     *
+     * @return object Returns the current instance of the class for method chaining.
+     */
+    public function asArray()
+    {
+        $this->result_format = 'array';
+        return $this;
+    }
+
+    /**
      * Get final results as an object
      *
      * @return object
      */
+     /**
+     * Set the return format to an object.
+     *
+     * @return object Returns the current instance of the class for method chaining.
+     */
     public function asObject()
     {
         $this->returnObject = true;
+        $this->result_format = 'object';
+        return $this;
+    }
+
+     /**
+     * Set the return format to a JSON string.
+     *
+     * @return object Returns the current instance of the class for method chaining.
+     */
+    public function asJson()
+    {
+        $this->result_format = 'json';
         return $this;
     }
 
@@ -1131,11 +1191,38 @@ class CI_DB_json_driver extends CI_DB_driver {
         // Finally, lets do sorting :)
         $content = $this->processOrderBy($content);
 
+        // Apply limit and offset if they are set.
+        if ($this->limit !== null) {
+            $content = array_slice($content, $this->offset, $this->limit);
+        }
+
+        // Reset limit and offset properties for the next query.
+        $this->limit = null;
+        $this->offset = 0;
         $this->flushIndexes(true);
 
-        if ($this->returnObject) {
-            $content = objectify($content, true);
+        // Handle the return format
+        switch ($this->result_format) {
+            case 'array':
+                // Data is already an array from loadTableData
+                 $content = arrayfy($content);
+                break;
+            case 'json':
+                $content = json_encode($content, JSON_PRETTY_PRINT);
+                break;
+            case 'object':
+            default:
+                // Convert array of arrays to array of objects
+                // $content = array_map(function($record) {
+                //     return (object) $record;
+                // }, $content);
+                $content = objectify($content, true);
+                break;
         }
+
+        // if ($this->returnObject) {
+        //     $content = objectify($content, true);
+        // }
 
         return $content;
     }
@@ -1220,7 +1307,7 @@ class CI_DB_json_driver extends CI_DB_driver {
      *
      * @return  bool    Returns true if file was created, else false
      */
-    public function toSQL(string $from = '', string $to = null, bool $createTable = true): bool
+    public function toSQL(string $from = '', ?string $to = null, bool $createTable = true): bool
     {
 
         if (is_string($from) && ($to === null)) {

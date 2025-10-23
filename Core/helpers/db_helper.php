@@ -33,7 +33,7 @@ if ( ! function_exists('use_table'))
         $model = match ($with) {
             'EasyModel' => new \Base\Models\EasyModel,
             'BaseModel' => new \Base\Models\BaseModel,
-            'OrmModel'  => new \Base\Models\OrmModel,
+            // 'OrmModel'  => new \Base\Models\OrmModel,
             'Model'     => new \Base\Models\Model,
             default     => new \Base\Models\EasyModel, // Default to EasyModel
         };
@@ -246,4 +246,113 @@ if ( ! function_exists('drop_trigger'))
 	{
 		return "DROP TRIGGER {$trigger_name};";
 	}
+}
+
+// --------------------------------------------------------------
+
+if ( ! function_exists('use_json_model')) 
+{
+    /**
+     * Create a JSON model instance
+     *
+     * @param string $table
+     * @return object
+     */
+    function use_json_model($modelname = '')
+    {
+        $model = use_model($modelname);
+        
+        if (is_object($model)) {
+			return $model;
+		}
+
+        return app()->{$modelname};
+    }
+}
+
+if ( ! function_exists('json_db')) 
+{
+    /**
+     * Get JSON database instance
+     *
+     * @param string $path
+     * @return Base\Json\Db
+     */
+    function json_db($path = '')
+    {
+        return new Base\Json\Db($path);
+    }
+}
+
+if ( ! function_exists('json_table')) 
+{
+    /**
+     * Quick table access with JSON database
+     *
+     * @param string $table
+     * @return Base\Json\Db
+     */
+    function json_table($table)
+    {
+		$path = config('json_db_path');
+
+		$table = $path . DS . $table . '.json';
+
+        return use_json($table);
+    }
+}
+
+if ( ! function_exists('json_migrate')) 
+{
+    /**
+     * Migrate data from one format to another
+     *
+     * @param string $fromTable
+     * @param string $toTable
+     * @param callable|null $transformer
+     * @return bool
+     */
+    function json_migrate($fromTable, $toTable, $transformer = null)
+    {
+        $sourceData = json_table($fromTable)->all();
+        
+        if (empty($sourceData)) {
+            return false;
+        }
+
+        $targetModel = json_table($toTable);
+        
+        foreach ($sourceData as $record) {
+            $data = is_object($record) ? (array) $record : $record;
+            
+            if ($transformer && is_callable($transformer)) {
+                $data = $transformer($data);
+            }
+            
+            $targetModel->insert($data);
+        }
+        
+        return true;
+    }
+}
+
+if ( ! function_exists('json_backup_all')) 
+{
+    /**
+     * Backup all JSON tables
+     *
+     * @return array
+     */
+    function json_backup_all()
+    {
+        $db = json_db();
+        $tables = $db->listTables();
+        $results = [];
+        
+        foreach ($tables as $table) {
+            $results[$table] = $db->backupTable($table);
+        }
+        
+        return $results;
+    }
 }
