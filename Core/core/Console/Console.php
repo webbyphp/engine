@@ -333,7 +333,11 @@ class Console
             case 'clear:cache':
                 static::consoleEnv();
                 static::clearCache($arg2, $arg3, $arg4);
-            break;
+                break;
+            case 'clear:session':
+                static::consoleEnv();
+                static::clearSession($arg2, $arg3, $arg4);
+                break;
             case 'update:composer':
                 static::consoleEnv();
                 static::runSystemCommand(static::$composerCommand .'self-update');
@@ -1236,6 +1240,47 @@ class Console
         echo $output . "\n";
         exit;
     }
+
+    protected static function clearSession(...$args)
+    {
+        $type = $args[0];
+        $file = $args[1];
+
+        if($type == null) {
+            $type = '--file';
+        }
+
+        if ($type == '--file') {
+
+            $type = str_replace('-', '', $type);
+
+            $command = Console::phpCommand() . 'session/clean/' . $type;
+            static::runSystemCommand($command);
+            exit;
+        }
+
+        if ($type == null) {
+            $output =   " \n";
+            $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for clear:session", 'light', 'red') . " \n";
+            echo $output . "\n";
+            exit;
+        }
+
+        if ($type == '--db') {
+
+            $type = str_replace('-', '', $type);
+
+            $command = Console::phpCommand() . 'session/clean/' . $type;
+            static::runSystemCommand($command);
+            exit;
+        }
+
+        $output =   " \n";
+        $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for clear:session", 'light', 'red') . " \n";
+        echo $output . "\n";
+        exit;
+    }
+
 
     /**
      * Check Console Environment
