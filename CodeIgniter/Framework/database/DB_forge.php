@@ -70,11 +70,25 @@ abstract class CI_DB_forge
 	public $keys		= [];
 
 	/**
+     * Unique Keys data.
+     *
+     * @var array
+     */
+    protected $unique_keys = [];
+
+	/**
 	 * Primary Keys data
 	 *
 	 * @var	array
 	 */
 	public $primary_keys	= [];
+
+	/**
+     * Foreign Keys data
+     *
+     * @var array
+     */
+    protected $foreign_keys = [];
 
 	/**
 	 * Database character set
@@ -172,6 +186,19 @@ abstract class CI_DB_forge
 		log_message('info', 'Database Forge Class Initialized');
 	}
 
+
+	// --------------------------------------------------------------------
+
+	/**
+     * Provides access to the forge's current database connection.
+     *
+     * @return mixed
+     */
+    public function get_connection()
+    {
+        return $this->db;
+    }
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -230,7 +257,7 @@ abstract class CI_DB_forge
 	 * @param	bool	$primary
 	 * @return	CI_DB_forge
 	 */
-	public function add_key($key, $primary = false)
+	public function add_key($key, $primary = false, $unique = false)
 	{
 		// DO NOT change this! This condition is only applicable
 		// for PRIMARY keys because you can only have one such,
@@ -250,9 +277,39 @@ abstract class CI_DB_forge
 			$this->primary_keys[] = $key;
 		} else {
 			$this->keys[] = $key;
+
+			if ($unique) {
+				$this->unique_keys = count($this->keys) - 1;
+			}
 		}
 
 		return $this;
+	}
+
+	// --------------------------------------------------------------------
+	
+	/**
+	 * Add Primary key
+	 *
+	 * @param array|string $key
+	 * @return CI_DB_forge
+	 */
+	public function add_primary_key($key)
+	{
+		return $this->add_key($key, true);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Add Unique key
+	 *
+	 * @param array|string $key
+	 * @return CI_DB_forge
+	 */
+	public function add_unique_key($key)
+	{
+		return $this->add_key($key, false, true);
 	}
 
 	// --------------------------------------------------------------------
@@ -280,16 +337,76 @@ abstract class CI_DB_forge
 					show_error('Field information is required for that operation.');
 				}
 
-				$this->fields[] = $field;
+				$field_name = explode(' ', $field, 2)[0];
+                $field_name = trim($field_name, '`\'"');
+
+				$this->fields[$field_name] = $field;
 			}
 		}
 
 		if (is_array($field)) {
-			$this->fields = array_merge($this->fields, $field);
+
+			// $this->fields = array_merge($this->fields, $field);
+
+			foreach ($field as $idx => $f) {
+
+                if (is_string($f)) {
+                    $this->add_field($f);
+
+                    continue;
+                }
+
+                if (is_array($f)) {
+                    $this->fields = array_merge($this->fields, [$idx => $f]);
+                }
+            }
 		}
 
 		return $this;
 	}
+
+	// --------------------------------------------------------------------
+
+	/**
+     * Add Foreign Key
+     *
+     * @param string|string[] $field_name
+     * @param string|string[] $table_name
+	 * @param string|string[] $field
+     * @param string $on_update
+	 * @param string $on_delete
+	 * 
+     *
+     * @return	CI_DB_forge
+     */
+    public function add_foreign_key($field_name = '', string $table_name = '', $field = '', string $on_update = '', string $on_delete = '')
+    {
+        $field_name  = (array) $field_name;
+        $field = (array) $field;
+        $error_names = [];
+
+        foreach ($field_name as $name) {
+            if (! isset($this->fields[$name])) {
+                $error_names[] = $name;
+            }
+        }
+
+        if ($error_names !== []) {
+            $error_names[0] = implode(', ', $error_names);
+
+			show_error('The field(s) ' . $error_names[0] . ' not found in the table.');
+        }
+
+        $this->foreign_keys[] = [
+            'field'          => $field_name,
+            'reference_table' => $table_name,
+            'reference_field' => $field,
+            'on_delete'       => strtoupper($on_delete),
+            'on_update'       => strtoupper($on_update),
+        ];
+
+        return $this;
+    }
 
 	// --------------------------------------------------------------------
 
@@ -370,12 +487,17 @@ abstract class CI_DB_forge
 				: "\n\t" . $this->_process_column($columns[$i]);
 		}
 
-		$columns = implode(',', $columns)
-			. $this->_process_primary_keys($table);
+		$columns = implode(',', $columns);
+
+		$columns .= $this->_process_primary_keys($table);
+		$columns .= $this->_process_foreign_keys($table);
 
 		// Are indexes created from within the CREATE TABLE statement? (e.g. in MySQL)
 		if ($this->_create_table_keys === true) {
-			$columns .= $this->_process_indexes($table);
+			$indexes = $this->_process_indexes($table);
+			if (is_string($indexes)) {
+				$columns .= $indexes;
+			}
 		}
 
 		// _create_table will usually have the following format: "%s %s (%s\n)"
@@ -430,7 +552,11 @@ abstract class CI_DB_forge
 			return true;
 		}
 
+		$this->db->disable_foreign_key_checks();
+
 		$query = $this->db->query($query);
+
+		$this->db->enable_foreign_key_checks();
 
 		// Update table list cache
 		if ($query && !empty($this->db->data_cache['table_names'])) {
@@ -656,11 +782,11 @@ abstract class CI_DB_forge
 
 			$field = [
 				'name'			=> $key,
-				'new_name'		=> isset($attributes['NAME']) ? $attributes['NAME'] : null,
-				'type'			=> isset($attributes['TYPE']) ? $attributes['TYPE'] : null,
+				'new_name'      => $attributes['NAME'] ?? null,
+                'type'          => $attributes['TYPE'] ?? null,
 				'length'		=> '',
 				'unsigned'		=> '',
-				'null'			=> null,
+				'null'			=> '',
 				'unique'		=> '',
 				'default'		=> '',
 				'auto_increment'	=> '',
@@ -683,10 +809,10 @@ abstract class CI_DB_forge
 				if ($attributes['null'] === true) {
 					$field['null'] = empty($this->_null) ? '' : ' ' . $this->_null;
 				} else {
-					$field['null'] = ' NOT null';
+					$field['null'] = ' NOT NULL';
 				}
 			} elseif ($create_table === true) {
-				$field['null'] = ' NOT null';
+				$field['null'] = ' NOT NULL';
 			}
 
 			$this->_attr_auto_increment($attributes, $field);
@@ -697,6 +823,9 @@ abstract class CI_DB_forge
 			}
 
 			if (isset($attributes['TYPE']) && !empty($attributes['CONSTRAINT'])) {
+
+				$attributes['CONSTRAINT'] = $this->db->escape($attributes['CONSTRAINT']);
+
 				switch (strtoupper($attributes['TYPE'])) {
 					case 'ENUM':
 					case 'SET':
@@ -905,19 +1034,26 @@ abstract class CI_DB_forge
 		$sqls = [];
 
 		for ($i = 0, $c = count($this->keys); $i < $c; $i++) {
-			if (is_array($this->keys[$i])) {
-				for ($i2 = 0, $c2 = count($this->keys[$i]); $i2 < $c2; $i2++) {
-					if (!isset($this->fields[$this->keys[$i][$i2]])) {
-						unset($this->keys[$i][$i2]);
-						continue;
-					}
+			
+			$this->keys[$i] = (array) $this->keys[$i];
+
+			for ($i2 = 0, $c2 = count($this->keys[$i]); $i2 < $c2; $i2++) {
+				if (!isset($this->fields[$this->keys[$i][$i2]])) {
+					unset($this->keys[$i][$i2]);
 				}
-			} elseif (!isset($this->fields[$this->keys[$i]])) {
-				unset($this->keys[$i]);
+			}
+
+			if ($this->keys[$i] <= 0) {
 				continue;
 			}
 
-			is_array($this->keys[$i]) or $this->keys[$i] = [$this->keys[$i]];
+			if (in_array($i, $this->unique_keys, true)) {
+                $sqls[] = 'ALTER TABLE ' . $this->db->escape_identifiers($table)
+                    . ' ADD CONSTRAINT ' . $this->db->escape_identifiers($table . '_' . implode('_', $this->keys[$i]))
+                    . ' UNIQUE (' . implode(', ', $this->db->escape_identifiers($this->keys[$i])) . ')';
+
+                continue;
+            }
 
 			$sqls[] = 'CREATE INDEX ' . $this->db->escape_identifiers($table . '_' . implode('_', $this->keys[$i]))
 				. ' ON ' . $this->db->escape_identifiers($table)
@@ -925,6 +1061,49 @@ abstract class CI_DB_forge
 		}
 
 		return $sqls;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Process foreign keys
+	 *
+	 * @param	string	$table	Table name
+	 * @return	string
+	 */
+	protected function _process_foreign_keys($table)
+	{
+		$sql = '';
+
+		$allow_actions = [
+            'CASCADE',
+            'SET NULL',
+            'NO ACTION',
+            'RESTRICT',
+            'SET DEFAULT',
+        ];
+
+		foreach ($this->foreign_keys as $fkey) {
+
+            $name_index            = $table . '_' . implode('_', $fkey['field']) . '_foreign';
+            $name_index_filled      = $this->db->escape_identifiers($name_index);
+            $foreign_key_filled     = implode(', ', $this->db->escapeIdentifiers($fkey['field']));
+            $reference_table_filled  = $this->db->escape_identifiers($this->db->DBPrefix . $fkey['reference_table']);
+            $reference_field_filled  = implode(', ', $this->db->escape_identifiers($fkey['reference_field']));
+
+            $format_sql = ",\n\tCONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s(%s)";
+            $sql .= sprintf($format_sql, $name_index_filled, $foreign_key_filled, $reference_table_filled, $reference_field_filled);
+
+            if ($fkey['on_delete'] !== false && in_array($fkey['on_delete'], $allow_actions, true)) {
+                $sql .= ' ON DELETE ' . $fkey['on_delete'];
+            }
+
+            if ($fkey['on_update'] !== false && in_array($fkey['on_update'], $allow_actions, true)) {
+                $sql .= ' ON UPDATE ' . $fkey['on_update'];
+            }
+        }
+
+		return $sql;
 	}
 
 	// --------------------------------------------------------------------
