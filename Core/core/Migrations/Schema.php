@@ -5,10 +5,10 @@
  *
  * Expressive table definitions
  *
- * @author 		Jamie Rumbelow <http://jamierumbelow.net>
+ * @author      Jamie Rumbelow <http://jamierumbelow.net>
  * @author      Kwame Oteng Appiah-Nti <http://developerkwame.com>
- * @version		1.0.0
- * @copyright 	(c)2011 Jamie Rumbelow
+ * @version     1.0.0
+ * @copyright   (c)2011 Jamie Rumbelow
  * @copyright   (c)2022 Kwame Oteng Appiah-Nti
  */
 
@@ -50,7 +50,6 @@ class Schema
         'datetime'    => 'DATETIME',
         'timestamp'   => 'TIMESTAMP',
         'boolean'     => 'TINYINT',
-        'tinyint'     => 'TINYINT'
     ];
 
     public function __construct()
@@ -203,9 +202,9 @@ class Schema
      *
      * @return void
      */
-    public static function enableForeignKeyChecks()
+    public static function enableForeignKeyChecks(): void
     {
-        static::ci()->db->enable_foreign_key_checks();
+        static::withSQL(static::ci()->db->enable_foreign_key_checks());
     }
 
     /**
@@ -213,9 +212,9 @@ class Schema
      *
      * @return void
      */
-    public static function disableForeignKeyChecks()
+    public static function disableForeignKeyChecks(): void
     {
-        static::ci()->db->disable_foreign_key_checks();
+        static::withSQL(static::ci()->db->disable_foreign_key_checks());
     }
 
 }

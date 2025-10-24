@@ -43,6 +43,14 @@ class Table
         'keys' => []
     ];
 
+    protected $foreignColumn = '_id';
+
+    protected $primaryColumn = 'id';
+
+    protected $onDelete = 'RESTRICT';
+
+    protected $onUpdate = 'RESTRICT';
+
     protected $null = false;
 
     public function __construct($tableName = '')
@@ -291,16 +299,64 @@ class Table
     }
 
     /* ---------------------------------Helper Methods---------------------------------- */
-
+    
+    /**
+     * Set the given column as the primary key.
+     *
+     * @param mixed $columnName The name of the column to be set as primary key.
+     */
     public function primaryKey($columnName)
     {
         $this->key($columnName, true);
     }
 
+    // public function foreignKey($key, )
+    // {
+    //     $column->foreignId('deleted_by')->nullable()->constrained('users');
+
+    //     return "ALTER TABLE `{$this->foreignColumn}` ADD CONSTRAINT `{$this->primaryColumn}_{$this->foreignColumn}_fk` FOREIGN KEY (`{$this->foreignColumn}`) REFERENCES `{$references[0]}`(`{$references[1]}`) ON DELETE {$on_delete} ON UPDATE {$on_update}";
+
+    // }
+
     public function key($columnName, $primary = false)
     {
         $this->definition['keys'][$columnName] = $primary;
     }
+
+    /**
+     * Add a foreign key constraint to a given table.
+     *
+     * @param mixed $primaryKey description
+     * @param mixed $foreignKey description
+     * @param mixed $references description
+     * @param string $onDelete description
+     * @param string $onUpdate description
+     * @return string
+     */
+    public function addforeignKey($table, $foreignKey, $references, $onDelete = 'RESTRICT', $onUpdate = 'RESTRICT', $primaryKey = '')
+	{
+        $currentTable = $table;
+        $this->primaryColumn = $primaryKey ?? $currentTable;
+        $this->foreignColumn = $foreignKey;
+        $this->onUpdate = $onUpdate;
+        $this->onDelete = $onDelete;
+
+		$references = explode('(', str_replace(')', '', str_replace('`', '', $references)));
+
+        $query = "ALTER TABLE `{$currentTable}` ADD CONSTRAINT `{$this->primaryColumn}_{$this->foreignColumn}_fk` FOREIGN KEY (`{$this->foreignColumn}`) REFERENCES `{$references[0]}`(`{$references[1]}`) ON DELETE {$this->onDelete} ON UPDATE {$this->onUpdate}";
+
+        return $this->ci->db->query($query);
+    }
+
+    public function dropForeignKey($table, $foreignKey, $primaryKey = '')
+	{
+        $currentTable = $table;
+        $this->primaryColumn = $primaryKey ?? $currentTable;
+        $this->foreignColumn = $foreignKey;
+		$query = "ALTER TABLE `{$currentTable}` DROP FOREIGN KEY `{$this->primaryColumn}_{$this->foreignColumn}_fk`";
+
+        return $this->ci->db->query($query);
+	}
 
     public function addDefinitionRule($columnName, $rule, $options)
     {
@@ -318,4 +374,5 @@ class Table
 
         $this->definition['columns'][$columnName] = array_merge($rule, $options);
     }
+
 }
