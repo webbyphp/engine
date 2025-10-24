@@ -65,7 +65,7 @@ class CI_Cache_file extends CI_Driver {
 		$CI = get_instance();
 		$CI->load->helper('file');
 		$path = $CI->config->item('cache_path');
-		$this->_cache_path = ($path === '') ? CACHE_PATH : $path;
+		$this->_cache_path = ($path === '') ? WRITABLEPATH.'cache/' : $path;
 	}
 
 	// ------------------------------------------------------------------------

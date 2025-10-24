@@ -42,7 +42,7 @@
 
 class CI_Cache_sqlite extends CI_Driver {
     
-    /**
+   /**
     * Path to the cache database file.
     *
     * @var string
@@ -173,7 +173,7 @@ class CI_Cache_sqlite extends CI_Driver {
        try {
            // insert or replace data
            $query = $this->sqlite->query("INSERT OR REPLACE INTO cache(id, data, expire) VALUES ('" . (string) $id . "', '" . serialize($data) . "', '" . (time() + $ttl) . "')");
-           
+
            // trigger auto-flush
            if ($this->auto_flush)
                $this->flush();
@@ -250,7 +250,7 @@ class CI_Cache_sqlite extends CI_Driver {
    {
        try {
         
-           $info = array();
+           $info = [];
            
            // get number of items in cache
            $query = $this->sqlite->query("SELECT count(1) FROM cache");
@@ -296,6 +296,6 @@ class CI_Cache_sqlite extends CI_Driver {
        } catch ( \PDOException $e ) {
            return false;
        }
-   }    
-   
+   }
+
 }
