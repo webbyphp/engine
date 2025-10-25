@@ -76,7 +76,7 @@ class CI_Controller
 	/**
 	 * Dynamic variables container
 	 *
-	 * @var	array
+	 * @var array<string,mixed>
 	 */
 	protected array $container = [];
 
@@ -186,7 +186,7 @@ class CI_Controller
      * @param string $name
      * @param mixed $value
      */
-    public function __set($name, $value): void
+    public function __set(string $name, mixed $value): void
     {
         $this->container[$name] = $value;
     }
@@ -198,7 +198,7 @@ class CI_Controller
      * @param string $name
      * @return mixed|null
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         // If the property exists in the container, return it
         if (array_key_exists($name, $this->container)) {
@@ -219,7 +219,7 @@ class CI_Controller
      * @param string $name
      * @return bool
      */
-    public function __isset($name): bool
+    public function __isset(string $name): bool
     {
         return array_key_exists($name, $this->container);
     }
