@@ -1,6 +1,6 @@
 use Base\Controllers\ConsoleController;
 
-class {{CONTROLLER}} extends ConsoleController
+final class {{CONTROLLER}} extends ConsoleController
 {
     public function __construct()
     {

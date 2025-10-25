@@ -1,6 +1,6 @@
 use Base\Controllers\WebController;
 
-class {{CONTROLLER}} extends WebController
+final class {{CONTROLLER}} extends WebController
 {
     public function __construct()
     {

@@ -51,16 +51,43 @@ declare(strict_types=1);
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/general/controllers.html
  */
-#[AllowDynamicProperties]
-class CI_Controller extends stdClass
+
+/**
+ * 
+ * @property CI_Loader    $load      Loader library
+ * @property CI_Input     $input     Input library  
+ * @property CI_Output    $output    Output library
+ * @property CI_Config    $config    Configuration library
+ * @property CI_URI       $uri       URI library
+ * @property CI_Router    $router    Router library
+ * @property CI_Security  $security  Security library
+ * @property CI_Lang      $lang      Language library
+ * @property CI_Zip       $zip       Zip library
+ * @property CI_Benchmark $benchmark Benchmark library
+ * @property CI_Session   $session   Session library (if loaded)
+ * @property CI_DB_query_builder $db Database connection (if loaded)
+ * @property CI_Form_validation $form_validation Form validation library (if loaded)
+ * 
+*/
+
+class CI_Controller 
 {
 
 	/**
-	 * Reference to the CI singleton
+	 * Dynamic variables container
 	 *
-	 * @var	object
+	 * @var	array
 	 */
-	private static $instance;
+	protected array $container = [];
+
+	/**
+	 * Reference to the CI singleton
+     * super-object instance reference 
+	 * (legacy get_instance()).
+     *
+     * @var CI_Controller|null
+     */
+    private static ?CI_Controller $instance = null;
 
 	/**
 	 * CI_Loader
@@ -119,6 +146,9 @@ class CI_Controller extends stdClass
 		foreach (is_loaded() as $var => $class)
 		{
 			$this->$var = load_class($class);
+
+			// place into container so __get will return it
+            $this->container[$var] = $this->$var;
 		}
 
 		$this->load = load_class('Loader', 'core');
@@ -148,5 +178,50 @@ class CI_Controller extends stdClass
 	 * @return	void
 	 */
 	// public function _output($output) {}
+
+	/**
+     * Magic setter for dynamic properties 
+	 * -> store into container.
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value): void
+    {
+        $this->container[$name] = $value;
+    }
+
+    /**
+     * Magic getter for properties 
+	 * -> read from container.
+     *
+     * @param string $name
+     * @return mixed|null
+     */
+    public function __get($name)
+    {
+        // If the property exists in the container, return it
+        if (array_key_exists($name, $this->container)) {
+            return $this->container[$name];
+        }
+
+        // As a fallback, let the loader try to lazy-load the item (same behavior as CI)
+        if (isset($this->load) && method_exists($this->load, $name)) {
+            return $this->load->$name;
+        }
+
+        return null;
+    }
+
+    /**
+     * Optionally expose isset behavior.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name): bool
+    {
+        return array_key_exists($name, $this->container);
+    }
 
 }

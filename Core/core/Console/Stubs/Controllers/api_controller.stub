@@ -1,6 +1,6 @@
 use Base\Controllers\ApiController;
 
-class {{CONTROLLER}} extends ApiController
+final class {{CONTROLLER}} extends ApiController
 {
     public function __construct()
     {

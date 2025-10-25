@@ -1,6 +1,6 @@
 use Base\Console\Command;
 
-class {{COMMAND}} extends Command
+final class {{COMMAND}} extends Command
 {
 
     public function __construct()

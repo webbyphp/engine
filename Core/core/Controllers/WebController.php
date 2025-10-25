@@ -16,6 +16,7 @@ class WebController extends Controller
         $this->data['site_name'] = config_item('app_name');
 
         $this->plate = $this->plates();
+
     }
 
     public function plates($params = [])
@@ -81,7 +82,7 @@ class WebController extends Controller
     protected function toOutside($to = '')
     {
         $this->use->config('forbidden');
-        
+
         if (!contains('https://', $to) or !contains('http://', $to)) {
             $to = empty($to) ? "" : 'https://' . $to;
         } else {
