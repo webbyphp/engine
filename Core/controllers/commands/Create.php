@@ -321,63 +321,53 @@ class Create extends ConsoleController
         switch ($fileType) {
             case 'controller':
             case 'web_controller':
+            case 'ci_controller':
+            case 'raw_controller':
+            case 'base_controller':
             case 'api_controller':
             case 'console_controller':
                 return str_replace('{{CONTROLLER}}', $className, $fileContent);
-            break;
             case 'raw_command':
             case 'base_command':
             case 'package_command':
             case 'console_command':
                 return str_replace('{{COMMAND}}', $className, $fileContent);
-            break;
             case 'easy_model':
             case 'base_model':
             case 'orm_model':
             case 'json_model':
                 return str_replace('{{MODEL}}', $className, $fileContent);
-            break;
             case 'service':
                 return str_replace('{{SERVICE}}', $className, $fileContent);
-            break;
             case 'default_action':
             case 'crud_action':
             case 'job_action':
                 return str_replace('{{ACTION}}', $className, $fileContent);
-            break;
             case 'library':
                 return str_replace('{{LIBRARY}}', $className, $fileContent);
-            break;
             case 'base_helper':
                 return str_replace('{{HELPER}}', $className, $fileContent);
-            break;
             case 'static_helper':
                 $className = substr($className, 0, -7);
                 return str_replace('{{HELPER}}', $className, $fileContent);
-            break;
             case 'form':
                 return str_replace('{{FORM}}', $className, $fileContent);
-            break;
             case 'rule':
                 return str_replace('{{RULE}}', $className, $fileContent);
-            break;
             case 'empty':
             case 'php':
             case 'plates':
             case 'blade':
                 return $fileContent;
-            break;
             case 'middleware':
             case 'web_middleware':
             case 'api_middleware':
             case 'console_middleware':
             case 'command_middleware':
                 return str_replace('{{MIDDLEWARE}}', $className, $fileContent);
-            break;
             case 'fake_enum':
             case 'real_enum':
                 return str_replace('{{ENUM}}', $className, $fileContent);
-            break;
             case 'default_migration':
             case 'anonymous_migration':
                 
@@ -385,12 +375,10 @@ class Create extends ConsoleController
                 $className = 'Migration_'. $className;
 
                 return str_replace('{{MIGRATION}}', $className, $fileContent);
-            break;
             case 'raw_seeder':
             case 'sample_seeder':
             case 'default_seeder':
                 return str_replace('{{SEEDER}}', $className, $fileContent);
-            break;
             default:
                 ConsoleColor::white(" Sorry no file was created", 'light', 'red');
             exit;
