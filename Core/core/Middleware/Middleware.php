@@ -72,7 +72,7 @@ class Middleware extends Controller
                 if (file_exists(APPROOT . 'Middleware/' . $filename . '.php')) {
                     require APPROOT . 'Middleware/' . $filename . '.php';
 
-                    $ci = &get_instance();
+                    $ci = get_instance();
 
                     $object = new $filename($this, $ci);
 

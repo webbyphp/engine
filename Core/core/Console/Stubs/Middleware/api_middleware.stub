@@ -4,12 +4,11 @@ use Base\Controllers\ApiController;
 
 class {{MIDDLEWARE}} extends ApiController
 {
-    public $validate;
-
     public function __construct()
     {
         parent::__construct();
-        $this->validate = use_form_validation();
+
+        $this->always();
     }
 
     /**
@@ -21,4 +20,4 @@ class {{MIDDLEWARE}} extends ApiController
     public function always() {}
 
 }
-/* End of {{MIDDLEWARE}} file */
+/* End of {{MIDDLEWARE}} (an api middleware) file */

@@ -1,13 +1,22 @@
 namespace App\Middleware;
 
-use Base\Controllers\Controller;
+use Base\Middleware\BaseMiddleware;
 
-class {{MIDDLEWARE}} extends Controller
+class {{MIDDLEWARE}} extends BaseMiddleware
 {
     public function __construct()
     {
         parent::__construct();
+
+        $this->always();
     }
+
+    /**
+     * Handle middleware implementation
+     *
+     * @return void
+     */
+    public function handle() {}
 
     /**
      * Default middleware function 

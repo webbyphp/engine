@@ -177,6 +177,42 @@ class Route
 	protected static $self = null;
 
 	/**
+     * Current route middlewares
+     *
+     * @var array
+     */
+    protected static $currentMiddlewares = [];
+
+    /**
+     * Route middlewares mapping
+     *
+     * @var array
+     */
+    protected static $routeMiddlewares = [];
+
+    /**
+     * Middleware groups
+     *
+     * @var array
+     */
+    protected static $middlewareGroups = [
+        'web' => [
+            'LogRequestMiddleware',
+        ],
+        'api' => [
+            'cors',
+            'JsonOnlyMiddleware',
+            'api_auth',
+            'ratelimit'
+        ],
+        'admin' => [
+            'auth',
+            'admin',
+            'LogRequestMiddleware'
+        ]
+    ];
+
+	/**
 	 * Constructor function
 	 *
 	 * @param boolean $namespace

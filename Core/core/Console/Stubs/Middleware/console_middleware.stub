@@ -7,6 +7,8 @@ class {{MIDDLEWARE}} extends ConsoleController
     public function __construct()
     {
         parent::__construct();
+
+        $this->always();
     }
 
     /**
@@ -18,4 +20,4 @@ class {{MIDDLEWARE}} extends ConsoleController
     public function always() {}
 
 }
-/* End of {{MIDDLEWARE}} file */
+/* End of {{MIDDLEWARE}} (a console middleware) file */
