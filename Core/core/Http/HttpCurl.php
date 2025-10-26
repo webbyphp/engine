@@ -6,37 +6,36 @@ use Base\Http\CurlException;
 
 /**
  * An Easy Curl Library
- * 
+ *
  * Serving as an http client to work with remote servers
  * Built to easily use than the native PHP cURL bindings
  * Borrowed some ideas from Philsturgeon's CodeIgniter-Curl library
  *
- * @package    HttpCurl
- * @author     Kwame Oteng Appiah-Nti <me@developerkwame.com>
- * @author     Philip Sturgeon
- * @license    http://philsturgeon.co.uk/code/dbad-license dbad-license
+ * @package HttpCurl
+ * @author Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ * @author Philip Sturgeon
+ * @license http://philsturgeon.co.uk/code/dbad-license dbad-license
  */
 class HttpCurl
 {
-
     /**
      * Http Base URL
-     * 
+     *
      * @var string
      */
     public $baseUrl = '';
 
     /**
      * User Agent
-     * 
+     *
      * @var string
      */
     public $userAgent = 'An API Agent';
 
     /**
      * Curl Connect Timeout
-     * 
-     * Maximum amount of time in seconds that is allowed 
+     *
+     * Maximum amount of time in seconds that is allowed
      * to make the connection to the API server
      * @var int
      */
@@ -44,8 +43,8 @@ class HttpCurl
 
     /**
      * Curl Timeout
-     * 
-     * Maximum amount of time in seconds to which the 
+     *
+     * Maximum amount of time in seconds to which the
      * execution of cURL call will be limited
      * @var int
      */
@@ -61,7 +60,7 @@ class HttpCurl
     /**
      * Last response
      *
-     * @var string
+     * @var string|array
      */
     private $lastResponse;
 
@@ -84,7 +83,7 @@ class HttpCurl
     /**
      * Contains the cURL handler for a session
      *
-     * @var \CurlHandle
+     * @var \CurlHandle|resource|null
      */
     protected $session;
 
@@ -110,6 +109,13 @@ class HttpCurl
     protected $headers = [];
 
     /**
+     * Add file property to the class
+     *
+     * @var array
+     */
+    protected $files = [];
+
+    /**
      * Get Error code returned as an int
      *
      * @var int
@@ -119,24 +125,24 @@ class HttpCurl
     /**
      * Get Error message returned as a string
      *
-     * @var Error message returned as a string
+     * @var string Error message returned as a string
      */
     protected $errorString;
-    
+
     /**
      * Check Error Status
      *
      * @var bool
      */
-    protected $hasError;
-    
+    protected $hasError = false;
+
     /**
      * Get all curl request Information
      *
-     * @var mixed
+     * @var array
      */
-    public $info;
-    
+    public $info = [];
+
     /**
      * Hold Http Status Code
      *
@@ -145,22 +151,48 @@ class HttpCurl
     protected $status;
 
     /**
-     * @param string 
+     * @param string $url
+     * @param string $userAgent
      * @throws \Base\Http\CurlException if the library failed to initialize
      */
-
     public function __construct($url = '', $userAgent = '')
     {
-        $this->userAgent = $userAgent;
+        if ($userAgent) {
+            $this->userAgent = $userAgent;
+        }
 
-        log_message('info', 'cURL Class Initialized');
+        if (function_exists('log_message')) {
+            log_message('info', 'cURL Class Initialized');
+        }
 
         if (!$this->isEnabled()) {
             throw new CurlException('cURL Class - PHP was not built with cURL enabled. Rebuild PHP with --with-curl to use cURL.');
         }
 
-        $url && $this->create($url);
-        $this->baseUrl = $url;
+        if ($url) {
+            $this->baseUrl = $this->formatUrl($url);
+        }
+    }
+
+    /**
+     * Format URL to ensure it has proper protocol
+     *
+     * @param string $url
+     * @return string
+     */
+    private function formatUrl($url)
+    {
+        // If no protocol in URL, assume its a local link
+        if (!preg_match('!^\w+://!i', $url)) {
+            // Using url function from ci_core_helper.php if available
+            if (function_exists('url')) {
+                $url = url($url);
+            } else {
+                // Fallback - assume http if no protocol
+                $url = 'http://' . ltrim($url, '/');
+            }
+        }
+        return $url;
     }
 
     /**
@@ -171,14 +203,12 @@ class HttpCurl
      */
     public function create($url)
     {
-        // If no protocol in URL, assume its a CI link
-        if (!preg_match('!^\w+://! i', $url)) {
-            //Using url function from ci_core_helper.php
-            $url = url($url);
-        }
+        $this->url = $this->formatUrl($url);
+        $this->session = curl_init($this->url);
 
-        $this->baseUrl = $url;
-        $this->session = curl_init($this->baseUrl);
+        if ($this->session === false) {
+            throw new CurlException('Failed to initialize cURL session');
+        }
 
         return $this;
     }
@@ -188,16 +218,109 @@ class HttpCurl
      *
      * @return string
      */
-    protected function getBaseUrl()
+    public function getBaseUrl()
     {
         return $this->baseUrl;
+    }
+
+    /**
+     * Add a file to the request
+     *
+     * @param string $field The form field name
+     * @param string $filePath Path to the file
+     * @param string|null $mimeType MIME type of the file (optional)
+     * @param string|null $filename Custom filename (optional)
+     * @return HttpCurl
+     * @throws CurlException
+     */
+    public function addFile($field, $filePath, $mimeType = null, $filename = null)
+    {
+        if (!file_exists($filePath)) {
+            throw new CurlException("File not found: $filePath");
+        }
+
+        if (!is_readable($filePath)) {
+            throw new CurlException("File is not readable: $filePath");
+        }
+
+        // Use CURLFile for PHP 5.5+
+        if (class_exists('CURLFile')) {
+            $curlFile = new \CURLFile($filePath, $mimeType, $filename);
+        } else {
+            // Fallback for older PHP versions (though your library targets PHP 8.3)
+            $curlFile = '@' . $filePath;
+            if ($mimeType) {
+                $curlFile .= ';type=' . $mimeType;
+            }
+            if ($filename) {
+                $curlFile .= ';filename=' . $filename;
+            }
+        }
+
+        // Store the file data - we'll use this in setupPost/setupPut methods
+        if (!isset($this->files)) {
+            $this->files = [];
+        }
+        $this->files[$field] = $curlFile;
+
+        return $this;
+    }
+
+    /**
+     * Add multiple files at once
+     *
+     * @param array $files Array of files where key is field name and value is file path or array with file details
+     * @return HttpCurl
+     * @throws CurlException
+     */
+    public function addFiles($files)
+    {
+        foreach ($files as $field => $fileData) {
+            if (is_string($fileData)) {
+                // Simple file path
+                $this->addFile($field, $fileData);
+            } elseif (is_array($fileData)) {
+                // Array with file details
+                $filePath = $fileData['path'] ?? $fileData['file'] ?? '';
+                $mimeType = $fileData['type'] ?? $fileData['mime'] ?? null;
+                $filename = $fileData['name'] ?? $fileData['filename'] ?? null;
+                
+                $this->addFile($field, $filePath, $mimeType, $filename);
+            }
+        }
+        
+        return $this;
+    }
+
+    /**
+     * Convenience method for uploading files via POST
+     *
+     * @param string $path
+     * @param array $files Array of files to upload
+     * @param array $params Additional form parameters
+     * @param array $options Additional cURL options
+     * @return HttpCurl
+     */
+    public function upload($path = '', $files = [], $params = [], $options = [])
+    {
+        $fullUrl = $this->buildUrl($path);
+        $this->create($fullUrl);
+        
+        // Add files to the request
+        $this->addFiles($files);
+        
+        // Setup POST with parameters
+        $this->setupPost($params);
+        $this->options($options);
+
+        return $this;
     }
 
     /**
      * HttpCurl Request Method
      *
      * Quickly make a simple and easy cURL call with one line.
-     * 
+     *
      * @param string $method
      * @param string $path
      * @param array $params
@@ -207,16 +330,32 @@ class HttpCurl
     public function request($method, $path = '', array $params = [], $options = [])
     {
         $method = strtolower($method);
-
-        // Get acts differently, as it doesnt accept 
-        // parameters in the same way
-        if ($method === 'get') {
-            // If a URL is provided, create new session
-            $this->get($path, $params);
-        } else {
-            // If a URL is provided, create new session
-            $this->create($path);
-            $this->{$method}($params);
+        
+        // Build full URL
+        $fullUrl = $this->buildUrl($path);
+        
+        // Create session with full URL
+        $this->create($fullUrl);
+        
+        // Call the appropriate method
+        switch ($method) {
+            case 'get':
+                $this->setupGet($params);
+                break;
+            case 'post':
+                $this->setupPost($params);
+                break;
+            case 'put':
+                $this->setupPut($params);
+                break;
+            case 'patch':
+                $this->setupPatch($params);
+                break;
+            case 'delete':
+                $this->setupDelete($params);
+                break;
+            default:
+                throw new CurlException("Unsupported HTTP method: $method");
         }
 
         // Add in the specific options provided
@@ -225,77 +364,63 @@ class HttpCurl
     }
 
     /**
-     * HttpCurl Ftpget Method
+     * Build full URL from base and path
      *
-     * @param [type] $url
-     * @param [type] $file_path
-     * @param string $username
-     * @param string $password
-     * @return mixed
+     * @param string $path
+     * @return string
      */
-    public function ftpget($url, $file_path, $username = '', $password = '')
+    private function buildUrl($path = '')
     {
-        // If there is no ftp:// or any protocol entered, add ftp://
-        if (!preg_match('!^(ftp|sftp)://! i', $url)) {
-            $url = 'ftp://' . $url;
+        if (empty($path)) {
+            return $this->baseUrl;
         }
 
-        // Use an FTP login
-        if ($username != '') {
-            $auth_string = $username;
-
-            if ($password != '') {
-                $auth_string .= ':' . $password;
-            }
-
-            // Add the user auth string after the protocol
-            $url = str_replace('://', '://' . $auth_string . '@', $url);
+        // If path is already a full URL, use it as is
+        if (preg_match('!^\w+://!i', $path)) {
+            return $path;
         }
 
-        // Add the filepath
-        $url .= $file_path;
-
-        $file['file'] = new \CurlFile($file_path, mime_content_type($file_path));
-
-        $this->option(CURLOPT_POST, true);
-        $this->option(CURLOPT_POSTFIELDS, $file);
-        // $this->option(CURLOPT_BINARYTRANSFER, true);
-        $this->option(CURLOPT_VERBOSE, true);
-
-        return $this->execute();
+        // Combine base URL with path
+        $baseUrl = rtrim($this->baseUrl, '/');
+        $path = ltrim($path, '/');
+        
+        return $baseUrl . '/' . $path;
     }
-
-    /*---------------------------------------------Advanced Usage -------------------------------*/
 
     /**
      * HttpCurl Get method
-     * 
+     *
      * @param string $path
      * @param array $params
      * @return HttpCurl
      */
     public function get($path = '', $params = [])
     {
-
-        if (empty($path) && !empty($this->getBaseUrl())) {
-            $this->create($this->getBaseUrl());
-        }
-
-        if (!empty($path)) {
-            $this->create($path);
-        }
-
-        $this->method(HttpCurl::GET);
-
+        $fullUrl = $this->buildUrl($path);
+        
+        // Add query parameters to URL for GET requests
         if (!empty($params)) {
-            $params .= '?' . http_build_query($params, '', '&');
-
-            // Add in the specific options provided
-            $this->option(CURLOPT_POST, true);
-            $this->option(CURLOPT_POSTFIELDS, $params);
+            $separator = strpos($fullUrl, '?') !== false ? '&' : '?';
+            $fullUrl .= $separator . http_build_query($params, '', '&');
         }
+
+        $this->create($fullUrl);
+        $this->setupGet();
 
         return $this;
+    }
+
+    /**
+     * Setup GET request options
+     *
+     * @param array $params
+     * @return void
+     */
+    private function setupGet($params = [])
+    {
+        $this->method(self::GET);
+        // GET requests don't use POST fields
+        $this->option(CURLOPT_HTTPGET, true);
     }
 
     /**
@@ -308,25 +433,41 @@ class HttpCurl
      */
     public function post($path = '', $params = [], $options = [])
     {
-        $path = trim($path, '/');
-
-        if (!empty($path)) {
-            $this->create($this->baseUrl . $path);
-        }
-
-        // If it's an array (instead of a query string) 
-        // then format it correctly
-        if (is_array($params)) {
-            $params = http_build_query($params, '', '&');
-        }
-
-        // Add in the specific options provided
+        $fullUrl = $this->buildUrl($path);
+        $this->create($fullUrl);
+        
+        $this->setupPost($params);
         $this->options($options);
-        $this->method(HttpCurl::POST);
-        $this->option(CURLOPT_POST, true);
-        $this->option(CURLOPT_POSTFIELDS, $params);
 
         return $this;
+    }
+
+    /**
+     * Setup POST request options
+     *
+     * @param array|string $params
+     * @return void
+     */
+    private function setupPost($params = [])
+    {
+        $this->method(self::POST);
+        $this->option(CURLOPT_POST, true);
+        
+        // Handle file uploads
+        if (!empty($this->files)) {
+            // When files are present, merge with regular params
+            $postData = array_merge((array)$params, $this->files);
+            $this->option(CURLOPT_POSTFIELDS, $postData);
+            
+            // Don't set Content-Type header when uploading files
+            // Let cURL set it automatically with boundary
+        } elseif (!empty($params)) {
+            // Regular POST without files
+            if (is_array($params)) {
+                $params = http_build_query($params, '', '&');
+            }
+            $this->option(CURLOPT_POSTFIELDS, $params);
+        }
     }
 
     /**
@@ -339,25 +480,36 @@ class HttpCurl
      */
     public function put($path = '', $params = [], $options = [])
     {
-        $path = trim($path, '/');
-
-        if (!empty($path)) {
-            $this->create($this->baseUrl . $path);
-        }
-
-        // If its an array (instead of a query string) then format it correctly
-        if (is_array($params)) {
-            $params = http_build_query($params, '', '&');
-        }
-
-        // Add in the specific options provided
+        $fullUrl = $this->buildUrl($path);
+        $this->create($fullUrl);
+        
+        $this->setupPut($params);
         $this->options($options);
-        $this->method(HttpCurl::PUT);
-        $this->option(CURLOPT_POSTFIELDS, $params);
-        // Override method, I think this overrides $_POST with PUT data but... we'll see eh?
-        $this->option(CURLOPT_HTTPHEADER, ['X-HTTP-Method-Override: PUT']);
 
         return $this;
+    }
+
+    /**
+     * Setup PUT request options
+     *
+     * @param array|string $params
+     * @return void
+     */
+    private function setupPut($params = [])
+    {
+        $this->method(self::PUT);
+        
+        // Handle file uploads
+        if (!empty($this->files)) {
+            // For PUT with files, we need to use POST fields
+            $postData = array_merge((array)$params, $this->files);
+            $this->option(CURLOPT_POSTFIELDS, $postData);
+        } elseif (!empty($params)) {
+            if (is_array($params)) {
+                $params = http_build_query($params, '', '&');
+            }
+            $this->option(CURLOPT_POSTFIELDS, $params);
+        }
     }
 
     /**
@@ -370,26 +522,31 @@ class HttpCurl
      */
     public function patch($path = '', $params = [], $options = [])
     {
-        $path = trim($path, '/');
-
-        if (!empty($path)) {
-            $this->create($this->baseUrl . $path);
-        }
-
-        // If its an array (instead of a query string) then format it correctly
-        if (is_array($params)) {
-            $params = http_build_query($params, '', '&');
-        }
-
-        // Add in the specific options provided
+        $fullUrl = $this->buildUrl($path);
+        $this->create($fullUrl);
+        
+        $this->setupPatch($params);
         $this->options($options);
-        $this->method(HttpCurl::PATCH);
-        $this->option(CURLOPT_POSTFIELDS, $params);
-
-        // Override method, I think this overrides $_POST with PATCH data but... we'll see eh?
-        $this->option(CURLOPT_HTTPHEADER, ['X-HTTP-Method-Override: PATCH']);
 
         return $this;
+    }
+
+    /**
+     * Setup PATCH request options
+     *
+     * @param array|string $params
+     * @return void
+     */
+    private function setupPatch($params = [])
+    {
+        $this->method(self::PATCH);
+        
+        if (!empty($params)) {
+            if (is_array($params)) {
+                $params = http_build_query($params, '', '&');
+            }
+            $this->option(CURLOPT_POSTFIELDS, $params);
+        }
     }
 
     /**
@@ -402,35 +559,43 @@ class HttpCurl
      */
     public function delete($path = '', $params = [], $options = [])
     {
-        $path = trim($path, '/');
-
-        if (!empty($path)) {
-            $this->create($this->baseUrl . $path);
-        }
-
-        // If its an array (instead of a query string) then format it correctly
-        if (is_array($params)) {
-            $params = http_build_query($params, '', '&');
-        }
-
-        // Add in the specific options provided
+        $fullUrl = $this->buildUrl($path);
+        $this->create($fullUrl);
+        
+        $this->setupDelete($params);
         $this->options($options);
-        $this->method(HttpCurl::DELETE);
-        $this->option(CURLOPT_POSTFIELDS, $params);
 
         return $this;
     }
 
     /**
+     * Setup DELETE request options
+     *
+     * @param array|string $params
+     * @return void
+     */
+    private function setupDelete($params = [])
+    {
+        $this->method(self::DELETE);
+        
+        if (!empty($params)) {
+            if (is_array($params)) {
+                $params = http_build_query($params, '', '&');
+            }
+            $this->option(CURLOPT_POSTFIELDS, $params);
+        }
+    }
+
+    /**
      * HttpCurl Set Cookie Method
      *
-     * @param array $params
+     * @param array|string $params
      * @return HttpCurl
      */
     public function setCookies($params = [])
     {
         if (is_array($params)) {
-            $params = http_build_query($params, '', '&');
+            $params = http_build_query($params, '', '; ');
         }
 
         $this->option(CURLOPT_COOKIE, $params);
@@ -441,12 +606,34 @@ class HttpCurl
      * Http Header Method
      *
      * @param string $header
-     * @param string|array $content
+     * @param string $content
      * @return HttpCurl
      */
     public function header($header, $content = null)
     {
-        $this->headers[] = $content ? $header . ': ' . $content : $header;
+        if ($content !== null) {
+            $this->headers[] = $header . ': ' . $content;
+        } else {
+            $this->headers[] = $header;
+        }
+        return $this;
+    }
+
+    /**
+     * Set multiple headers at once
+     *
+     * @param array $headers
+     * @return HttpCurl
+     */
+    public function headers($headers = [])
+    {
+        foreach ($headers as $key => $value) {
+            if (is_numeric($key)) {
+                $this->header($value);
+            } else {
+                $this->header($key, $value);
+            }
+        }
         return $this;
     }
 
@@ -472,7 +659,10 @@ class HttpCurl
      */
     public function login($username = '', $password = '', $type = 'any')
     {
-        $this->option(CURLOPT_HTTPAUTH, constant('CURLAUTH_' . strtoupper($type)));
+        $authType = 'CURLAUTH_' . strtoupper($type);
+        if (defined($authType)) {
+            $this->option(CURLOPT_HTTPAUTH, constant($authType));
+        }
         $this->option(CURLOPT_USERPWD, $username . ':' . $password);
         return $this;
     }
@@ -481,7 +671,7 @@ class HttpCurl
      * HttpCurl Proxy Method
      *
      * @param string $url
-     * @param integer $port
+     * @param int $port
      * @return HttpCurl
      */
     public function proxy($url = '', $port = 80)
@@ -507,9 +697,9 @@ class HttpCurl
     /**
      * HttpCurl SSL Method
      *
-     * @param boolean $verifyPeer
-     * @param integer $verifyHost
-     * @param mixed $pathToCert
+     * @param bool $verifyPeer
+     * @param int $verifyHost
+     * @param string|null $pathToCert
      * @return HttpCurl
      */
     public function ssl($verifyPeer = true, $verifyHost = 2, $pathToCert = null)
@@ -517,9 +707,8 @@ class HttpCurl
         if ($verifyPeer) {
             $this->option(CURLOPT_SSL_VERIFYPEER, true);
             $this->option(CURLOPT_SSL_VERIFYHOST, $verifyHost);
-            if (isset($pathToCert)) {
-                $pathToCert = realpath($pathToCert);
-                $this->option(CURLOPT_CAINFO, $pathToCert);
+            if ($pathToCert && file_exists($pathToCert)) {
+                $this->option(CURLOPT_CAINFO, realpath($pathToCert));
             }
         } else {
             $this->option(CURLOPT_SSL_VERIFYPEER, false);
@@ -529,40 +718,46 @@ class HttpCurl
     }
 
     /**
+     * Set JSON content type and encode data
+     *
+     * @param array|object $data
+     * @return HttpCurl
+     */
+    public function json($data)
+    {
+        $this->header('Content-Type', 'application/json');
+        $this->option(CURLOPT_POSTFIELDS, json_encode($data));
+        return $this;
+    }
+
+    /**
      * HttpCurl Options Method
-     * 
-     * Gathers all curl_setopt_arrays
      *
      * @param array $options
      * @return HttpCurl
      */
     public function options($options = [])
     {
-        // Merge options in with the rest - done as array_merge() 
-        // does not overwrite numeric keys
         foreach ($options as $option => $value) {
             $this->option($option, $value);
         }
-
-        // Set all options provided
-        curl_setopt_array($this->session, $this->options);
-
         return $this;
     }
 
     /**
      * HttpCurl Option Method
      *
-     * Allows you to specify a curl option
-     * 
-     * @param string $option
-     * @param string $value
+     * @param string|int $option
+     * @param mixed $value
      * @return HttpCurl
      */
     public function option($option, $value)
     {
         if (is_string($option) && !is_numeric($option)) {
-            $option = constant('CURLOPT_' . strtoupper($option));
+            $constant = 'CURLOPT_' . strtoupper($option);
+            if (defined($constant)) {
+                $option = constant($constant);
+            }
         }
 
         $this->options[$option] = $value;
@@ -573,76 +768,125 @@ class HttpCurl
      * Execute a curl session and return results
      *
      * @return mixed
+     * @throws CurlException
      */
     public function execute()
     {
-        // Set two default options, and merge any extra ones in
-        if (!isset($this->options[CURLOPT_CONNECTTIMEOUT])) {
-            $this->options[CURLOPT_CONNECTTIMEOUT] = $this->curlConnectTimeout;
+        if (!$this->session) {
+            throw new CurlException('No cURL session available. Call create() first.');
         }
 
-        if (!isset($this->options[CURLOPT_TIMEOUT])) {
-            $this->options[CURLOPT_TIMEOUT] = $this->curlTimeout;
-        }
+        // Set default options
+        $this->setDefaultOptions();
 
-        if (!isset($this->options[CURLOPT_RETURNTRANSFER])) {
-            $this->options[CURLOPT_RETURNTRANSFER] = true;
-        }
-
-        if (!isset($this->options[CURLOPT_FAILONERROR])) {
-            $this->options[CURLOPT_FAILONERROR] = true;
-        }
-
-        if (!isset($this->options[CURLOPT_USERAGENT])) {
-            $this->options[CURLOPT_USERAGENT] = $this->userAgent;
-        }
-
-        // Only set follow location if not running securely
-        if (!ini_get('safe_mode') && !ini_get('open_basedir')) {
-            // Ok, follow location is not set already so lets set it to true
-            if (!isset($this->options[CURLOPT_FOLLOWLOCATION])) {
-                $this->options[CURLOPT_FOLLOWLOCATION] = true;
-            }
-        }
-
+        // Set headers if any
         if (!empty($this->headers)) {
             $this->option(CURLOPT_HTTPHEADER, $this->headers);
         }
 
-        $this->options();
+        // Apply all options to the session
+        if (!curl_setopt_array($this->session, $this->options)) {
+            throw new CurlException('Failed to set cURL options');
+        }
 
-        // Execute the request & and hide all output
+        // Execute the request
         $this->lastResponseRaw = curl_exec($this->session);
         $this->info = curl_getinfo($this->session);
+        $this->status = $this->info['http_code'] ?? 0;
 
-        // Request failed
+        // Check for errors
         if ($this->lastResponseRaw === false) {
-            $errno = curl_errno($this->session);
-            $error = curl_error($this->session);
-
-            curl_close($this->session);
-            $this->reset();
-
-            $this->hasError = true;
-            $this->errorCode = $errno;
-            $this->errorString = $error;
-
+            $this->handleError();
             return false;
         }
-        // Request successful
-        else {
-            curl_close($this->session);
-            $this->lastResponse = $this->lastResponseRaw;
-            $this->reset();
-            $this->hasError = false;
-            return $this->lastResponse;
+
+        // Success
+        curl_close($this->session);
+        $this->lastResponse = $this->processResponse($this->lastResponseRaw);
+        $this->reset();
+        $this->hasError = false;
+
+        return $this->lastResponse;
+    }
+
+    /**
+     * Set default cURL options
+     *
+     * @return void
+     */
+    private function setDefaultOptions()
+    {
+        $defaults = [
+            CURLOPT_CONNECTTIMEOUT => $this->curlConnectTimeout,
+            CURLOPT_TIMEOUT => $this->curlTimeout,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FAILONERROR => false, // Handle errors manually
+            CURLOPT_USERAGENT => $this->userAgent,
+            CURLOPT_HEADER => false,
+        ];
+
+        // Only set follow location if safe
+        if (!ini_get('safe_mode') && !ini_get('open_basedir')) {
+            $defaults[CURLOPT_FOLLOWLOCATION] = true;
+            $defaults[CURLOPT_MAXREDIRS] = 5;
+        }
+
+        foreach ($defaults as $option => $value) {
+            if (!isset($this->options[$option])) {
+                $this->options[$option] = $value;
+            }
         }
     }
 
     /**
+     * Handle cURL errors
+     *
+     * @return void
+     */
+    private function handleError()
+    {
+        $this->errorCode = curl_errno($this->session);
+        $this->errorString = curl_error($this->session);
+        $this->hasError = true;
+
+        curl_close($this->session);
+        $this->reset();
+    }
+
+    /**
+     * Process response data
+     *
+     * @param string $response
+     * @return string|array
+     */
+    private function processResponse($response)
+    {
+        // Try to decode JSON responses
+        if ($this->isJsonResponse()) {
+            $decoded = json_decode($response, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                return $decoded;
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * Check if response is JSON
+     *
+     * @return bool
+     */
+    private function isJsonResponse()
+    {
+        $contentType = $this->info['content_type'] ?? '';
+        return strpos($contentType, 'application/json') !== false;
+    }
+
+    /**
      * Return raw response data from the last request
-     * 
-     * @return string|null Response data
+     *
+     * @return string|null
      */
     public function getLastResponseRaw()
     {
@@ -651,8 +895,8 @@ class HttpCurl
 
     /**
      * Return decoded response data from the last request
-     * 
-     * @return string|array|null Response data
+     *
+     * @return string|array|null
      */
     public function getLastResponse()
     {
@@ -666,7 +910,7 @@ class HttpCurl
      */
     public function statusCode()
     {
-        return $this->status;
+        return $this->status ?? 0;
     }
 
     /**
@@ -686,7 +930,7 @@ class HttpCurl
      */
     public function getErrorMessage()
     {
-        return 'An error: ' . $this->errorString . ' with error number: ' . $this->errorCode;
+        return 'cURL Error: ' . $this->errorString . ' (Code: ' . $this->errorCode . ')';
     }
 
     /**
@@ -702,7 +946,7 @@ class HttpCurl
     /**
      * Get Curl Error Code
      *
-     * @return void
+     * @return int
      */
     public function errorCode()
     {
@@ -720,30 +964,41 @@ class HttpCurl
     }
 
     /**
+     * Get request info
+     *
+     * @return array
+     */
+    public function getInfo()
+    {
+        return $this->info;
+    }
+
+    /**
      * Curl Debugging
      *
-     * @return void
+     * @return string
      */
     public function debug()
     {
-        echo "=============================================<br/>\n";
-        echo "<h2>CURL Test</h2>\n";
-        echo "=============================================<br/>\n";
-        echo "<h3>Response</h3>\n";
-        echo "<code>" . nl2br(htmlentities($this->lastResponseRaw)) . "</code><br/>\n\n";
+        $output = "=============================================\n";
+        $output .= "CURL Debug Information\n";
+        $output .= "=============================================\n";
+        $output .= "URL: " . ($this->url ?: $this->baseUrl) . "\n";
+        $output .= "Status Code: " . $this->statusCode() . "\n";
+        $output .= "Response:\n" . $this->lastResponseRaw . "\n\n";
 
-        if ($this->errorString) {
-            echo "=============================================<br/>\n";
-            echo "<h3>Errors</h3>";
-            echo "<strong>Code:</strong> " . $this->errorCode . "<br/>\n";
-            echo "<strong>Message:</strong> " . $this->errorString . "<br/>\n";
+        if ($this->hasError()) {
+            $output .= "=============================================\n";
+            $output .= "Errors:\n";
+            $output .= "Code: " . $this->errorCode . "\n";
+            $output .= "Message: " . $this->errorString . "\n";
         }
 
-        echo "=============================================<br/>\n";
-        echo "<h3>Info</h3>";
-        echo "<pre>";
-        print_r($this->info);
-        echo "</pre>";
+        $output .= "=============================================\n";
+        $output .= "Info:\n";
+        $output .= print_r($this->info, true);
+
+        return $output;
     }
 
     /**
@@ -754,7 +1009,10 @@ class HttpCurl
     public function debugRequest()
     {
         return [
-            'url' => $this->baseUrl
+            'base_url' => $this->baseUrl,
+            'current_url' => $this->url,
+            'headers' => $this->headers,
+            'options' => $this->options
         ];
     }
 
@@ -768,10 +1026,23 @@ class HttpCurl
         $this->lastResponseRaw = '';
         $this->headers = [];
         $this->options = [];
+        $this->files = [];
         $this->errorCode = null;
         $this->errorString = '';
         $this->session = null;
+        $this->url = '';
 
         return $this;
+    }
+
+    /**
+     * Destructor to ensure cURL handle is closed
+     */
+    public function __destruct()
+    {
+        if ($this->session) {
+            // curl_close($this->session); // deprecated in PHP 8.5
+            unset($this->session);
+        }
     }
 }
