@@ -11,13 +11,14 @@ use Base\Controllers\Controller;
 /**
  * CodeIgniter Api Server Controller
  * 
- * A fully REST Api server implementation for CodeIgniter3 
+ * A fully REST API server implementation for CodeIgniter 3 
  * using one library, one config file and one controller.
  *
  * @link  https://github.com/chriskacerguis/ci-apiserver
  *
- * Note: Breaking modifications have been done to work with Webby
- * @since 4.0.0 
+ * Note: Breaking modifications have been 
+ * done to work with WebbyPHP
+ * @since 3.0.0 
  * @author Kwame Oteng Appiah-Nti (Developer Kwame)
  * 
  */
@@ -150,6 +151,28 @@ class ApiServerController extends Controller
      * @var array
      */
     protected $args = [];
+
+    /**
+     * Unified request data from all HTTP methods
+     * Contains input from GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS
+     *
+     * @var array
+     */
+    protected $requestData = [];
+
+    /**
+     * Accepted HTTP methods for the current endpoint
+     *
+     * @var array
+     */
+    protected $acceptedMethods = [];
+
+    /**
+     * Flag to check if HTTP method validation should be enforced
+     *
+     * @var bool
+     */
+    protected $enforceMethodValidation = false;
 
     /**
      * The insertId of the log entry (if we have one).
@@ -383,7 +406,7 @@ class ApiServerController extends Controller
         //get header vars
         $this->head_args = $this->input->request_headers();
 
-        // Merge both for one mega-args variable
+        // Merge all for one mega-args variable
         $this->args = array_merge(
             $this->get_args,
             $this->options_args,
@@ -394,6 +417,9 @@ class ApiServerController extends Controller
             $this->delete_args,
             $this->{$this->request->method . '_args'}
         );
+
+        // Set up unified request data (same as args but with a cleaner name)
+        $this->requestData = $this->args;
 
         // Extend this function to apply additional checking early on in the process
         $this->earlyChecks();
@@ -555,11 +581,13 @@ class ApiServerController extends Controller
         // Remove the supported format from the function name e.g. index.json => index
         $object_called = preg_replace('/^(.*)\.(?:' . implode('|', array_keys($this->supportedFormats)) . ')$/', '$1', $object_called);
 
-        $controllerMethod = $object_called . '_' . $this->request->method;
-        // Does this method exist? If not, try executing an index method
-        if (!method_exists($this, $controllerMethod)) {
-            $controllerMethod = 'index_' . $this->request->method;
-            array_unshift($arguments, $object_called);
+        $controllerMethod = $this->resolveControllerMethod($object_called, $arguments);
+        
+        if ($controllerMethod === null) {
+            $this->response([
+                $this->config->item('api_status_field_name')  => false,
+                $this->config->item('api_message_field_name') => $this->lang->line('text_api_unknown_method'),
+            ], HttpStatus::METHOD_NOT_ALLOWED);
         }
 
         // Do we want to log this method (if allowed by config)?
@@ -651,7 +679,7 @@ class ApiServerController extends Controller
             }
 
             // If the method doesn't exist, then the error will be caught and an error response shown
-            $_error = &load_class('Exceptions', 'core');
+            $_error = load_class('Exceptions', 'core');
             $_error->show_exception($ex);
         }
     }
@@ -1434,18 +1462,157 @@ class ApiServerController extends Controller
         $this->query_args = $this->input->get();
     }
 
+    // HTTP METHOD VALIDATION ------------------------------------------------------
+
+    /**
+     * Define which HTTP methods are accepted for the current endpoint
+     * 
+     * @param string|array $methods HTTP methods as string (e.g., 'GET|POST') or array
+     * @return void
+     * @throws Exception
+     */
+    protected function accepts($methods)
+    {
+        $this->enforceMethodValidation = true;
+        
+        if (is_string($methods)) {
+            // Handle string format like 'GET|POST|PUT'
+            $methodArray = explode('|', strtoupper($methods));
+        } elseif (is_array($methods)) {
+            // Handle array format like [HttpMethod::GET, HttpMethod::POST]
+            $methodArray = array_map('strtoupper', $methods);
+        } else {
+            throw new Exception('Invalid method format. Use string like "GET|POST" or array.');
+        }
+
+        $this->acceptedMethods = array_map('trim', $methodArray);
+        
+        // Validate current request method
+        $currentMethod = strtoupper($this->request->method);
+        if (!in_array($currentMethod, $this->acceptedMethods, true)) {
+            $this->response([
+                $this->config->item('api_status_field_name') => false,
+                $this->config->item('api_message_field_name') => sprintf(
+                    'Method %s not allowed. Accepted methods: %s',
+                    $currentMethod,
+                    implode(', ', $this->acceptedMethods)
+                ),
+            ], HttpStatus::METHOD_NOT_ALLOWED);
+        }
+    }
+
+    /**
+     * Get unified request data from all HTTP methods
+     * 
+     * @param string|null $key Specific key to retrieve, null for all data
+     * @param bool $xss_clean Whether to apply XSS filtering
+     * @return mixed
+     */
+    public function requestData($key = null, $xss_clean = null)
+    {
+        if ($key === null) {
+            return $this->requestData;
+        }
+        
+        return isset($this->requestData[$key]) ? $this->xssClean($this->requestData[$key], $xss_clean) : null;
+    }
+
+    /**
+     * Check if current request method matches given method(s)
+     * 
+     * @param string|array $methods Method(s) to check against
+     * @return bool
+     */
+    protected function isMethod($methods)
+    {
+        if (is_string($methods)) {
+            $methodArray = explode('|', strtoupper($methods));
+        } else {
+            $methodArray = array_map('strtoupper', (array)$methods);
+        }
+        
+        return in_array(strtoupper($this->request->method), $methodArray, true);
+    }
+
+    /**
+     * Get the current HTTP method
+     * 
+     * @return string
+     */
+    protected function getMethod()
+    {
+        return strtoupper($this->request->method);
+    }
+
+    /**
+     * Resolve the controller method based on modern HTTP verb mapping
+     * 
+     * This method supports multiple patterns:
+     * 1. Modern verb prefix: getUsers() for GET /users
+     * 2. Legacy verb suffix: users_get for GET /users (backward compatibility)
+     * 3. Generic method with accepts(): users() with $this->accepts('GET|POST')
+     * 
+     * @param string $object_called The requested endpoint
+     * @param array &$arguments Method arguments (passed by reference)
+     * @return string|null The resolved method name or null if not found
+     */
+    protected function resolveControllerMethod($object_called, &$arguments)
+    {
+        $httpMethod = strtolower($this->request->method);
+        $httpMethodUpper = strtoupper($this->request->method);
+        
+        // Pattern 1: Modern verb prefix (e.g., getUsers, postUsers, putUsers)
+        $modernMethod = $httpMethod . ucfirst($object_called);
+        if (method_exists($this, $modernMethod)) {
+            return $modernMethod;
+        }
+        
+        // Pattern 2: Legacy verb suffix (e.g., users_get, users_post) - backward compatibility
+        $legacyMethod = $object_called . '_' . $httpMethod;
+        if (method_exists($this, $legacyMethod)) {
+            return $legacyMethod;
+        }
+        
+        // Pattern 3: Generic method (e.g., users()) - will be validated by accepts() if used
+        if (method_exists($this, $object_called)) {
+            return $object_called;
+        }
+        
+        // Pattern 4: Try with index method and modern verb prefix
+        $indexModernMethod = $httpMethod . 'Index';
+        if (method_exists($this, $indexModernMethod)) {
+            array_unshift($arguments, $object_called);
+            return $indexModernMethod;
+        }
+        
+        // Pattern 5: Try with index method legacy (e.g., index_get)
+        $indexLegacyMethod = 'index_' . $httpMethod;
+        if (method_exists($this, $indexLegacyMethod)) {
+            array_unshift($arguments, $object_called);
+            return $indexLegacyMethod;
+        }
+        
+        // Pattern 6: Generic index method
+        if (method_exists($this, 'index')) {
+            array_unshift($arguments, $object_called);
+            return 'index';
+        }
+        
+        return null;
+    }
+
     // INPUT FUNCTION --------------------------------------------------------------
 
     /**
      * Retrieve a value from a GET request.
      *
-     * @param null $key       Key to retrieve from the GET request
+     * @param string $key       Key to retrieve from the GET request
      *                        If NULL an array of arguments is returned
-     * @param null $xss_clean Whether to apply XSS filtering
+     * @param bool $xss_clean Whether to apply XSS filtering
      *
      * @return array|string|null Value from the GET request; otherwise, NULL
      */
-    public function get($key = null, $xss_clean = null)
+    public function get(?string $key = null, ?bool $xss_clean = null)
     {
         if ($key === null) {
             return $this->get_args;
@@ -1457,13 +1624,13 @@ class ApiServerController extends Controller
     /**
      * Retrieve a value from a OPTIONS request.
      *
-     * @param null $key       Key to retrieve from the OPTIONS request.
+     * @param string $key       Key to retrieve from the OPTIONS request.
      *                        If NULL an array of arguments is returned
-     * @param null $xss_clean Whether to apply XSS filtering
+     * @param bool $xss_clean Whether to apply XSS filtering
      *
      * @return array|string|null Value from the OPTIONS request; otherwise, NULL
      */
-    public function options($key = null, $xss_clean = null)
+    public function options(?string $key = null, ?bool $xss_clean = null)
     {
         if ($key === null) {
             return $this->options_args;
@@ -1475,13 +1642,13 @@ class ApiServerController extends Controller
     /**
      * Retrieve a value from a HEAD request.
      *
-     * @param null $key       Key to retrieve from the HEAD request
+     * @param string $key       Key to retrieve from the HEAD request
      *                        If NULL an array of arguments is returned
-     * @param null $xss_clean Whether to apply XSS filtering
+     * @param bool $xss_clean Whether to apply XSS filtering
      *
      * @return array|string|null Value from the HEAD request; otherwise, NULL
      */
-    public function head($key = null, $xss_clean = null)
+    public function head(?string $key = null, ?bool $xss_clean = null)
     {
         if ($key === null) {
             return $this->head_args;
@@ -1493,13 +1660,13 @@ class ApiServerController extends Controller
     /**
      * Retrieve a value from a POST request.
      *
-     * @param null $key       Key to retrieve from the POST request
+     * @param string $key       Key to retrieve from the POST request
      *                        If NULL an array of arguments is returned
-     * @param null $xss_clean Whether to apply XSS filtering
+     * @param bool $xss_clean Whether to apply XSS filtering
      *
      * @return array|string|null Value from the POST request; otherwise, NULL
      */
-    public function post($key = null, $xss_clean = null)
+    public function post(?string $key = null, ?bool $xss_clean = null)
     {
         if ($key === null) {
             foreach (new \RecursiveIteratorIterator(new \RecursiveArrayIterator($this->post_args), \RecursiveIteratorIterator::CATCH_GET_CHILD) as $key => $value) {
@@ -1515,13 +1682,13 @@ class ApiServerController extends Controller
     /**
      * Retrieve a value from a PUT request.
      *
-     * @param null $key       Key to retrieve from the PUT request
+     * @param string $key      Key to retrieve from the PUT request
      *                        If NULL an array of arguments is returned
-     * @param null $xss_clean Whether to apply XSS filtering
+     * @param bool $xss_clean Whether to apply XSS filtering
      *
      * @return array|string|null Value from the PUT request; otherwise, NULL
      */
-    public function put($key = null, $xss_clean = null)
+    public function put(?string $key = null, ?bool $xss_clean = null)
     {
         if ($key === null) {
             return $this->put_args;
@@ -1533,13 +1700,13 @@ class ApiServerController extends Controller
     /**
      * Retrieve a value from a DELETE request.
      *
-     * @param null $key       Key to retrieve from the DELETE request
+     * @param string $key       Key to retrieve from the DELETE request
      *                        If NULL an array of arguments is returned
-     * @param null $xss_clean Whether to apply XSS filtering
+     * @param bool $xss_clean Whether to apply XSS filtering
      *
      * @return array|string|null Value from the DELETE request; otherwise, NULL
      */
-    public function delete($key = null, $xss_clean = null)
+    public function delete(?string $key = null, ?bool $xss_clean = null)
     {
         if ($key === null) {
             return $this->delete_args;
@@ -1551,13 +1718,13 @@ class ApiServerController extends Controller
     /**
      * Retrieve a value from a PATCH request.
      *
-     * @param null $key       Key to retrieve from the PATCH request
+     * @param string $key       Key to retrieve from the PATCH request
      *                        If NULL an array of arguments is returned
-     * @param null $xss_clean Whether to apply XSS filtering
+     * @param bool $xss_clean Whether to apply XSS filtering
      *
      * @return array|string|null Value from the PATCH request; otherwise, NULL
      */
-    public function patch($key = null, $xss_clean = null)
+    public function patch(?string $key = null, ?bool $xss_clean = null)
     {
         if ($key === null) {
             return $this->patch_args;
@@ -1569,13 +1736,13 @@ class ApiServerController extends Controller
     /**
      * Retrieve a value from the query parameters.
      *
-     * @param null $key       Key to retrieve from the query parameters
+     * @param string $key       Key to retrieve from the query parameters
      *                        If NULL an array of arguments is returned
-     * @param null $xss_clean Whether to apply XSS filtering
+     * @param bool $xss_clean Whether to apply XSS filtering
      *
      * @return array|string|null Value from the query parameters; otherwise, NULL
      */
-    public function query($key = null, $xss_clean = null)
+    public function query(?string $key = null, ?bool $xss_clean = null)
     {
         if ($key === null) {
             return $this->query_args;
@@ -1752,7 +1919,7 @@ class ApiServerController extends Controller
      * @param string      $username The user's name
      * @param bool|string $password The user's password
      *
-     * @return bool
+     * @return bool|string
      */
     protected function checkLogin($username = null, $password = false)
     {

@@ -78,15 +78,15 @@ class Format
     /**
      * DO NOT CALL THIS DIRECTLY, USE factory().
      *
-     * @param null $data
-     * @param null $from_type
+     * @param $data
+     * @param $from_type
      *
      * @throws Exception
      */
     public function __construct($data = null, $from_type = null)
     {
         // Get the CodeIgniter reference
-        $this->ci = Instance::create();
+        $this->ci = ci();
 
         // Load the inflector helper
         $this->ci->load->helper('inflector');
@@ -222,8 +222,8 @@ class Format
      *
      * @param mixed|null $data      Optional data to pass, so as to override the data passed
      *                              to the constructor
-     * @param null       $structure
-     * @param string     $basenode
+     * @param mixed $structure
+     * @param string $basenode
      *
      * @return mixed
      */
@@ -342,7 +342,7 @@ class Format
      * @param string     $enclosure The optional enclosure parameter sets the field
      *                              enclosure (one character only). NULL will use the default value (")
      *
-     * @return string A csv string
+     * @return mixed A csv string
      */
     public function toCSV($data = null, $delimiter = ',', $enclosure = '"')
     {
@@ -512,7 +512,7 @@ class Format
      * @return array A multi-dimensional array with the outer array being the number of rows
      *               and the inner arrays the individual fields
      */
-    protected function fromCSV($data, $delimiter = ',', $enclosure = '"')
+    protected function fromCSV($data, $delimiter = ',', $enclosure = '"', $escape = "\\")
     {
         // If NULL, then set as the default delimiter
         if ($delimiter === null) {
@@ -523,8 +523,8 @@ class Format
         if ($enclosure === null) {
             $enclosure = '"';
         }
-
-        return str_getcsv($data, $delimiter, $enclosure);
+        
+        return str_getcsv($data, $delimiter, $enclosure, $escape);
     }
 
     /**
