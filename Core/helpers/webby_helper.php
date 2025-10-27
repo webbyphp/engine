@@ -968,12 +968,26 @@ if ( ! function_exists('ends_with'))
 
 /* ------------------------------- Array Functions ---------------------------------*/
 
+if ( ! function_exists('rayz')) 
+{
+    /**
+     *  Helper function to instantiate the Rayz Class
+     *
+     *  @param  array|iterator  $array
+     *  @return object
+     */
+    function rayz(array|iterator $array = [])
+    {
+        return(new \Base\Helpers\Rayz($array));
+    }
+}
+
 if ( ! function_exists('arrayz')) 
 {
     /**
      * Helper function for Arrayz Class
      *
-     * @param array $items
+     * @param mixed $items
      * @return Base\Helpers\Arrayz
      */
     function arrayz(mixed $items = []): Base\Helpers\Arrayz
@@ -1505,20 +1519,6 @@ if ( ! function_exists('to_generator'))
             return $data;
         }
 
-    }
-}
-
-if ( ! function_exists('rayz')) 
-{
-    /**
-     *  Instantiate the Rayz Class
-     *
-     *  @param  array|iterator  $array
-     *  @return object
-     */
-    function arrayz(array|iterator $array = [])
-    {
-        return(new \Base\Helpers\Rayz($array));
     }
 }
 
