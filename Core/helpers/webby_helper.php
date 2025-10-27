@@ -1870,44 +1870,36 @@ if ( ! function_exists('honeypot'))
      */
     function honeypot($name = '', $template = '', $container = '')
     {
-        $data = [
-            'hidden' => env('honeypot.hidden'),
-            'name' => (!empty($name)) ? $name : env('honeypot.name'),
-            'template' => (!empty($template)) ? $template : env('honeypot.template'),
-            'container' => (!empty($container)) ? $container : env('honeypot.container'),
-            'honeyfield' => env('honeypot.timefield')
-        ];
-
-        if ($data['hidden']) {
-            $data['hidden'] = 'hidden';
-        } else {
-            $data['hidden'] = 'text';
+        if (!config('honeypot')['enabled']) {
+            return '';
         }
 
-        if (!empty($data['honeyfield'])) {
+        $data = [
+            'name' => $name ?: config('honeypot')['name'],
+            'template' => $template ?: config('honeypot')['template'],
+            'container' => $container ?: config('honeypot')['container'],
+            'honeyfield' => config('honeypot')['timefield']
+        ];
 
+        if (config('honeypot')['time_check_enabled']) {
             $data['honeytime'] = base64_encode(time());
             session('honeytime', $data['honeytime']);
-            $data['timename'] = env('honeypot.timename');
-            $data['honeyfield'] = str_replace('{hidden}', $data['hidden'], $data['honeyfield']);
+            $data['timename'] = config('honeypot')['timename'];
             $data['honeyfield'] = str_replace('{timename}', $data['timename'], $data['honeyfield']);
             $data['honeyfield'] = str_replace('{honeytime}', $data['honeytime'], $data['honeyfield']);
+        } else {
+            $data['honeyfield'] = '';
         }
 
         if (!empty($data['container'])) {
-
             $output = str_replace('{name}', $data['name'], $data['template']);
-            $output = str_replace('{hidden}', $data['hidden'], $output);
             $output = str_replace('{template}', $output, $output);
             $output = str_replace(['{template}','{honeyfield}'], [$output, $data['honeyfield']], $data['container']);
             return $output;
         }
 
         $output = str_replace('{name}', $data['name'], $data['template']);
-        $output = str_replace('{hidden}', $data['hidden'], $output);
-        $output = str_replace('{template}', $data['template'], $output);
         return $output;
-
     }
 }
 
@@ -1922,7 +1914,11 @@ if ( ! function_exists('honey_check'))
      */
     function honey_check($honeypot = '')
     {
-        if (trim($honeypot) != '') {
+        if (!config('honeypot')['enabled']) {
+            return true;
+        }
+
+        if (trim((string)$honeypot) != '') {
             return false;
         }
 
@@ -1942,9 +1938,13 @@ if ( ! function_exists('honey_time'))
      */
     function honey_time($field = '', $time = '')
     {
+        if (!config('honeypot')['enabled'] || !config('honeypot')['time_check_enabled']) {
+            return true;
+        }
+
         $honeytime = base64_decode((string)session('honeytime'));
 
-        $time =  (int) $time ?: (int) env('honeypot.time');
+        $time =  (int) $time ?: (int) config('honeypot')['time'];
 
         $seconds = time() - (int)$honeytime;
         
@@ -1966,8 +1966,12 @@ if ( ! function_exists('honey_style'))
      */
     function honey_style($custom_style = '')
     {
+        if (!config('honeypot')['enabled']) {
+            return '';
+        }
+
         if (empty($custom_style)) {
-            return env('honeypot.style');
+            return config('honeypot')['style'];
         }
         
         return $custom_style;

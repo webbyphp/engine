@@ -175,6 +175,7 @@ class Plates
 		'lang',
 		'choice',
 		'csrf',
+		'honeypot',
 	];
 
 	private string $cacheExtension = '.plates';
@@ -1428,6 +1429,16 @@ class Plates
 	protected function compile_csrf(string $content): array|string
 	{
 		return str_replace('@csrf', '<?php echo csrf() ?>', $content);
+	}
+
+	// --------------------------------------------------------------------------
+
+	/**
+	 *  Rewrites Plates @honeypot statement into valid PHP
+	 */
+	protected function compile_honeypot(string $content): array|string
+	{
+		return str_replace('@honeypot', '<?php echo honeypot() ?>', $content);
 	}
 
 	// --------------------------------------------------------------------------
