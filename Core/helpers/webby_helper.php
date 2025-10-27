@@ -1226,6 +1226,23 @@ if ( ! function_exists('remove_with_value'))
     }
 }
 
+if ( ! function_exists('array_keys_case_insensitive_value')) 
+{
+    function array_keys_case_insensitive_value(array $array, string $search_value): array
+    {
+        $matching_keys = [];
+        $search_value_lower = strtolower($search_value);
+
+        foreach ($array as $key => $value) {
+            if (is_string($value) && strtolower($value) === $search_value_lower) {
+                $matching_keys[] = $key;
+            }
+        }
+        
+        return $matching_keys;
+    }
+}
+
 if ( ! function_exists('object_array')) 
 {
     /**
@@ -1270,14 +1287,25 @@ if ( ! function_exists('arrayfy'))
             return $object;
         }
 
+        // Handles objects and converts them to arrays
         if (is_object($object)) {
             $array = [];
             foreach ($object as $key => $value) {
-                $array[$key] = arrayfy($value);
+                $array[$key] = arrayfy($value); // Recursively call arrayfy for nested values
             }
             return $array;
         }
 
+        // Handles arrays and ensures all nested items are converted
+        if (is_array($object)) {
+            $array = [];
+            foreach ($object as $key => $value) {
+                $array[$key] = arrayfy($value); // Recursively call arrayfy for each item
+            }
+            return $array;
+        }
+
+        // Handles other types, including simple data types and converting objects in a final attempt
         if (!is_array($object)) {
             return json_decode(json_encode($object), true);
         }
@@ -1332,6 +1360,67 @@ if ( ! function_exists('objectify'))
     }
 }
 
+if ( ! function_exists('to_object')) 
+{
+    /**
+     * Alias of objectify()
+     *
+     * @param array $array
+     * @param bool $natural
+     * @param string|object $class
+     * @return object
+     */
+    function to_object(array|object $array, $natural = false, $class = 'stdClass')
+    {
+        return objectify($array, $natural, $class);
+    }
+
+}
+
+if ( ! function_exists('contains_object'))
+{
+    function contains_object(array $array): bool
+    {
+        foreach ($array as $value) {
+            if (is_object($value)) {
+                return true; // Found an object, exit
+            }
+        }
+
+        return false; // No object
+    }
+}
+
+if ( ! function_exists('value'))
+{
+	/**
+	 *  Return the default value of the given value
+	 *
+	 *  @param     mixed    $value
+	 *  @return    mixed
+	 */
+	function value($value)
+	{
+		return $value instanceof Closure ? $value() : $value;
+	}
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('with'))
+{
+	/**
+	 *  Return the given object (useful for chaining)
+	 *
+	 *  @param     mixed    $object
+	 *  @return    mixed
+	 */
+	function with($object)
+	{
+		return $object;
+	}
+}
+
 if ( ! function_exists('is_json')) 
 {
 
@@ -1344,12 +1433,7 @@ if ( ! function_exists('is_json'))
      */
     function is_json(string $json, int $depth = 512, int $flag = 0)
     {
-        if (is_php('8.3')) {
-            return json_validate($json, $depth, $flag);
-        }
-
-        json_decode($json);
-        return json_last_error() === JSON_ERROR_NONE;
+        return json_validate($json, $depth, $flag);
     }
 }
 
@@ -1358,7 +1442,7 @@ if ( ! function_exists('compare_json'))
     /**
      * Compare two json objects
      *
-     * This is taken from
+     * Based on
      * https://stackoverflow.com/questions/34346952/compare-two-json-in-php
      * 
      * The second answer
@@ -1421,6 +1505,229 @@ if ( ! function_exists('to_generator'))
             return $data;
         }
 
+    }
+}
+
+if ( ! function_exists('rayz')) 
+{
+    /**
+     *  Instantiate the Rayz Class
+     *
+     *  @param  array|iterator  $array
+     *  @return object
+     */
+    function arrayz(array|iterator $array = [])
+    {
+        return(new \Base\Helpers\Rayz($array));
+    }
+}
+
+if ( ! function_exists('collect_from')) 
+{
+    /**
+     * Create collection from various data types
+     *
+     * @param mixed $data
+     * @return \Base\Helpers\Arrayz
+     */
+    function collect_from(mixed $data): \Base\Helpers\Arrayz
+    {
+        return \Base\Helpers\Arrayz::from($data);
+    }
+}
+
+if ( ! function_exists('collection_from_query')) 
+{
+    /**
+     * Create collection from CodeIgniter query result
+     *
+     * @param mixed $query_result
+     * @return \Base\Helpers\Arrayz
+     */
+    function collection_from_query(mixed $query_result): \Base\Helpers\Arrayz
+    {
+        return collect_from($query_result);
+    }
+}
+
+if ( ! function_exists('make_list')) 
+{
+    /**
+     * Create a simple list (beginner-friendly)
+     *
+     * @param mixed ...$items
+     * @return \Base\Helpers\Arrayz
+     */
+    function make_list(mixed ...$items): \Base\Helpers\Arrayz
+    {
+        return arrayz($items);
+    }
+}
+
+if ( ! function_exists('filter_list')) 
+{
+    /**
+     * Filter a list by condition (beginner-friendly)
+     *
+     * @param mixed $list
+     * @param callable $condition
+     * @return array
+     */
+    function filter_list(mixed $list, callable $condition): array
+    {
+        return arrayz($list)->filter($condition)->values()->toArray();
+    }
+}
+
+if ( ! function_exists('map_list')) 
+{
+    /**
+     * Transform each item in a list (beginner-friendly)
+     *
+     * @param mixed $list
+     * @param callable $transformer
+     * @return array
+     */
+    function map_list(mixed $list, callable $transformer): array
+    {
+        return arrayz($list)->map($transformer)->toArray();
+    }
+}
+
+if ( ! function_exists('find_in_list')) 
+{
+    /**
+     * Find first item matching condition (beginner-friendly)
+     *
+     * @param mixed $list
+     * @param callable $condition
+     * @return mixed
+     */
+    function find_in_list(mixed $list, callable $condition): mixed
+    {
+        return arrayz($list)->first($condition);
+    }
+}
+
+if ( ! function_exists('count_where')) 
+{
+    /**
+     * Count items matching condition
+     *
+     * @param mixed $list
+     * @param callable $condition
+     * @return int
+     */
+    function count_where(mixed $list, callable $condition): int
+    {
+        return arrayz($list)->filter($condition)->count();
+    }
+}
+
+if ( ! function_exists('list_contains')) 
+{
+    /**
+     * Check if list contains value (beginner-friendly)
+     *
+     * @param mixed $list
+     * @param mixed $value
+     * @return bool
+     */
+    function list_contains(mixed $list, mixed $value): bool
+    {
+        return arrayz($list)->contains($value);
+    }
+}
+
+if ( ! function_exists('get_column')) 
+{
+    /**
+     * Extract a column from array of arrays/objects (beginner-friendly)
+     *
+     * @param mixed $data
+     * @param string $column
+     * @return array
+     */
+    function get_column(mixed $data, string $column): array
+    {
+        return arrayz($data)->pluck($column)->toArray();
+    }
+}
+
+if ( ! function_exists('sort_list_by')) 
+{
+    /**
+     * Sort list by a field (beginner-friendly)
+     *
+     * @param mixed $list
+     * @param string $field
+     * @param bool $ascending
+     * @return array
+     */
+    function sort_list_by(mixed $list, string $field, bool $ascending = true): array
+    {
+        $direction = $ascending ? 'asc' : 'desc';
+        return arrayz($list)->sortBy($field, $direction)->values()->toArray();
+    }
+}
+
+if ( ! function_exists('group_list_by')) 
+{
+    /**
+     * Group list by a field (beginner-friendly)
+     *
+     * @param mixed $list
+     * @param string $field
+     * @return array
+     */
+    function group_list_by(mixed $list, string $field): array
+    {
+        return arrayz($list)->groupBy($field)->map(fn($group) => $group->toArray())->toArray();
+    }
+}
+
+if ( ! function_exists('take_from_list')) 
+{
+    /**
+     * Take first n items from list (beginner-friendly)
+     *
+     * @param mixed $list
+     * @param int $count
+     * @return array
+     */
+    function take_from_list(mixed $list, int $count): array
+    {
+        return arrayz($list)->take($count)->toArray();
+    }
+}
+
+if ( ! function_exists('skip_from_list')) 
+{
+    /**
+     * Skip first n items from list (beginner-friendly)
+     *
+     * @param mixed $list
+     * @param int $count
+     * @return array
+     */
+    function skip_from_list(mixed $list, int $count): array
+    {
+        return arrayz($list)->skip($count)->values()->toArray();
+    }
+}
+
+if ( ! function_exists('chunk_list')) 
+{
+    /**
+     * Split list into smaller chunks (beginner-friendly)
+     *
+     * @param mixed $list
+     * @param int $size
+     * @return array
+     */
+    function chunk_list(mixed $list, int $size): array
+    {
+        return arrayz($list)->chunk($size)->map(fn($chunk) => $chunk->toArray())->toArray();
     }
 }
 
