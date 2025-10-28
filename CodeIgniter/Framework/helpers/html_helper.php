@@ -163,7 +163,7 @@ if ( ! function_exists('_list'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('img'))
+if ( ! function_exists('image'))
 {
 	/**
 	 * Image
@@ -175,7 +175,7 @@ if ( ! function_exists('img'))
 	 * @param	mixed
 	 * @return	string
 	 */
-	function img($src = '', $index_page = false, $attributes = '')
+	function image($src = '', $index_page = false, $attributes = '')
 	{
 		if ( ! is_array($src) )
 		{
@@ -399,7 +399,7 @@ if ( ! function_exists('nbs'))
 	/**
 	 * Generates non-breaking space entities based on number supplied
 	 *
-	 * @deprecated	3.0.0	Use str_repeat() instead
+	 * Helper function as nbs() you can use str_repeat() instead
 	 * @param	int
 	 * @return	string
 	 */
