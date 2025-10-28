@@ -46,6 +46,37 @@ if ( ! function_exists('unique_id'))
     }
 }
 
+if ( ! function_exists('hash_id')) 
+{
+
+    /**
+     * Generate unique fake ids
+     * 
+     * @param int|string $string
+     * @param int $length
+     * @return string
+     */
+    function hash_id(mixed $string, int $length = 6)
+    {
+        return Base\Helpers\FakeId::encode( $string, $length);
+    }
+}
+
+if ( ! function_exists('unhash_id')) 
+{
+
+    /**
+     * Unhash fake ids
+     * 
+     * @param int|string $string
+     * @return string|int
+     */
+    function unhash_id(mixed $string)
+    {
+        return Base\Helpers\FakeId::decode( $string);
+    }
+}
+
 /* ----------------------------- Polyfill Functions ---------------------------------*/
 
 if ( ! function_exists('utf8_encode')) 

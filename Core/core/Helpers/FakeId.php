@@ -4,7 +4,7 @@
  * PseudoCrypt by KevBurns (http://blog.kevburnsjr.com/php-unique-hash)
  * Reference/source: http://stackoverflow.com/a/1464155/933782
  * 
- * Renamed to PseudoHash
+ * Renamed to FakeId
  * 
  * I want a short alphanumeric hash that’s unique and who’s sequence is difficult to deduce. 
  * I could run it out to md5 and trim the first (n) chars but that’s not going to be very unique. 
@@ -17,9 +17,9 @@
  * echo "<pre>";
  * foreach(range(1, 10) as $n) {
  *     echo $n." - ";
- *     $hash = PseudoHash::encode($n, 6);
+ *     $hash = FakeId::encode($n, 6);
  *     echo $hash." - ";
- *     echo PseudoHash::decode($hash)."<br/>";
+ *     echo FakeId::decode($hash)."<br/>";
  * }
  * 
  * Sample Results:
@@ -43,12 +43,8 @@
 
 namespace Base\Helpers;
 
-class PseudoHash 
+class FakeId 
 {
-    /**
-     * Symbols to check and filter
-     */
-    // private static $symbols = "“”!?;\",+eE.\/”“'";
 
     /**
      * Key: Next prime greater than 62 ^ n / 1.618033988749894848
@@ -82,6 +78,11 @@ class PseudoHash
         59=>120,60=>121,61=>122
     ];
 
+    /**
+     * Encode To base62
+     * @param mixed $int
+     * @return string
+     */
     public static function base62($int) {
         $key = "";
         while(bccomp($int, 0) > 0) {
@@ -92,6 +93,11 @@ class PseudoHash
         return strrev($key);
     }
 
+    /**
+     * Decode from base62
+     * @param mixed $key
+     * @return int|string
+     */
     public static function unbase62($key) {
         $int = 0;
         foreach(str_split(strrev($key)) as $i => $char) {
@@ -101,6 +107,11 @@ class PseudoHash
         return $int;
     }
 
+    /**
+     * Decode Hashed Id
+     * @param mixed $hash
+     * @return int
+     */
     public static function decode($hash) {
         $length = strlen($hash);
         $ceil = bcpow(62, $length);
@@ -130,24 +141,43 @@ class PseudoHash
     }
 
     /**
-     * Fix exponential if string contains it
+     * Checks if $str contains exponential notation
+     * and fixes it by removing the exponential part
      *
      * @param string $str
+     * @param int $length
      * @return string
      * @author Kwame Oteng Appiah-Nti (Developer Kwame)
      */
-    private static function fixExponential($str, $removeExponential = false)
+    public static function containsExponential($str, $length = 6)
     {
-        // Convert $str to string 
-        $str = (string) $str;
 
         if (!contains('+eE', $str) && !contains('E+', $str)) {
             return $str;
         }
 
+        $str = static::fixExponential($str);
+        $str .= (string) unique_code($length);
+
+        return $str;
+    }
+
+    /**
+     * Fix exponential if string contains it
+     * for very special cases
+     * 
+     * @param string $str
+     * @return mixed
+     * @author Kwame Oteng Appiah-Nti (Developer Kwame)
+     */
+    private static function fixExponential($str, $removeExponential = true)
+    {
+        // Convert $str to string 
+        $str = (string) $str;
+
         if ($removeExponential) {
             return preg_replace (
-                "/[+eE.]/u", 
+                "/[+eE.]/u",
                 "", 
                 $str
             );
@@ -162,7 +192,7 @@ class PseudoHash
      * fix it to a number
      *
      * @param int|string $str
-     * @return string
+     * @return mixed
      * @author Kwame Oteng Appiah-Nti 
      * (Developer Kwame)
      */
@@ -173,23 +203,18 @@ class PseudoHash
         }
 
         if ($str === INF) {
-            $hex = bin2hex(random_bytes(30));
-            $str = static::fixExponential($hex);
+            $str = bin2hex(random_bytes(30));
         }
-
-        $str_fixed = null;
 
         if ( is_string($str) && $toDecimal === false) {
             $str = bin2hex(trim($str));
-            $str_fixed = static::fixExponential($str);
         }
 
         if ( is_string($str) && $toDecimal === true) {
-            $str = hexdec(bin2hex(trim($str)));
-            $str_fixed = static::fixExponential($str, true);
+            $str = bchexdec(bin2hex(trim($str)));
         }
 
-        return $str_fixed;
+        return $str;
     }
 
     /**
@@ -207,7 +232,7 @@ class PseudoHash
      * Hexadecimal value to string
      *
      * @param mixed $str
-     * @return mixed
+     * @return bool|string
      */
     public static function fromHex($str)
     {
@@ -220,16 +245,25 @@ class PseudoHash
 
     /**
      * To Human String
-     * 
+     * Converts a number to a human-readable string
+     * For example, 123456789 becomes "123 456 789"
+     * @param int|string $number
+     * @return string
      */
     public static function toHumanString($number)
     {
-        return implode(array_map('chr', str_split($number, 3)));
+        return implode(
+            array_map('chr', 
+            str_split($number, 3))
+        );
     }
 
     /**
      * To Number String
-     *
+     * Converts a string to a number string
+     * For example, "abc" becomes "097098099"
+     * @param string $str
+     * @return string
      */
     public static function toNumberString($str)
     {
