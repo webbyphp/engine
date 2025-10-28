@@ -612,8 +612,8 @@ class Base_Loader extends \CI_Loader
 
 		$_is_view = false;
 		$ext = (!empty(config_item('view')['view_engine'])) 
-			? ltrim(config_item('plate_extension'), '.') 
-			: 'php';
+			? ltrim(config_item('view_extension'), '.') 
+			: ltrim(PHPEXT, '.');
 
 		if (isset($_ci_view)) {
 			$_ci_path = '';

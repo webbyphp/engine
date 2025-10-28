@@ -207,7 +207,7 @@ class Plates
 		$this->ci->load->driver('cache');	//	Load ci cache driver
 
 		if (config_item('enable_helper')) {
-			$this->ci->load->helper('plate');	//	Load Plates Helper
+			$this->ci->load->helper('view');	//	Load View Helper
 		}
 
 		$this->initialize($params);
@@ -301,7 +301,7 @@ class Plates
 	 */
 	public function clear(): static
 	{
-		$this->plateExtension   = config_item('plate_extension');
+		$this->plateExtension   = config_item('view_extension') ?? PHPEXT;
 		$this->cacheTime		= config_item('cache_time');
 		$this->enableAutoload	= config_item('enable_autoload');
 		$this->locale			= config_item('language');

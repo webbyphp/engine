@@ -10,7 +10,7 @@ $core_helpers = [
     'ci_core',
     'webby',
     'db',
-    'plate',
+    'view',
 
 ];
 
