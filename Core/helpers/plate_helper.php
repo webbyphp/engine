@@ -18,7 +18,7 @@ if ( ! function_exists('plates'))
      * Plates object
      *
      * @param array $params
-     * @return Plates
+     * @return \Base\View\Plates
      */
     function plates($params = [])
     {
@@ -53,10 +53,10 @@ if ( ! function_exists('view'))
         if (config('view')['view_engine'] === 'plates')  {
 
             if ($view_data === null) {
-                return plates()->view($view_path, $return);
+                return plates()->view($view_path, null, $return);
             }
 
-            return plates()->set($view_data)->view($view_path, $return);
+            return plates()->set($view_data)->view($view_path, null, $return);
         }
 
         // Render view blade views
@@ -70,7 +70,7 @@ if ( ! function_exists('view'))
         }
 
         // Fall on plates to render view
-		return plates()->set($view_data)->view($view_path, $return);
+		return plates()->set($view_data)->view($view_path, null, $return);
         
     }
 }
@@ -81,7 +81,7 @@ if ( ! function_exists('blade'))
      * Blade object
      *
      * @param array $params
-     * @return Blade
+     * @return object
      */
     function blade()
     {
@@ -111,14 +111,14 @@ if ( ! function_exists('mail_view'))
 
         if (empty($mail_data)) {
             $exception_message = "Email data cannot be empty as second paramater";
-            throw new \Exception($exception_message); 
             log_message('error', $exception_message);
+            throw new \Exception($exception_message);
         }
 
         if ( ! is_array($mail_data)) {
             $exception_message = "Email data should be array";
-            throw new \Exception($exception_message); 
             log_message('error', $exception_message);
+            throw new \Exception($exception_message); 
         }
 
         if (is_string($mail_view_path)) {
@@ -127,9 +127,8 @@ if ( ! function_exists('mail_view'))
 
         if ( ! is_array($mail_view_path)) {
             $exception_message = "Email view malformed, make sure it has the 'double colon' symbol '::' in it";
-            throw new \Exception($exception_message); 
             log_message('error', $exception_message);
-            exit;
+            throw new \Exception($exception_message); 
         }
 
         [$layout, $view] = $mail_view_path;

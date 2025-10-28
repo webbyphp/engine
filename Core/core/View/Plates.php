@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A Template engine for Webby
+ * A Template engine for WebbyPHP
  * 
  * It is based on Laravel's Blade templating engine 
  * Initially developed by Gustavo Martins and named Slice as
@@ -10,7 +10,7 @@
  * @author		Gustavo Martins <gustavo_martins92@hotmail.com>
  * @link		https://github.com/GustMartins/Slice-Library
  * 
- * Expanded to work efficiently with Webby 
+ * Expanded to work efficiently with WebbyPHP
  * 
  * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  * @license MIT
@@ -22,6 +22,7 @@ namespace Base\View;
 
 use Exception;
 use ParseError;
+use Base\HMVC\Modules;
 
 class Plates
 {
@@ -135,9 +136,11 @@ class Plates
 	private array $compilers 		= [
 		'directive',
 		'comment',
+		'multiline_html_comment',
 		'html_comment',
 		'ternary',
 		'preserved',
+		'unescaped_echo',
 		'echo',
 		'variable',
 		'forelse',
@@ -480,7 +483,7 @@ class Plates
 		//	If you are using Modular Extensions it will be detected
 		if (method_exists($this->ci->router, 'fetch_module')) {
 			$module = $this->ci->router->fetch_module();
-			[$path, $view] = \Modules::find($viewName . $this->plateExtension, $module, 'Views/');
+			[$path, $view] = Modules::find($viewName . $this->plateExtension, $module, 'Views/');
 
 			if ($path) {
 				$defaultPath = $path . $view;
@@ -899,11 +902,12 @@ class Plates
 	 */
 	protected function each(string $template, array $variable, string $label, $default = null): string
 	{
-		$content = '';
+        $content = '';
 
 		if ((is_countable($variable) ? count($variable) : 0) > 0) {
-			foreach ($variable as $val[$label]) {
-				$content .= $this->include($template, $val);
+			foreach ($variable as $item) {
+                $dataForInclude = [$label => $item];
+				$content .= $this->include($template, $dataForInclude);
 			}
 		} else {
 			$content .= ($default !== null) ? $this->include($default) : '';
@@ -940,6 +944,21 @@ class Plates
 
 		return preg_replace($returnPattern, "<?php /* $1 */ ?>\n", $content);
 	}
+
+	 /**
+     * Compile custom multiline HTML comments !!! ... !!!
+     * Removes any internal '-->' before wrapping.
+     */
+    protected function compile_multiline_html_comment(string $content): string
+    {
+        $pattern = '/\!\!\!\s*(.*?)\s*\!\!\!/s'; // 's' for dotall, capture content in $1
+        return preg_replace_callback($pattern, function ($matches) {
+            $innerContent = $matches[1];
+            // Remove '-->' from innerContent
+            $cleanedContent = str_replace('-->', '-- >', $innerContent); // Replace with space to avoid breaking if it was intentional structure
+            return '<!--' . $cleanedContent . '-->';
+        }, $content);
+    }
 
 	// --------------------------------------------------------------------------
 
@@ -987,13 +1006,23 @@ class Plates
 	// --------------------------------------------------------------------------
 
 	/**
+	 *  Rewrites Plates unescaped echo statement {!! $data !!} into PHP echo statement.
+	 */
+	protected function compile_unescaped_echo(string $content): string
+	{
+		$pattern = '/\{!!\s*(.+?)\s*!!\}/s';
+		return preg_replace($pattern, '<?php echo $1; ?>', $content);
+	}
+
+	// --------------------------------------------------------------------------
+
+	/**
 	 *  Rewrites Plates echo statement into PHP echo statement
 	 */
 	protected function compile_echo(string $content): ?string
 	{
 		$pattern = '/\{\{(.+?)\}\}/';
-
-		return preg_replace($pattern, '<?php echo $1; ?>', $content);
+		return preg_replace($pattern, '<?php echo esc($1); ?>', $content);
 	}
 
 	// --------------------------------------------------------------------------
