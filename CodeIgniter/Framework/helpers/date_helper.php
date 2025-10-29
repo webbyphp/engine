@@ -49,10 +49,10 @@
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('now'))
+if ( ! function_exists('current_time'))
 {
 	/**
-	 * Get "now" time
+	 * Get "now" as current_time() time
 	 *
 	 * Returns time() based on the timezone parameter or on the
 	 * "time_reference" setting
@@ -60,7 +60,7 @@ if ( ! function_exists('now'))
 	 * @param	string
 	 * @return	int
 	 */
-	function now($timezone = null)
+	function current_time($timezone = null)
 	{
 		if (empty($timezone))
 		{
@@ -75,7 +75,7 @@ if ( ! function_exists('now'))
 		$datetime = new DateTime('now', new DateTimeZone($timezone));
 		sscanf($datetime->format('j-n-Y G:i:s'), '%d-%d-%d %d:%d:%d', $day, $month, $year, $hour, $minute, $second);
 
-		return mktime($hour, $minute, $second, $month, $day, $year);
+		return mktime((int) $hour, $minute, $second, $month, $day, $year);
 	}
 }
 
