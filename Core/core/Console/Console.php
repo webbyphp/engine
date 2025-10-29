@@ -26,6 +26,11 @@ class Console
 
     private static $composerCommand = 'composer ';
 
+    // Pest variables
+    private static $pestCommand = './vendor/bin/pest ';
+    private static $pestColorAlways = '--colors=always ';
+    private static $pestTestCoverate = '--coverage ';
+
     private const WEBBY_CLI_VERSION = '2.12.4';
 
     private const DEFAULT_HOST = "localhost";
@@ -217,7 +222,15 @@ class Console
             case 'resource:link':
                 static::consoleEnv();
                 static::runSystemCommand(Console::phpCommand() . 'create/resourcelink');
-            break;
+                break;
+            case 'test':
+                static::consoleEnv();
+                static::runSystemCommand(static::$pestCommand . static::$pestColorAlways . $arg2 . ' ' . $arg3);
+                break;
+            case 'test:coverage':
+                static::consoleEnv();
+                static::runSystemCommand(static::$pestCommand . static::$pestColorAlways . static::$pestTestCoverate . $arg2 . ' ' . $arg3);
+                break;
             case 'use:command':
                 if (empty($arg2)) {
                     echo ConsoleColor::red("No arguments provided!") . "\n";
