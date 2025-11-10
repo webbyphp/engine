@@ -79,22 +79,19 @@ $config['controller_suffix'] = '';
 | Composer auto-loading
 |--------------------------------------------------------------------------
 |
-| Enabling this setting will tell CodeIgniter to look for a Composer
-| package auto-loader script in application/vendor/autoload.php.
-|
-|	$config['composer_autoload'] = true;
-|
-| Or if you have your vendor/ directory located somewhere else, you
-| can opt to set a specific path as well:
-|
-|	$config['composer_autoload'] = '/path/to/vendor/autoload.php';
+| Due to modern PHP development, Composer needs to be used no matter what 
+| Composer is autoloaded in the public/index.php by default
+| The auto-loader script can be found in vendor/autoload.php.
 |
 | For more information about Composer, please visit http://getcomposer.org/
 |
 | Note: This will NOT disable or override the CodeIgniter-specific
-|	autoloading (application/config/autoload.php)
+| autoloading (config/autoload.php)
+| 
+| The configuration below when uncommented just makes the 'composer_autoload'
+| string available in the config array. 
 */
-$config['composer_autoload'] = false; //realpath(ROOTPATH . 'vendor/autoload.php');
+// $config['composer_autoload'] = realpath(ROOTPATH . 'vendor/autoload.php');
 
 /*
 |--------------------------------------------------------------------------

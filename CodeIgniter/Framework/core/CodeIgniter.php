@@ -166,23 +166,6 @@ if ($SUBDOMAIN !== 'www' && $SUBDOMAIN !== '') {
 
 /*
  * ------------------------------------------------------
- *  Should we use a Composer autoloader?
- * ------------------------------------------------------
- */
-if ($composer_autoload = config_item('composer_autoload')) {
-	if ($composer_autoload === true) {
-		file_exists(COREPATH . 'vendor/autoload.php')
-			? require_once(COREPATH . 'vendor/autoload.php')
-			: log_message('error', '$config[\'composer_autoload\'] is set to true but ' . COREPATH . 'vendor/autoload.php was not found.');
-	} elseif (file_exists($composer_autoload)) {
-		require_once($composer_autoload);
-	} else {
-		log_message('error', 'Could not find the specified $config[\'composer_autoload\'] path: ' . $composer_autoload);
-	}
-}
-
-/*
- * ------------------------------------------------------
  *  Start the timer... tick tock tick tock...
  * ------------------------------------------------------
  */
