@@ -584,7 +584,7 @@ if ( ! function_exists('str2hex'))
      * @return string
      */
     function str2hex($str)
-    {   
+    {
         $str = trim($str);
         return bin2hex($str);
     }
