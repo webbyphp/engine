@@ -51,7 +51,8 @@
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/database/
  */
-class CI_DB_mysqli_driver extends CI_DB {
+class CI_DB_mysqli_driver extends CI_DB
+{
 
 	/**
 	 * Database driver
@@ -118,23 +119,19 @@ class CI_DB_mysqli_driver extends CI_DB {
 	public function db_connect($persistent = false)
 	{
 		// PHP 8.1 changes default error handling mode from silent to exceptions - reverse that
-		if (is_php('8.1'))
-		{
+		if (is_php('8.1')) {
 			$mysqli_driver = new mysqli_driver();
 			$mysqli_driver->report_mode = MYSQLI_REPORT_OFF;
 		}
 
 		// Do we have a socket path?
-		if ($this->hostname[0] === '/')
-		{
+		if ($this->hostname[0] === '/') {
 			$hostname = null;
 			$port = null;
 			$socket = $this->hostname;
-		}
-		else
-		{
+		} else {
 			$hostname = ($persistent === true)
-				? 'p:'.$this->hostname : $this->hostname;
+				? 'p:' . $this->hostname : $this->hostname;
 			$port = empty($this->port) ? null : $this->port;
 			$socket = null;
 		}
@@ -144,15 +141,12 @@ class CI_DB_mysqli_driver extends CI_DB {
 
 		$this->_mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, 10);
 
-		if (isset($this->stricton))
-		{
-			if ($this->stricton)
-			{
+		if (isset($this->stricton)) {
+			if ($this->stricton) {
 				$this->_mysqli->options(MYSQLI_INIT_COMMAND, 'SET SESSION sql_mode = CONCAT(@@sql_mode, ",", "STRICT_ALL_TABLES")');
-			}
-			else
-			{
-				$this->_mysqli->options(MYSQLI_INIT_COMMAND,
+			} else {
+				$this->_mysqli->options(
+					MYSQLI_INIT_COMMAND,
 					'SET SESSION sql_mode =
 					REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
 					@@sql_mode,
@@ -166,21 +160,18 @@ class CI_DB_mysqli_driver extends CI_DB {
 			}
 		}
 
-		if (is_array($this->encrypt))
-		{
+		if (is_array($this->encrypt)) {
 			$ssl = [];
-			empty($this->encrypt['ssl_key'])    OR $ssl['key']    = $this->encrypt['ssl_key'];
-			empty($this->encrypt['ssl_cert'])   OR $ssl['cert']   = $this->encrypt['ssl_cert'];
-			empty($this->encrypt['ssl_ca'])     OR $ssl['ca']     = $this->encrypt['ssl_ca'];
-			empty($this->encrypt['ssl_capath']) OR $ssl['capath'] = $this->encrypt['ssl_capath'];
-			empty($this->encrypt['ssl_cipher']) OR $ssl['cipher'] = $this->encrypt['ssl_cipher'];
+			empty($this->encrypt['ssl_key'])    or $ssl['key']    = $this->encrypt['ssl_key'];
+			empty($this->encrypt['ssl_cert'])   or $ssl['cert']   = $this->encrypt['ssl_cert'];
+			empty($this->encrypt['ssl_ca'])     or $ssl['ca']     = $this->encrypt['ssl_ca'];
+			empty($this->encrypt['ssl_capath']) or $ssl['capath'] = $this->encrypt['ssl_capath'];
+			empty($this->encrypt['ssl_cipher']) or $ssl['cipher'] = $this->encrypt['ssl_cipher'];
 
-			if (isset($this->encrypt['ssl_verify']))
-			{
+			if (isset($this->encrypt['ssl_verify'])) {
 				$client_flags |= MYSQLI_CLIENT_SSL;
 
-				if ($this->encrypt['ssl_verify'])
-				{
+				if ($this->encrypt['ssl_verify']) {
 					defined('MYSQLI_OPT_SSL_VERIFY_SERVER_CERT') && $this->_mysqli->options(MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, true);
 				}
 				// Apparently (when it exists), setting MYSQLI_OPT_SSL_VERIFY_SERVER_CERT
@@ -189,14 +180,12 @@ class CI_DB_mysqli_driver extends CI_DB {
 				//
 				// https://secure.php.net/ChangeLog-5.php#5.6.16
 				// https://bugs.php.net/bug.php?id=68344
-				elseif (defined('MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT'))
-				{
+				elseif (defined('MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT')) {
 					$client_flags |= MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT;
 				}
 			}
 
-			if ( ! empty($ssl))
-			{
+			if (! empty($ssl)) {
 				$client_flags |= MYSQLI_CLIENT_SSL;
 				$this->_mysqli->ssl_set(
 					isset($ssl['key'])    ? $ssl['key']    : null,
@@ -208,23 +197,20 @@ class CI_DB_mysqli_driver extends CI_DB {
 			}
 		}
 
-		if ($this->_mysqli->real_connect($hostname, $this->username, $this->password, $this->database, $port, $socket, $client_flags))
-		{
+		if ($this->_mysqli->real_connect($hostname, $this->username, $this->password, $this->database, $port, $socket, $client_flags)) {
 			// Prior to version 5.7.3, MySQL silently downgrades to an unencrypted connection if SSL setup fails
 			if (
 				($client_flags & MYSQLI_CLIENT_SSL)
 				&& version_compare($this->_mysqli->client_info, '5.7.3', '<=')
 				&& empty($this->_mysqli->query("SHOW STATUS LIKE 'ssl_cipher'")->fetch_object()->Value)
-			)
-			{
+			) {
 				$this->_mysqli->close();
 				$message = 'MySQLi was configured for an SSL connection, but got an unencrypted connection instead!';
 				log_message('error', $message);
 				return ($this->db_debug) ? $this->display_error($message, '', true) : false;
 			}
 
-			if ( ! $this->_mysqli->set_charset($this->char_set))
-			{
+			if (! $this->_mysqli->set_charset($this->char_set)) {
 				log_message('error', "Database: Unable to set the configured connection charset ('{$this->char_set}').");
 				$this->_mysqli->close();
 				return ($this->db->db_debug) ? $this->display_error('db_unable_to_set_charset', $this->char_set) : false;
@@ -248,8 +234,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	public function reconnect()
 	{
-		if ($this->conn_id !== false && $this->conn_id->ping() === false)
-		{
+		if ($this->conn_id !== false && $this->conn_id->ping() === false) {
 			$this->conn_id = false;
 		}
 	}
@@ -264,13 +249,11 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	public function db_select($database = '')
 	{
-		if ($database === '')
-		{
+		if ($database === '') {
 			$database = $this->database;
 		}
 
-		if ($this->conn_id->select_db($database))
-		{
+		if ($this->conn_id->select_db($database)) {
 			$this->database = $database;
 			$this->data_cache = [];
 			return true;
@@ -288,8 +271,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	public function version()
 	{
-		if (isset($this->data_cache['version']))
-		{
+		if (isset($this->data_cache['version'])) {
 			return $this->data_cache['version'];
 		}
 
@@ -323,9 +305,8 @@ class CI_DB_mysqli_driver extends CI_DB {
 	{
 		// mysqli_affected_rows() returns 0 for "DELETE FROM TABLE" queries. This hack
 		// modifies the query so that it a proper number of affected rows is returned.
-		if ($this->delete_hack === true && preg_match('/^\s*DELETE\s+FROM\s+(\S+)\s*$/i', $sql))
-		{
-			return trim($sql).' WHERE 1=1';
+		if ($this->delete_hack === true && preg_match('/^\s*DELETE\s+FROM\s+(\S+)\s*$/i', $sql)) {
+			return trim($sql) . ' WHERE 1=1';
 		}
 
 		return $sql;
@@ -355,8 +336,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	protected function _trans_commit()
 	{
-		if ($this->conn_id->commit())
-		{
+		if ($this->conn_id->commit()) {
 			$this->conn_id->autocommit(true);
 			return true;
 		}
@@ -373,8 +353,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	protected function _trans_rollback()
 	{
-		if ($this->conn_id->rollback())
-		{
+		if ($this->conn_id->rollback()) {
 			$this->conn_id->autocommit(true);
 			return true;
 		}
@@ -396,36 +375,36 @@ class CI_DB_mysqli_driver extends CI_DB {
 	}
 
 	// --------------------------------------------------------------------
-	
+
 	/**
-     * Escape Like String Direct
-     * There are a few instances where MySQLi queries cannot take the
-     * additional "ESCAPE x" parameter for specifying the escape character
-     * in "LIKE" strings, and this handles those directly with a backslash.
-     *
-     * @param string|string[] $str Input string
-     *
-     * @return string|string[]
-     */
-    public function escape_like_string_direct($str)
-    {
-        if (is_array($str)) {
-            foreach ($str as $key => $val) {
-                $str[$key] = $this->escape_like_string_direct($val);
-            }
+	 * Escape Like String Direct
+	 * There are a few instances where MySQLi queries cannot take the
+	 * additional "ESCAPE x" parameter for specifying the escape character
+	 * in "LIKE" strings, and this handles those directly with a backslash.
+	 *
+	 * @param string|string[] $str Input string
+	 *
+	 * @return string|string[]
+	 */
+	public function escape_like_string_direct($str)
+	{
+		if (is_array($str)) {
+			foreach ($str as $key => $val) {
+				$str[$key] = $this->escape_like_string_direct($val);
+			}
 
-            return $str;
-        }
+			return $str;
+		}
 
-        $str = $this->_escape_str($str);
+		$str = $this->_escape_str($str);
 
-        // Escape LIKE condition wildcards
-        return str_replace(
-            [$this->_like_escape_chr, '%', '_'],
-            ['\\' . $this->_like_escape_chr, '\\' . '%', '\\' . '_'],
-            $str
-        );
-    }
+		// Escape LIKE condition wildcards
+		return str_replace(
+			[$this->_like_escape_chr, '%', '_'],
+			['\\' . $this->_like_escape_chr, '\\' . '%', '\\' . '_'],
+			$str
+		);
+	}
 
 	// --------------------------------------------------------------------
 
@@ -463,11 +442,10 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	protected function _list_tables($prefix_limit = false)
 	{
-		$sql = 'SHOW TABLES FROM '.$this->_escape_char.$this->database.$this->_escape_char;
+		$sql = 'SHOW TABLES FROM ' . $this->_escape_char . $this->database . $this->_escape_char;
 
-		if ($prefix_limit !== false && $this->dbprefix !== '')
-		{
-			return $sql." LIKE '".$this->escape_like_string_direct($this->dbprefix)."%'";
+		if ($prefix_limit !== false && $this->dbprefix !== '') {
+			return $sql . " LIKE '" . $this->escape_like_string_direct($this->dbprefix) . "%'";
 		}
 
 		return $sql;
@@ -485,7 +463,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	protected function _list_columns($table = '')
 	{
-		return 'SHOW COLUMNS FROM '.$this->protect_identifiers($table, true, null, false);
+		return 'SHOW COLUMNS FROM ' . $this->protect_identifiers($table, true, null, false);
 	}
 
 	// --------------------------------------------------------------------
@@ -498,19 +476,19 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	public function field_data($table)
 	{
-		if (($query = $this->query('SHOW COLUMNS FROM '.$this->protect_identifiers($table, true, null, false))) === false)
-		{
+		if (($query = $this->query('SHOW COLUMNS FROM ' . $this->protect_identifiers($table, true, null, false))) === false) {
 			return false;
 		}
 		$query = $query->result_object();
 
 		$retval = [];
-		for ($i = 0, $c = count($query); $i < $c; $i++)
-		{
+		for ($i = 0, $c = count($query); $i < $c; $i++) {
 			$retval[$i]			= new stdClass();
 			$retval[$i]->name		= $query[$i]->Field;
 
-			sscanf($query[$i]->Type, '%[a-z](%d)',
+			sscanf(
+				$query[$i]->Type,
+				'%[a-z](%d)',
 				$retval[$i]->type,
 				$retval[$i]->max_length
 			);
@@ -525,59 +503,59 @@ class CI_DB_mysqli_driver extends CI_DB {
 	// --------------------------------------------------------------------
 
 	/**
-     * Returns an array of objects with index data
-     *
-     * @return stdClass[]
-     */
-    protected function index_data(string $table): array
-    {
-        $table = $this->protect_identifiers($table, true, null, false);
+	 * Returns an array of objects with index data
+	 *
+	 * @return stdClass[]
+	 */
+	protected function index_data(string $table): array
+	{
+		$table = $this->protect_identifiers($table, true, null, false);
 
-        if (($query = $this->query('SHOW INDEX FROM ' . $table)) === false) {
-            show_error('Failed to get index data from database');
-        }
+		if (($query = $this->query('SHOW INDEX FROM ' . $table)) === false) {
+			show_error('Failed to get index data from database');
+		}
 
-        if (! $indexes = $query->result_array()) {
-            return [];
-        }
+		if (! $indexes = $query->result_array()) {
+			return [];
+		}
 
-        $keys = [];
+		$keys = [];
 
-        foreach ($indexes as $index) {
-            if (empty($keys[$index['Key_name']])) {
-                $keys[$index['Key_name']]       = new stdClass();
-                $keys[$index['Key_name']]->name = $index['Key_name'];
+		foreach ($indexes as $index) {
+			if (empty($keys[$index['Key_name']])) {
+				$keys[$index['Key_name']]       = new stdClass();
+				$keys[$index['Key_name']]->name = $index['Key_name'];
 
-                if ($index['Key_name'] === 'PRIMARY') {
-                    $type = 'PRIMARY';
-                } elseif ($index['Index_type'] === 'FULLTEXT') {
-                    $type = 'FULLTEXT';
-                } elseif ($index['Non_unique']) {
-                    $type = $index['Index_type'] === 'SPATIAL' ? 'SPATIAL' : 'INDEX';
-                } else {
-                    $type = 'UNIQUE';
-                }
+				if ($index['Key_name'] === 'PRIMARY') {
+					$type = 'PRIMARY';
+				} elseif ($index['Index_type'] === 'FULLTEXT') {
+					$type = 'FULLTEXT';
+				} elseif ($index['Non_unique']) {
+					$type = $index['Index_type'] === 'SPATIAL' ? 'SPATIAL' : 'INDEX';
+				} else {
+					$type = 'UNIQUE';
+				}
 
-                $keys[$index['Key_name']]->type = $type;
-            }
+				$keys[$index['Key_name']]->type = $type;
+			}
 
-            $keys[$index['Key_name']]->fields[] = $index['Column_name'];
-        }
+			$keys[$index['Key_name']]->fields[] = $index['Column_name'];
+		}
 
-        return $keys;
-    }
+		return $keys;
+	}
 
 	// --------------------------------------------------------------------
 
 	/**
-     * Returns an array of objects with Foreign key data
-     *
-     *
-     * @return stdClass[]
-     */
-    protected function foreign_key_data(string $table): array
-    {
-        $sql = '
+	 * Returns an array of objects with Foreign key data
+	 *
+	 *
+	 * @return stdClass[]
+	 */
+	protected function foreign_key_data(string $table): array
+	{
+		$sql = '
                     SELECT
                         tc.CONSTRAINT_NAME,
                         tc.TABLE_NAME,
@@ -596,50 +574,50 @@ class CI_DB_mysqli_driver extends CI_DB {
                         tc.TABLE_SCHEMA = ' . $this->escape($this->database) . ' AND
                         tc.TABLE_NAME = ' . $this->escape($table);
 
-        if (($query = $this->query($sql)) === false) {
-            show_error('Failed to get foreign key data from database');
-        }
-        $query = $query->result_object();
+		if (($query = $this->query($sql)) === false) {
+			show_error('Failed to get foreign key data from database');
+		}
+		$query = $query->result_object();
 
-        $retVal = [];
+		$retVal = [];
 
-        foreach ($query as $row) {
-            $obj                      = new stdClass();
-            $obj->constraint_name     = $row->CONSTRAINT_NAME;
-            $obj->table_name          = $row->TABLE_NAME;
-            $obj->column_name         = $row->COLUMN_NAME;
-            $obj->foreign_table_name  = $row->REFERENCED_TABLE_NAME;
-            $obj->foreign_column_name = $row->REFERENCED_COLUMN_NAME;
+		foreach ($query as $row) {
+			$obj                      = new stdClass();
+			$obj->constraint_name     = $row->CONSTRAINT_NAME;
+			$obj->table_name          = $row->TABLE_NAME;
+			$obj->column_name         = $row->COLUMN_NAME;
+			$obj->foreign_table_name  = $row->REFERENCED_TABLE_NAME;
+			$obj->foreign_column_name = $row->REFERENCED_COLUMN_NAME;
 
-            $retVal[] = $obj;
-        }
+			$retVal[] = $obj;
+		}
 
-        return $retVal;
-    }
+		return $retVal;
+	}
 
 	// --------------------------------------------------------------------
-	
+
 	/**
-     * Returns platform-specific SQL to disable foreign key checks.
-     *
-     * @return string
-     */
-    public function disable_foreign_key_checks()
-    {
-        return 'SET FOREIGN_KEY_CHECKS=0';
-    }
+	 * Returns platform-specific SQL to disable foreign key checks.
+	 *
+	 * @return string
+	 */
+	public function disable_foreign_key_checks()
+	{
+		return 'SET FOREIGN_KEY_CHECKS=0';
+	}
 
 	// --------------------------------------------------------------------
 
-    /**
-     * Returns platform-specific SQL to enable foreign key checks.
-     *
-     * @return string
-     */
-    public function enable_foreign_key_checks()
-    {
-        return 'SET FOREIGN_KEY_CHECKS=1';
-    }
+	/**
+	 * Returns platform-specific SQL to enable foreign key checks.
+	 *
+	 * @return string
+	 */
+	public function enable_foreign_key_checks()
+	{
+		return 'SET FOREIGN_KEY_CHECKS=1';
+	}
 
 	// --------------------------------------------------------------------
 
@@ -653,8 +631,7 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	public function error()
 	{
-		if ( ! empty($this->_mysqli->connect_errno))
-		{
+		if (! empty($this->_mysqli->connect_errno)) {
 			return array(
 				'code'    => $this->_mysqli->connect_errno,
 				'message' => $this->_mysqli->connect_error
@@ -676,9 +653,8 @@ class CI_DB_mysqli_driver extends CI_DB {
 	 */
 	protected function _from_tables(): string
 	{
-		if ( ! empty($this->qb_join) && count($this->qb_from) > 1)
-		{
-			return '('.implode(', ', $this->qb_from).')';
+		if (! empty($this->qb_join) && count($this->qb_from) > 1) {
+			return '(' . implode(', ', $this->qb_from) . ')';
 		}
 
 		return implode(', ', $this->qb_from);
@@ -695,5 +671,4 @@ class CI_DB_mysqli_driver extends CI_DB {
 	{
 		$this->conn_id->close();
 	}
-
 }

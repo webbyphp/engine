@@ -468,9 +468,7 @@ abstract class CI_DB_driver
 	 *
 	 * @return	void
 	 */
-	public function reconnect()
-	{
-	}
+	public function reconnect() {}
 
 	// --------------------------------------------------------------------
 
@@ -1796,6 +1794,58 @@ abstract class CI_DB_driver
 		return $item . $alias;
 	}
 
+
+	/**
+	 * Returns the last error code and message.
+	 *
+	 * Must return an array with keys 'code' and 'message':
+	 *
+	 *  return ['code' => null, 'message' => null);
+	 */
+	// abstract public function error(): array;
+
+	/**
+	 * Insert ID
+	 *
+	 * @return int|string
+	 */
+	// abstract public function insert_id();
+
+	/**
+	 * Generates the SQL for listing tables in a platform-dependent manner.
+	 *
+	 * @return false|string
+	 */
+	// abstract protected function _list_tables(bool $constrainByPrefix = false);
+
+	/**
+	 * Generates a platform-specific query string so that the column names can be fetched.
+	 *
+	 * @return false|string
+	 */
+	// abstract protected function _list_columns(string $table = '');
+
+	/**
+	 * Platform-specific field data information.
+	 *
+	 * @see    getFieldData()
+	 */
+	// abstract protected function _field_data(string $table): array;
+
+	/**
+	 * Platform-specific index data.
+	 *
+	 * @see    getIndexData()
+	 */
+	// abstract protected function _index_data(string $table): array;
+
+	/**
+	 * Platform-specific foreign keys data.
+	 *
+	 * @see    getForeignKeyData()
+	 */
+	// abstract protected function _foreign_key_data(string $table): array;
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -1804,7 +1854,5 @@ abstract class CI_DB_driver
 	 *
 	 * @return	void
 	 */
-	protected function _reset_select()
-	{
-	}
+	protected function _reset_select() {}
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -36,7 +37,7 @@
  * @since	Version 1.3.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * MySQLi Utility Class
@@ -47,7 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/database/
  */
-class CI_DB_mysqli_utility extends CI_DB_utility {
+class CI_DB_mysqli_utility extends CI_DB_utility
+{
 
 	/**
 	 * List databases statement
@@ -80,8 +82,7 @@ class CI_DB_mysqli_utility extends CI_DB_utility {
 	 */
 	protected function _backup($params = [])
 	{
-		if (count($params) === 0)
-		{
+		if (count($params) === 0) {
 			return false;
 		}
 
@@ -92,57 +93,48 @@ class CI_DB_mysqli_utility extends CI_DB_utility {
 		$output = '';
 
 		// Do we need to include a statement to disable foreign key checks?
-		if ($foreign_key_checks === false)
-		{
-			$output .= 'SET foreign_key_checks = 0;'.$newline;
+		if ($foreign_key_checks === false) {
+			$output .= 'SET foreign_key_checks = 0;' . $newline;
 		}
 
-		foreach ( (array) $tables as $table)
-		{
+		foreach ((array) $tables as $table) {
 			// Is the table in the "ignore" list?
-			if (in_array($table, (array) $ignore, true))
-			{
+			if (in_array($table, (array) $ignore, true)) {
 				continue;
 			}
 
 			// Get the table schema
-			$query = $this->db->query('SHOW CREATE TABLE '.$this->db->escape_identifiers($this->db->database.'.'.$table));
+			$query = $this->db->query('SHOW CREATE TABLE ' . $this->db->escape_identifiers($this->db->database . '.' . $table));
 
 			// No result means the table name was invalid
-			if ($query === false)
-			{
+			if ($query === false) {
 				continue;
 			}
 
 			// Write out the table schema
-			$output .= '#'.$newline.'# TABLE STRUCTURE FOR: '.$table.$newline.'#'.$newline.$newline;
+			$output .= '#' . $newline . '# TABLE STRUCTURE FOR: ' . $table . $newline . '#' . $newline . $newline;
 
-			if ($add_drop === true)
-			{
-				$output .= 'DROP TABLE IF EXISTS '.$this->db->protect_identifiers($table).';'.$newline.$newline;
+			if ($add_drop === true) {
+				$output .= 'DROP TABLE IF EXISTS ' . $this->db->protect_identifiers($table) . ';' . $newline . $newline;
 			}
 
 			$i = 0;
 			$result = $query->result_array();
-			foreach ($result[0] as $val)
-			{
-				if ($i++ % 2)
-				{
-					$output .= $val.';'.$newline.$newline;
+			foreach ($result[0] as $val) {
+				if ($i++ % 2) {
+					$output .= $val . ';' . $newline . $newline;
 				}
 			}
 
 			// If inserts are not needed we're done...
-			if ($add_insert === false)
-			{
+			if ($add_insert === false) {
 				continue;
 			}
 
 			// Grab all the data from the current table
-			$query = $this->db->query('SELECT * FROM '.$this->db->protect_identifiers($table));
+			$query = $this->db->query('SELECT * FROM ' . $this->db->protect_identifiers($table));
 
-			if ($query->num_rows() === 0)
-			{
+			if ($query->num_rows() === 0) {
 				continue;
 			}
 
@@ -153,34 +145,28 @@ class CI_DB_mysqli_utility extends CI_DB_utility {
 			$i = 0;
 			$field_str = '';
 			$is_int = [];
-			while ($field = $query->result_id->fetch_field())
-			{
+			while ($field = $query->result_id->fetch_field()) {
 				// Most versions of MySQL store timestamp as a string
 				$is_int[$i] = in_array($field->type, array(MYSQLI_TYPE_TINY, MYSQLI_TYPE_SHORT, MYSQLI_TYPE_INT24, MYSQLI_TYPE_LONG), true);
 
 				// Create a string of field names
-				$field_str .= $this->db->escape_identifiers($field->name).', ';
+				$field_str .= $this->db->escape_identifiers($field->name) . ', ';
 				$i++;
 			}
 
 			// Trim off the end comma
-			$field_str = preg_replace('/, $/' , '', $field_str);
+			$field_str = preg_replace('/, $/', '', $field_str);
 
 			// Build the insert string
-			foreach ($query->result_array() as $row)
-			{
+			foreach ($query->result_array() as $row) {
 				$val_str = '';
 
 				$i = 0;
-				foreach ($row as $v)
-				{
+				foreach ($row as $v) {
 					// Is the value null?
-					if ($v === null)
-					{
+					if ($v === null) {
 						$val_str .= 'null';
-					}
-					else
-					{
+					} else {
 						// Escape the data if it's not an integer
 						$val_str .= ($is_int[$i] === false) ? $this->db->escape($v) : $v;
 					}
@@ -191,22 +177,20 @@ class CI_DB_mysqli_utility extends CI_DB_utility {
 				}
 
 				// Remove the comma at the end of the string
-				$val_str = preg_replace('/, $/' , '', $val_str);
+				$val_str = preg_replace('/, $/', '', $val_str);
 
 				// Build the INSERT string
-				$output .= 'INSERT INTO '.$this->db->protect_identifiers($table).' ('.$field_str.') VALUES ('.$val_str.');'.$newline;
+				$output .= 'INSERT INTO ' . $this->db->protect_identifiers($table) . ' (' . $field_str . ') VALUES (' . $val_str . ');' . $newline;
 			}
 
-			$output .= $newline.$newline;
+			$output .= $newline . $newline;
 		}
 
 		// Do we need to include a statement to re-enable foreign key checks?
-		if ($foreign_key_checks === false)
-		{
-			$output .= 'SET foreign_key_checks = 1;'.$newline;
+		if ($foreign_key_checks === false) {
+			$output .= 'SET foreign_key_checks = 1;' . $newline;
 		}
 
 		return $output;
 	}
-
 }

@@ -141,9 +141,7 @@ function &DB($params = '')
 		 * @see	CI_DB_query_builder
 		 * @see	CI_DB_driver
 		 */
-		class CI_DB extends CI_DB_query_builder
-		{
-		}
+		class CI_DB extends CI_DB_query_builder {}
 	}
 
 	// Load the DB driver
