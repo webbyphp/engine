@@ -85,7 +85,7 @@ class TraverseClassFile
     }
 
     /**
-     * Get the class name form file path using token
+     * Get the class name from file path using token
      * if class is anonymous include the file path
      * 
      * @param $filePathName
@@ -96,7 +96,7 @@ class TraverseClassFile
     {
         $src = file_get_contents($filePathName);
 
-        $classes = array();
+        $classes = [];
         $tokens = token_get_all($src);
         $count = count($tokens);
 
