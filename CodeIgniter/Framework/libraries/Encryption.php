@@ -294,7 +294,7 @@ class CI_Encryption {
 	 * @param	array	$params	Input parameters
 	 * @return	string
 	 */
-	public function encrypt($data, array $params = null)
+	public function encrypt(#[\SensitiveParameter] $data, ?array $params = null)
 	{
 		if (($params = $this->_get_params($params)) === false)
 		{
@@ -364,7 +364,7 @@ class CI_Encryption {
 	 * @param	array	$params	Input parameters
 	 * @return	string
 	 */
-	public function decrypt($data, array $params = null)
+	public function decrypt($data, ?array $params = null)
 	{
 		if (($params = $this->_get_params($params)) === false)
 		{
@@ -451,7 +451,7 @@ class CI_Encryption {
 	 * Get params
 	 *
 	 * @param	array	$params	Input parameters
-	 * @return	array
+	 * @return	array|bool
 	 */
 	protected function _get_params($params)
 	{
