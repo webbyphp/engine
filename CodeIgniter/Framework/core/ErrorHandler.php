@@ -188,12 +188,12 @@ class CI_ErrorHandler
             $this->displayCliError($errorData);
             return;
         }
-        
+
         if ($this->isApiRequest()) {
             $this->displayApiError($errorData);
             return;
         }
-        
+
         // Handle AJAX requests differently  
         if ($this->isAjaxRequest() && $this->config['enable_ajax_errors']) {
             $this->displayAjaxError($errorData);
@@ -275,11 +275,11 @@ class CI_ErrorHandler
         $magenta = "\033[35m";
         $reset = "\033[0m";
         $bold = "\033[1m";
-        
+
         // Get color based on error type
         $typeColor = $this->getErrorTypeColor($errorData['type']);
         $headerColor = $this->getErrorHeaderColor($errorData['severity']);
-        
+
         echo "\n" . $headerColor . $bold . "=== PHP " . strtoupper($this->getErrorCategory($errorData['type'])) . " ===" . $reset . "\n";
         echo $typeColor . "Type: " . $reset . $bold . $errorData['type'] . $reset . "\n";
         echo $typeColor . "Message: " . $reset . $errorData['message'] . "\n";
@@ -287,30 +287,30 @@ class CI_ErrorHandler
         echo $blue . "Line: " . $reset . $errorData['line'] . "\n";
         echo $cyan . "Request ID: " . $reset . $errorData['request_id'] . "\n";
         echo $magenta . "Timestamp: " . $reset . date('Y-m-d H:i:s', intval($errorData['timestamp'])) . "\n";
-        
+
         // Show stack trace for CLI
         if (!empty($errorData['trace'])) {
             echo "\n" . $bold . "Stack Trace:" . $reset . "\n";
             $count = 0;
             foreach ($errorData['trace'] as $frame) {
                 if ($count >= 5) break; // Limit for readability
-                
+
                 $file = isset($frame['file']) ? $frame['file'] : 'Unknown';
                 $line = isset($frame['line']) ? $frame['line'] : 0;
                 $function = isset($frame['function']) ? $frame['function'] : 'Unknown';
                 $class = isset($frame['class']) ? $frame['class'] : '';
                 $type = isset($frame['type']) ? $frame['type'] : '';
-                
+
                 echo $green . "#$count " . $reset . $class . $type . $function . "\n";
                 echo "    " . $file . ":" . $line . "\n";
                 $count++;
             }
         }
-        
+
         echo "\n" . str_repeat("=", 50) . "\n\n";
         exit(1);
     }
-    
+
     /**
      * Handle API errors with JSON response
      */
@@ -321,7 +321,7 @@ class CI_ErrorHandler
             header('Content-Type: application/json; charset=utf-8');
             header('X-Error-Request-ID: ' . $errorData['request_id']);
         }
-        
+
         $response = [
             'success' => false,
             'error' => [
@@ -332,7 +332,7 @@ class CI_ErrorHandler
                 'timestamp' => date('c', intval($errorData['timestamp']))
             ]
         ];
-        
+
         // In debug mode, include more details
         if ($this->config['debug']) {
             $response['error']['debug'] = [
@@ -341,7 +341,7 @@ class CI_ErrorHandler
                 'stack_trace' => array_slice($errorData['trace'], 0, 3) // Limited for API
             ];
         }
-        
+
         echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         exit(1);
     }
@@ -1090,8 +1090,8 @@ Timestamp: ' . date('Y-m-d H:i:s', intval($errorData['timestamp'])) . '
      */
     private function isCommandLineInterface()
     {
-        return php_sapi_name() === 'cli' || defined('STDIN') || 
-               (defined('PHP_SAPI') && PHP_SAPI === 'cli');
+        return php_sapi_name() === 'cli' || defined('STDIN') ||
+            (defined('PHP_SAPI') && PHP_SAPI === 'cli');
     }
 
     /**
@@ -1103,27 +1103,27 @@ Timestamp: ' . date('Y-m-d H:i:s', intval($errorData['timestamp'])) . '
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
         $acceptHeader = $_SERVER['HTTP_ACCEPT'] ?? '';
         $requestUri = $_SERVER['REQUEST_URI'] ?? '';
-        
+
         // Check for JSON content type
         if (stripos($contentType, 'application/json') !== false) {
             return true;
         }
-        
+
         // Check for JSON in Accept header
         if (stripos($acceptHeader, 'application/json') !== false) {
             return true;
         }
-        
+
         // Check for common API URL patterns
         if (preg_match('/\/(api|rest|webservice)\//i', $requestUri)) {
             return true;
         }
-        
+
         // Check for API version in URL
         if (preg_match('/\/v\d+\//i', $requestUri)) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -1420,32 +1420,38 @@ Timestamp: ' . date('Y-m-d H:i:s', intval($errorData['timestamp'])) . '
         $yellow = "\033[33m";     // Notices/Deprecated
         $blue = "\033[34m";       // Strict standards
         $magenta = "\033[35m";    // Parse/Compile errors
-        
+
         $normalizedType = strtolower($errorType);
-        
-        if (strpos($normalizedType, 'fatal') !== false || 
-            strpos($normalizedType, 'error') !== false) {
+
+        if (
+            strpos($normalizedType, 'fatal') !== false ||
+            strpos($normalizedType, 'error') !== false
+        ) {
             return $red;
         }
-        
+
         if (strpos($normalizedType, 'warning') !== false) {
             return $orange;
         }
-        
-        if (strpos($normalizedType, 'notice') !== false || 
-            strpos($normalizedType, 'deprecated') !== false) {
+
+        if (
+            strpos($normalizedType, 'notice') !== false ||
+            strpos($normalizedType, 'deprecated') !== false
+        ) {
             return $yellow;
         }
-        
+
         if (strpos($normalizedType, 'strict') !== false) {
             return $blue;
         }
-        
-        if (strpos($normalizedType, 'parse') !== false || 
-            strpos($normalizedType, 'compile') !== false) {
+
+        if (
+            strpos($normalizedType, 'parse') !== false ||
+            strpos($normalizedType, 'compile') !== false
+        ) {
             return $magenta;
         }
-        
+
         return $red; // Default to red for unknown error types
     }
 
@@ -1459,7 +1465,7 @@ Timestamp: ' . date('Y-m-d H:i:s', intval($errorData['timestamp'])) . '
         $yellow = "\033[33m";     // Notices
         $blue = "\033[34m";       // Strict standards
         $magenta = "\033[35m";    // Parse/Compile errors
-        
+
         switch ($severity) {
             case E_ERROR:
             case E_CORE_ERROR:
@@ -1467,25 +1473,25 @@ Timestamp: ' . date('Y-m-d H:i:s', intval($errorData['timestamp'])) . '
             case E_USER_ERROR:
             case E_RECOVERABLE_ERROR:
                 return $red;
-                
+
             case E_WARNING:
             case E_CORE_WARNING:
             case E_COMPILE_WARNING:
             case E_USER_WARNING:
                 return $orange;
-                
+
             case E_NOTICE:
             case E_USER_NOTICE:
             case E_DEPRECATED:
             case E_USER_DEPRECATED:
                 return $yellow;
-                
+
             case 2048: // E_STRICT
                 return $blue;
-                
+
             case E_PARSE:
                 return $magenta;
-                
+
             default:
                 return $red;
         }
@@ -1497,28 +1503,30 @@ Timestamp: ' . date('Y-m-d H:i:s', intval($errorData['timestamp'])) . '
     private function getErrorCategory($errorType)
     {
         $normalizedType = strtolower($errorType);
-        
-        if (strpos($normalizedType, 'fatal') !== false || 
-            strpos($normalizedType, 'error') !== false) {
+
+        if (
+            strpos($normalizedType, 'fatal') !== false ||
+            strpos($normalizedType, 'error') !== false
+        ) {
             return 'ERROR';
         }
-        
+
         if (strpos($normalizedType, 'warning') !== false) {
             return 'WARNING';
         }
-        
+
         if (strpos($normalizedType, 'notice') !== false) {
             return 'NOTICE';
         }
-        
+
         if (strpos($normalizedType, 'deprecated') !== false) {
             return 'DEPRECATED';
         }
-        
+
         if (strpos($normalizedType, 'strict') !== false) {
             return 'STRICT';
         }
-        
+
         return 'ERROR'; // Default
     }
 }
