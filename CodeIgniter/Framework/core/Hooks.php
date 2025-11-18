@@ -157,7 +157,7 @@ class CI_Hooks
 	}
 
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Alias to above method
 	 *
@@ -209,9 +209,9 @@ class CI_Hooks
 	{
 		// Check if hooks exist for the given action
 		if (isset($this->hooks[$action])) {
-			
+
 			// Sort the hooks by priority from highest to lowest
-			usort($this->hooks[$action], function($first, $second) {
+			usort($this->hooks[$action], function ($first, $second) {
 				return $first['priority'] < $second['priority'];
 			});
 

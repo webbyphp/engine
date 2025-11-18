@@ -54,7 +54,7 @@ class CI_CodeIgniter
      */
     public function __construct(array &$globals, array $server)
     {
-        $this->globals =& $globals;
+        $this->globals = &$globals;
 
         $this->server = $server;
 
@@ -67,7 +67,6 @@ class CI_CodeIgniter
         $this->constants['COMPOSERPATH'] = $this->globals['composer_directory'];
 
         $this->constants['VIEWPATH'] = $this->globals['view_directory'];
-
     }
 
     /**
@@ -122,7 +121,7 @@ class CI_CodeIgniter
     {
         if (!is_dir(CIPATH)) {
             throw new Exception('Supplied base path is not a directory');
-        } 
+        }
 
         ! defined('CIPATH') && define('CIPATH', $this->constants['CIPATH']);
     }
@@ -209,7 +208,7 @@ class CI_CodeIgniter
         load_class('Input', 'core');
 
         load_class('Lang', 'core');
-        
+
         load_class('Output', 'core');
     }
 
@@ -260,5 +259,4 @@ class CI_CodeIgniter
 
         defined('CIPATH') || $this->basepath();
     }
-
 }
