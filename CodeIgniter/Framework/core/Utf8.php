@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -35,7 +36,7 @@
  * @since	Version 2.0.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Utf8 Class
@@ -48,7 +49,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/libraries/utf8.html
  */
-class CI_Utf8 {
+class CI_Utf8
+{
 
 	/**
 	 * Class constructor
@@ -61,15 +63,12 @@ class CI_Utf8 {
 	{
 		if (
 			defined('PREG_BAD_UTF8_ERROR')				// PCRE must support UTF-8
-			&& (ICONV_ENABLED === true OR MB_ENABLED === true)	// iconv or mbstring must be installed
+			&& (ICONV_ENABLED === true or MB_ENABLED === true)	// iconv or mbstring must be installed
 			&& strtoupper(config_item('charset')) === 'UTF-8'	// Application charset must be UTF-8
-			)
-		{
+		) {
 			define('UTF8_ENABLED', true);
 			log_message('debug', 'UTF-8 Support Enabled');
-		}
-		else
-		{
+		} else {
 			define('UTF8_ENABLED', false);
 			log_message('debug', 'UTF-8 Support Disabled');
 		}
@@ -89,14 +88,10 @@ class CI_Utf8 {
 	 */
 	public function clean_string($str)
 	{
-		if ($this->is_ascii($str) === false)
-		{
-			if (MB_ENABLED)
-			{
+		if ($this->is_ascii($str) === false) {
+			if (MB_ENABLED) {
 				$str = mb_convert_encoding($str, 'UTF-8', 'UTF-8');
-			}
-			elseif (ICONV_ENABLED)
-			{
+			} elseif (ICONV_ENABLED) {
 				$str = @iconv('UTF-8', 'UTF-8//IGNORE', $str);
 			}
 		}
@@ -134,12 +129,9 @@ class CI_Utf8 {
 	 */
 	public function convert_to_utf8($str, $encoding)
 	{
-		if (MB_ENABLED)
-		{
+		if (MB_ENABLED) {
 			return mb_convert_encoding($str, 'UTF-8', $encoding);
-		}
-		elseif (ICONV_ENABLED)
-		{
+		} elseif (ICONV_ENABLED) {
 			return @iconv($encoding, 'UTF-8', $str);
 		}
 
@@ -160,5 +152,4 @@ class CI_Utf8 {
 	{
 		return (preg_match('/[^\x00-\x7F]/S', $str) === 0);
 	}
-
 }
