@@ -335,6 +335,23 @@ if ( ! function_exists('is_file_empty'))
     }
 }
 
+if ( ! function_exists('uploader')) 
+{
+    /**
+     * Helper function to load the 
+     * enhanced uploader library
+     * 
+     * @param array $config
+     * @return object
+     */
+    function uploader($config = []) 
+    {
+        ci()->load->library('uploader', $config);
+        return ci()->uploader;
+    }
+
+}
+
 if ( ! function_exists('input')) 
 {
     /**
