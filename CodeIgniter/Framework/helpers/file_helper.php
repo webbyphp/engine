@@ -36,7 +36,7 @@
  * @since	Version 1.0.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * CodeIgniter File Helpers
@@ -50,8 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('read_file'))
-{
+if (! function_exists('read_file')) {
 	/**
 	 * Read File
 	 *
@@ -70,8 +69,7 @@ if ( ! function_exists('read_file'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('write_file'))
-{
+if (! function_exists('write_file')) {
 	/**
 	 * Write File
 	 *
@@ -85,17 +83,14 @@ if ( ! function_exists('write_file'))
 	 */
 	function write_file($path, $data, $mode = 'wb')
 	{
-		if ( ! $fp = @fopen($path, $mode))
-		{
+		if (! $fp = @fopen($path, $mode)) {
 			return false;
 		}
 
 		flock($fp, LOCK_EX);
 
-		for ($result = $written = 0, $length = strlen($data); $written < $length; $written += $result)
-		{
-			if (($result = fwrite($fp, substr($data, $written))) === false)
-			{
+		for ($result = $written = 0, $length = strlen($data); $written < $length; $written += $result) {
+			if (($result = fwrite($fp, substr($data, $written))) === false) {
 				break;
 			}
 		}
@@ -109,8 +104,7 @@ if ( ! function_exists('write_file'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('delete_files'))
-{
+if (! function_exists('delete_files')) {
 	/**
 	 * Delete Files
 	 *
@@ -130,23 +124,17 @@ if ( ! function_exists('delete_files'))
 		// Trim the trailing slash
 		$path = rtrim($path, '/\\');
 
-		if ( ! $current_dir = @opendir($path))
-		{
+		if (! $current_dir = @opendir($path)) {
 			return false;
 		}
 
-		while (false !== ($filename = @readdir($current_dir)))
-		{
-			if ($filename !== '.' && $filename !== '..')
-			{
-				$filepath = $path.DIRECTORY_SEPARATOR.$filename;
+		while (false !== ($filename = @readdir($current_dir))) {
+			if ($filename !== '.' && $filename !== '..') {
+				$filepath = $path . DIRECTORY_SEPARATOR . $filename;
 
-				if (is_dir($filepath) && $filename[0] !== '.' && ! is_link($filepath))
-				{
+				if (is_dir($filepath) && $filename[0] !== '.' && ! is_link($filepath)) {
 					delete_files($filepath, $del_dir, $htdocs, $_level + 1);
-				}
-				elseif ($htdocs !== true OR ! preg_match('/^(\.htaccess|index\.(html|htm|php)|web\.config)$/i', $filename))
-				{
+				} elseif ($htdocs !== true or ! preg_match('/^(\.htaccess|index\.(html|htm|php)|web\.config)$/i', $filename)) {
 					@unlink($filepath);
 				}
 			}
@@ -162,8 +150,7 @@ if ( ! function_exists('delete_files'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('get_filenames'))
-{
+if (! function_exists('get_filenames')) {
 	/**
 	 * Get Filenames
 	 *
@@ -179,24 +166,18 @@ if ( ! function_exists('get_filenames'))
 	{
 		static $_filedata = [];
 
-		if ($fp = @opendir($source_dir))
-		{
+		if ($fp = @opendir($source_dir)) {
 			// reset the array and make sure $source_dir has a trailing slash on the initial call
-			if ($_recursion === false)
-			{
+			if ($_recursion === false) {
 				$_filedata = [];
-				$source_dir = rtrim(realpath($source_dir), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+				$source_dir = rtrim(realpath($source_dir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 			}
 
-			while (false !== ($file = readdir($fp)))
-			{
-				if (is_dir($source_dir.$file) && $file[0] !== '.')
-				{
-					get_filenames($source_dir.$file.DIRECTORY_SEPARATOR, $include_path, true);
-				}
-				elseif ($file[0] !== '.')
-				{
-					$_filedata[] = ($include_path === true) ? $source_dir.$file : $file;
+			while (false !== ($file = readdir($fp))) {
+				if (is_dir($source_dir . $file) && $file[0] !== '.') {
+					get_filenames($source_dir . $file . DIRECTORY_SEPARATOR, $include_path, true);
+				} elseif ($file[0] !== '.') {
+					$_filedata[] = ($include_path === true) ? $source_dir . $file : $file;
 				}
 			}
 
@@ -210,8 +191,7 @@ if ( ! function_exists('get_filenames'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('get_dir_file_info'))
-{
+if (! function_exists('get_dir_file_info')) {
 	/**
 	 * Get Directory File Information
 	 *
@@ -230,25 +210,19 @@ if ( ! function_exists('get_dir_file_info'))
 		static $_filedata = [];
 		$relative_path = $source_dir;
 
-		if ($fp = @opendir($source_dir))
-		{
+		if ($fp = @opendir($source_dir)) {
 			// reset the array and make sure $source_dir has a trailing slash on the initial call
-			if ($_recursion === false)
-			{
+			if ($_recursion === false) {
 				$_filedata = [];
-				$source_dir = rtrim(realpath($source_dir), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+				$source_dir = rtrim(realpath($source_dir), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 			}
 
 			// Used to be foreach (scandir($source_dir, 1) as $file), but scandir() is simply not as fast
-			while (false !== ($file = readdir($fp)))
-			{
-				if (is_dir($source_dir.$file) && $file[0] !== '.' && $top_level_only === false)
-				{
-					get_dir_file_info($source_dir.$file.DIRECTORY_SEPARATOR, $top_level_only, true);
-				}
-				elseif ($file[0] !== '.')
-				{
-					$_filedata[$file] = get_file_info($source_dir.$file);
+			while (false !== ($file = readdir($fp))) {
+				if (is_dir($source_dir . $file) && $file[0] !== '.' && $top_level_only === false) {
+					get_dir_file_info($source_dir . $file . DIRECTORY_SEPARATOR, $top_level_only, true);
+				} elseif ($file[0] !== '.') {
+					$_filedata[$file] = get_file_info($source_dir . $file);
 					$_filedata[$file]['relative_path'] = $relative_path;
 				}
 			}
@@ -263,8 +237,7 @@ if ( ! function_exists('get_dir_file_info'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('get_file_info'))
-{
+if (! function_exists('get_file_info')) {
 	/**
 	 * Get File Info
 	 *
@@ -279,20 +252,16 @@ if ( ! function_exists('get_file_info'))
 	 */
 	function get_file_info($file, $returned_values = ['name', 'server_path', 'size', 'date'])
 	{
-		if ( ! file_exists($file))
-		{
+		if (! file_exists($file)) {
 			return false;
 		}
 
-		if (is_string($returned_values))
-		{
+		if (is_string($returned_values)) {
 			$returned_values = explode(',', $returned_values);
 		}
 
-		foreach ($returned_values as $key)
-		{
-			switch ($key)
-			{
+		foreach ($returned_values as $key) {
+			switch ($key) {
 				case 'name':
 					$fileinfo['name'] = basename($file);
 					break;
@@ -326,8 +295,7 @@ if ( ! function_exists('get_file_info'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('get_mime_by_extension'))
-{
+if (! function_exists('get_mime_by_extension')) {
 	/**
 	 * Get Mime by Extension
 	 *
@@ -344,20 +312,17 @@ if ( ! function_exists('get_mime_by_extension'))
 	{
 		static $mimes;
 
-		if ( ! is_array($mimes))
-		{
+		if (! is_array($mimes)) {
 			$mimes = get_mimes();
 
-			if (empty($mimes))
-			{
+			if (empty($mimes)) {
 				return false;
 			}
 		}
 
 		$extension = strtolower(substr(strrchr($filename, '.'), 1));
 
-		if (isset($mimes[$extension]))
-		{
+		if (isset($mimes[$extension])) {
 			return is_array($mimes[$extension])
 				? current($mimes[$extension]) // Multiple mime types, just give the first one
 				: $mimes[$extension];
@@ -369,8 +334,7 @@ if ( ! function_exists('get_mime_by_extension'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('symbolic_permissions'))
-{
+if (! function_exists('symbolic_permissions')) {
 	/**
 	 * Symbolic Permissions
 	 *
@@ -382,53 +346,38 @@ if ( ! function_exists('symbolic_permissions'))
 	 */
 	function symbolic_permissions($perms)
 	{
-		if (($perms & 0xC000) === 0xC000)
-		{
+		if (($perms & 0xC000) === 0xC000) {
 			$symbolic = 's'; // Socket
-		}
-		elseif (($perms & 0xA000) === 0xA000)
-		{
+		} elseif (($perms & 0xA000) === 0xA000) {
 			$symbolic = 'l'; // Symbolic Link
-		}
-		elseif (($perms & 0x8000) === 0x8000)
-		{
+		} elseif (($perms & 0x8000) === 0x8000) {
 			$symbolic = '-'; // Regular
-		}
-		elseif (($perms & 0x6000) === 0x6000)
-		{
+		} elseif (($perms & 0x6000) === 0x6000) {
 			$symbolic = 'b'; // Block special
-		}
-		elseif (($perms & 0x4000) === 0x4000)
-		{
+		} elseif (($perms & 0x4000) === 0x4000) {
 			$symbolic = 'd'; // Directory
-		}
-		elseif (($perms & 0x2000) === 0x2000)
-		{
+		} elseif (($perms & 0x2000) === 0x2000) {
 			$symbolic = 'c'; // Character special
-		}
-		elseif (($perms & 0x1000) === 0x1000)
-		{
+		} elseif (($perms & 0x1000) === 0x1000) {
 			$symbolic = 'p'; // FIFO pipe
-		}
-		else
-		{
+		} else {
 			$symbolic = 'u'; // Unknown
 		}
 
 		// Owner
 		$symbolic .= (($perms & 0x0100) ? 'r' : '-')
-			.(($perms & 0x0080) ? 'w' : '-')
-			.(($perms & 0x0040) ? (($perms & 0x0800) ? 's' : 'x' ) : (($perms & 0x0800) ? 'S' : '-'));
+			. (($perms & 0x0080) ? 'w' : '-')
+			. (($perms & 0x0040) ? (($perms & 0x0800) ? 's' : 'x') : (($perms & 0x0800) ? 'S' : '-'));
 
 		// Group
 		$symbolic .= (($perms & 0x0020) ? 'r' : '-')
-			.(($perms & 0x0010) ? 'w' : '-')
-			.(($perms & 0x0008) ? (($perms & 0x0400) ? 's' : 'x' ) : (($perms & 0x0400) ? 'S' : '-'));
+			. (($perms & 0x0010) ? 'w' : '-')
+			. (($perms & 0x0008) ? (($perms & 0x0400) ? 's' : 'x') : (($perms & 0x0400) ? 'S' : '-'));
 
 		// World
 		$symbolic .= (($perms & 0x0004) ? 'r' : '-')
-			.(($perms & 0x0002) ? 'w' : '-')
-			.(($perms & 0x0001) ? (($perms & 0x0200) ? 't' : 'x' ) : (($perms & 0x0200) ? 'T' : '-'));
+			. (($perms & 0x0002) ? 'w' : '-')
+			. (($perms & 0x0001) ? (($perms & 0x0200) ? 't' : 'x') : (($perms & 0x0200) ? 'T' : '-'));
 
 		return $symbolic;
 	}
@@ -436,8 +385,7 @@ if ( ! function_exists('symbolic_permissions'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('octal_permissions'))
-{
+if (! function_exists('octal_permissions')) {
 	/**
 	 * Octal Permissions
 	 *
