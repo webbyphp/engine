@@ -202,11 +202,14 @@ class Console
                 static::runSystemCommand(Console::phpCommand() . 'routes');
                 break;
             case 'app:on':
-                static::runSystemCommand(Console::phpCommand() . 'maintenance/on');
-            break;
+                static::runSystemCommand(Console::phpCommand() . 'maintenance/on/' . $arg2);
+                break;
             case 'app:off':
-                static::runSystemCommand(Console::phpCommand() . 'maintenance/off');
-            break;
+                static::runSystemCommand(Console::phpCommand() . 'maintenance/off/' . $arg2);
+                break;
+            case 'app:mode':
+                static::runSystemCommand(Console::phpCommand() . 'maintenance/mode/' . $arg2);
+                break;
             case 'app:to-production':
                 static::runSystemCommand(Console::phpCommand() . 'environment/production');
                 break;
@@ -353,8 +356,8 @@ class Console
                 break;
             case 'update:composer':
                 static::consoleEnv();
-                static::runSystemCommand(static::$composerCommand .'self-update');
-            break;
+                static::runSystemCommand(static::$composerCommand . 'self-update');
+                break;
             default:
                 static::noCommand();
                 break;
@@ -1164,7 +1167,7 @@ class Console
 
         $viewType = '';
 
-        if (!empty($module) && !empty($view[1]) ) {
+        if (!empty($module) && !empty($view[1])) {
             $filename = $view[1];
         }
 
@@ -1173,7 +1176,7 @@ class Console
             $viewType = $view[1];
         }
 
-        if (empty($module) && !empty($view[0]) ) {
+        if (empty($module) && !empty($view[0])) {
             $filename = $view[0];
         }
 
@@ -1424,7 +1427,7 @@ class Console
      *
      * @return string The local IP address or '127.0.o.1'.
      */
-    private static function getLocalIPAddress() 
+    private static function getLocalIPAddress()
     {
 
         if (static::getOS() === 'WINDOWS') {
@@ -1436,7 +1439,7 @@ class Console
             $output = shell_exec('ifconfig');
             preg_match('/inet (?!127\.0\.0\.1)(\d+\.\d+\.\d+\.\d+)/', $output, $matches);
         }
-    
+
         $localIp = isset($matches[1]) ? $matches[1] : '127.0.0.1';
 
         return $localIp;
