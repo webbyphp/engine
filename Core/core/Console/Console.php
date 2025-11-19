@@ -1363,6 +1363,14 @@ class Console
         $port = 0;
         $number = static::DEFAULT_PORT;
 
+        if (isset($args[1]) && $args[2] === '--ssl' && !empty($args[3])) {
+
+            // system('sudo ./ssl-serve ' . $args[3] . ' ' . static::DEFAULT_PORT . ' ' . rand(5000, 6000));
+            // system($command);
+            static::runSystemCommand('sudo ./ssl-serve ' . $args[3] . ' ' . static::DEFAULT_PORT . ' ' . rand(5000, 6000));
+            exit;
+        }
+
         if (isset($args[2]) && $args[2] === '--port') {
             $number = isset($args[3]) ? (int)$args[3] : "";
             $port = (isset($number) && is_int($number)) ? $number : static::DEFAULT_PORT;
@@ -1388,6 +1396,17 @@ class Console
             exit;
         }
 
+        if ($port < 1024 || $port > 65535) {
+            echo ConsoleColor::red("\n\tPort number must be between 1024 and 65535!\n") . "\n";
+            exit;
+        }
+
+        if (static::checkPort($host, $port)) {
+            $oldPort = intval($port);
+            $port = $oldPort + 1;
+            $portInUse = ConsoleColor::yellow("\n\tPort {$port} has been assigned, {$oldPort} is in use.") . "\n";
+        }
+
         $project_dir = static::$rootpath; //__DIR__;
         $dir = realpath($project_dir . '/public/');
 
@@ -1408,13 +1427,33 @@ class Console
             $output .= ConsoleColor::cyan("http://{$clientIp}:{$port} \n");
         }
 
+        $output .= $portInUse ?? '';
+
         $output .= ConsoleColor::yellow("\n\tPress Ctrl+C to stop Webby Server!");
-        " \n";
+        $output .= " \n";
 
         echo ConsoleColor::green($output) . "\n\n";
 
-        static::runSystemCommand('php -S ' . $host .':' . $port . ' -t "' . $dir . '"');
+        static::runSystemCommand('php -S ' . $host . ':' . $port . ' -t "' . $dir . '"');
+    }
 
+    /**
+     * Check if a port is open
+     *
+     * @param string $host
+     * @param int $port
+     * @return bool
+     */
+    private static function checkPort(string $host, int $port): bool
+    {
+        $connection = @fsockopen($host, $port);
+
+        if (is_resource($connection)) {
+            fclose($connection);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static function getOS()
@@ -1570,9 +1609,11 @@ class Console
     public static function run(array $args): void
     {
         if (
-            (isset($args[2]) && $args[2] === '--host') 
-                && (isset($args[4]) && $args[4] === '--port')
+            (isset($args[2]) && $args[2] === '--host')
+            && (isset($args[4]) && $args[4] === '--port')
         ) {
+            Console::serve($args);
+        } else if (isset($args[2]) && $args[2] === '--ssl') {
             Console::serve($args);
         } else if (isset($args[2]) && $args[2] === '--host') {
             Console::serve($args);
