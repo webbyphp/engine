@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -36,7 +37,7 @@
  * @since	Version 3.0.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * SQLite3 Utility Class
@@ -45,7 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author	Andrey Andreev
  * @link	https://codeigniter.com/userguide3/database/
  */
-class CI_DB_sqlite3_utility extends CI_DB_utility {
+class CI_DB_sqlite3_utility extends CI_DB_utility
+{
 
 	/**
 	 * Export
@@ -58,5 +60,4 @@ class CI_DB_sqlite3_utility extends CI_DB_utility {
 		// Not supported
 		return $this->db->display_error('db_unsupported_feature');
 	}
-
 }

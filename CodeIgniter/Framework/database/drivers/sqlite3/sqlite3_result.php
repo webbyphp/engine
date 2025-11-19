@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -36,7 +37,7 @@
  * @since	Version 3.0.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * SQLite3 Result Class
@@ -47,7 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		Andrey Andreev
  * @link		https://codeigniter.com/userguide3/database/
  */
-class CI_DB_sqlite3_result extends CI_DB_result {
+class CI_DB_sqlite3_result extends CI_DB_result
+{
 
 	/**
 	 * Number of fields in the result set
@@ -71,8 +73,7 @@ class CI_DB_sqlite3_result extends CI_DB_result {
 	public function list_fields()
 	{
 		$field_names = [];
-		for ($i = 0, $c = $this->num_fields(); $i < $c; $i++)
-		{
+		for ($i = 0, $c = $this->num_fields(); $i < $c; $i++) {
 			$field_names[] = $this->result_id->columnName($i);
 		}
 
@@ -99,8 +100,7 @@ class CI_DB_sqlite3_result extends CI_DB_result {
 		);
 
 		$retval = [];
-		for ($i = 0, $c = $this->num_fields(); $i < $c; $i++)
-		{
+		for ($i = 0, $c = $this->num_fields(); $i < $c; $i++) {
 			$retval[$i]			= new stdClass();
 			$retval[$i]->name		= $this->result_id->columnName($i);
 
@@ -122,8 +122,7 @@ class CI_DB_sqlite3_result extends CI_DB_result {
 	 */
 	public function free_result()
 	{
-		if (is_object($this->result_id))
-		{
+		if (is_object($this->result_id)) {
 			$this->result_id->finalize();
 			$this->result_id = null;
 		}
@@ -156,18 +155,14 @@ class CI_DB_sqlite3_result extends CI_DB_result {
 	protected function _fetch_object($class_name = 'stdClass')
 	{
 		// No native support for fetching rows as objects
-		if (($row = $this->result_id->fetchArray(SQLITE3_ASSOC)) === false)
-		{
+		if (($row = $this->result_id->fetchArray(SQLITE3_ASSOC)) === false) {
 			return false;
-		}
-		elseif ($class_name === 'stdClass')
-		{
+		} elseif ($class_name === 'stdClass') {
 			return (object) $row;
 		}
 
 		$class_name = new $class_name();
-		foreach (array_keys($row) as $key)
-		{
+		foreach (array_keys($row) as $key) {
 			$class_name->$key = $row[$key];
 		}
 
@@ -191,5 +186,4 @@ class CI_DB_sqlite3_result extends CI_DB_result {
 		// Only resetting to the start of the result set is supported
 		return ($n > 0) ? false : $this->result_id->reset();
 	}
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -36,7 +37,7 @@
  * @since	Version 3.0.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * SQLite3 Database Adapter Class
@@ -51,7 +52,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		Andrey Andreev
  * @link		https://codeigniter.com/userguide3/database/
  */
-class CI_DB_sqlite3_driver extends CI_DB {
+class CI_DB_sqlite3_driver extends CI_DB
+{
 
 	/**
 	 * Database driver
@@ -79,19 +81,15 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	 */
 	public function db_connect($persistent = false)
 	{
-		if ($persistent)
-		{
+		if ($persistent) {
 			log_message('debug', 'SQLite3 doesn\'t support persistent connections');
 		}
 
-		try
-		{
-			return ( ! $this->password)
+		try {
+			return (! $this->password)
 				? new SQLite3($this->database)
 				: new SQLite3($this->database, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE, $this->password);
-		}
-		catch (Exception $e)
-		{
+		} catch (Exception $e) {
 			return false;
 		}
 	}
@@ -105,8 +103,7 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	 */
 	public function version()
 	{
-		if (isset($this->data_cache['version']))
-		{
+		if (isset($this->data_cache['version'])) {
 			return $this->data_cache['version'];
 		}
 
@@ -216,8 +213,8 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	protected function _list_tables($prefix_limit = false)
 	{
 		return 'SELECT "NAME" FROM "SQLITE_MASTER" WHERE "TYPE" = \'table\''
-			.(($prefix_limit !== false && $this->dbprefix != '')
-				? ' AND "NAME" LIKE \''.$this->escape_like_str($this->dbprefix).'%\' '.sprintf($this->_like_escape_str, $this->_like_escape_chr)
+			. (($prefix_limit !== false && $this->dbprefix != '')
+				? ' AND "NAME" LIKE \'' . $this->escape_like_str($this->dbprefix) . '%\' ' . sprintf($this->_like_escape_str, $this->_like_escape_chr)
 				: '');
 	}
 
@@ -231,14 +228,12 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	 */
 	public function list_fields($table)
 	{
-		if (($result = $this->query('PRAGMA TABLE_INFO('.$this->protect_identifiers($table, true, null, false).')')) === false)
-		{
+		if (($result = $this->query('PRAGMA TABLE_INFO(' . $this->protect_identifiers($table, true, null, false) . ')')) === false) {
 			return false;
 		}
 
 		$fields = [];
-		foreach ($result->result_array() as $row)
-		{
+		foreach ($result->result_array() as $row) {
 			$fields[] = $row['name'];
 		}
 
@@ -255,20 +250,17 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	 */
 	public function field_data($table)
 	{
-		if (($query = $this->query('PRAGMA TABLE_INFO('.$this->protect_identifiers($table, true, null, false).')')) === false)
-		{
+		if (($query = $this->query('PRAGMA TABLE_INFO(' . $this->protect_identifiers($table, true, null, false) . ')')) === false) {
 			return false;
 		}
 
 		$query = $query->result_array();
-		if (empty($query))
-		{
+		if (empty($query)) {
 			return false;
 		}
 
 		$retval = [];
-		for ($i = 0, $c = count($query); $i < $c; $i++)
-		{
+		for ($i = 0, $c = count($query); $i < $c; $i++) {
 			$retval[$i]			= new stdClass();
 			$retval[$i]->name		= $query[$i]['name'];
 			$retval[$i]->type		= $query[$i]['type'];
@@ -309,7 +301,7 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	 */
 	protected function _replace($table, $keys, $values): string
 	{
-		return 'INSERT OR '.parent::_replace($table, $keys, $values);
+		return 'INSERT OR ' . parent::_replace($table, $keys, $values);
 	}
 
 	// --------------------------------------------------------------------
@@ -327,7 +319,7 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	 */
 	protected function _truncate($table): string
 	{
-		return 'DELETE FROM '.$table;
+		return 'DELETE FROM ' . $table;
 	}
 
 	// --------------------------------------------------------------------
@@ -341,5 +333,4 @@ class CI_DB_sqlite3_driver extends CI_DB {
 	{
 		$this->conn_id->close();
 	}
-
 }
