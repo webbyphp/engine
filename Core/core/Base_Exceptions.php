@@ -41,6 +41,20 @@ class Base_Exceptions extends \CI_Exceptions
 		parent::__construct();
 	}
 
+	private function redirectTo404Handler($router): void 
+	{
+		$missingRoute = ucfirst($router->class) . '/' . $router->method;
+		$redirectUrl = sprintf(
+			'%s%s?url=%s',
+			$router->config->config['base_url'],
+			$router->routes['404_override'],
+			urlencode($missingRoute)
+		);
+		
+		header('Location: ' . $redirectUrl, true, 302);
+		exit;
+	}
+
 	public function show_error($heading, $message, $template = 'error_general', $status_code = 500)
 	{
 		$templates_path = config_item('error_views_path');
@@ -81,7 +95,15 @@ class Base_Exceptions extends \CI_Exceptions
 		ob_start();
 
 		if (!is_cli() && $status_code == 404) {
-			include($templates_path . $template . config_item('plate_extension'));
+
+			$RTR = $GLOBALS['RTR'];
+
+			if ($status_code == 404) {
+				$this->redirectTo404Handler($RTR);
+			}
+
+			include($templates_path . $template . config_item('view_extension') ?? PHPEXT);
+			
 		} else {
 			include($templates_path . $template . '.php');
 		}

@@ -40,7 +40,7 @@ class Base_URI extends \CI_URI
 	 * @access public
 	 * @param integer $n The number of the segment to retrieve
 	 * @param array $default Array of default values
-	 * @return array
+	 * @return array|bool
 	 */
 	public function segment_to_assoc($n = 3, $default = [])
 	{
@@ -53,7 +53,7 @@ class Base_URI extends \CI_URI
 	 * @access 	public
 	 * @param integer $n The number of the segment to retrieve
 	 * @param array $default Array of default values
-	 * @return array
+	 * @return array|bool
 	 *
 	 */
 	public function rsegment_to_assoc($n = 3, $default = [])
@@ -69,7 +69,7 @@ class Base_URI extends \CI_URI
 	 * @param integer $n The number of the segment to retrieve
 	 * @param array $default Array of default values
 	 * @param string $which 'segment' or 'rsegment', used internally
-	 * @return array
+	 * @return array|bool
 	 */
 	public function _segment_to_assoc($n = 3, $default = [], $which = 'segment')
 	{
@@ -146,10 +146,11 @@ class Base_URI extends \CI_URI
 		}
 
 		if (is_cli()) {
-			return "which is from Webby Cli";
+			return "Which is from Webby Cli";
 		}
 
 		return "UNKNOWN";
 	}
+
 }
 /* end of file Base_URI.php */
