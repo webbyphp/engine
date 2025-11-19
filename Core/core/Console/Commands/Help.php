@@ -47,7 +47,6 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    app:to-testing") .  ConsoleColor::cyan("      Make application ready for testing mode")  . " \n";
         $output .=  ConsoleColor::light_purple("    app:to-development") .  ConsoleColor::cyan("  Make application ready for development mode")  . " \n";
         $output .=  ConsoleColor::light_purple("    app:baseurl") .  ConsoleColor::cyan("         Set base url of application")  . " \n";
-        $output .=  ConsoleColor::light_purple("    list:routes") .  ConsoleColor::cyan("         List all available routes")  . " \n";
         $output .=  ConsoleColor::light_purple("    resource:link") .  ConsoleColor::cyan("       Create a symlink for the resources folder in public")  . " \n";
         $output .=  ConsoleColor::light_purple("    migrate") .  ConsoleColor::cyan("             Run and manage migrations for databases")  . " \n";
         $output .=  ConsoleColor::light_purple("    db:seed") .  ConsoleColor::cyan("             Runs all or specified seeder to populate database tables")  . " \n";
@@ -56,12 +55,12 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    clear:session") .  ConsoleColor::cyan("       Clear specific session type")  . " \n";
         $output .=  ConsoleColor::light_purple("    clear:cache") .  ConsoleColor::cyan("         Clear specific cached files")  . " \n";
         $output .=  ConsoleColor::light_purple("    use:command") .  ConsoleColor::cyan("         Enables you to access console controllers to perform cli tasks")  . " \n";
-        $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("       Update sylynder engine")  . " \n";
+        $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("       Update webbyphp engine")  . " \n";
         $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("            Initialize your project to use git")  . " \n";
         
         $output .=  " \n";
         $output .=  ConsoleColor::yellow(" Generator Commands:") . " \n";
-        $output .=  ConsoleColor::light_purple("    key:generate") .  ConsoleColor::cyan("        Generates an encryption key in the .env file")  . " \n";
+        $output .=  ConsoleColor::light_purple("    key:generate") .  ConsoleColor::cyan("        Generate an encryption key in the .env file")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:module") .  ConsoleColor::cyan("       Create a module by specifying which sub-directories to use e.g --mvc, --c, --m")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:package") .  ConsoleColor::cyan("      Create a package by specifying which sub-directories to use e.g --mvc, --c, --m, --s")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:command") .  ConsoleColor::cyan("      Create a command class")  . " \n";
@@ -672,7 +671,7 @@ class Help extends Console
         echo <<<CREATECONTROLLER
             {$welcome}
             {$description}
-                Create controller by specifying which module it belongs with
+                Create controller class
 
             {$usage}
                 php webby create:controller <module-type:module-name> <controller-name> <options>
@@ -691,6 +690,7 @@ class Help extends Console
                 php webby create:controller api:v1 --name=send
                 php webby create:controller web:books --name=authors --add-suffix
 
+
         CREATECONTROLLER;
     }
 
@@ -704,7 +704,7 @@ class Help extends Console
         echo <<<CREATEMODEL
             {$welcome}
             {$description}
-                Create model by specifying which module it belongs with.
+                Create model class.
 
             {$usage}
                 php webby create:model <module-type:module-name> <model-name> <options>
@@ -758,7 +758,7 @@ class Help extends Console
         echo <<<CREATESERVICE
             {$welcome}
             {$description}
-                Create service by specifying which module it belongs with.
+                Create service class.
 
             {$usage}
                 php webby create:service <module-type:module-name> <service-name>
@@ -781,7 +781,7 @@ class Help extends Console
         echo <<<CREATEACTION
             {$welcome}
             {$description}
-                Create action by specifying which module it belongs with.
+                Create action class.
 
             {$usage}
                 php webby create:action <module-type:module-name> <action-name> <action-type>
@@ -790,7 +790,7 @@ class Help extends Console
                 php webby create:action web:books --name=books
                 php webby create:action web:books --name=author --crud
                 php webby create:action web:books --name=category --job
-            
+
         CREATEACTION;
     }
 
@@ -804,7 +804,7 @@ class Help extends Console
         echo <<<CREATELIBRARY
             {$welcome}
             {$description}
-                Create library by specifying which module it belongs with.
+                Create library class.
 
             {$usage}
                 php webby create:library <module-type:module-name> <library-name>
@@ -812,7 +812,7 @@ class Help extends Console
             {$examples}
                 php webby create:library web:books --name=isbn
                 php webby create:library web:books --name=wiki
-                
+
         CREATELIBRARY;
     }
 
@@ -826,7 +826,7 @@ class Help extends Console
         echo <<<CREATEHELPER
             {$welcome}
             {$description}
-                Create helper by specifying which module it belongs with.
+                Create helper class.
 
             {$usage}
                 php webby create:helper <module-type:module-name> <helper-name> <helper-type>
@@ -963,7 +963,7 @@ class Help extends Console
         echo <<<UPDATEENGINE
             {$welcome}
             {$description}
-                Update sylynder/engine for current updates.
+                Update webbyphp/engine to current updates.
 
             {$usage}
                 php webby update:engine
@@ -1144,39 +1144,28 @@ class Help extends Console
         switch ($color) {
             case 'cyan':
                 return ConsoleColor::cyan($string);
-            break;
             case 'green':
                 return ConsoleColor::green($string);
-            break;
             case 'yellow':
                 return ConsoleColor::yellow($string);
-            break;
             case 'purple':
                 return ConsoleColor::purple($string);
-            break;
             case 'light_purple':
                 return ConsoleColor::light_purple($string);
-            break;
             case 'normal':
                 return ConsoleColor::normal($string);
-            break;
             case 'dim':
                 return ConsoleColor::dim($string);
-            break;
             case 'red':
                 return ConsoleColor::red($string);
-            break;
             case 'brown':
                 return ConsoleColor::brown($string);
-            break;
             case 'white':
                 return ConsoleColor::white($string);
-            break;
             default:
                 return ConsoleColor::white($string);
-            break;
         }
-        return ConsoleColor::cyan($string);
+
     }
 
 }
