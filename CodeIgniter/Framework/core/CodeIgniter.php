@@ -169,7 +169,7 @@ if ($SUBDOMAIN !== 'www' && $SUBDOMAIN !== '') {
  *  Start the timer... tick tock tick tock...
  * ------------------------------------------------------
  */
-$BM = &load_class('Benchmark', 'core');
+$BM = load_class('Benchmark', 'core');
 $BM->mark('total_execution_time_start');
 $BM->mark('loading_time:_base_classes_start');
 
@@ -383,6 +383,19 @@ $BM->mark('loading_time:_base_classes_end');
  *  controller methods that begin with an underscore.
  */
 
+/*
+| -------------------------------------------------------------------
+|  App PSR4 Autoloader
+| -------------------------------------------------------------------
+| Location of classes with namespaces autoloader:
+| These files will be autoloaded from the APPROOT
+| to help Webby's core functionality
+|
+|  require_once COREPATH.'config/psr4.php';
+|
+ */
+require_once COREPATH . 'config/psr4.php';
+
 /**
  * Get namespaced controller info
  *
@@ -406,7 +419,7 @@ function getNamespacedController($class, $dir = null)
 		$class = $namespace . '\\' . str_replace('/', '\\', $dir) . $class;
 	}
 
-	$path = APPROOT . 'Controllers/' . $dir . $class . '.php';
+	$path = APPROOT . 'Controllers/' . $dir . $class . ".php";
 
 	return ['fqcn' => $class,'path' => $path];
 

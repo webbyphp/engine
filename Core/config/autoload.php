@@ -40,20 +40,7 @@ defined('COREPATH') or exit('No direct script access allowed');
 |  require_once ROOTPATH . 'config/autoload.php';
 |
  */
-require_once ROOTPATH . 'config/autoload.php';
-
-/*
-| -------------------------------------------------------------------
-|  App PSR4 Autoloader
-| -------------------------------------------------------------------
-| Location of classes with namespaces autoloader:
-| These files will be autoloaded from the APPROOT
-| to help Webby's core functionality
-|
-|  require_once COREPATH.'config/psr4.php';
-|
- */
-require_once COREPATH . 'config/psr4.php';
+include ROOTPATH . '/config/autoload.php';
 
 /*
 | -------------------------------------------------------------------

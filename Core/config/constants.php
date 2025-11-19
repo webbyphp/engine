@@ -6,7 +6,7 @@ defined('COREPATH') or exit('No direct script access allowed');
  * work arounds simple
  */
 
-if ( ! defined('DS')) define('DS', DIRECTORY_SEPARATOR);
+if (! defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 
 /*
  * --------------------------------------------------------------------
@@ -31,4 +31,4 @@ define('WEBBY_AUTHOR_AKA', 'Developer Kwame');
 | A set of constants that Webby uses to define its core
 |
 */
-require_once ROOTPATH.'config/constants.php';
+require_once ROOTPATH . 'config/constants.php';
