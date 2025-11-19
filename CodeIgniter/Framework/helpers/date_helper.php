@@ -97,7 +97,7 @@ if ( ! function_exists('mdate'))
 	 *
 	 * @param	string
 	 * @param	int
-	 * @return	int
+	 * @return	int|string
 	 */
 	function mdate($datestr = '', $time = '')
 	{
@@ -606,7 +606,7 @@ if ( ! function_exists('timezones'))
 	 * for various other ones in this library
 	 *
 	 * @param	string	timezone
-	 * @return	string
+	 * @return	array|float|int
 	 */
 	function timezones($tz = '')
 	{
@@ -682,7 +682,7 @@ if ( ! function_exists('date_range'))
 	 *					 - true or 'unix' for a timestamp
 	 *					 - false or 'days' for an interval
 	 * @param	string  date_format	Output date format, same as in date()
-	 * @return	array
+	 * @return	array|bool
 	 */
 	function date_range($unix_start = '', $mixed = '', $is_unix = true, $format = 'Y-m-d')
 	{
