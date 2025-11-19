@@ -71,21 +71,21 @@ class CI_Loader {
 	 *
 	 * @var	array
 	 */
-	protected $_ci_library_paths =	[COREPATH, BASEPATH, THIRDPARTYPATH];
+	protected $_ci_library_paths =	[COREPATH, BASEPATH, THIRDPARTYPATH, APPROOT];
 
 	/**
 	 * List of paths to load models from
 	 *
 	 * @var	array
 	 */
-	protected $_ci_model_paths =	[COREPATH, THIRDPARTYPATH];
+	protected $_ci_model_paths =	[COREPATH, THIRDPARTYPATH, APPROOT];
 
 	/**
 	 * List of paths to load helpers from
 	 *
 	 * @var	array
 	 */
-	protected $_ci_helper_paths =	[COREPATH, BASEPATH, THIRDPARTYPATH];
+	protected $_ci_helper_paths =	[COREPATH, BASEPATH, THIRDPARTYPATH, APPROOT];
 
 	/**
 	 * List of cached variables
@@ -137,7 +137,7 @@ class CI_Loader {
 	public function __construct()
 	{
 		$this->_ci_ob_level = ob_get_level();
-		$this->_ci_classes =& is_loaded();
+		$this->_ci_classes = is_loaded();
 
 		log_message('info', 'Loader Class Initialized');
 	}
@@ -297,7 +297,7 @@ class CI_Loader {
 		if ( ! class_exists('CI_Model', false))
 		{
 			$app_path = COREPATH.'core'.DIRECTORY_SEPARATOR;
-			
+
 			if (file_exists($app_path.'Model.php'))
 			{
 				require_once($app_path.'Model.php');
@@ -623,60 +623,55 @@ class CI_Loader {
 	public function helper($helpers = [])
 	{
 		is_array($helpers) OR $helpers = [$helpers];
-		foreach ($helpers as &$helper)
+
+		foreach ($helpers as $helper)
 		{
 			$filename = basename($helper);
 			$filepath = ($filename === $helper) ? '' : substr($helper, 0, strlen($helper) - strlen($filename));
-			$filename = strtolower(preg_replace('#(_helper)?(\.php)?$#i', '', $filename)).'_helper';
-			$helper   = $filepath.$filename;
 
-			if (isset($this->_ci_helpers[$helper]))
-			{
-				continue;
-			}
+			// Extract base name without forcing lowercase
+			$base_name = preg_replace('#(_helper)?(\.php)?$#i', '', $filename);
 
-			// Is this a helper extension request?
-			$ext_helper = config_item('subclass_prefix').$filename;
-			$ext_loaded = false;
-			foreach ($this->_ci_helper_paths as $path)
+			// Candidate filenames (lowercase + original-case)
+			$candidates = [
+				strtolower($base_name).'_helper',
+				$base_name.'_helper',
+			];
+
+			$loaded = false;
+
+			foreach ($candidates as $candidate)
 			{
-				if (file_exists($path.'helpers/'.$ext_helper.'.php'))
+				// Skip if already loaded
+				if (isset($this->_ci_helpers[$candidate]))
 				{
-					include_once($path.'helpers/'.$ext_helper.'.php');
-					$ext_loaded = true;
-				}
-			}
-
-			// If we have loaded extensions - check if the base one is here
-			if ($ext_loaded === true)
-			{
-				$base_helper = BASEPATH.'helpers/'.$helper.'.php';
-				if ( ! file_exists($base_helper))
-				{
-					show_error('Unable to load the requested file: helpers/'.$helper.'.php');
-				}
-
-				include_once($base_helper);
-				$this->_ci_helpers[$helper] = true;
-				log_message('info', 'Helper loaded: '.$helper);
-				continue;
-			}
-
-			// No extensions found ... try loading regular helpers and/or overrides
-			foreach ($this->_ci_helper_paths as $path)
-			{
-				if (file_exists($path.'helpers/'.$helper.'.php'))
-				{
-					include_once($path.'helpers/'.$helper.'.php');
-
-					$this->_ci_helpers[$helper] = true;
-					log_message('info', 'Helper loaded: '.$helper);
+					$loaded = true;
 					break;
 				}
+
+				// Look through helper paths
+				foreach ($this->_ci_helper_paths as $path)
+				{
+					$possible_helpers = [
+						$path.'helpers/'.$filepath.$candidate.'.php',
+						$path.'Helpers/'.$filepath.$candidate.'.php',
+					];
+
+					foreach ($possible_helpers as $file)
+					{
+						if (file_exists($file))
+						{
+							include_once($file);
+							$this->_ci_helpers[$candidate] = true;
+							log_message('info', 'Helper loaded: '.$candidate);
+							$loaded = true;
+							break 3; // helper found, break all loops
+						}
+					}
+				}
 			}
 
-			// unable to load the helper
-			if ( ! isset($this->_ci_helpers[$helper]))
+			if ( ! $loaded)
 			{
 				show_error('Unable to load the requested file: helpers/'.$helper.'.php');
 			}
@@ -684,6 +679,7 @@ class CI_Loader {
 
 		return $this;
 	}
+
 
 	// --------------------------------------------------------------------
 
@@ -886,9 +882,9 @@ class CI_Loader {
 		}
 
 		// make sure the application default paths are still in the array
-		$this->_ci_library_paths = array_unique(array_merge($this->_ci_library_paths, [COREPATH, BASEPATH, THIRDPARTYPATH]));
-		$this->_ci_helper_paths = array_unique(array_merge($this->_ci_helper_paths, [COREPATH, BASEPATH, THIRDPARTYPATH]));
-		$this->_ci_model_paths = array_unique(array_merge($this->_ci_model_paths, [COREPATH, THIRDPARTYPATH]));
+		$this->_ci_library_paths = array_unique(array_merge($this->_ci_library_paths, [COREPATH, BASEPATH, THIRDPARTYPATH, APPROOT]));
+		$this->_ci_helper_paths = array_unique(array_merge($this->_ci_helper_paths, [COREPATH, BASEPATH, THIRDPARTYPATH, APPROOT]));
+		$this->_ci_model_paths = array_unique(array_merge($this->_ci_model_paths, [COREPATH, THIRDPARTYPATH, APPROOT]));
 		$this->_ci_view_paths = array_merge($this->_ci_view_paths, [APPROOT.'Views/' => true]);
 		$config->_config_paths = array_unique(array_merge($config->_config_paths, [COREPATH, ROOTPATH]));
 
@@ -908,7 +904,7 @@ class CI_Loader {
 	 * @used-by	CI_Loader::view()
 	 * @used-by	CI_Loader::file()
 	 * @param	array	$_ci_data	Data to load
-	 * @return	object
+	 * @return	mixed
 	 */
 	protected function _ci_load($_ci_data)
 	{
@@ -1047,18 +1043,12 @@ class CI_Loader {
 	protected function _ci_load_library($class, $params = null, $object_name = null)
 	{
 		// Get the class name, and while we're at it trim any slashes.
-		// The directory path can be included as part of the class name,
-		// but we don't want a leading slash
 		$class = str_replace('.php', '', trim($class, '/'));
 
 		// Was the path included with the class name?
-		// We look for a slash to determine this
 		if (($last_slash = strrpos($class, '/')) !== false)
 		{
-			// Extract the path
 			$subdir = substr($class, 0, ++$last_slash);
-
-			// Get the filename from the path
 			$class = substr($class, $last_slash);
 		}
 		else
@@ -1077,12 +1067,8 @@ class CI_Loader {
 		// Safety: Was the class already loaded by a previous call?
 		if (class_exists($class, false))
 		{
-			$property = $object_name;
-			if (empty($property))
-			{
-				$property = strtolower($class);
-				isset($this->_ci_varmap[$property]) && $property = $this->_ci_varmap[$property];
-			}
+			$property = $object_name ?: strtolower($class);
+			isset($this->_ci_varmap[$property]) && $property = $this->_ci_varmap[$property];
 
 			$CI = get_instance();
 
@@ -1099,20 +1085,22 @@ class CI_Loader {
 		foreach ($this->_ci_library_paths as $path)
 		{
 			// BASEPATH has already been checked for
-			if ($path === BASEPATH)
-			{
-				continue;
-			}
+			if ($path === BASEPATH) continue;
 
-			$filepath = $path.'libraries/'.$subdir.$class.'.php';
-			// Does the file exist? No? Bummer...
-			if ( ! file_exists($filepath))
-			{
-				continue;
-			}
+			// Try lowercase and uppercase "libraries"
+			$possible_paths = [
+				$path.'libraries/'.$subdir.$class.'.php',
+				$path.'Libraries/'.$subdir.$class.'.php',
+			];
 
-			include_once($filepath);
-			return $this->_ci_init_library($class, '', $params, $object_name);
+			foreach ($possible_paths as $filepath)
+			{
+				if (file_exists($filepath))
+				{
+					include_once($filepath);
+					return $this->_ci_init_library($class, '', $params, $object_name);
+				}
+			}
 		}
 
 		// One last attempt. Maybe the library is in a subdirectory, but it wasn't specified?
