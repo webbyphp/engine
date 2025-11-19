@@ -53,7 +53,8 @@
  * @link		TBA
  * @todo improve on implementation
  */
-class CI_DB_json_result extends CI_DB_result {
+class CI_DB_json_result extends CI_DB_result
+{
 
     /**
      * Number of rows in the result set
@@ -61,7 +62,8 @@ class CI_DB_json_result extends CI_DB_result {
      * @access	public
      * @return	integer
      */
-    function num_rows() {
+    function num_rows()
+    {
         return (bool)true;
     }
 
@@ -73,7 +75,8 @@ class CI_DB_json_result extends CI_DB_result {
      * @access	public
      * @return	integer
      */
-    function num_fields() {
+    function num_fields()
+    {
         return (bool)true;
     }
 
@@ -87,7 +90,8 @@ class CI_DB_json_result extends CI_DB_result {
      * @access	public
      * @return	array
      */
-    function list_fields() {
+    function list_fields()
+    {
         return [];
     }
 
@@ -101,7 +105,8 @@ class CI_DB_json_result extends CI_DB_result {
      * @access	public
      * @return	array
      */
-    function field_data() {
+    function field_data()
+    {
         return [];
     }
 
@@ -112,7 +117,8 @@ class CI_DB_json_result extends CI_DB_result {
      *
      * @return	null
      */
-    function free_result() {
+    function free_result()
+    {
         return null;
     }
 
@@ -128,7 +134,8 @@ class CI_DB_json_result extends CI_DB_result {
      * @access	private
      * @return	array
      */
-    function _data_seek($n = 0) {
+    function _data_seek($n = 0)
+    {
         return [];
     }
 
@@ -142,7 +149,8 @@ class CI_DB_json_result extends CI_DB_result {
      * @access	private
      * @return	array
      */
-    function _fetch_assoc() {
+    function _fetch_assoc()
+    {
         return [];
     }
 
@@ -157,8 +165,7 @@ class CI_DB_json_result extends CI_DB_result {
      * @return	object
      */
     protected function _fetch_object($class_name = 'stdClass')
-	{
-		return new $class_name();
-	}
-
+    {
+        return new $class_name();
+    }
 }

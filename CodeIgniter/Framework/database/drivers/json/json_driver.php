@@ -53,7 +53,8 @@ use Base\Json\Helpers\Helper;
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/database/
  */
-class CI_DB_json_driver extends CI_DB_driver {
+class CI_DB_json_driver extends CI_DB_driver
+{
 
     public $dbdriver = 'json';
 
@@ -70,51 +71,51 @@ class CI_DB_json_driver extends CI_DB_driver {
     var $_count_string = "SELECT COUNT(*) AS ";
 
     // var $_random_keyword = ' ASC';
-    
+
     var $trans_active;
 
     // --------------------------------------------------------------------
 
-	/**
-	 * Identifier escape character
-	 *
-	 * Must be empty for ODBC.
-	 *
-	 * @var	string
-	 */
-	protected $_escape_char = '';
+    /**
+     * Identifier escape character
+     *
+     * Must be empty for ODBC.
+     *
+     * @var	string
+     */
+    protected $_escape_char = '';
 
-	/**
-	 * ESCAPE statement string
-	 *
-	 * @var	string
-	 */
-	protected $_like_escape_str = " {escape '%s'} ";
+    /**
+     * ESCAPE statement string
+     *
+     * @var	string
+     */
+    protected $_like_escape_str = " {escape '%s'} ";
 
-	/**
-	 * ORDER BY random keyword
-	 *
-	 * @var	array
-	 */
-	protected $_random_keyword = ' ASC'; //array('RND()', 'RND(%d)');
+    /**
+     * ORDER BY random keyword
+     *
+     * @var	array
+     */
+    protected $_random_keyword = ' ASC'; //array('RND()', 'RND(%d)');
 
 	// --------------------------------------------------------------------
 
-	/**
-	 * JSON result ID resource returned from json_prepare()
-	 *
-	 * @var	resource
-	 */
-	private $json_result;
+    /**
+     * JSON result ID resource returned from json_prepare()
+     *
+     * @var	resource
+     */
+    private $json_result;
 
-	/**
-	 * Values to use with json_execute() for prepared statements
-	 *
-	 * @var	array
-	 */
-	private $binds = [];
+    /**
+     * Values to use with json_execute() for prepared statements
+     *
+     * @var	array
+     */
+    private $binds = [];
 
-     /**
+    /**
      * @var int|null The number of results to limit the query to.
      */
     protected $limit = null;
@@ -282,15 +283,15 @@ class CI_DB_json_driver extends CI_DB_driver {
      * @param mixed $jsonEncodeOption
      */
 
-	/**
-	 * Class constructor
-	 *
-	 * @param	array|string	$params
-	 * @return	void
-	 */
-	public function __construct(string|array $params = [])
-	{
-		parent::__construct($params);
+    /**
+     * Class constructor
+     *
+     * @param	array|string	$params
+     * @return	void
+     */
+    public function __construct(string|array $params = [])
+    {
+        parent::__construct($params);
 
         $path = (is_string($params)) ? $params : '';
 
@@ -312,8 +313,7 @@ class CI_DB_json_driver extends CI_DB_driver {
         }
 
         $this->jsonOptions['encode'] = $this->jsonEncodeOption;
-        
-	}
+    }
 
     /**
      * Create a folder/directory as database
@@ -334,7 +334,7 @@ class CI_DB_json_driver extends CI_DB_driver {
             }
 
             try {
-                mkdir( $directory, 0700, true);
+                mkdir($directory, 0700, true);
                 return true;
             } catch (\Exception $ex) {
                 return false;
@@ -410,7 +410,7 @@ class CI_DB_json_driver extends CI_DB_driver {
         if (!file_exists($this->file)) {
             try {
                 touch($this->file);
-            } catch(\Exception $ex) {
+            } catch (\Exception $ex) {
                 throw new \Exception('Unable to access JSON file, make sure your json database path is set in .env file');
             }
         }
@@ -459,7 +459,7 @@ class CI_DB_json_driver extends CI_DB_driver {
             // throw new \Exception('Invalid JSON or No Content in JSON file');
             $content = [];
         }
-        
+
         $this->content = $content;
         return true;
     }
@@ -485,7 +485,7 @@ class CI_DB_json_driver extends CI_DB_driver {
         }
 
         $content = $this->processOrderBy($this->content);
-        
+
         if (empty($key)) {
             return count($content);
         }
@@ -507,7 +507,7 @@ class CI_DB_json_driver extends CI_DB_driver {
                 }
             }
         }
-        
+
         return $total = count($elements);
     }
 
@@ -570,7 +570,7 @@ class CI_DB_json_driver extends CI_DB_driver {
         $file = $file . self::JSON_FILE_EXTENSION;
 
         $this->file = sprintf('%s/%s.json', $this->path, str_replace('.json', '', $file)); // Adding .json extension is no longer necessary
-        
+
         // Reset where
         $this->where([]);
         $this->content = '';
@@ -580,7 +580,7 @@ class CI_DB_json_driver extends CI_DB_driver {
         $this->orderBy = [];
 
         if ($this->fileExists()) {
-            $this->content = ( array ) json_decode( file_get_contents( $this->file ) );
+            $this->content = (array) json_decode(file_get_contents($this->file));
         }
 
         return $this;
@@ -996,7 +996,7 @@ class CI_DB_json_driver extends CI_DB_driver {
         }
         // Filter array
         $rows = array_filter($this->content, function ($row, $index) {
-            
+
             $row = (array) $row; // Convert first stage to array if object
 
             // Check for rows intersecting with the where values.
@@ -1114,7 +1114,7 @@ class CI_DB_json_driver extends CI_DB_driver {
      *
      * @return object
      */
-     /**
+    /**
      * Set the return format to an object.
      *
      * @return object Returns the current instance of the class for method chaining.
@@ -1126,7 +1126,7 @@ class CI_DB_json_driver extends CI_DB_driver {
         return $this;
     }
 
-     /**
+    /**
      * Set the return format to a JSON string.
      *
      * @return object Returns the current instance of the class for method chaining.
@@ -1154,9 +1154,8 @@ class CI_DB_json_driver extends CI_DB_driver {
         if ($rows instanceof \stdClass) {
             $rows = (array) $rows;
         }
-        
-        return reset($rows) ?: null;
 
+        return reset($rows) ?: null;
     }
 
     /**
@@ -1205,7 +1204,7 @@ class CI_DB_json_driver extends CI_DB_driver {
         switch ($this->result_format) {
             case 'array':
                 // Data is already an array from loadTableData
-                 $content = arrayfy($content);
+                $content = arrayfy($content);
                 break;
             case 'json':
                 $content = json_encode($content, JSON_PRETTY_PRINT);
@@ -1263,9 +1262,9 @@ class CI_DB_json_driver extends CI_DB_driver {
         }
 
         if ($this->content) {
-            
+
             $element = pathinfo($source, PATHINFO_FILENAME);
-            
+
             $xml = '
             <?xml version="1.0"?>
                 <' . $element . '>
@@ -1311,14 +1310,13 @@ class CI_DB_json_driver extends CI_DB_driver {
     {
 
         if (is_string($from) && ($to === null)) {
-            
+
             $source = str_ext(str_last_word($this->file, '/'), true);
             $this->from($source); // Reads the JSON file
 
             // Assign $to to $from
             $from = str_ext($from);
             $to = $from . self::SQL_FILE_EXTENSION;
-
         } else {
             $this->from($from); // Reads the JSON file
         }
@@ -1334,7 +1332,7 @@ class CI_DB_json_driver extends CI_DB_driver {
             if ($createTable) {
                 // Should create table, generate a CREATE TABLE statement using the column of the first row
                 $firstRow = (array) $this->content[0];
-                
+
                 $columns = array_map(function ($column) use ($firstRow) {
                     return sprintf("\t`%s` %s", $column, $this->toSQLType(gettype($firstRow[$column])));
                 }, array_keys($firstRow));
@@ -1384,5 +1382,4 @@ class CI_DB_json_driver extends CI_DB_driver {
         }
         return $return;
     }
-
 }
