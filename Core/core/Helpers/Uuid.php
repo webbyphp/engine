@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * UUID Helper
@@ -21,11 +21,11 @@
 
 namespace Base\Helpers;
 
-Class Uuid 
+class Uuid
 {
 
-	public static function v3($name, $namespace = null) 
-	{    	
+	public static function v3($name, $namespace = null)
+	{
 		if (is_null($namespace)) {
 			$namespace = self::v4();
 		}
@@ -34,19 +34,19 @@ Class Uuid
 			return false;
 		}
 
-		if ( ! self::is_valid($namespace)) {
+		if (!self::is_valid($namespace)) {
 			return false;
 		}
 
 		// Get hexadecimal components of namespace
-		$nhex = str_replace(['-','{','}'], '', $namespace);
+		$nhex = str_replace(['-', '{', '}'], '', $namespace);
 
 		// Binary Value
 		$nstr = '';
 
 		// Convert Namespace UUID to bits
-		for ($i = 0; $i < strlen($nhex); $i+=2) {
-			$nstr .= chr(hexdec($nhex[$i].$nhex[$i+1]));
+		for ($i = 0; $i < strlen($nhex); $i += 2) {
+			$nstr .= chr(hexdec($nhex[$i] . $nhex[$i + 1]));
 		}
 
 		// Calculate hash value
@@ -74,15 +74,17 @@ Class Uuid
 		);
 	}
 
-	public static function v4($trim = false) 
+	public static function v4($trim = false)
 	{
-		
+
 		$format = ($trim == false) ? '%04x%04x-%04x-%04x-%04x-%04x%04x%04x' : '%04x%04x%04x%04x%04x%04x%04x%04x';
 
-		return sprintf($format,
+		return sprintf(
+			$format,
 
 			// 32 bits for "time_low"
-			mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+			mt_rand(0, 0xffff),
+			mt_rand(0, 0xffff),
 
 			// 16 bits for "time_mid"
 			mt_rand(0, 0xffff),
@@ -97,11 +99,13 @@ Class Uuid
 			mt_rand(0, 0x3fff) | 0x8000,
 
 			// 48 bits for "node"
-			mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+			mt_rand(0, 0xffff),
+			mt_rand(0, 0xffff),
+			mt_rand(0, 0xffff)
 		);
 	}
 
-	public static function v5($name, $namespace = null) 
+	public static function v5($name, $namespace = null)
 	{
 		if (is_null($namespace)) {
 			$namespace = self::v4();
@@ -111,19 +115,19 @@ Class Uuid
 			return false;
 		}
 
-		if ( ! self::is_valid($namespace)) {
+		if (!self::is_valid($namespace)) {
 			return false;
 		}
 
 		// Get hexadecimal components of namespace
-		$nhex = str_replace(['-','{','}'], '', $namespace);
+		$nhex = str_replace(['-', '{', '}'], '', $namespace);
 
 		// Binary Value
 		$nstr = '';
 
 		// Convert Namespace UUID to bits
-		for ($i = 0; $i < strlen($nhex); $i+=2) {
-			$nstr .= chr(hexdec($nhex[$i].$nhex[$i+1]));
+		for ($i = 0; $i < strlen($nhex); $i += 2) {
+			$nstr .= chr(hexdec($nhex[$i] . $nhex[$i + 1]));
 		}
 
 		// Calculate hash value
@@ -151,7 +155,30 @@ Class Uuid
 		);
 	}
 
-	public static function is_valid($uuid) 
+	public static function v7()
+	{
+		// random bytes
+		$value = random_bytes(16);
+
+		// current timestamp in ms
+		$timestamp = intval(microtime(true) * 1000);
+
+		// timestamp
+		$value[0] = chr(($timestamp >> 40) & 0xFF);
+		$value[1] = chr(($timestamp >> 32) & 0xFF);
+		$value[2] = chr(($timestamp >> 24) & 0xFF);
+		$value[3] = chr(($timestamp >> 16) & 0xFF);
+		$value[4] = chr(($timestamp >> 8) & 0xFF);
+		$value[5] = chr($timestamp & 0xFF);
+
+		// version and variant
+		$value[6] = chr((ord($value[6]) & 0x0F) | 0x70);
+		$value[8] = chr((ord($value[8]) & 0x3F) | 0x80);
+
+		return bin2hex($value);
+	}
+
+	public static function is_valid($uuid)
 	{
 		return preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1;
 	}
