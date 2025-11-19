@@ -1764,6 +1764,142 @@ if ( ! function_exists('chunk_list'))
 
 /* ------------------------------- Date | Time | Format Functions ---------------------------------*/
 
+if ( ! function_exists('now')) 
+{
+    // /**
+    //  * Current timestamp
+    //  * 
+    //  * @return string 
+    //  */
+    // function now(string|bool $format = true)
+    // {
+    //     if ($format === true) {
+    //         return NOW;
+    //     }
+
+    //     $now = new DateTime();
+    //     return $now->format($format);
+
+    // }
+
+    //  /**
+    //  * Get the current date and time.
+    //  * 
+    //  * @param string|bool $format The format string, or `true` to return a Unix timestamp.
+    //  * @return int|DateTimeImmutable|string The Unix timestamp, an object, or a formatted string.
+    //  */
+    // function now(string|bool $format = true): int|DateTimeImmutable|string
+    // {
+    //     $now = new DateTimeImmutable('now');
+
+    //     if ($format === true) {
+    //         return $now->getTimestamp();
+    //     }
+
+    //     if (is_string($format)) {
+    //         return $now->format($format);
+    //     }
+
+    //     // Default case: return the DateTimeImmutable object
+    //     return $now;
+    // }
+
+    /**
+     * Get the current date and time, optionally adjusting for a timezone or returning a specific format.
+     * 
+     * @param string|bool|null|array $param Can be:
+     *                                 - `null` (default): Returns DateTimeImmutable object using default timezone.
+     *                                 - `true`: Returns Unix timestamp using default timezone.
+     *                                 - `string` (format): Returns formatted string using default timezone.
+     *                                 - `string` (timezone name e.g., 'America/New_York'): Returns DateTimeImmutable object for that timezone.
+     *                                 - `array` of ['format' => string, 'timezone' => string]: Returns formatted string for that timezone.
+     *                                 - `array` of ['timestamp' => true, 'timezone' => string]: Returns Unix timestamp for that timezone.
+     * @return int|DateTimeImmutable|string The Unix timestamp, DateTimeImmutable object, or formatted string.
+     */
+    function now(string|bool|null|array $param = null): int|DateTimeImmutable|string
+    {
+        // Determine the timezone to use
+        $timezone = date_default_timezone_get(); // Start with PHP's default
+
+        if (is_string($param) && !empty($param) && !is_valid_date_format($param)) { // Check if param is likely a timezone string
+            // Attempt to treat the string as a timezone name
+            try {
+                $dtz = new DateTimeZone($param);
+                $timezone = $param;
+                $currentDt = new DateTimeImmutable('now', $dtz);
+                // If the parameter was just a timezone string, return the object for that timezone
+                return $currentDt;
+            } catch (Exception $e) {
+                // If it's not a valid timezone, assume it's a format string
+                // The current $timezone (PHP's default) will be used for the currentDt creation below
+            }
+        }
+        
+        // Handle array parameter for advanced usage (timezone + format/timestamp)
+        if (is_array($param)) {
+            if (isset($param['timezone']) && !empty($param['timezone'])) {
+                try {
+                    $dtz = new DateTimeZone($param['timezone']);
+                    $timezone = $param['timezone'];
+                } catch (Exception $e) {
+                    // Invalid timezone in array, fall back to default
+                }
+            }
+        }
+
+        // Create the DateTimeImmutable object for the determined timezone
+        $currentDt = new DateTimeImmutable('now', new DateTimeZone($timezone));
+
+        // Handle return based on $param or array settings
+        if ($param === true || (is_array($param) && isset($param['timestamp']) && $param['timestamp'] === true)) {
+            // Return Unix timestamp
+            return $currentDt->getTimestamp();
+        } 
+        
+        if (is_string($param) && !empty($param) && is_valid_date_format($param)) {
+            // Return formatted string
+            return $currentDt->format($param);
+        }
+
+        if (is_array($param) && isset($param['format']) && is_string($param['format'])) {
+             // Return formatted string from array
+            return $currentDt->format($param['format']);
+        }
+        
+        // Default: return the DateTimeImmutable object
+        return $currentDt;
+    }
+
+    // Helper function to loosely check if a string is a date format
+    // This is a basic check; real validation might be more complex
+    function is_valid_date_format(string $str): bool 
+    {
+
+        // Look for common format characters, exclude 
+        // common timezone string parts
+        $commonFormatChars = [
+            'Y', 'm', 'd', 'H', 'i', 's', 'A', 'a', 
+            'F', 'M', 'j', 'D', 'l', 'P', 'Z', 'T'
+        ];
+
+        foreach ($commonFormatChars as $char) {
+            if (str_contains($str, $char)) {
+                return true;
+            }
+        }
+
+        // Simple check to avoid confusion with 
+        // some timezone names (e.g., "GMT")
+        // This is not foolproof but helps.
+        if (
+            in_array(strtolower($str), 
+            ['gmt', 'utc', 'z'])
+        ) { return false; }
+
+        return false;
+    }
+
+}
 
 if ( ! function_exists('timezone')) 
 {
@@ -2108,9 +2244,34 @@ if ( ! function_exists('travel'))
      *
      * @return \Base\Helpers\TimeTravel
      */
-    function travel()
+    function travel(
+        $timezone = null, 
+        $autoFormat = false, 
+        $format = 'Y-m-d H:i:s'
+    ) {
+        return new Base\Helpers\TimeTravel(
+            $timezone, 
+            $autoFormat, 
+            $format
+        );
+    }
+}
+
+// Create a quick formatter helper
+if (!function_exists('quick_travel')) 
     {
-        return new \Base\Helpers\TimeTravel;
+    /**
+     * Quick travel
+     * @param mixed $format
+     * @return Base\Helpers\TimeTravel
+     */
+    function quick_travel($format = 'Y-m-d H:i:s') 
+    {
+        return new Base\Helpers\TimeTravel(
+            null, 
+            true, 
+            $format
+        );
     }
 }
 
