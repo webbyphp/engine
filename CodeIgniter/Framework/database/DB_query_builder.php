@@ -638,10 +638,9 @@ abstract class CI_DB_query_builder extends CI_DB_driver
 				$k = substr($k, 0, $match[0][1]) . ($match[1][0] === '=' ? ' IS null' : ' IS NOT null');
 			}
 
-			$$qb_key = ['condition' => $prefix.$k, 'value' => $v, 'escape' => $escape];
+			$$qb_key = ['condition' => $prefix . $k, 'value' => $v, 'escape' => $escape];
 			$this->{$qb_key}[] = $$qb_key;
-			if ($this->qb_caching === true)
-			{
+			if ($this->qb_caching === true) {
 				$this->{$qb_cache_key}[] = $$qb_key;
 				$this->qb_cache_exists[] = substr($qb_key, 3);
 			}
