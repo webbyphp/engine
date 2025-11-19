@@ -15,12 +15,23 @@ trait EnumValues
      */
     public static function getValues()
     {
+
         $cases = [];
-        
-        foreach (self::cases() as $case) {
-            $cases[] = ['name' => $case->name, 'value' =>  $case->value];
+
+        if (method_exists(self::class, 'cases')) {
+            // Handle PHP 8.1+ Enums
+            foreach (self::cases() as $case) {
+                $cases[] = ['name' => $case->name, 'value' => $case->value];
+            }
+        } else {
+            // Handle class constants
+            $reflection = new \ReflectionClass(self::class);
+            $constants = $reflection->getConstants();
+            foreach ($constants as $name => $value) {
+                $cases[] = ['name' => $name, 'value' => $value];
+            }
         }
-        
+
         return arrayz($cases)->pluck('value')->get();
     }
 
@@ -34,5 +45,4 @@ trait EnumValues
     {
         return arrayz(self::getValues())->contains('value', $value);
     }
-
 }
