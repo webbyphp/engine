@@ -46,7 +46,8 @@
  * @author		EllisLab Dev Team
  * @link
  */
-class CI_Cache_dummy extends CI_Driver {
+class CI_Cache_dummy extends CI_Driver
+{
 
 	/**
 	 * Get
@@ -168,5 +169,4 @@ class CI_Cache_dummy extends CI_Driver {
 	{
 		return true;
 	}
-
 }

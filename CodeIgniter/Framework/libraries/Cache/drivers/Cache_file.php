@@ -46,7 +46,8 @@
  * @author		EllisLab Dev Team
  * @link
  */
-class CI_Cache_file extends CI_Driver {
+class CI_Cache_file extends CI_Driver
+{
 
 	/**
 	 * Directory in which to save cache files
@@ -65,7 +66,7 @@ class CI_Cache_file extends CI_Driver {
 		$CI = get_instance();
 		$CI->load->helper('file');
 		$path = $CI->config->item('cache_path');
-		$this->_cache_path = ($path === '') ? WRITABLEPATH.'cache/' : $path;
+		$this->_cache_path = ($path === '') ? WRITABLEPATH . 'cache/' : $path;
 	}
 
 	// ------------------------------------------------------------------------
@@ -101,9 +102,8 @@ class CI_Cache_file extends CI_Driver {
 			'data'		=> $data
 		];
 
-		if (write_file($this->_cache_path.$id, serialize($contents)))
-		{
-			chmod($this->_cache_path.$id, 0640);
+		if (write_file($this->_cache_path . $id, serialize($contents))) {
+			chmod($this->_cache_path . $id, 0640);
 			return true;
 		}
 
@@ -120,7 +120,7 @@ class CI_Cache_file extends CI_Driver {
 	 */
 	public function delete($id)
 	{
-		return is_file($this->_cache_path.$id) ? unlink($this->_cache_path.$id) : false;
+		return is_file($this->_cache_path . $id) ? unlink($this->_cache_path . $id) : false;
 	}
 
 	// ------------------------------------------------------------------------
@@ -136,12 +136,9 @@ class CI_Cache_file extends CI_Driver {
 	{
 		$data = $this->_get($id);
 
-		if ($data === false)
-		{
+		if ($data === false) {
 			$data = ['data' => 0, 'ttl' => 60];
-		}
-		elseif ( ! is_int($data['data']))
-		{
+		} elseif (! is_int($data['data'])) {
 			return false;
 		}
 
@@ -164,12 +161,9 @@ class CI_Cache_file extends CI_Driver {
 	{
 		$data = $this->_get($id);
 
-		if ($data === false)
-		{
+		if ($data === false) {
 			$data = ['data' => 0, 'ttl' => 60];
-		}
-		elseif ( ! is_int($data['data']))
-		{
+		} elseif (! is_int($data['data'])) {
 			return false;
 		}
 
@@ -216,19 +210,16 @@ class CI_Cache_file extends CI_Driver {
 	 */
 	public function get_metadata($id)
 	{
-		if ( ! is_file($this->_cache_path.$id))
-		{
+		if (! is_file($this->_cache_path . $id)) {
 			return false;
 		}
 
-		$data = unserialize(file_get_contents($this->_cache_path.$id));
+		$data = unserialize(file_get_contents($this->_cache_path . $id));
 
-		if (is_array($data))
-		{
-			$mtime = filemtime($this->_cache_path.$id);
+		if (is_array($data)) {
+			$mtime = filemtime($this->_cache_path . $id);
 
-			if ( ! isset($data['ttl'], $data['time']))
-			{
+			if (! isset($data['ttl'], $data['time'])) {
 				return false;
 			}
 
@@ -267,20 +258,17 @@ class CI_Cache_file extends CI_Driver {
 	 */
 	protected function _get($id)
 	{
-		if ( ! is_file($this->_cache_path.$id))
-		{
+		if (! is_file($this->_cache_path . $id)) {
 			return false;
 		}
 
-		$data = unserialize(file_get_contents($this->_cache_path.$id));
+		$data = unserialize(file_get_contents($this->_cache_path . $id));
 
-		if ($data['ttl'] > 0 && time() > $data['time'] + $data['ttl'])
-		{
-			file_exists($this->_cache_path.$id) && unlink($this->_cache_path.$id);
+		if ($data['ttl'] > 0 && time() > $data['time'] + $data['ttl']) {
+			file_exists($this->_cache_path . $id) && unlink($this->_cache_path . $id);
 			return false;
 		}
 
 		return $data;
 	}
-
 }
