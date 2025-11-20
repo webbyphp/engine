@@ -23,7 +23,7 @@ class Prune
         }
 
         $expire = (time() - config_item('sess_expiration'));
-        
+
         get_instance()->load->database();
         get_instance()->db->where("timestamp < {$expire}");
         $delete = get_instance()->db->delete(config_item('sess_save_path'));
@@ -51,7 +51,7 @@ class Prune
             }
 
             $lastmodified = filemtime($sessionPath . $file);
-            
+
             //24 hours in a day * 3600 seconds per hour
             if ((time() - $lastmodified) > config_item('sess_expiration')) {
                 @unlink($sessionPath . $file);
@@ -62,7 +62,7 @@ class Prune
 
         log_message('debug', 'Session garbage collection performed on files.');
 
-        return true;   
+        return true;
     }
 }
 /* end of file ./engine/Core/Session/Session.php */
