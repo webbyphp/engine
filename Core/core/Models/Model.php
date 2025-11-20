@@ -2,7 +2,7 @@
 
 namespace Base\Models;
 
-class Model extends \CI_Model 
+class Model extends \CI_Model
 {
     /**
      * The model's default table.
@@ -40,7 +40,7 @@ class Model extends \CI_Model
     {
         // CI parent::__get() check
         if (property_exists(get_instance(), $key)) {
-            
+
             return parent::__get($key);
         }
 

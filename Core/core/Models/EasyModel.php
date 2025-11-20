@@ -22,6 +22,5 @@ class EasyModel extends Model
 
         $this->use->database();
     }
-
 }
 /* end of file Core/core/Models/EasyModel.php */

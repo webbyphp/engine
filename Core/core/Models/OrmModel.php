@@ -9,7 +9,7 @@
  * manipulations in a more specific
  * way 
  * 
- * @author  Oteng Kwame Appiah-Nti <developerkwame@gmail.com> (Developer Kwame)
+ * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com> (Developer Kwame)
  * @license MIT
  * @link    <link will be here>
  * @version 1.0
