@@ -1,6 +1,6 @@
 <?php
 
- /**
+/**
  * Schema Table Definition
  * 
  * This class helps to define tables
@@ -25,7 +25,7 @@ class Table
      * @var
      */
     protected $ci;
-    
+
     /**
      * Table Name variable
      *
@@ -121,7 +121,6 @@ class Table
         }
 
         return false;
-
     }
 
     /**
@@ -139,7 +138,7 @@ class Table
 
     public function define($definition)
     {
-		$this->ci->dbforge->add_field($definition);
+        $this->ci->dbforge->add_field($definition);
     }
 
     public function field($columnName, $type = Types::VARCHAR, $attributes = [], $options = [])
@@ -248,7 +247,7 @@ class Table
 
         if ($deletedAt) {
             $this->datetime('deleted_at', $options);
-        } 
+        }
     }
 
     public function datetimes($options = [], $deletedAt = false)
@@ -291,7 +290,7 @@ class Table
 
     public function deletedby($constraint = 40, $options = [], $columnName = 'deleted_by')
     {
-        $this->field($columnName, Types::VARCHAR,[
+        $this->field($columnName, Types::VARCHAR, [
             'constraint' => $constraint,
             'null' => true,
             'default' => null
@@ -299,7 +298,7 @@ class Table
     }
 
     /* ---------------------------------Helper Methods---------------------------------- */
-    
+
     /**
      * Set the given column as the primary key.
      *
@@ -334,14 +333,14 @@ class Table
      * @return string
      */
     public function addforeignKey($table, $foreignKey, $references, $onDelete = 'RESTRICT', $onUpdate = 'RESTRICT', $primaryKey = '')
-	{
+    {
         $currentTable = $table;
         $this->primaryColumn = $primaryKey ?? $currentTable;
         $this->foreignColumn = $foreignKey;
         $this->onUpdate = $onUpdate;
         $this->onDelete = $onDelete;
 
-		$references = explode('(', str_replace(')', '', str_replace('`', '', $references)));
+        $references = explode('(', str_replace(')', '', str_replace('`', '', $references)));
 
         $query = "ALTER TABLE `{$currentTable}` ADD CONSTRAINT `{$this->primaryColumn}_{$this->foreignColumn}_fk` FOREIGN KEY (`{$this->foreignColumn}`) REFERENCES `{$references[0]}`(`{$references[1]}`) ON DELETE {$this->onDelete} ON UPDATE {$this->onUpdate}";
 
@@ -349,30 +348,29 @@ class Table
     }
 
     public function dropForeignKey($table, $foreignKey, $primaryKey = '')
-	{
+    {
         $currentTable = $table;
         $this->primaryColumn = $primaryKey ?? $currentTable;
         $this->foreignColumn = $foreignKey;
-		$query = "ALTER TABLE `{$currentTable}` DROP FOREIGN KEY `{$this->primaryColumn}_{$this->foreignColumn}_fk`";
+        $query = "ALTER TABLE `{$currentTable}` DROP FOREIGN KEY `{$this->primaryColumn}_{$this->foreignColumn}_fk`";
 
         return $this->ci->db->query($query);
-	}
+    }
 
     public function addDefinitionRule($columnName, $rule, $options)
     {
         if (
-            array_key_exists('null', $options) 
+            array_key_exists('null', $options)
             || array_key_exists('null', $rule)
         ) {
             $options = array_merge(['default' => null], $options);
         }
 
-        if (array_key_exists('length', $options) ) {
+        if (array_key_exists('length', $options)) {
             $options = array_merge(['constraint' => $options['length']], $options);
             unset($options['length']);
         }
 
         $this->definition['columns'][$columnName] = array_merge($rule, $options);
     }
-
 }

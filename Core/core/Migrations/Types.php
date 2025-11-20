@@ -54,5 +54,4 @@ class Types
     public const MULTIPOLYGON       = 'MULTIPOLYGON';
     public const GEOMETRYCOLLECTION = 'GEOMETRYCOLLECTION';
     public const JSON               = 'JSON';
-
 }

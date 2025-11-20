@@ -25,7 +25,7 @@ class Schema
      * @var
      */
     protected static $ci;
-    
+
     /**
      * Types variable
      *
@@ -79,7 +79,6 @@ class Schema
 
         $callback($table);
         $table->createTable();
-        
     }
 
     public static function withSQL(string $query = '')
@@ -145,14 +144,14 @@ class Schema
         static::ci()->load->dbforge();
 
         $exists = self::$ci->db->field_exists($name, $table);
-        
+
         if (!$exists && is_cli()) {
-            echo ConsoleColor::yellow("The " . $name . " field does not exist in the '".$table. "' table \n");
+            echo ConsoleColor::yellow("The " . $name . " field does not exist in the '" . $table . "' table \n");
             exit;
         }
 
         if (!$exists) {
-            echo "The " . $name . " field does not exist in the '".$table. "' table";
+            echo "The " . $name . " field does not exist in the '" . $table . "' table";
             exit;
         }
 
@@ -216,5 +215,4 @@ class Schema
     {
         static::withSQL(static::ci()->db->disable_foreign_key_checks());
     }
-
 }
