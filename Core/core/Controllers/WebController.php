@@ -16,7 +16,6 @@ class WebController extends Controller
         $this->data['site_name'] = config_item('app_name');
 
         $this->plate = $this->plates();
-
     }
 
     public function plates($params = [])
@@ -68,7 +67,6 @@ class WebController extends Controller
         }
 
         $this->output->delete_cache($page);
-        
     }
 
     /**
@@ -101,5 +99,4 @@ class WebController extends Controller
             redirect(config('route_outside'), 'refresh');
         }
     }
-    
 }

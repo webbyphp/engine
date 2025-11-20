@@ -104,7 +104,6 @@ class MiddlewareRunner
         foreach ($allMiddlewares as $middleware) {
             $this->executeMiddleware($middleware, $method);
         }
-
     }
 
     /**
@@ -118,7 +117,7 @@ class MiddlewareRunner
     {
         // Parse middleware string (e.g., "auth|except:login,register")
         $parsed = $this->parseMiddleware($middleware);
-        
+
         $middlewareName = $parsed['name'];
         $options = $parsed['options'];
 
@@ -135,7 +134,7 @@ class MiddlewareRunner
 
         // Load and execute middleware
         $middlewareInstance = $this->loadMiddleware($className);
-        
+
         if ($middlewareInstance) {
             // Execute middleware handle method
             $middlewareInstance->handle();
@@ -250,10 +249,10 @@ class MiddlewareRunner
             return null;
         }
 
-        $className = $this->namespace.$className; // Prepend the namespace
+        $className = $this->namespace . $className; // Prepend the namespace
 
         require_once $filename;
-        
+
         if (!class_exists($className)) {
             show_error('Middleware class not found: ' . $className);
             return null;

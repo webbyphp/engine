@@ -56,13 +56,11 @@ class Middleware extends Controller
                     if (in_array($this->router->method, $methods)) {
                         $runMiddleware = false;
                     }
-
                 } else if ($type == 'only') {
 
                     if (!in_array($this->router->method, $methods)) {
                         $runMiddleware = false;
                     }
-
                 }
             }
 
@@ -79,9 +77,8 @@ class Middleware extends Controller
                     $object->run();
 
                     $this->middlewares[$middlewareName] = $object;
-
                 } else {
-                    
+
                     if (ENVIRONMENT == 'development') {
                         show_error('Unable to load middleware: ' . $filename . '.php');
                     } else {

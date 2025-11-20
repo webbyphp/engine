@@ -1,66 +1,66 @@
-<?php 
+<?php
 
 namespace Base\Controllers;
 
 use Base\Middleware\MiddlewareRunner;
 
-class Controller extends \Base_Controller 
+class Controller extends \Base_Controller
 {
 	/**
-     * Middleware runner instance
-     *
-     * @var MiddlewareRunner
-     */
-    protected $middlewareRunner;
-
-    /**
-     * Registered middlewares for this controller
-     *
-     * @var array
-     */
-    protected $middlewares = [];
+	 * Middleware runner instance
+	 *
+	 * @var MiddlewareRunner
+	 */
+	protected $middlewareRunner;
 
 	/**
-     * Flag to track if middlewares have been run
-     *
-     * @var bool
-     */
-    private $middlewaresExecuted = false;
+	 * Registered middlewares for this controller
+	 *
+	 * @var array
+	 */
+	protected $middlewares = [];
+
+	/**
+	 * Flag to track if middlewares have been run
+	 *
+	 * @var bool
+	 */
+	private $middlewaresExecuted = false;
 
 
-    public function __construct()
-    {
-        parent::__construct();
+	public function __construct()
+	{
+		parent::__construct();
 
 		// Initialize middleware runner
-        $this->middlewareRunner = new MiddlewareRunner($this);
+		$this->middlewareRunner = new MiddlewareRunner($this);
 
-        $this->maintenanceMode();
-    }
+		$this->maintenanceMode();
+	}
 
-    /**
+	/**
 	 * Set app maintenance mode
 	 *
 	 * @return void
 	 */
 	private function maintenanceMode()
 	{
-        if (is_cli()) {
+		if (is_cli()) {
 			$this->config->set_item('maintenance_mode', true);
 		}
 
-        // Check for file-based maintenance mode first (more reliable)
-        if ($this->isFileBasedMaintenanceActive()) {
-            $this->handleMaintenanceMode();
-            return;
-        }
+		// Check for file-based maintenance mode first (more reliable)
+		if ($this->isFileBasedMaintenanceActive()) {
+			$this->handleMaintenanceMode();
+			return;
+		}
 
 		if (
-			$this->config->item('maintenance_mode') === "false" 
+			$this->config->item('maintenance_mode') === "false"
 			|| $this->config->item('app_status') === false
 		) {
-            $this->handleMaintenanceMode();
-		} 
+			$this->handleMaintenanceMode();
+		}
 	}
 
 	/**
@@ -88,25 +88,26 @@ class Controller extends \Base_Controller
 			return; // Allow access
 		}
 
-        $maintenance_view = $this->config->item('maintenance_view');
+		$maintenance_view = $this->config->item('maintenance_view');
 
 		log_message('app', 'Accessing maintenance mode from this ip address: ' . $this->getVisitIP());
-		
+
 		if (is_cli()) {
-            // exit('In Maintenance Mode')
-			echo \Base\Console\ConsoleColor::yellow("In Maintenance Mode \n"); PHP_EOL ;
-            exit; 
+			// exit('In Maintenance Mode')
+			echo \Base\Console\ConsoleColor::yellow("In Maintenance Mode \n");
+			PHP_EOL;
+			exit;
 		}
 
-        // if (is_cli() 
-        //     && in_array('maintenance/on/', $_SERVER['argv'])
-        //     || in_array('maintenance/off/', $_SERVER['argv']) ) {
-        //     // exit('In Maintenance Mode');
-			
+		// if (is_cli() 
+		//     && in_array('maintenance/on/', $_SERVER['argv'])
+		//     || in_array('maintenance/off/', $_SERVER['argv']) ) {
+		//     // exit('In Maintenance Mode');
+
 		// } else {
-        //     echo ConsoleColor::yellow("In Maintenance Mode \n"); PHP_EOL ;
-        //     exit; 
-        // }
+		//     echo ConsoleColor::yellow("In Maintenance Mode \n"); PHP_EOL ;
+		//     exit; 
+		// }
 
 		http_response_code(503); // Set response code
 		header('Retry-After: 3600'); // Set retry time
@@ -220,7 +221,7 @@ class Controller extends \Base_Controller
 	{
 		// Check if admin bypass is enabled
 		$adminBypassEnabled = getenv('app.maintenance.bypass.admin') === 'true';
-		
+
 		if (!$adminBypassEnabled) {
 			return false;
 		}
@@ -291,45 +292,45 @@ class Controller extends \Base_Controller
 	}
 
 	/**
-     * Define middlewares for this controller
-     * 
-     * Override this method in child controllers
-     *
-     * @return array
-     */
-    protected function middleware()
-    {
-        return [];
-    }
+	 * Define middlewares for this controller
+	 * 
+	 * Override this method in child controllers
+	 *
+	 * @return array
+	 */
+	protected function middleware()
+	{
+		return [];
+	}
 
-    /**
-     * Register middleware programmatically
-     * 
-     * Usage in controller constructor:
-     * $this->middleware('auth', 'admin|except:login,register');
-     *
-     * @param mixed ...$middlewares
-     * @return self
-     */
-    protected function registerMiddleware(...$middlewares)
-    {
-        foreach ($middlewares as $middleware) {
-            $this->middlewares[] = $middleware;
-        }
+	/**
+	 * Register middleware programmatically
+	 * 
+	 * Usage in controller constructor:
+	 * $this->middleware('auth', 'admin|except:login,register');
+	 *
+	 * @param mixed ...$middlewares
+	 * @return self
+	 */
+	protected function registerMiddleware(...$middlewares)
+	{
+		foreach ($middlewares as $middleware) {
+			$this->middlewares[] = $middleware;
+		}
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Alias for registerMiddleware
-     *
-     * @param mixed ...$middlewares
-     * @return self
-     */
-    protected function useMiddleware(...$middlewares)
-    {
-        return $this->registerMiddleware(...$middlewares);
-    }
+	/**
+	 * Alias for registerMiddleware
+	 *
+	 * @param mixed ...$middlewares
+	 * @return self
+	 */
+	protected function useMiddleware(...$middlewares)
+	{
+		return $this->registerMiddleware(...$middlewares);
+	}
 
 	public function _runMiddlewares()
 	{
@@ -338,91 +339,92 @@ class Controller extends \Base_Controller
 	}
 
 	/**
-     * Run middlewares defined in routes
-     *
-     * @return void
-     */
-    protected function runRouteMiddlewares()
-    {
-        $currentRoute = $this->router->class . '/' . $this->router->method;
-        $routeMiddlewares = \Base\Route\Route::getRouteMiddlewares($currentRoute);
+	 * Run middlewares defined in routes
+	 *
+	 * @return void
+	 */
+	protected function runRouteMiddlewares()
+	{
+		$currentRoute = $this->router->class . '/' . $this->router->method;
+		$routeMiddlewares = \Base\Route\Route::getRouteMiddlewares($currentRoute);
 
-        if (!empty($routeMiddlewares)) {
-            $this->middlewareRunner->run($routeMiddlewares, $this->router->method);
-        }
-    }
-	
-    /**
-     * Run all middlewares
-     *
-     * @return void
-     */
-    protected function runMiddlewares()
-    {
+		if (!empty($routeMiddlewares)) {
+			$this->middlewareRunner->run($routeMiddlewares, $this->router->method);
+		}
+	}
+
+	/**
+	 * Run all middlewares
+	 *
+	 * @return void
+	 */
+	protected function runMiddlewares()
+	{
 		// Get current route
-        $currentRoute = $this->getCurrentRoute();
+		$currentRoute = $this->getCurrentRoute();
 
 		// Get defined routes
 		$definedRoutes = \Base\Route\Route::getRoutes();
 
 		$routeWithMiddleware = array_keys_case_insensitive_value(
-			$definedRoutes, $currentRoute
+			$definedRoutes,
+			$currentRoute
 		);
 
-        // Get route middlewares
+		// Get route middlewares
 		$route = $routeWithMiddleware[0] ?? '';
-        $routeMiddlewares = \Base\Route\Route::getRouteMiddlewares($route);
+		$routeMiddlewares = \Base\Route\Route::getRouteMiddlewares($route);
 
 		// dd($currentRoute, $routeMiddlewares, $definedRoutes);
-		
-        // Get middlewares from middleware() method
-        $definedMiddlewares = $this->middleware();
 
-        // Merge: Route middlewares → Controller middlewares → Registered middlewares
-        $allMiddlewares = array_merge($routeMiddlewares, $definedMiddlewares, $this->middlewares);
+		// Get middlewares from middleware() method
+		$definedMiddlewares = $this->middleware();
 
-        // Get current method being called
-        $currentMethod = $this->router->method;
+		// Merge: Route middlewares → Controller middlewares → Registered middlewares
+		$allMiddlewares = array_merge($routeMiddlewares, $definedMiddlewares, $this->middlewares);
 
-        // Run middlewares
-        $this->middlewareRunner->run($allMiddlewares, $currentMethod);
-    }
+		// Get current method being called
+		$currentMethod = $this->router->method;
+
+		// Run middlewares
+		$this->middlewareRunner->run($allMiddlewares, $currentMethod);
+	}
 
 	/**
-     * Get current route pattern
-     *
-     * @return string
-     */
-    protected function getCurrentRoute()
-    {
-        // Build the current route pattern
-        $directory = $this->router->directory;
-        $class = $this->router->class;
-        $method = $this->router->method;
+	 * Get current route pattern
+	 *
+	 * @return string
+	 */
+	protected function getCurrentRoute()
+	{
+		// Build the current route pattern
+		$directory = $this->router->directory;
+		$class = $this->router->class;
+		$method = $this->router->method;
 
-        // Clean up directory path
-        $directory = str_replace(['\\', '../../'], ['/', ''], $directory);
-        $directory = trim($directory, '/');
+		// Clean up directory path
+		$directory = str_replace(['\\', '../../'], ['/', ''], $directory);
+		$directory = trim($directory, '/');
 
-        // Build route string
-        if (!empty($directory)) {
-            $route = $directory . '/' . $class . '/' . $method;
-        } else {
-            $route = $class . '/' . $method;
-        }
+		// Build route string
+		if (!empty($directory)) {
+			$route = $directory . '/' . $class . '/' . $method;
+		} else {
+			$route = $class . '/' . $method;
+		}
 
-        return $route;
-    }
+		return $route;
+	}
 
-    /**
-     * Get executed middlewares
-     *
-     * @return array
-     */
-    protected function getExecutedMiddlewares()
-    {
-        return $this->middlewareRunner->getExecutedMiddlewares();
-    }
+	/**
+	 * Get executed middlewares
+	 *
+	 * @return array
+	 */
+	protected function getExecutedMiddlewares()
+	{
+		return $this->middlewareRunner->getExecutedMiddlewares();
+	}
 
 	/**
 	 * Get Client IP
@@ -452,5 +454,4 @@ class Controller extends \Base_Controller
 
 		return "UNKNOWN";
 	}
-
 }

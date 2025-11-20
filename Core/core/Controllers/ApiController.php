@@ -12,7 +12,7 @@ class ApiController extends ApiServerController // ApiServerController from the 
     public function __construct()
     {
         parent::__construct();
-        
+
         // Protection
         header('X-Content-Type-Options: nosniff');
         header('X-Frame-Options: SAMEORIGIN');
@@ -51,9 +51,9 @@ class ApiController extends ApiServerController // ApiServerController from the 
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
         header('Access-Control-Allow-Headers: *');
-        
+
         $method = $_SERVER['REQUEST_METHOD'];
-        
+
         if ($method == "OPTIONS") {
             die();
         }
@@ -117,5 +117,4 @@ class ApiController extends ApiServerController // ApiServerController from the 
         $data = array_merge($status, $data);
         return $this->response($data, $statusCode);
     }
-    
 }

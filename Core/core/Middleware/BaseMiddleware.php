@@ -121,13 +121,13 @@ abstract class BaseMiddleware implements MiddlewareInterface
     protected function hasRole($roles)
     {
         $user = $this->user();
-        
+
         if (!$user) {
             return false;
         }
 
         $userRole = $user['role'] ?? null;
-        
+
         if (is_array($roles)) {
             return in_array($userRole, $roles);
         }
