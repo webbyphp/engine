@@ -181,7 +181,6 @@ if (! function_exists('js')) {
     }
 }
 
-
 if (! function_exists('use_url')) {
     /**
      * Use an external asset from

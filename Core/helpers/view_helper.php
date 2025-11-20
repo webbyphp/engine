@@ -12,8 +12,7 @@ defined('COREPATH') or exit('No direct script access allowed');
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('plates')) 
-{
+if (! function_exists('plates')) {
     /**
      * Plates object
      *
@@ -28,8 +27,7 @@ if ( ! function_exists('plates'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('view')) 
-{
+if (! function_exists('view')) {
     /**
      * A heavy lifting view function for the 
      * CodeIgniter $this->load->view() [enhanced]
@@ -48,9 +46,9 @@ if ( ! function_exists('view'))
         if (config('view')['view_engine'] === '') {
             return app()->use->view($view_path, $view_data, $return);
         }
- 
+
         // Get the evaluated view contents for the given plates view
-        if (config('view')['view_engine'] === 'plates')  {
+        if (config('view')['view_engine'] === 'plates') {
 
             if ($view_data === null) {
                 return plates()->view($view_path, null, $return);
@@ -70,13 +68,11 @@ if ( ! function_exists('view'))
         }
 
         // Fall on plates to render view
-		return plates()->set($view_data)->view($view_path, null, $return);
-        
+        return plates()->set($view_data)->view($view_path, null, $return);
     }
 }
 
-if ( ! function_exists('blade')) 
-{
+if (! function_exists('blade')) {
     /**
      * Blade object
      *
@@ -89,8 +85,7 @@ if ( ! function_exists('blade'))
     }
 }
 
-if ( ! function_exists('mail_view')) 
-{
+if (! function_exists('mail_view')) {
     /**
      * Used for finding mail views
      *
@@ -115,20 +110,20 @@ if ( ! function_exists('mail_view'))
             throw new \Exception($exception_message);
         }
 
-        if ( ! is_array($mail_data)) {
+        if (! is_array($mail_data)) {
             $exception_message = "Email data should be array";
             log_message('error', $exception_message);
-            throw new \Exception($exception_message); 
+            throw new \Exception($exception_message);
         }
 
         if (is_string($mail_view_path)) {
             return app()->use->view($mail_view_path, $mail_data, true);
         }
 
-        if ( ! is_array($mail_view_path)) {
+        if (! is_array($mail_view_path)) {
             $exception_message = "Email view malformed, make sure it has the 'double colon' symbol '::' in it";
             log_message('error', $exception_message);
-            throw new \Exception($exception_message); 
+            throw new \Exception($exception_message);
         }
 
         [$layout, $view] = $mail_view_path;
@@ -139,8 +134,7 @@ if ( ! function_exists('mail_view'))
     }
 }
 
-if ( ! function_exists('partial')) 
-{
+if (! function_exists('partial')) {
     /**
      * For loading header and footer views
      * or any includable view
@@ -155,8 +149,7 @@ if ( ! function_exists('partial'))
     }
 }
 
-if ( ! function_exists('section')) 
-{
+if (! function_exists('section')) {
     /**
      * load a view section
      * @param string $view_path       
@@ -168,8 +161,7 @@ if ( ! function_exists('section'))
     }
 }
 
-if ( ! function_exists('layout')) 
-{
+if (! function_exists('layout')) {
     /**
      * Load views in a layout format
      *
@@ -179,13 +171,12 @@ if ( ! function_exists('layout'))
      * @return string
      */
     function layout(
-        $layout_path, 
-        $view_path = null, 
+        $layout_path,
+        $view_path = null,
         $view_data = null
     ) {
 
-        if (! is_null($view_path) && isset($view_path) )
-        {
+        if (! is_null($view_path) && isset($view_path)) {
             $view_data['content'] = $view_path;
         }
 

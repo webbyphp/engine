@@ -4,46 +4,43 @@ defined('COREPATH') or exit('No direct script access allowed');
 use Base\Debug\Debug;
 use Base\Debug\Error;
 
-if ( ! function_exists( __NAMESPACE__ . '\\suppressWarnings' ) ) 
-{
+if (! function_exists(__NAMESPACE__ . '\\suppressWarnings')) {
 
-    if ( ! function_exists( 'shut_up' )) 
-    {
+    if (! function_exists('shut_up')) {
         /**
          * Reference-counted warning suppression
          *
          * @param bool $end Whether to restore warnings
          */
-        function shut_up( $end = false ) {
-            Error::suppressWarnings( $end );
+        function shut_up($end = false)
+        {
+            Error::suppressWarnings($end);
         }
     }
 
-    if ( ! function_exists( 'shush' )) 
-    {
+    if (! function_exists('shush')) {
         /**
          * Alias of shut_up function
          * @param bool $end Whether to restore warnings
          */
-        function shush( $end = false ) {
-            shut_up( $end );
+        function shush($end = false)
+        {
+            shut_up($end);
         }
-
     }
 
-    
-    if ( ! function_exists( 'speak_up' )) 
-    {
+
+    if (! function_exists('speak_up')) {
         /**
          * Restore error level to previous value
          */
-        function speak_up() {
+        function speak_up()
+        {
             Error::restoreWarnings();
         }
     }
 
-    if ( ! function_exists( 'keep_quiet' )) 
-    {
+    if (! function_exists('keep_quiet')) {
         /**
          * Call the callback given by the first parameter, suppressing any warnings.
          *
@@ -51,15 +48,14 @@ if ( ! function_exists( __NAMESPACE__ . '\\suppressWarnings' ) )
          * @param mixed ...$args Optional arguments for the function call
          * @return mixed
          */
-        function keep_quiet( callable $callback, ...$args ) {
-            return Error::quietCall( $callback, ...$args );
+        function keep_quiet(callable $callback, ...$args)
+        {
+            return Error::quietCall($callback, ...$args);
         }
     }
-
 }
 
-if ( ! function_exists( 'strict_dev' )) 
-{
+if (! function_exists('strict_dev')) {
     /**
      * Check if development 
      * environment is active
@@ -67,15 +63,14 @@ if ( ! function_exists( 'strict_dev' ))
      * @return void
      */
     function strict_dev()
-    { 
+    {
         if (ENVIRONMENT !== 'development') {
             show_error('Sorry you must be in development mode');
         }
     }
 }
 
-if ( ! function_exists( 'console' )) 
-{
+if (! function_exists('console')) {
     /**
      * Show output in Browser Console
      *
@@ -83,17 +78,16 @@ if ( ! function_exists( 'console' ))
      * @param string $type - browser console log types [log]
      * @return void
      */
-    function console(/* mixed */ $var, string $type = 'log')
-    { 
+    function console(/* mixed */$var, string $type = 'log')
+    {
         strict_dev();
         echo '<script type="text/javascript">console.';
-        echo ''.$type.'';
-        echo '('.json_encode($var).')</script>';
+        echo '' . $type . '';
+        echo '(' . json_encode($var) . ')</script>';
     }
 }
 
-if ( ! function_exists( 'dump' )) 
-{
+if (! function_exists('dump')) {
     /**
      * Simple debug output with 
      * var_dump() function
@@ -102,7 +96,7 @@ if ( ! function_exists( 'dump' ))
      * @return void
      */
     function dump($dump)
-    { 
+    {
         strict_dev();
         echo '<pre>';
         var_dump($dump);
@@ -110,16 +104,18 @@ if ( ! function_exists( 'dump' ))
     }
 }
 
-if ( ! function_exists( 'dd' )) {
+if (! function_exists('dd')) {
     function dd()
     {
         strict_dev();
-        array_map(function($x) { Debug::var_dump($x); }, func_get_args()); die;
+        array_map(function ($x) {
+            Debug::var_dump($x);
+        }, func_get_args());
+        die;
     }
 }
 
-if ( ! function_exists( 'dr' )) 
-{
+if (! function_exists('dr')) {
     /**
      * Debug output for APIs
      *
@@ -131,13 +127,13 @@ if ( ! function_exists( 'dr' ))
         $dump = func_get_args();
 
         strict_dev();
-        header('Content-Type: application/json'); echo json_encode($dump); exit;
-
+        header('Content-Type: application/json');
+        echo json_encode($dump);
+        exit;
     }
 }
 
-if ( ! function_exists( 'pp' )) 
-{
+if (! function_exists('pp')) {
     /**
      * Pretty Print debug output
      *
@@ -153,8 +149,7 @@ if ( ! function_exists( 'pp' ))
     }
 }
 
-if ( ! function_exists( 'dump_json' )) 
-{
+if (! function_exists('dump_json')) {
     /**
      * Debug json output 
      * Useful when using ajax requests
@@ -163,14 +158,13 @@ if ( ! function_exists( 'dump_json' ))
      * @return mixed
      */
     function dump_json($dump)
-    { 
+    {
         strict_dev();
         return json_encode($dump);
     }
 }
 
-if ( ! function_exists( 'start_profiler' ))
-{
+if (! function_exists('start_profiler')) {
     /**
      * Enable Profiler
      *
@@ -183,8 +177,7 @@ if ( ! function_exists( 'start_profiler' ))
     }
 }
 
-if ( ! function_exists( 'stop_profiler' )) 
-{
+if (! function_exists('stop_profiler')) {
     /**
      * Disable Profiler
      *
@@ -197,8 +190,7 @@ if ( ! function_exists( 'stop_profiler' ))
     }
 }
 
-if ( ! function_exists( 'section_profiler' )) 
-{
+if (! function_exists('section_profiler')) {
     /**
      * Set Profiler Sections
      *
@@ -211,11 +203,11 @@ if ( ! function_exists( 'section_profiler' ))
     function section_profiler($config = null)
     {
         strict_dev();
-        
-        $sections =[ 
-            'config'  => true, 
-            'queries' => true 
-        ]; 
+
+        $sections = [
+            'config'  => true,
+            'queries' => true
+        ];
 
         if ($config !== null && is_array($config)) {
             $sections = $config;
@@ -225,8 +217,7 @@ if ( ! function_exists( 'section_profiler' ))
     }
 }
 
-if ( ! function_exists( 'start_benchmark' )) 
-{
+if (! function_exists('start_benchmark')) {
     /**
      * Set and start a benchmark marker
      *
@@ -239,8 +230,7 @@ if ( ! function_exists( 'start_benchmark' ))
     }
 }
 
-if ( ! function_exists( 'end_benchmark' )) 
-{
+if (! function_exists('end_benchmark')) {
     /**
      * Set and end a benchmark marker
      *
@@ -253,8 +243,7 @@ if ( ! function_exists( 'end_benchmark' ))
     }
 }
 
-if ( ! function_exists( 'show_time_elasped' )) 
-{
+if (! function_exists('show_time_elasped')) {
     /**
      * Calculates the time difference 
      * between two marked points.
@@ -265,12 +254,11 @@ if ( ! function_exists( 'show_time_elasped' ))
      */
     function show_time_elasped($start_key = 'start', $end_key = 'end')
     {
-        return ci()->benchmark->elapsed_time($start_key, $end_key) . ' '; 
+        return ci()->benchmark->elapsed_time($start_key, $end_key) . ' ';
     }
 }
 
-if ( ! function_exists( 'time_used' )) 
-{
+if (! function_exists('time_used')) {
     /**
      * Show time elasped
      *
@@ -278,12 +266,11 @@ if ( ! function_exists( 'time_used' ))
      */
     function time_used()
     {
-        echo "{elapsed_time}"; 
+        echo "{elapsed_time}";
     }
 }
 
-if ( ! function_exists( 'memory_used' )) 
-{
+if (! function_exists('memory_used')) {
     /**
      * Show memory used
      *
@@ -291,6 +278,6 @@ if ( ! function_exists( 'memory_used' ))
      */
     function memory_used()
     {
-        echo "{memory_usage}"; 
+        echo "{memory_usage}";
     }
 }
