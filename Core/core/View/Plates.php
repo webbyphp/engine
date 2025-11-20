@@ -493,14 +493,14 @@ class Plates
 		//	Verify if the page really exists
 		if (is_file($defaultPath)) {
 			if ($showError) {
-						return $defaultPath;
-					}
-			
+				return $defaultPath;
+			}
+
 			return true;
 		}
-		
+
 		if ($showError) {
-			show_error($viewName . ' view was not found, Are you sure the view exists and is a `'.$this->plateExtension.'` file? ');
+			show_error($viewName . ' view was not found, Are you sure the view exists and is a `' . $this->plateExtension . '` file? ');
 		} else {
 			return false;
 		}
@@ -538,11 +538,11 @@ class Plates
 		$viewPath	= $this->exists($template, true);
 		$cacheName	= md5((string) $viewPath) . $this->cacheExtension;
 		$platesPath = $this->ci->config->item('plates_cache_path') . DIRECTORY_SEPARATOR;
-		
+
 		$this->viewPath = $viewPath;
 		$this->cacheName = $cacheName;
 		$this->platesPath = $platesPath;
-		
+
 		// Save cached files to cache/web/plates folder
 		$this->ci->config->set_item('cache_path', $platesPath);
 
@@ -586,13 +586,13 @@ class Plates
 		if (is_array($data)) {
 			extract($data);
 		}
-		
+
 		ob_start();
 
 		$template = $this->replaceBlacklisted($template);
 
 		$templateFile = $this->platesPath . md5((string) $this->viewPath) . PHPEXT;
-	
+
 		file_put_contents($templateFile, $template);
 
 		include $templateFile;
@@ -610,21 +610,69 @@ class Plates
 	private function replaceBlacklisted(string $template): array|string
 	{
 		$blacklists = [
-			'exec(', 'shell_exec(', 'pcntl_exec(', 'passthru(', 'proc_open(', 'system(',
-			'posix_kill(', 'posix_setsid(', 'pcntl_fork(', 'posix_uname(', 'php_uname(',
-			'phpinfo(', 'popen(', 'file_get_contents(', 'file_put_contents(', 'rmdir(',
-			'mkdir(', 'unlink(', 'highlight_contents(', 'symlink(',
-			'apache_child_terminate(', 'apache_setenv(', 'define_syslog_variables(',
-			'escapeshellarg(', 'escapeshellcmd(', 'eval(', 'fp(', 'fput(',
-			'ftp_connect(', 'ftp_exec(', 'ftp_get(', 'ftp_login(', 'ftp_nb_fput(',
-			'ftp_put(', 'ftp_raw(', 'ftp_rawlist(', 'highlight_file(', 'ini_alter(',
-			'ini_get_all(', 'ini_restore(', 'inject_code(', 'mysql_pconnect(',
-			'openlog(', 'passthru(', 'php_uname(', 'phpAds_remoteInfo(',
-			'phpAds_XmlRpc(', 'phpAds_xmlrpcDecode(', 'phpAds_xmlrpcEncode(',
-			'posix_getpwuid(', 'posix_kill(', 'posix_mkfifo(', 'posix_setpgid(',
-			'posix_setsid(', 'posix_setuid(', 'posix_uname(', 'proc_close(',
-			'proc_get_status(', 'proc_nice(', 'proc_open(', 'proc_terminate(',
-			'syslog(', 'xmlrpc_entity_decode('
+			'exec(',
+			'shell_exec(',
+			'pcntl_exec(',
+			'passthru(',
+			'proc_open(',
+			'system(',
+			'posix_kill(',
+			'posix_setsid(',
+			'pcntl_fork(',
+			'posix_uname(',
+			'php_uname(',
+			'phpinfo(',
+			'popen(',
+			'file_get_contents(',
+			'file_put_contents(',
+			'rmdir(',
+			'mkdir(',
+			'unlink(',
+			'highlight_contents(',
+			'symlink(',
+			'apache_child_terminate(',
+			'apache_setenv(',
+			'define_syslog_variables(',
+			'escapeshellarg(',
+			'escapeshellcmd(',
+			'eval(',
+			'fp(',
+			'fput(',
+			'ftp_connect(',
+			'ftp_exec(',
+			'ftp_get(',
+			'ftp_login(',
+			'ftp_nb_fput(',
+			'ftp_put(',
+			'ftp_raw(',
+			'ftp_rawlist(',
+			'highlight_file(',
+			'ini_alter(',
+			'ini_get_all(',
+			'ini_restore(',
+			'inject_code(',
+			'mysql_pconnect(',
+			'openlog(',
+			'passthru(',
+			'php_uname(',
+			'phpAds_remoteInfo(',
+			'phpAds_XmlRpc(',
+			'phpAds_xmlrpcDecode(',
+			'phpAds_xmlrpcEncode(',
+			'posix_getpwuid(',
+			'posix_kill(',
+			'posix_mkfifo(',
+			'posix_setpgid(',
+			'posix_setsid(',
+			'posix_setuid(',
+			'posix_uname(',
+			'proc_close(',
+			'proc_get_status(',
+			'proc_nice(',
+			'proc_open(',
+			'proc_terminate(',
+			'syslog(',
+			'xmlrpc_entity_decode('
 		];
 
 		return str_replace($blacklists, '', $template);
@@ -676,12 +724,12 @@ class Plates
 	// --------------------------------------------------------------------------
 
 	/**
-	*  Gets the content of a template to use inside the current template
-	*  Mostly templates are used as sections
-	*  It will inherit all the Global data
-	*
-	*  @param    array    $data
-	*/
+	 *  Gets the content of a template to use inside the current template
+	 *  Mostly templates are used as sections
+	 *  It will inherit all the Global data
+	 *
+	 *  @param    array    $data
+	 */
 	protected function section(string $template, $data = null): string
 	{
 		$data = isset($data) ? array_merge($this->plateData, $data) : $this->plateData;
@@ -840,11 +888,11 @@ class Plates
 		$line = '';
 
 		if (!empty($src)) {
-			$line = 'src="'.$src.'"';
+			$line = 'src="' . $src . '"';
 		}
 
 		if (!empty($attributes)) {
-			$line = $line .' '. $attributes;
+			$line = $line . ' ' . $attributes;
 		}
 
 		return $line = "\n\n\t<script " . $line . "></script>\n";
@@ -902,11 +950,11 @@ class Plates
 	 */
 	protected function each(string $template, array $variable, string $label, $default = null): string
 	{
-        $content = '';
+		$content = '';
 
 		if ((is_countable($variable) ? count($variable) : 0) > 0) {
 			foreach ($variable as $item) {
-                $dataForInclude = [$label => $item];
+				$dataForInclude = [$label => $item];
 				$content .= $this->include($template, $dataForInclude);
 			}
 		} else {
@@ -945,33 +993,33 @@ class Plates
 		return preg_replace($returnPattern, "<?php /* $1 */ ?>\n", $content);
 	}
 
-	 /**
-     * Compile custom multiline HTML comments !!! ... !!!
-     * Removes any internal '-->' before wrapping.
-     */
-    protected function compile_multiline_html_comment(string $content): string
-    {
-        $pattern = '/\!\!\!\s*(.*?)\s*\!\!\!/s'; // 's' for dotall, capture content in $1
-        return preg_replace_callback($pattern, function ($matches) {
-            $innerContent = $matches[1];
-            // Remove '-->' from innerContent
-            $cleanedContent = str_replace('-->', '-- >', $innerContent); // Replace with space to avoid breaking if it was intentional structure
-            return '<!--' . $cleanedContent . '-->';
-        }, $content);
-    }
+	/**
+	 * Compile custom multiline HTML comments !!! ... !!!
+	 * Removes any internal '-->' before wrapping.
+	 */
+	protected function compile_multiline_html_comment(string $content): string
+	{
+		$pattern = '/\!\!\!\s*(.*?)\s*\!\!\!/s'; // 's' for dotall, capture content in $1
+		return preg_replace_callback($pattern, function ($matches) {
+			$innerContent = $matches[1];
+			// Remove '-->' from innerContent
+			$cleanedContent = str_replace('-->', '-- >', $innerContent); // Replace with space to avoid breaking if it was intentional structure
+			return '<!--' . $cleanedContent . '-->';
+		}, $content);
+	}
 
 	// --------------------------------------------------------------------------
 
 	/**
-     * Compile html view comments.
-     */
-    protected function compile_html_comment(string $view): ?string
-    {
-		return preg_replace_callback('/###(.*?)###/', function($matches) {
+	 * Compile html view comments.
+	 */
+	protected function compile_html_comment(string $view): ?string
+	{
+		return preg_replace_callback('/###(.*?)###/', function ($matches) {
 			$comment = trim($matches[1]);
-            return sprintf('<!-- %s  -->', $comment);
+			return sprintf('<!-- %s  -->', $comment);
 		}, $view);
-    }
+	}
 
 	// --------------------------------------------------------------------------
 
