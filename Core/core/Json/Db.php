@@ -7,6 +7,7 @@
 | This file implements json as a flat file database
 |
 */
+
 namespace Base\Json;
 
 /**
@@ -29,7 +30,7 @@ class Db extends \CI_DB_json_driver
     public function __construct($params = [])
     {
         parent::__construct($params);
-        
+
         // Load JSON database configuration
         // ci()->load->config('json_database');
     }
@@ -43,11 +44,11 @@ class Db extends \CI_DB_json_driver
     public function createDatabase($name = '')
     {
         $path = $this->path . DIRECTORY_SEPARATOR . $name;
-        
+
         if (!is_dir($path)) {
             return mkdir($path, config_item('json_db_dir_permissions'), true);
         }
-        
+
         return true;
     }
 
@@ -60,11 +61,11 @@ class Db extends \CI_DB_json_driver
     public function dropDatabase($name)
     {
         $path = $this->path . DIRECTORY_SEPARATOR . $name;
-        
+
         if (is_dir($path)) {
             return $this->removeDirectory($path);
         }
-        
+
         return true;
     }
 
@@ -77,11 +78,11 @@ class Db extends \CI_DB_json_driver
     {
         $tables = [];
         $files = glob($this->path . '/*.json');
-        
+
         foreach ($files as $file) {
             $tables[] = pathinfo($file, PATHINFO_FILENAME);
         }
-        
+
         return $tables;
     }
 
@@ -107,16 +108,16 @@ class Db extends \CI_DB_json_driver
     public function createTable($table, array $schema = [])
     {
         $filePath = $this->path . DIRECTORY_SEPARATOR . $table . '.json';
-        
+
         if (!file_exists($filePath)) {
             $initialData = [];
             return file_put_contents($filePath, json_encode($initialData, JSON_PRETTY_PRINT)) !== false;
         }
-        
+
         return true;
     }
 
-     /**
+    /**
      * Load all data from a table (JSON file)
      *
      * @param string $table The name of the table (JSON file).
@@ -125,18 +126,18 @@ class Db extends \CI_DB_json_driver
     public function loadTableData($table)
     {
         $filePath = $this->path . DIRECTORY_SEPARATOR . $table . '.json';
-        
+
         if (!file_exists($filePath)) {
             return [];
         }
-        
+
         $json_data = file_get_contents($filePath);
         $data = json_decode($json_data, true);
 
         return is_array($data) ? $data : [];
     }
 
-     /**
+    /**
      * Save data to a table (JSON file)
      *
      * @param string $table The name of the table (JSON file).
@@ -164,11 +165,11 @@ class Db extends \CI_DB_json_driver
     public function dropTable($table)
     {
         $filePath = $this->path . DIRECTORY_SEPARATOR . $table . '.json';
-        
+
         if (file_exists($filePath)) {
             return unlink($filePath);
         }
-        
+
         return true;
     }
 
@@ -209,11 +210,11 @@ class Db extends \CI_DB_json_driver
     public function restoreTable($table, $backupFile)
     {
         $targetFile = $this->path . DIRECTORY_SEPARATOR . $table . '.json';
-        
+
         if (file_exists($backupFile)) {
             return copy($backupFile, $targetFile);
         }
-        
+
         return false;
     }
 
@@ -227,7 +228,7 @@ class Db extends \CI_DB_json_driver
     {
         $data = $this->loadTableData($table);
         $filePath = $this->path . DIRECTORY_SEPARATOR . $table . '.json';
-        
+
         // Clear the cache to get fresh stats
         // clearstatcache();
 
@@ -249,12 +250,12 @@ class Db extends \CI_DB_json_driver
     public function optimizeTable($table)
     {
         $data = $this->loadTableData($table);
-        
+
         // Remove any invalid records and reindex
-        $cleanData = array_values(array_filter($data, function($record) {
+        $cleanData = array_values(array_filter($data, function ($record) {
             return is_array($record) && !empty($record);
         }));
-        
+
         return $this->saveTableData($table, $cleanData);
     }
 
@@ -274,7 +275,7 @@ class Db extends \CI_DB_json_driver
 
         foreach ($files as $file) {
             $filePath = $dir . DIRECTORY_SEPARATOR . $file;
-            
+
             if (is_dir($filePath)) {
                 $this->removeDirectory($filePath);
             } else {
