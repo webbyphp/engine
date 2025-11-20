@@ -43,7 +43,7 @@
 
 namespace Base\Helpers;
 
-class FakeId 
+class FakeId
 {
 
     /**
@@ -69,13 +69,68 @@ class FakeId
     /* Ascii :                    0  9,         A  Z,         a  z     */
     /* $chars = array_merge(range(48,57), range(65,90), range(97,122)) */
     private static $chars62 = [
-        0=>48,1=>49,2=>50,3=>51,4=>52,5=>53,6=>54,7=>55,8=>56,9=>57,10=>65,
-        11=>66,12=>67,13=>68,14=>69,15=>70,16=>71,17=>72,18=>73,19=>74,20=>75,
-        21=>76,22=>77,23=>78,24=>79,25=>80,26=>81,27=>82,28=>83,29=>84,30=>85,
-        31=>86,32=>87,33=>88,34=>89,35=>90,36=>97,37=>98,38=>99,39=>100,40=>101,
-        41=>102,42=>103,43=>104,44=>105,45=>106,46=>107,47=>108,48=>109,49=>110,
-        50=>111,51=>112,52=>113,53=>114,54=>115,55=>116,56=>117,57=>118,58=>119,
-        59=>120,60=>121,61=>122
+        0 => 48,
+        1 => 49,
+        2 => 50,
+        3 => 51,
+        4 => 52,
+        5 => 53,
+        6 => 54,
+        7 => 55,
+        8 => 56,
+        9 => 57,
+        10 => 65,
+        11 => 66,
+        12 => 67,
+        13 => 68,
+        14 => 69,
+        15 => 70,
+        16 => 71,
+        17 => 72,
+        18 => 73,
+        19 => 74,
+        20 => 75,
+        21 => 76,
+        22 => 77,
+        23 => 78,
+        24 => 79,
+        25 => 80,
+        26 => 81,
+        27 => 82,
+        28 => 83,
+        29 => 84,
+        30 => 85,
+        31 => 86,
+        32 => 87,
+        33 => 88,
+        34 => 89,
+        35 => 90,
+        36 => 97,
+        37 => 98,
+        38 => 99,
+        39 => 100,
+        40 => 101,
+        41 => 102,
+        42 => 103,
+        43 => 104,
+        44 => 105,
+        45 => 106,
+        46 => 107,
+        47 => 108,
+        48 => 109,
+        49 => 110,
+        50 => 111,
+        51 => 112,
+        52 => 113,
+        53 => 114,
+        54 => 115,
+        55 => 116,
+        56 => 117,
+        57 => 118,
+        58 => 119,
+        59 => 120,
+        60 => 121,
+        61 => 122
     ];
 
     /**
@@ -83,9 +138,10 @@ class FakeId
      * @param mixed $int
      * @return string
      */
-    public static function base62($int) {
+    public static function base62($int)
+    {
         $key = "";
-        while(bccomp($int, 0) > 0) {
+        while (bccomp($int, 0) > 0) {
             $mod = bcmod($int, 62);
             $key .= chr(static::$chars62[$mod]);
             $int = bcdiv($int, 62);
@@ -98,9 +154,10 @@ class FakeId
      * @param mixed $key
      * @return int|string
      */
-    public static function unbase62($key) {
+    public static function unbase62($key)
+    {
         $int = 0;
-        foreach(str_split(strrev($key)) as $i => $char) {
+        foreach (str_split(strrev($key)) as $i => $char) {
             $dec = array_search(ord($char), static::$chars62);
             $int = bcadd(bcmul($dec, bcpow(62, $i)), $int);
         }
@@ -112,7 +169,8 @@ class FakeId
      * @param mixed $hash
      * @return int
      */
-    public static function decode($hash) {
+    public static function decode($hash)
+    {
         $length = strlen($hash);
         $ceil = bcpow(62, $length);
         $mmiprimes = array_values(static::$golden_primes);
@@ -176,15 +234,14 @@ class FakeId
         $str = (string) $str;
 
         if ($removeExponential) {
-            return preg_replace (
+            return preg_replace(
                 "/[+eE.]/u",
-                "", 
+                "",
                 $str
             );
         }
 
         return $str = number_format($str, 0, '', '');
-        
     }
 
     /**
@@ -197,7 +254,7 @@ class FakeId
      * (Developer Kwame)
      */
     private static function fixStr($str, $toDecimal = false)
-    {       
+    {
         if (is_int($str)) {
             return $str;
         }
@@ -206,11 +263,11 @@ class FakeId
             $str = bin2hex(random_bytes(30));
         }
 
-        if ( is_string($str) && $toDecimal === false) {
+        if (is_string($str) && $toDecimal === false) {
             $str = bin2hex(trim($str));
         }
 
-        if ( is_string($str) && $toDecimal === true) {
+        if (is_string($str) && $toDecimal === true) {
             $str = bchexdec(bin2hex(trim($str)));
         }
 
@@ -236,7 +293,7 @@ class FakeId
      */
     public static function fromHex($str)
     {
-        if (!ctype_xdigit($str) ) {
+        if (!ctype_xdigit($str)) {
             throw new \Exception("Not A Valid Hexadecimal Value", 1);
         }
 
@@ -253,8 +310,10 @@ class FakeId
     public static function toHumanString($number)
     {
         return implode(
-            array_map('chr', 
-            str_split($number, 3))
+            array_map(
+                'chr',
+                str_split($number, 3)
+            )
         );
     }
 
@@ -268,8 +327,7 @@ class FakeId
     public static function toNumberString($str)
     {
         return implode(array_map(function ($n) {
-             return sprintf('%03d', $n); 
+            return sprintf('%03d', $n);
         }, unpack('C*', $str)));
     }
-
 }

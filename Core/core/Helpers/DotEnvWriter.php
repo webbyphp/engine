@@ -45,12 +45,11 @@ class DotEnvWriter
         $lines = preg_split('/\r\n|\r|\n/', $this->content);
 
         foreach ($lines as $line) {
-            
+
             if (strlen(trim($line)) && !(strpos(trim($line), '#') === 0)) {
                 [$key, $val] = array_map("trim", explode('=', (string)$line));
                 $this->variables[$key] = $this->stripValue($val);
             }
-
         }
     }
 
@@ -282,5 +281,4 @@ class DotEnvWriter
     {
         return $this->changed;
     }
-
 }
