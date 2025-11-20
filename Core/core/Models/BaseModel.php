@@ -97,7 +97,7 @@ class BaseModel extends Model implements \ArrayAccess
      */
     protected $useSoftDelete = false;
     protected $useSoftDeleteKey = 'deleted_at';
-    
+
     /**
      * The active value for $softDeleteField
      *
@@ -286,7 +286,7 @@ class BaseModel extends Model implements \ArrayAccess
      */
     public $returnAs = 'object';
 
-	/**
+    /**
      * If the return type is object , one can specify 
      * a custom class representing the data to rather 
      * be created and returned as the stdClass object
@@ -328,12 +328,12 @@ class BaseModel extends Model implements \ArrayAccess
      */
     public function __construct($attributes = [])
     {
-        
+
         parent::__construct();
-        
+
         // Initialize query builder
         $this->queryBuilder = $this->db;
-        
+
         // Initialize cache driver
         $this->initializeCacheDriver();
 
@@ -343,13 +343,12 @@ class BaseModel extends Model implements \ArrayAccess
             $this->exists = true;
             $this->wasRecentlyCreated = false;
         }
-        
+
         // Apply global scopes
         $this->applyGlobalScopes();
-        
+
         // Set default timezone
         $this->setTimezone();
-
     }
 
     /**
@@ -424,12 +423,12 @@ class BaseModel extends Model implements \ArrayAccess
     protected function resolveRelatedModel(string $modelName): BaseModel
     {
         $ci = get_instance();
-        
+
         // Check model mapping first
         if (isset($this->modelMap[$modelName])) {
             $modelName = $this->modelMap[$modelName];
         }
-        
+
         // Try different naming conventions
         $possibleNames = [
             strtolower($modelName) . '_model',  // post_model
@@ -438,13 +437,13 @@ class BaseModel extends Model implements \ArrayAccess
             $modelName,                         // Post
             strtolower($modelName),             // post
         ];
-        
+
         foreach ($possibleNames as $name) {
             // Check if model is already loaded
             if (isset($ci->{$name})) {
                 return $ci->{$name};
             }
-            
+
             // Try to load the model
             try {
                 $ci->load->model($name);
@@ -455,14 +454,14 @@ class BaseModel extends Model implements \ArrayAccess
                 continue;
             }
         }
-        
+
         // If no model found, try to create instance directly
         foreach ($possibleNames as $name) {
             if (class_exists($name)) {
                 return new $name();
             }
         }
-        
+
         throw new \Exception("Could not resolve model: {$modelName}. Please ensure the model exists and follows Webby's naming conventions.");
     }
 
@@ -476,7 +475,7 @@ class BaseModel extends Model implements \ArrayAccess
         }
 
         $ci = get_instance();
-        
+
         // Load appropriate cache driver
         switch ($this->cacheConfig['driver']) {
             case 'memcached':
@@ -493,7 +492,7 @@ class BaseModel extends Model implements \ArrayAccess
                 $ci->load->driver('cache', array('adapter' => 'file'));
                 break;
         }
-        
+
         $this->cacheDriver = $ci->cache;
     }
 
@@ -527,7 +526,7 @@ class BaseModel extends Model implements \ArrayAccess
         return (new DateTime('now', new DateTimeZone($this->timezone)))->format('Y-m-d H:i:s');
     }
 
-     /**
+    /**
      * Set the user ID to be used for created_by/updated_by.
      * Useful for API/CLI environments.
      *
@@ -536,7 +535,7 @@ class BaseModel extends Model implements \ArrayAccess
      */
     public function asUser(mixed $userId): static
     {
-        $this->userId = $this->formatUserIdForDatabase($userId); 
+        $this->userId = $this->formatUserIdForDatabase($userId);
         return $this;
     }
 
@@ -547,12 +546,12 @@ class BaseModel extends Model implements \ArrayAccess
      */
     protected function setUser(?string $userId = '')
     {
-        if ( $userId != '' ) {
+        if ($userId != '') {
             $this->userId = $userId;
             return $this->userId;
         }
 
-        if ( $this->userId != '' ) {
+        if ($this->userId != '') {
             return $this->userId;
         }
 
@@ -584,7 +583,7 @@ class BaseModel extends Model implements \ArrayAccess
         $sessionKeys = ['user_id', 'id', 'user', 'auth_user_id', 'uuid', 'user_uuid'];
         $sessionKeyExists = in_array($this->userSessionKey, $sessionKeys);
 
-        $userId = ($sessionKeyExists) ? session($this->userSessionKey) : null; 
+        $userId = ($sessionKeyExists) ? session($this->userSessionKey) : null;
 
         if ($userId) {
             $this->userId = $userId;
@@ -659,7 +658,7 @@ class BaseModel extends Model implements \ArrayAccess
             'key' => $key,
             'tags' => array_merge($this->cacheConfig['tags'], $tags)
         ];
-        
+
         return $this;
     }
 
@@ -712,10 +711,10 @@ class BaseModel extends Model implements \ArrayAccess
         }
 
         $cacheKey = $this->buildCacheKey($method, $params);
-        
+
         // Try to get from cache
         $cachedResult = $this->getCacheValue($cacheKey);
-        
+
         if ($cachedResult !== false) {
             $this->resetCacheSettings();
             return $this->unserializeCachedResult($cachedResult);
@@ -724,7 +723,7 @@ class BaseModel extends Model implements \ArrayAccess
         // Execute fresh query and cache result
         $result = $this->executeFreshQuery($method, $params);
         $this->setCacheValue($cacheKey, $result);
-        
+
         $this->resetCacheSettings();
         return $result;
     }
@@ -753,7 +752,7 @@ class BaseModel extends Model implements \ArrayAccess
         ];
 
         $key = $this->cacheConfig['prefix'] . md5(implode('|', $keyComponents));
-        
+
         return $key;
     }
 
@@ -787,7 +786,7 @@ class BaseModel extends Model implements \ArrayAccess
 
         $ttl = $this->currentCacheSettings['ttl'] ?? $this->cacheConfig['ttl'];
         $serializedValue = $this->serializeForCache($value);
-        
+
         // Store with TTL (0 means no expiration)
         if ($ttl > 0) {
             return $this->cacheDriver->save($key, $serializedValue, $ttl);
@@ -832,7 +831,7 @@ class BaseModel extends Model implements \ArrayAccess
      */
     protected function executeFreshQuery(string $method, array $params): mixed
     {
-        return match($method) {
+        return match ($method) {
             'find' => $this->executeFreshFind($params),
             'findAll' => $this->executeFreshFindAll($params),
             'first' => $this->executeFreshFirst($params),
@@ -849,17 +848,17 @@ class BaseModel extends Model implements \ArrayAccess
     {
         $id = $params[0] ?? null;
         $originalMethod = 'parent::find';
-        
+
         if ($this->useSoftDelete && $this->temporaryWithDeleted !== true) {
             $this->db->where($this->useSoftDeleteKey, $this->softDeleteFalseValue);
         }
-        
+
         $row = $this->get($id, null, null);
-        
+
         if ($row) {
             return $row[0];
         }
-        
+
         return null;
     }
 
@@ -871,7 +870,7 @@ class BaseModel extends Model implements \ArrayAccess
         $idOrRow = $params[0] ?? null;
         $optionalValue = $params[1] ?? null;
         $orderBy = $params[2] ?? null;
-        
+
         return $this->get($idOrRow, $optionalValue, $orderBy);
     }
 
@@ -882,11 +881,11 @@ class BaseModel extends Model implements \ArrayAccess
     {
         $this->db->limit(1);
         $rows = $this->findAll();
-        
+
         if (is_array($rows) && count($rows) == 1) {
             return $rows[0];
         }
-        
+
         return $rows;
     }
 
@@ -896,9 +895,9 @@ class BaseModel extends Model implements \ArrayAccess
     protected function executeFreshCount(array $params): int
     {
         $column = $params[0] ?? '*';
-        
+
         $this->db->from($this->table);
-        
+
         if ($this->useSoftDelete && $this->temporaryWithDeleted !== true) {
             $this->db->where($this->useSoftDeleteKey, $this->softDeleteFalseValue);
         }
@@ -914,7 +913,7 @@ class BaseModel extends Model implements \ArrayAccess
         $idOrRow = $params[0] ?? null;
         $optionalValue = $params[1] ?? null;
         $orderBy = $params[2] ?? null;
-        
+
         // Custom order by if desired
         if ($orderBy != null) {
             $this->db->order_by($orderBy);
@@ -993,7 +992,7 @@ class BaseModel extends Model implements \ArrayAccess
         // In production, you might want to maintain a tag index
         $pattern = $this->cacheConfig['prefix'] . '*';
         $keys = $this->getCacheKeys($pattern);
-        
+
         foreach ($keys as $key) {
             $cached = $this->getCacheValue($key);
             if ($cached && isset($cached['tags'])) {
@@ -1002,7 +1001,7 @@ class BaseModel extends Model implements \ArrayAccess
                 }
             }
         }
-        
+
         return true;
     }
 
@@ -1015,11 +1014,11 @@ class BaseModel extends Model implements \ArrayAccess
     {
         $pattern = $this->cacheConfig['prefix'] ?? '' . $this->table . '*';
         $keys = $this->getCacheKeys($pattern);
-        
+
         foreach ($keys as $key) {
             $this->cacheDriver->delete($key);
         }
-        
+
         return true;
     }
 
@@ -1034,7 +1033,7 @@ class BaseModel extends Model implements \ArrayAccess
         // This is a simplified implementation
         // Different cache drivers handle key patterns differently
         $keys = [];
-        
+
         switch ($this->cacheConfig['driver']) {
             case 'redis':
                 // Redis supports KEYS command
@@ -1043,7 +1042,7 @@ class BaseModel extends Model implements \ArrayAccess
                     $keys = $redis->keys($pattern);
                 }
                 break;
-                
+
             case 'file':
                 // For file cache, scan cache directory
                 $cacheDir = APPPATH . 'cache/';
@@ -1056,12 +1055,12 @@ class BaseModel extends Model implements \ArrayAccess
                     }
                 }
                 break;
-                
+
             default:
                 // For other drivers, we can't easily get all keys
                 break;
         }
-        
+
         return $keys;
     }
 
@@ -1114,12 +1113,12 @@ class BaseModel extends Model implements \ArrayAccess
     public function setCacheConfig(array $config): static
     {
         $this->cacheConfig = array_merge($this->cacheConfig, $config);
-        
+
         // Reinitialize cache driver if settings changed
         if (isset($config['enabled']) || isset($config['driver'])) {
             $this->initializeCacheDriver();
         }
-        
+
         return $this;
     }
 
@@ -1135,9 +1134,9 @@ class BaseModel extends Model implements \ArrayAccess
         $this->cacheConfig['enabled'] = true;
         $this->cacheConfig['ttl'] = $ttl;
         $this->cacheConfig['driver'] = $driver;
-        
+
         $this->initializeCacheDriver();
-        
+
         return $this;
     }
 
@@ -1194,7 +1193,7 @@ class BaseModel extends Model implements \ArrayAccess
         if ($this->exists) {
             return $this->performUpdate();
         }
-        
+
         // Otherwise, create a new record
         return $this->performInsert();
     }
@@ -1207,10 +1206,10 @@ class BaseModel extends Model implements \ArrayAccess
     protected function performInsert(): bool
     {
         $data = $this->getAttributesForInsert();
-        
+
         // Fire creating event
         $data = $this->creating($data);
-        
+
         // Add created timestamp and user tracking
         $currentUserId = $this->trackUser ? $this->getCurrentUserId() : null;
 
@@ -1220,43 +1219,43 @@ class BaseModel extends Model implements \ArrayAccess
 
         // Add timestamps if enabled
         if ($this->timestamps) {
-            
+
             $timestamp = $this->getCurrentTimestamp();
-            
-            if ( ! isset($data[$this->createdAt])) {
+
+            if (! isset($data[$this->createdAt])) {
                 $data[$this->createdAt] = $timestamp;
             }
-            
-            if ( ! isset($data[$this->updatedAt])) {
+
+            if (! isset($data[$this->updatedAt])) {
                 $data[$this->updatedAt] = $timestamp;
             }
         }
 
         // Insert the record
         $result = $this->db->insert($this->table, $data);
-        
+
         if ($result) {
             $insertId = $this->db->insert_id();
-            
+
             // Set the primary key
             $this->setAttribute($this->primaryKey, $insertId);
-            
+
             // Mark as existing and recently created
             $this->exists = true;
             $this->wasRecentlyCreated = true;
-            
+
             // Update original attributes
             $this->syncOriginal();
-            
+
             // Clear related cache
             $this->clearModelCacheAfterWrite();
-            
+
             // Fire created event
             $this->created($this);
-            
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -1268,53 +1267,53 @@ class BaseModel extends Model implements \ArrayAccess
     protected function performUpdate(): bool
     {
         $changed = $this->getChangedAttributes();
-        
+
         if (empty($changed)) {
             return true; // No changes to save
         }
-        
+
         // Fire updating event
         $changed = $this->updating($changed);
-        
+
         // Add updated timestamp and user tracking
         $currentUserId = $this->trackUser ? $this->getCurrentUserId() : null;
-        
+
         if ($this->timestamps && !isset($changed[$this->updatedAt])) {
             $changed[$this->updatedAt] = $this->getCurrentTimestamp();
         }
-        
+
         if ($this->trackUser && $currentUserId && !isset($changed[$this->updatedBy])) {
             $changed[$this->updatedBy] = $currentUserId;
         }
-        
+
         // Convert values for database storage
         foreach ($changed as $key => $value) {
             $changed[$key] = $this->getValueForDatabase($key, $value);
         }
-        
+
         // Update the record
         $primaryKeyValue = $this->getAttribute($this->primaryKey);
         $this->db->where($this->primaryKey, $primaryKeyValue);
         $result = $this->db->update($this->table, $changed);
-        
+
         if ($result) {
             // Update attributes with new values
             foreach ($changed as $key => $value) {
                 $this->setAttribute($key, $value);
             }
-            
+
             // Sync original attributes
             $this->syncOriginal();
-            
+
             // Clear related cache
             $this->clearModelCacheAfterWrite();
-            
+
             // Fire updated event
             $this->updated($this);
-            
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -1331,7 +1330,7 @@ class BaseModel extends Model implements \ArrayAccess
 
         // Clear all cache for this model table
         $this->clearModelCache();
-        
+
         // Also clear any tagged cache
         if (!empty($this->cacheConfig['tags'])) {
             $this->clearCacheByTags($this->cacheConfig['tags']);
@@ -1348,14 +1347,14 @@ class BaseModel extends Model implements \ArrayAccess
         if (!$this->exists) {
             return false;
         }
-        
+
         $primaryKeyValue = $this->getAttribute($this->primaryKey);
-        
+
         // Fire deleting event
         if (!$this->deleting($primaryKeyValue)) {
             return false;
         }
-        
+
         // Perform soft delete if enabled
         if ($this->useSoftDelete) {
             $result = $this->performSoftDelete();
@@ -1364,16 +1363,16 @@ class BaseModel extends Model implements \ArrayAccess
             $this->db->where($this->primaryKey, $primaryKeyValue);
             $result = $this->db->delete($this->table);
         }
-        
+
         if ($result) {
             $this->exists = false;
-            
+
             // Fire deleted event
             $this->deleted($this);
-            
+
             return true;
         }
-        
+
         return false;
     }
 
@@ -1387,7 +1386,7 @@ class BaseModel extends Model implements \ArrayAccess
         $data = [
             $this->useSoftDeleteKey => $this->getCurrentTimestamp()
         ];
-        
+
         // Add deleted_by tracking if user tracking is enabled
         if ($this->trackUser) {
             $currentUserId = $this->getCurrentUserId();
@@ -1395,10 +1394,10 @@ class BaseModel extends Model implements \ArrayAccess
                 $data[$this->deletedBy] = $currentUserId;
             }
         }
-        
+
         $primaryKeyValue = $this->getAttribute($this->primaryKey);
         $this->db->where($this->primaryKey, $primaryKeyValue);
-        
+
         return $this->db->update($this->table, $data);
     }
 
@@ -1412,15 +1411,15 @@ class BaseModel extends Model implements \ArrayAccess
         if (!$this->exists) {
             return null;
         }
-        
+
         $primaryKeyValue = $this->getAttribute($this->primaryKey);
         $fresh = static::find($primaryKeyValue);
-        
+
         if ($fresh) {
             $this->attributes = $fresh->attributes;
             $this->syncOriginal();
         }
-        
+
         return $this;
     }
 
@@ -1434,18 +1433,18 @@ class BaseModel extends Model implements \ArrayAccess
         if (!$this->exists) {
             return $this;
         }
-        
+
         $primaryKeyValue = $this->getAttribute($this->primaryKey);
         $this->db->where($this->primaryKey, $primaryKeyValue);
         $query = $this->db->get($this->table);
-        
+
         if ($query->num_rows() > 0) {
             $data = $query->row_array();
             $this->attributes = [];
             $this->fill($data);
             $this->syncOriginal();
         }
-        
+
         return $this;
     }
 
@@ -1459,17 +1458,17 @@ class BaseModel extends Model implements \ArrayAccess
     protected function getAttributesForInsert(): array
     {
         $attributes = [];
-        
+
         foreach ($this->attributes as $key => $value) {
             // Skip primary key if it's auto-increment and empty
             if ($key === $this->primaryKey && empty($value)) {
                 continue;
             }
-            
+
             // Convert value for database storage
             $attributes[$key] = $this->getValueForDatabase($key, $value);
         }
-        
+
         return $attributes;
     }
 
@@ -1481,13 +1480,13 @@ class BaseModel extends Model implements \ArrayAccess
     public function getChangedAttributes(): array
     {
         $changed = [];
-        
+
         foreach ($this->attributes as $key => $value) {
             if (!array_key_exists($key, $this->original) || $this->original[$key] !== $value) {
                 $changed[$key] = $value;
             }
         }
-        
+
         return $changed;
     }
 
@@ -1501,19 +1500,19 @@ class BaseModel extends Model implements \ArrayAccess
     public function hasChanges($attributes = null): bool
     {
         $changed = $this->getChangedAttributes();
-        
+
         if (is_null($attributes)) {
             return count($changed) > 0;
         }
-        
+
         $attributes = is_array($attributes) ? $attributes : func_get_args();
-        
+
         foreach ($attributes as $attribute) {
             if (array_key_exists($attribute, $changed)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -1552,7 +1551,7 @@ class BaseModel extends Model implements \ArrayAccess
         if (is_null($key)) {
             return $this->original;
         }
-        
+
         return $this->original[$key] ?? $default;
     }
 
@@ -1633,7 +1632,7 @@ class BaseModel extends Model implements \ArrayAccess
         if (isset($columns['deleted_by'])) {
             $this->deletedBy = $columns['deleted_by'];
         }
-        
+
         return $this;
     }
 
@@ -1645,11 +1644,11 @@ class BaseModel extends Model implements \ArrayAccess
     public function getAuditColumns(): array
     {
         $columns = $this->getTimestampColumns();
-        
+
         if ($this->trackUser) {
             $columns = array_merge($columns, $this->getUserTrackingColumns());
         }
-        
+
         return $columns;
     }
 
@@ -1662,7 +1661,7 @@ class BaseModel extends Model implements \ArrayAccess
     protected function filterFillable($data)
     {
         if ($this->fillable) {
-            $data = array_intersect_key($data, array_flip($this->fillable)); 
+            $data = array_intersect_key($data, array_flip($this->fillable));
         }
 
         return $data;
@@ -1909,7 +1908,7 @@ class BaseModel extends Model implements \ArrayAccess
         if (method_exists($class, '__construct')) {
             $reflection = new \ReflectionClass($class);
             $constructor = $reflection->getConstructor();
-            
+
             if ($constructor && $constructor->getNumberOfRequiredParameters() <= 1) {
                 return new $class($value, ...$parameters);
             }
@@ -2131,7 +2130,7 @@ class BaseModel extends Model implements \ArrayAccess
     protected function castToPhone(mixed $value, ?string $format = null): array
     {
         $cleaned = preg_replace('/[^0-9]/', '', $value);
-        
+
         return [
             'raw' => (string) $value,
             'cleaned' => $cleaned,
@@ -2182,13 +2181,13 @@ class BaseModel extends Model implements \ArrayAccess
     protected function hydrateObject(string $class, array $data, array $options = []): mixed
     {
         $reflection = new \ReflectionClass($class);
-        
+
         // Try constructor injection
         $constructor = $reflection->getConstructor();
         if ($constructor) {
             $parameters = $constructor->getParameters();
             $args = [];
-            
+
             foreach ($parameters as $param) {
                 $paramName = $param->getName();
                 if (array_key_exists($paramName, $data)) {
@@ -2199,7 +2198,7 @@ class BaseModel extends Model implements \ArrayAccess
                     $args[] = null;
                 }
             }
-            
+
             $instance = $reflection->newInstanceArgs($args);
         } else {
             $instance = $reflection->newInstance();
@@ -2233,7 +2232,7 @@ class BaseModel extends Model implements \ArrayAccess
             $address['zip'] ?? '',
             $address['country'] ?? ''
         ]);
-        
+
         return implode(', ', $parts);
     }
 
@@ -2247,13 +2246,14 @@ class BaseModel extends Model implements \ArrayAccess
     protected function formatPhone(string $number, ?string $format = null): string
     {
         if (strlen($number) === 10) {
-            return sprintf('%s-%s-%s', 
+            return sprintf(
+                '%s-%s-%s',
                 substr($number, 0, 3),
                 substr($number, 3, 3),
                 substr($number, 6, 4)
             );
         }
-        
+
         return $number;
     }
 
@@ -2472,7 +2472,7 @@ class BaseModel extends Model implements \ArrayAccess
         }
 
         $relationship = $this->{$relation}();
-        
+
         if (!$data) {
             return $this;
         }
@@ -2490,7 +2490,7 @@ class BaseModel extends Model implements \ArrayAccess
     protected function loadRelationship(array $relationship, mixed $data): mixed
     {
         $relatedModel = new $relationship['related']();
-        
+
         return match ($relationship['type']) {
             'hasOne' => $relatedModel->where($relationship['foreign_key'], $data[$relationship['local_key']])->first(),
             'hasMany' => $relatedModel->where($relationship['foreign_key'], $data[$relationship['local_key']])->findAll(),
@@ -2510,9 +2510,9 @@ class BaseModel extends Model implements \ArrayAccess
     protected function loadBelongsToMany(array $relationship, mixed $data): mixed
     {
         $this->db->select($relationship['related'] . '.*')
-                 ->from($relationship['table'])
-                 ->join($relationship['related'], $relationship['table'] . '.' . $relationship['related_pivot_key'] . ' = ' . $relationship['related'] . '.id')
-                 ->where($relationship['table'] . '.' . $relationship['foreign_pivot_key'], $data[$this->primaryKey]);
+            ->from($relationship['table'])
+            ->join($relationship['related'], $relationship['table'] . '.' . $relationship['related_pivot_key'] . ' = ' . $relationship['related'] . '.id')
+            ->where($relationship['table'] . '.' . $relationship['foreign_pivot_key'], $data[$this->primaryKey]);
 
         return $this->getResult($this->db->get());
     }
@@ -2568,7 +2568,7 @@ class BaseModel extends Model implements \ArrayAccess
     public function scope(string $scope, mixed ...$parameters): static
     {
         $method = 'scope' . ucfirst($scope);
-        
+
         if (method_exists($this, $method)) {
             $this->{$method}(...$parameters);
         }
@@ -2599,7 +2599,7 @@ class BaseModel extends Model implements \ArrayAccess
      */
     public function removeGlobalScope(string $scope): static
     {
-        $this->globalScopes = array_filter($this->globalScopes, function($s) use ($scope) {
+        $this->globalScopes = array_filter($this->globalScopes, function ($s) use ($scope) {
             return $s !== $scope;
         });
 
@@ -2671,13 +2671,13 @@ class BaseModel extends Model implements \ArrayAccess
     {
         $instance = new static();
         $instance->db->where($instance->primaryKey, $id);
-        
+
         if ($instance->useSoftDelete) {
             $instance->db->where($instance->useSoftDeleteKey, $instance->softDeleteFalseValue);
         }
-        
+
         $query = $instance->db->get($instance->table);
-        
+
         if ($query->num_rows() > 0) {
             $data = $query->row_array();
             $instance->attributes = $data;
@@ -2689,7 +2689,7 @@ class BaseModel extends Model implements \ArrayAccess
             // return $model;
             return $model;
         }
-        
+
         return null;
     }
 
@@ -2721,18 +2721,18 @@ class BaseModel extends Model implements \ArrayAccess
     public static function firstOrCreate(array $attributes, array $values = []): static
     {
         $instance = new static();
-        
+
         // Build where clause
         foreach ($attributes as $key => $value) {
             $instance->db->where($key, $value);
         }
-        
+
         if ($instance->useSoftDelete) {
             $instance->db->where($instance->useSoftDeleteKey, $instance->softDeleteFalseValue);
         }
-        
+
         $query = $instance->db->get($instance->table);
-        
+
         if ($query->num_rows() > 0) {
             $data = $query->row_array();
             $model = new static($data);
@@ -2770,18 +2770,18 @@ class BaseModel extends Model implements \ArrayAccess
     public static function firstOrNew(array $attributes, array $values = []): static
     {
         $instance = new static();
-        
+
         // Build where clause
         foreach ($attributes as $key => $value) {
             $instance->db->where($key, $value);
         }
-        
+
         if ($instance->useSoftDelete) {
             $instance->db->where($instance->useSoftDeleteKey, $instance->softDeleteFalseValue);
         }
-        
+
         $query = $instance->db->get($instance->table);
-        
+
         if ($query->num_rows() > 0) {
             $data = $query->row_array();
             $model = new static($data);
@@ -2807,10 +2807,10 @@ class BaseModel extends Model implements \ArrayAccess
     public function createBy(array $data): object|array
     {
         $data = $this->addTimestamps($data);
-        
+
         $this->db->insert($this->table, $data);
         $insertId = $this->db->insert_id();
-        
+
         $result = $this->find($insertId);
 
         if (!empty($this->protected)) {
@@ -2820,7 +2820,7 @@ class BaseModel extends Model implements \ArrayAccess
         return $result;
     }
 
-        /**
+    /**
      * Update the model in the database
      *
      * @param array $attributes
@@ -2832,7 +2832,7 @@ class BaseModel extends Model implements \ArrayAccess
         if (!empty($attributes)) {
             $this->fill($attributes);
         }
-        
+
         return $this->save($options);
     }
 
@@ -2862,16 +2862,16 @@ class BaseModel extends Model implements \ArrayAccess
         // if (!empty($idOrRow)) {
         //     static::fill($idOrRow);
         // }
-// dd($idOrRow, $optionalValue, $attributes);
+        // dd($idOrRow, $optionalValue, $attributes);
         // if (is_array($idOrRow) || is_array($optionalValue)) {
-            
+
         //     if (!empty($attributes)) {
         //         static::fill($attributes);
         //     }
         //     dd('ss');
         //     return static::save($optionalValue);
         // }
-// dd('ss');
+        // dd('ss');
         if ($optionalValue == null) {
             if (is_array($idOrRow)) {
                 $this->db->where($idOrRow);
@@ -2884,14 +2884,14 @@ class BaseModel extends Model implements \ArrayAccess
                 $data = $this->filterFillable($optionalValue);
                 return $this->db->update($this->table, $data);
             } else {
-                 $this->db->where([$idOrRow => $optionalValue]);
+                $this->db->where([$idOrRow => $optionalValue]);
             }
         }
 
         $attributes = $this->filterFillable($attributes);
 
         if (is_null($idOrRow) && empty($attributes)) {
-            return $this->db->update($this->table);  
+            return $this->db->update($this->table);
         }
 
         return $this->db->update($this->table, $attributes);
@@ -2984,7 +2984,7 @@ class BaseModel extends Model implements \ArrayAccess
         return $result;
     }
 
-        /**
+    /**
      * Soft delete a record
      *
      * @param mixed $id
@@ -3210,7 +3210,7 @@ class BaseModel extends Model implements \ArrayAccess
     public function collect(mixed $idOrRow = null, mixed $optionalValue = null, mixed $orderBy = null): array|object
     {
         $results = $this->findAll($idOrRow, $optionalValue, $orderBy);
-        
+
         if ($this->returnAs === 'array') {
             return $results;
         }
@@ -3231,7 +3231,7 @@ class BaseModel extends Model implements \ArrayAccess
 
         do {
             $results = $this->setLimitStart($count, ($page - 1) * $count)->findAll();
-            
+
             $countResults = count($results);
 
             if ($countResults == 0) {
@@ -3257,7 +3257,7 @@ class BaseModel extends Model implements \ArrayAccess
     public function count(string $column = '*'): int
     {
         $this->db->from($this->table);
-        
+
         if ($this->useSoftDelete && $this->temporaryWithDeleted !== true) {
             $this->db->where($this->useSoftDeleteKey, $this->softDeleteFalseValue);
         }
@@ -3275,7 +3275,7 @@ class BaseModel extends Model implements \ArrayAccess
     {
         $this->db->select_min($column);
         $this->db->from($this->table);
-        
+
         if ($this->useSoftDelete && $this->temporaryWithDeleted !== true) {
             $this->db->where($this->useSoftDeleteKey, $this->softDeleteFalseValue);
         }
@@ -3294,7 +3294,7 @@ class BaseModel extends Model implements \ArrayAccess
     {
         $this->db->select_max($column);
         $this->db->from($this->table);
-        
+
         if ($this->useSoftDelete && $this->temporaryWithDeleted !== true) {
             $this->db->where($this->useSoftDeleteKey, $this->softDeleteFalseValue);
         }
@@ -3313,7 +3313,7 @@ class BaseModel extends Model implements \ArrayAccess
     {
         $this->db->select_avg($column);
         $this->db->from($this->table);
-        
+
         if ($this->useSoftDelete && $this->temporaryWithDeleted !== true) {
             $this->db->where($this->useSoftDeleteKey, $this->softDeleteFalseValue);
         }
@@ -3332,7 +3332,7 @@ class BaseModel extends Model implements \ArrayAccess
     {
         $this->db->select_sum($column);
         $this->db->from($this->table);
-        
+
         if ($this->useSoftDelete && $this->temporaryWithDeleted !== true) {
             $this->db->where($this->useSoftDeleteKey, $this->softDeleteFalseValue);
         }
@@ -3491,7 +3491,7 @@ class BaseModel extends Model implements \ArrayAccess
         if ($this->useSoftDelete && $this->temporaryWithDeleted !== true) {
             $this->db->where($this->useSoftDeleteKey, $this->softDeleteFalseValue);
         }
-        
+
         $this->load->helper('security');
 
         $_POST = xss_clean($_POST);
@@ -3715,40 +3715,40 @@ class BaseModel extends Model implements \ArrayAccess
     protected function returnType($multi = false)
     {
         $method = ($multi) ? 'result' : 'row';
-        
-		//if a custom object return type
-		if (($this->temporaryReturnType == 'object') && ($this->customReturnObject != '')) {
-		  return 'custom_'.$method.'_object';
-		} else {
-			// If our type is either 'array' or 'json', we'll simply use the array version
-			// of the function, since the database library doesn't support json.
-			return $this->temporaryReturnType == 'array' ? $method . '_array' : $method;
-		}	
+
+        //if a custom object return type
+        if (($this->temporaryReturnType == 'object') && ($this->customReturnObject != '')) {
+            return 'custom_' . $method . '_object';
+        } else {
+            // If our type is either 'array' or 'json', we'll simply use the array version
+            // of the function, since the database library doesn't support json.
+            return $this->temporaryReturnType == 'array' ? $method . '_array' : $method;
+        }
     }
 
     /**
      * Return the return data for configured type
-    *
-    * @param mixed $data
-    * @param bool $multi
-    * @return mixed
-    */
+     *
+     * @param mixed $data
+     * @param bool $multi
+     * @return mixed
+     */
     protected function returnData($data, $multi = false)
     {
-		$returnTypeMethod = $this->returnType($multi);
+        $returnTypeMethod = $this->returnType($multi);
 
-		// if a object return type
-		if (($this->temporaryReturnType == 'object') && ($this->customReturnObject != '')) {
-			if ($returnTypeMethod == 'custom_row_object') {
-				$data = $data->{$returnTypeMethod}(0,$this->customReturnObject);
-			} else {	
-			 $data = $data->{$returnTypeMethod}($this->customReturnObject);
-			}
-		} else {
-			$data = $data->{$returnTypeMethod}();
-		}
+        // if a object return type
+        if (($this->temporaryReturnType == 'object') && ($this->customReturnObject != '')) {
+            if ($returnTypeMethod == 'custom_row_object') {
+                $data = $data->{$returnTypeMethod}(0, $this->customReturnObject);
+            } else {
+                $data = $data->{$returnTypeMethod}($this->customReturnObject);
+            }
+        } else {
+            $data = $data->{$returnTypeMethod}();
+        }
 
-		return  $data;
+        return  $data;
     }
 
     /**
@@ -4508,11 +4508,11 @@ class BaseModel extends Model implements \ArrayAccess
         int|array $value = 1,
         array $columns = []
     ) {
-        
+
         if (is_numeric($value)) {
             $value = (int) abs($value);
         }
-       
+
         $columns = is_array($value) ? $value : $columns;
 
         $fieldsArray = is_array($fields);
@@ -4529,14 +4529,13 @@ class BaseModel extends Model implements \ArrayAccess
             $this->db->set($fields, "{$fields}+{$value}", false);
         }
 
-        if (!empty($columns) ) {
+        if (!empty($columns)) {
             $this->db->set($columns, false);
         }
 
         $result = $this->db->update($this->table);
 
         return ($fieldsArray) ? $result : $this;
-       
     }
 
     //--------------------------------------------------------------------
@@ -4560,7 +4559,7 @@ class BaseModel extends Model implements \ArrayAccess
         if (is_numeric($value)) {
             $value = (int) abs($value);
         }
-       
+
         $columns = is_array($value) ? $value : $columns;
 
         $fieldsArray = is_array($fields);
@@ -4577,14 +4576,13 @@ class BaseModel extends Model implements \ArrayAccess
             $this->db->set($fields, "{$fields}-{$value}", false);
         }
 
-        if (!empty($columns) ) {
+        if (!empty($columns)) {
             $this->db->set($columns, false);
         }
 
         $result = $this->db->update($this->table);
 
         return ($fieldsArray) ? $result : $this;
-       
     }
 
     //--------------------------------------------------------------------
@@ -4899,11 +4897,10 @@ class BaseModel extends Model implements \ArrayAccess
             ->where('id <', $currentId)
             ->order_by('id', 'desc')
             ->limit(1);
-        
-        $query = $this->db->get();
-        
-        return $this->getRowResult($query);
 
+        $query = $this->db->get();
+
+        return $this->getRowResult($query);
     }
 
     /**
@@ -4921,11 +4918,10 @@ class BaseModel extends Model implements \ArrayAccess
             ->where('id >', $currentId)
             ->order_by('id', 'asc')
             ->limit(1);
-        
-        $query = $this->db->get();
-        
-        return $this->getRowResult($query);
 
+        $query = $this->db->get();
+
+        return $this->getRowResult($query);
     }
 
     /**
@@ -4990,63 +4986,63 @@ class BaseModel extends Model implements \ArrayAccess
     }
 
     /**
-	 * Start Transaction
-	 *
-	 * @param	bool	$test_mode = false
-	 * @return	bool
-	 */
+     * Start Transaction
+     *
+     * @param	bool	$test_mode = false
+     * @return	bool
+     */
     public function startTransaction($testMode = false)
     {
         return $this->db->trans_start($testMode);
     }
 
     /**
-	 * Begin Transaction
-	 *
-	 * @param	bool	$test_mode = false
-	 * @return	bool
-	 */
+     * Begin Transaction
+     *
+     * @param	bool	$test_mode = false
+     * @return	bool
+     */
     public function beginTransaction($testMode = false)
     {
         return $this->db->trans_begin($testMode);
     }
 
     /**
-	 * Complete Transaction
-	 *
-	 * @return	bool
-	 */
+     * Complete Transaction
+     *
+     * @return	bool
+     */
     public function completeTransaction()
     {
         return $this->db->trans_complete();
     }
 
     /**
-	 * Lets you retrieve the transaction flag 
+     * Lets you retrieve the transaction flag 
      * to determine if it has failed
-	 *
-	 * @return	bool
-	 */
+     *
+     * @return	bool
+     */
     public function transactionStatus()
     {
         return $this->db->trans_status();
     }
 
     /**
-	 * Rollback Transaction
-	 *
-	 * @return	bool
-	 */
+     * Rollback Transaction
+     *
+     * @return	bool
+     */
     public function rollbackTransaction()
     {
         return $this->db->trans_rollback();
     }
 
     /**
-	 * Commit Transaction
-	 *
-	 * @return	bool
-	 */
+     * Commit Transaction
+     *
+     * @return	bool
+     */
     public function commitTransaction()
     {
         return $this->db->trans_commit();
@@ -5167,7 +5163,7 @@ class BaseModel extends Model implements \ArrayAccess
     {
 
         if (property_exists(get_instance(), $key)) {
-            
+
             return parent::__get($key);
         }
 
@@ -5198,15 +5194,13 @@ class BaseModel extends Model implements \ArrayAccess
     {
 
         if (isset($this->attributes[$key])) {
-            
-            return true;
-        }
-        else if (isset($this->attributes[$key])) {
 
             return true;
-        }
-        else if (method_exists($this, $method = $key)) {
-            
+        } else if (isset($this->attributes[$key])) {
+
+            return true;
+        } else if (method_exists($this, $method = $key)) {
+
             // return ($this->getRelationshipProperty($method));
         }
 
@@ -5242,8 +5236,9 @@ class BaseModel extends Model implements \ArrayAccess
      * @param mixed $value
      * @return void
      */
-    public function offsetSet(mixed $offset, mixed $value): void {
-        
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+
         $this->__set($offset, $value);
     }
 
@@ -5253,7 +5248,8 @@ class BaseModel extends Model implements \ArrayAccess
      * @param string $offset
      * @return bool Result
      */
-    public function offsetExists(mixed $offset): bool {
+    public function offsetExists(mixed $offset): bool
+    {
 
         return $this->__isset($offset);
     }
@@ -5264,7 +5260,8 @@ class BaseModel extends Model implements \ArrayAccess
      * @param mixed $offset
      * @return void
      */
-    public function offsetUnset(mixed $offset): void {
+    public function offsetUnset(mixed $offset): void
+    {
 
         $this->__unset($offset);
     }
@@ -5275,10 +5272,10 @@ class BaseModel extends Model implements \ArrayAccess
      * @param mixed $offset
      * @return mixed Value of property
      */
-    public function offsetGet(mixed $offset): mixed {
+    public function offsetGet(mixed $offset): mixed
+    {
 
         return $this->$offset;
     }
-
 }
 /* end of file Base/Models/BaseModel.php */
