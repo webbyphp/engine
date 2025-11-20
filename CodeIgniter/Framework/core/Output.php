@@ -305,7 +305,7 @@ class CI_Output
 	 * @param	string	$charset	Character set (default: null)
 	 * @return	CI_Output
 	 */
-	public function set_content_type($mime_type, $charset = null)
+	public function set_content_type(string $mime_type, ?string $charset = null): self
 	{
 		if (strpos($mime_type, '/') === false) {
 			$extension = ltrim($mime_type, '.');
@@ -340,7 +340,7 @@ class CI_Output
 	 * @param	string	$charset	Character set (default: null)
 	 * @return	CI_Output
 	 */
-	public function setContentType($mime_type, $charset = null)
+	public function setContentType(string $mime_type, ?string $charset = null)
 	{
 		if (strpos($mime_type, '/') === false) {
 			$extension = ltrim($mime_type, '.');
@@ -410,7 +410,7 @@ class CI_Output
 	 * @param	string	$header
 	 * @return	string
 	 */
-	public function get_header($header)
+	public function get_header(string $header)
 	{
 		// We only need [x][0] from our multi-dimensional array
 		$header_lines = array_map(function ($headers) {
@@ -442,7 +442,7 @@ class CI_Output
 	 * @param	string	$header
 	 * @return	string
 	 */
-	public function getHeader($header)
+	public function getHeader(string $header)
 	{
 		// We only need [x][0] from our multi-dimensional array
 		$header_lines = array_map(function ($headers) {
@@ -480,7 +480,7 @@ class CI_Output
 	 * @param	string	$text	Optional message
 	 * @return	CI_Output
 	 */
-	public function set_status_header($code = 200, $text = '')
+	public function set_status_header(int $code = 200, string $text = '')
 	{
 		set_status_header($code, $text);
 		return $this;
@@ -530,7 +530,7 @@ class CI_Output
      * @param string|string[] $value Header value(s).
      * @return static
      */
-    public function withHeader($name, $value)
+    public function withHeader(string $name, $value)
     {
         $this->setHeader("{$name}: {$value}", true);
         
@@ -550,7 +550,7 @@ class CI_Output
      * @param string|string[] $value Header value(s).
      * @return self
      */
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader(string $name, $value)
     {
         $this->setHeader("{$name}: {$value}");
         
@@ -727,7 +727,7 @@ class CI_Output
 	 * @param	bool	$val	true to enable or false to disable
 	 * @return	CI_Output
 	 */
-	public function enable_profiler($val = true)
+	public function enable_profiler(bool $val = true)
 	{
 		$this->enable_profiler = is_bool($val) ? $val : true;
 		return $this;
@@ -739,7 +739,7 @@ class CI_Output
 	 * @param	bool	$val	true to enable or false to disable
 	 * @return	CI_Output
 	 */
-	public function enableProfiler($val = true)
+	public function enableProfiler(bool $val = true)
 	{
 		$this->enable_profiler = is_bool($val) ? $val : true;
 		return $this;
@@ -756,7 +756,7 @@ class CI_Output
 	 * @param	array	$sections	Profiler sections
 	 * @return	CI_Output
 	 */
-	public function set_profiler_sections($sections)
+	public function set_profiler_sections(array $sections)
 	{
 		if (isset($sections['query_toggle_count'])) {
 			$this->_profiler_sections['query_toggle_count'] = (int) $sections['query_toggle_count'];
@@ -779,7 +779,7 @@ class CI_Output
 	 * @param	array	$sections	Profiler sections
 	 * @return	CI_Output
 	 */
-	public function setProfilerSections($sections)
+	public function setProfilerSections(array $sections)
 	{
 		if (isset($sections['query_toggle_count'])) {
 			$this->_profiler_sections['query_toggle_count'] = (int) $sections['query_toggle_count'];
@@ -801,7 +801,7 @@ class CI_Output
 	 * @param	int	$time	Cache expiration time in minutes
 	 * @return	CI_Output
 	 */
-	public function cache($time)
+	public function cache(int $time)
 	{
 		$this->cache_expiration = is_numeric($time) ? $time : 0;
 		return $this;
@@ -834,9 +834,9 @@ class CI_Output
 	 * @param	string	$output	Output data override
 	 * @return	void
 	 */
-	public function _display($output = null)
+	public function _display(?string $output = null)
 	{
-		// Note:  We use load_class() because we can't use $CI =& get_instance()
+		// Note:  We use load_class() because we can't use $CI = get_instance()
 		// since this function is sometimes called by the caching mechanism,
 		// which happens before the CI super object is available.
 		$BM = load_class('Benchmark', 'core');
@@ -944,6 +944,7 @@ class CI_Output
 		// Does the controller contain a function named _output()?
 		// If so send the output there.  Otherwise, echo it.
 		if (method_exists($CI, '_output')) {
+			/** @var CI_Controller $CI */
 			$CI->_output($output);
 		} else {
 			echo $output; // Send it to the browser!
@@ -961,7 +962,7 @@ class CI_Output
 	 * @param	string	$output	Output data to cache
 	 * @return	void
 	 */
-	public function _write_cache($output)
+	public function _write_cache(string $output)
 	{
 		$CI = get_instance();
 		$path = $CI->config->item('cache_path');
@@ -1120,7 +1121,7 @@ class CI_Output
 	 * @param	string	$uri	URI string
 	 * @return	bool
 	 */
-	public function delete_cache($uri = '')
+	public function delete_cache(string $uri = '')
 	{
 		$CI = get_instance();
 		$cache_path = $CI->config->item('cache_path');
@@ -1161,7 +1162,7 @@ class CI_Output
 	 * @param	string	$uri	URI string
 	 * @return	bool
 	 */
-	public function deleteCache($uri = '')
+	public function deleteCache(string $uri = '')
 	{
 		return $this->delete_cache($uri);
 	}
@@ -1178,7 +1179,7 @@ class CI_Output
 	 * @param	int	$expiration	Timestamp of when should the requested page expire from cache
 	 * @return	void
 	 */
-	public function set_cache_header($last_modified, $expiration)
+	public function set_cache_header(int $last_modified, int $expiration)
 	{
 		$max_age = $expiration - $_SERVER['REQUEST_TIME'];
 
@@ -1203,7 +1204,7 @@ class CI_Output
 	 * @param	int	$expiration	Timestamp of when should the requested page expire from cache
 	 * @return	void
 	 */
-	public function setCacheHeader($last_modified, $expiration)
+	public function setCacheHeader(int $last_modified, int $expiration)
 	{
 		return $this->set_cache_header($last_modified, $expiration);
 	}
@@ -1216,7 +1217,7 @@ class CI_Output
 	 * @param	string	$str
 	 * @return	int
 	 */
-	protected static function strlen($str)
+	protected static function strlen(string $str)
 	{
 		return (self::$func_overload)
 			? mb_strlen($str, '8bit')
@@ -1233,7 +1234,7 @@ class CI_Output
 	 * @param	int	$length
 	 * @return	string
 	 */
-	protected static function substr($str, $start, $length = null)
+	protected static function substr(string $str, string $start, ?string $length = null)
 	{
 		if (self::$func_overload) {
 			return mb_substr($str, $start, $length, '8bit');

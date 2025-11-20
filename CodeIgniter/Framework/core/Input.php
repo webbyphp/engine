@@ -127,6 +127,13 @@ class CI_Input
 	protected $uni;
 
 	/**
+	 * Cleaned data from POST, GET and COOKIE etc
+	 * when $this->all() is used
+	 * @var
+	 */
+	protected $data;
+
+	/**
 	 * File Upload variables
 	 *
 	 * @var
@@ -141,7 +148,6 @@ class CI_Input
 	protected $givenName;
 	protected $rawname;
 	protected $isUploadedFile = false;
-
 
 
 	// --------------------------------------------------------------------
@@ -205,6 +211,8 @@ class CI_Input
 				$output[$key] = $this->_fetch_from_array($array, $key, $xss_clean);
 			}
 
+			$this->data = $output;
+
 			return $output;
 		}
 
@@ -266,16 +274,47 @@ class CI_Input
 	// --------------------------------------------------------------------
 
 	/**
+	 * Get all post data
+	 *
+	 * @param bool $asArray if true, the data will be returned as an array
+	 * @return array|object
+	 */
+	public function all($asArray = false)	
+	{
+		$this->post(null, true);
+
+		if ($asArray === true) {
+			return $this->data;
+		}
+
+		return $this->data = (object)$this->data;
+
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Return the data from the request
+	 *
+	 * @return array|object
+	 */
+	public function data($asArray = false)
+	{
+		return $asArray ? $this->data : (object) $this->data;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Verify if an item from the REQUEST array exists
 	 *
 	 * @param	mixed	$index		Index for item to be checked from $_POST
 	 * @param	bool	$xss_clean	Whether to apply XSS filtering
 	 * @return	bool
 	 */
-	public function has($index = null)
+	public function has($index = null, $xss_clean = false)
 	{
-		$array = clean($_REQUEST);
-		$exists = in_array($index, array_keys($array));
+		$exists = $this->_fetch_from_array($_REQUEST, $index, $xss_clean);
 
 		if ($exists) {
 			return true;
@@ -321,13 +360,13 @@ class CI_Input
 	 *
 	 * @param array $indexes
 	 * @param bool $xss_clean
-	 * @return void
+	 * @return mixed
 	 */
 	public function except(array $indexes = [], $xss_clean = false)
 	{
-		$post = array_diff_key($_REQUEST, array_flip($indexes));
+		$request = array_diff_key($_REQUEST, array_flip($indexes));
 
-		return $this->_fetch_from_array($post, null, $xss_clean);
+		return $this->_fetch_from_array($request, null, $xss_clean);
 	}
 
 	// --------------------------------------------------------------------
@@ -455,7 +494,7 @@ class CI_Input
 	 * @param string $path
 	 * @return CI_Input
 	 */
-	public function filedata($file = [], $name = null, $path = '')
+	public function filedata($file = [], $name = null, $path = ''): CI_Input|string
 	{
 		if (empty($file)) {
 			return '';
@@ -494,7 +533,7 @@ class CI_Input
 	 * @param string $name
 	 * @return CI_Input
 	 */
-	public function upload($file = [], $path = '', $name = null)
+	public function upload($file = [], $path = '', $name = null): CI_Input|string
 	{
 		if (empty($file)) {
 			return '';
@@ -1454,4 +1493,5 @@ class CI_Input
             return null;
         }
 	}
+	
 }
