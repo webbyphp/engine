@@ -3,8 +3,7 @@ defined('COREPATH') or exit('No direct script access allowed');
 
 /* ------------------------------- Path Functions ---------------------------------*/
 
-if ( ! function_exists('public_path')) 
-{
+if (! function_exists('public_path')) {
     /**
      * Path to the public directory
      *
@@ -13,16 +12,16 @@ if ( ! function_exists('public_path'))
      * @return string
      */
     function public_path($path = '', $resource = '')
-    {   
-        if ( ! empty($path) && !empty($resource)) {
-            return FCPATH . $path . DIRECTORY_SEPARATOR . $resource; 
+    {
+        if (! empty($path) && !empty($resource)) {
+            return FCPATH . $path . DIRECTORY_SEPARATOR . $resource;
         }
 
-        if ( ! empty($path) && is_dir(FCPATH . $path)) {
+        if (! empty($path) && is_dir(FCPATH . $path)) {
             return FCPATH . $path . DIRECTORY_SEPARATOR;
         }
 
-        if ( ! empty($path) && is_file(FCPATH . $path)) {
+        if (! empty($path) && is_file(FCPATH . $path)) {
             return FCPATH . $path;
         }
 
@@ -30,8 +29,7 @@ if ( ! function_exists('public_path'))
     }
 }
 
-if ( ! function_exists('app_path')) 
-{
+if (! function_exists('app_path')) {
     /**
      * Path to the app directory
      * This represents the APPROOT 
@@ -41,29 +39,28 @@ if ( ! function_exists('app_path'))
      * @return string
      */
     function app_path($path = '')
-    {   
+    {
         if (empty($path)) {
             return APPROOT;
         }
 
-        if ( ! empty($path) && is_dir(APPROOT . $path)) {
+        if (! empty($path) && is_dir(APPROOT . $path)) {
             return APPROOT . $path . DIRECTORY_SEPARATOR;
         }
 
-        if ( ! empty($path) && is_file(APPROOT . $path)) {
+        if (! empty($path) && is_file(APPROOT . $path)) {
             return APPROOT . $path;
         }
 
-        if ( ! empty($path) && !is_dir(APPROOT . $path)) {
-            throw new Exception("Path ". $path . " cannot be found");
+        if (! empty($path) && !is_dir(APPROOT . $path)) {
+            throw new Exception("Path " . $path . " cannot be found");
         }
 
         return APPROOT;
     }
 }
 
-if ( ! function_exists('writable_path')) 
-{
+if (! function_exists('writable_path')) {
     /**
      * Path to the writable directory
      *
@@ -72,17 +69,17 @@ if ( ! function_exists('writable_path'))
      * @return string
      */
     function writable_path($path = '', $resource = '')
-    {   
+    {
 
-        if ( ! empty($path) && !empty($resource)) {
-            return WRITABLEPATH . $path . DIRECTORY_SEPARATOR . $resource; 
+        if (! empty($path) && !empty($resource)) {
+            return WRITABLEPATH . $path . DIRECTORY_SEPARATOR . $resource;
         }
 
-        if ( ! empty($path) && is_dir(WRITABLEPATH . $path)) {
+        if (! empty($path) && is_dir(WRITABLEPATH . $path)) {
             return WRITABLEPATH . $path . DIRECTORY_SEPARATOR;
         }
 
-        if ( ! empty($path) && is_file(WRITABLEPATH . $path)) {
+        if (! empty($path) && is_file(WRITABLEPATH . $path)) {
             return WRITABLEPATH . $path;
         }
 
@@ -90,8 +87,7 @@ if ( ! function_exists('writable_path'))
     }
 }
 
-if ( ! function_exists('load_path')) 
-{
+if (! function_exists('load_path')) {
     /**
      * Load other folders from the public folder
      * @param  string $path
@@ -103,8 +99,7 @@ if ( ! function_exists('load_path'))
     }
 }
 
-if ( ! function_exists('resource')) 
-{
+if (! function_exists('resource')) {
     /**
      * Load files from resource folder
      * by the use of CodeIgniter's site_url() function
@@ -116,20 +111,19 @@ if ( ! function_exists('resource'))
     {
         $path = dotToslash($path);
 
-        if ( ! is_null($path)) {
+        if (! is_null($path)) {
             $path = 'resources' . DIRECTORY_SEPARATOR . $path;
         }
 
-        if ( ! is_null($item)) {
-            $path .= DIRECTORY_SEPARATOR .$item;
+        if (! is_null($item)) {
+            $path .= DIRECTORY_SEPARATOR . $item;
         }
-        
+
         return (!empty($path)) ? load_path($path) : site_url() . ASSETS;
     }
 }
 
-if ( ! function_exists('asset')) 
-{
+if (! function_exists('asset')) {
     /**
      * Load assets folder
      * by the use of CodeIgniter's site_url() function
@@ -139,19 +133,16 @@ if ( ! function_exists('asset'))
      */
     function asset($filepath = null)
     {
-        if($filepath !== null) 
-        {
+        if ($filepath !== null) {
             return site_url() . ASSETS . $filepath;
-        } 
+        }
 
         return site_url() . ASSETS;
-
     }
 }
 
 
-if ( ! function_exists('img')) 
-{
+if (! function_exists('img')) {
     /**
      * Load image assets
      *
@@ -164,8 +155,7 @@ if ( ! function_exists('img'))
     }
 }
 
-if ( ! function_exists('css')) 
-{
+if (! function_exists('css')) {
     /**
      * Load css assets
      *
@@ -178,8 +168,7 @@ if ( ! function_exists('css'))
     }
 }
 
-if ( ! function_exists('js')) 
-{
+if (! function_exists('js')) {
     /**
      * Load javascript assets
      *
@@ -193,8 +182,7 @@ if ( ! function_exists('js'))
 }
 
 
-if ( ! function_exists('use_url')) 
-{
+if (! function_exists('use_url')) {
     /**
      * Use an external asset from
      * a given url or source
@@ -209,8 +197,7 @@ if ( ! function_exists('use_url'))
     }
 }
 
-if ( ! function_exists('use_asset')) 
-{
+if (! function_exists('use_asset')) {
     /**
      * Load assets for a package
      * This targets a module placed in app/Packages
@@ -232,12 +219,11 @@ if ( ! function_exists('use_asset'))
             $package = strtolower(ci('router')->fetch_module());
         }
 
-        return load_path($path .DS. $package) .DS.$assets.DS. $filepath;
+        return load_path($path . DS . $package) . DS . $assets . DS . $filepath;
     }
 }
 
-if ( ! function_exists('use_css')) 
-{
+if (! function_exists('use_css')) {
     /**
      * Alias to the above function
      * but loads only css files
@@ -250,12 +236,11 @@ if ( ! function_exists('use_css'))
     {
         $filepath = str_ext($filepath, true);
 
-        return use_asset($filepath.$ext, $package);
+        return use_asset($filepath . $ext, $package);
     }
 }
 
-if ( ! function_exists('use_js')) 
-{
+if (! function_exists('use_js')) {
     /**
      * Alias to the above function
      * but loads only js files
