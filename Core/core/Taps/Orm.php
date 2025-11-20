@@ -9,14 +9,14 @@ class Orm
 {
     protected static $instance = BaseModel::class;
 
-     /**
+    /**
      * Holds the User ID for the next 
      * static ORM operation.
      * @var mixed
      */
-    public static $currentUserId = null; 
+    public static $currentUserId = null;
 
-     /**
+    /**
      * Set the user ID to be used for created_by/updated_by 
      * on the next static call.
      *
@@ -41,5 +41,4 @@ class Orm
     {
         return ToTap::make(self::$instance, $method, $arguments);
     }
-
 }

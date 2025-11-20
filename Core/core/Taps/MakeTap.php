@@ -23,5 +23,4 @@ abstract class MakeTap
      * @return mixed
      */
     public static function getConstructorArguments() {}
-
 }

@@ -17,5 +17,4 @@ class Output
     {
         return ToTap::make(self::$instance, $method, $arguments);
     }
-
 }

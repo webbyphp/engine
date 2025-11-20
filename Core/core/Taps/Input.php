@@ -17,5 +17,4 @@ class Input
     {
         return ToTap::make(self::$instance, $method, $arguments);
     }
-
 }

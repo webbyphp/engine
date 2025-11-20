@@ -6,7 +6,7 @@ use  Base\Taps\ToTap;
 
 class DB
 {
-     /**
+    /**
      * CI Database instance
      *
      * @var string
@@ -26,5 +26,4 @@ class DB
     {
         return ToTap::make(self::$instance, $method, $arguments);
     }
-
 }

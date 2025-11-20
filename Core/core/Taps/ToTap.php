@@ -12,7 +12,7 @@ use Base\Taps\MakeTap;
  */
 class ToTap extends MakeTap
 {
-    
+
     /**
      * Holds the instances of the classes.
      * @var array

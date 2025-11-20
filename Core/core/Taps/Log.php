@@ -74,7 +74,7 @@ class Log
     {
         log_message(self::$info, $message);
     }
-    
+
     public static function debug(string $message)
     {
         log_message(self::$debug, $message);
@@ -84,10 +84,9 @@ class Log
     {
         log_message($level, $message);
     }
-    
+
     public static function __callStatic($method, $arguments)
     {
         return ToTap::make(self::$instance, $method, $arguments);
     }
-
 }
