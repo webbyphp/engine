@@ -57,10 +57,10 @@ class Cache extends \Base_Output
         if ($this->isCached($key)) {
             return $this->getCacheItem($key);
         }
-        
+
         return null;
     }
-    
+
     /**
      * Caches an item which can be retrieved by key
      * 
@@ -193,10 +193,9 @@ class Cache extends \Base_Output
         try {
             file_put_contents($cachedFile, $value, LOCK_EX);
             touch($cachedFile, time() + $ttl);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             log_message('error', $e->getMessage());
         }
-
     }
 
     /**
@@ -240,18 +239,19 @@ class Cache extends \Base_Output
             $items = json_decode($items);
         }
 
-        if ( $this->serializeWith === self::IGBINARY
+        if (
+            $this->serializeWith === self::IGBINARY
             && function_exists('igbinary_unserialize')
         ) {
             shush();
-                $items = \igbinary_unserialize($items);
+            $items = \igbinary_unserialize($items);
             speak_up();
         }
 
         if ($this->serializeWith === self::SERIALIZE) {
             $items = unserialize($items);
         }
-        
+
         return $items;
     }
 
@@ -277,7 +277,7 @@ class Cache extends \Base_Output
 
         // Use the default expiration time if $ttl is not provided
         $ttl = $ttl ?? $this->ttl;
-        
+
         $cachedFile = $this->filesCachePath() . $key . $this->cacheExtension;
 
         $expirationTime = filemtime($cachedFile) + $ttl;
@@ -300,13 +300,13 @@ class Cache extends \Base_Output
      * Delete's the cached item
      *
      * @param string $key containing the identifier of the item to delete.
-    */
+     */
     public function deleteCacheItem($key)
     {
         $this->setCachePath(); // Set the correct cache path
 
         $cachePath = $this->filesCachePath();
-        @unlink($cachePath .sha1($key). $this->cacheExtension);
+        @unlink($cachePath . sha1($key) . $this->cacheExtension);
 
         return true;
     }
@@ -336,7 +336,6 @@ class Cache extends \Base_Output
         }
 
         $this->clearAllCache();
-
     }
 
     /**
@@ -351,8 +350,8 @@ class Cache extends \Base_Output
 
         if (empty($uri)) {
             $uri = $this->ci->config->item('base_url') .
-            $this->ci->config->item('index_page') .
-            $uri;
+                $this->ci->config->item('index_page') .
+                $uri;
         }
 
         $cachePath .= md5($uri);
@@ -391,8 +390,8 @@ class Cache extends \Base_Output
 
         if (empty($uri)) {
             $uri = $this->ci->config->item('base_url') .
-            $this->ci->config->item('index_page') .
-            $uri;
+                $this->ci->config->item('index_page') .
+                $uri;
         }
 
         $cachePath .= md5($uri);
@@ -412,12 +411,12 @@ class Cache extends \Base_Output
 
         if ((empty($uri))) {
             $uri = $this->ci->config->item('base_url') .
-            $this->ci->config->item('index_page') .
-            $uri;
+                $this->ci->config->item('index_page') .
+                $uri;
         }
-        
+
         $cachePath .= md5($uri);
-        
+
         if (!$fp = @fopen($cachePath, FOPEN_READ)) {
             return false;
         }
@@ -425,7 +424,7 @@ class Cache extends \Base_Output
         flock($fp, LOCK_SH);
 
         $cache = '';
-        
+
         if (filesize($cachePath) > 0) {
             $cache = fread($fp, filesize($cachePath));
         }
@@ -434,7 +433,7 @@ class Cache extends \Base_Output
         fclose($fp);
 
         $searchTimestamp = substr($cache, 0, 31);
-        
+
         // Strip out the embedded timestamp
         $timestamp = str_replace([':', ';', ' '], '', substr($searchTimestamp, 19));
 
@@ -446,7 +445,7 @@ class Cache extends \Base_Output
         // Return the timestamp
         return ($readableDate) ? date('d/m/Y H:i:s', $timestamp) : (int)trim($timestamp);
     }
-    
+
     /**
      * Returns the cache expiration timestamp for the specified path
      * 
@@ -477,9 +476,8 @@ class Cache extends \Base_Output
      * @param   string  $uri    URI string
      * @return  bool
      */
-    public function deleteWebCache(string $uri = '') : bool
+    public function deleteWebCache(string $uri = ''): bool
     {
         return parent::delete_cache($uri);
     }
-
 }
