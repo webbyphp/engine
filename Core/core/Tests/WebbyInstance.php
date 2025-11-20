@@ -9,12 +9,12 @@
  */
 class WebbyInstance
 {
-    
+
     /**
      * Version of the library
      */
     const VERSION = '1.0.0';
-    
+
     /**
      * Internal storage of CodeIgniter 3 
      * super object instance
@@ -23,7 +23,7 @@ class WebbyInstance
      * @access protected
      */
     protected static $instance;
-    
+
     /**
      * Initializes the CodeIgniter 3 
      * super object instance
@@ -38,26 +38,26 @@ class WebbyInstance
      * @return object CodeIgniter or Webby instance
      */
     public static function init(
-        $basepath = '', 
-        $apppath = '', 
-        $environment = 'testing', 
+        $basepath = '',
+        $apppath = '',
+        $environment = 'testing',
         $configs = []
-    ){
+    ) {
 
         if (self::$instance) {
             throw new WebbyInstanceException(message: 'Webby instance is already initialized');
         }
-        
+
         if (!is_dir($basepath)) {
             throw new WebbyInstanceException('Supplied base path is not a directory');
         } else {
-            $basepath = rtrim($basepath, '/').'/';
+            $basepath = rtrim($basepath, '/') . '/';
         }
-        
+
         if (!is_dir($apppath)) {
             throw new WebbyInstanceException('Supplied application path is not a directory');
         } else {
-            $apppath = rtrim($apppath, '/').'/';
+            $apppath = rtrim($apppath, '/') . '/';
         }
 
         define('BASEPATH', $basepath);
@@ -83,12 +83,12 @@ class WebbyInstance
 
         define('ENVIRONMENT', $environment ? $environment : 'development');
 
-        require(BASEPATH.'core/Common.php');
+        require(BASEPATH . 'core/Common.php');
 
-        if (file_exists(ROOTPATH.'config/'.ENVIRONMENT.'/constants.php')) {
-            require(ROOTPATH.'config/'.ENVIRONMENT.'/constants.php');
+        if (file_exists(ROOTPATH . 'config/' . ENVIRONMENT . '/constants.php')) {
+            require(ROOTPATH . 'config/' . ENVIRONMENT . '/constants.php');
         } else {
-            require(ROOTPATH.'config/constants.php');
+            require(ROOTPATH . 'config/constants.php');
         }
 
         // Load environment settings from .env files
@@ -104,7 +104,7 @@ class WebbyInstance
 
         $GLOBALS['MARK'] = load_class('Benchmark', 'core');
 
-        if (file_exists($basepath.'core/Security.php')) {
+        if (file_exists($basepath . 'core/Security.php')) {
             $GLOBALS['SEC'] = load_class('Security', 'core');
         }
 
@@ -115,7 +115,7 @@ class WebbyInstance
         load_class('Input', 'core');
 
         load_class('Lang', 'core');
-        
+
         load_class('Output', 'core');
 
         if ($configs['core_directory']) {
@@ -142,27 +142,28 @@ class WebbyInstance
         $host = str_replace($protocols, '', $host);
 
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-		$_SERVER['SERVER_NAME'] = 'localhost';
-		$_SERVER['HTTP_HOST']   =  $host;
-        
-        require(BASEPATH.'core/Controller.php');
+        $_SERVER['SERVER_NAME'] = 'localhost';
+        $_SERVER['HTTP_HOST']   =  $host;
 
-        function get_instance() {
+        require(BASEPATH . 'core/Controller.php');
+
+        function get_instance()
+        {
             return CI_Controller::get_instance();
         }
-        
-        if (file_exists(APPPATH.'core/'.$GLOBALS['CFG']->config['subclass_prefix'].'Controller.php')) {
-            require APPPATH.'core/'.$GLOBALS['CFG']->config['subclass_prefix'].'Controller.php';
-            $class = $GLOBALS['CFG']->config['subclass_prefix'].'Controller';
+
+        if (file_exists(APPPATH . 'core/' . $GLOBALS['CFG']->config['subclass_prefix'] . 'Controller.php')) {
+            require APPPATH . 'core/' . $GLOBALS['CFG']->config['subclass_prefix'] . 'Controller.php';
+            $class = $GLOBALS['CFG']->config['subclass_prefix'] . 'Controller';
         } else {
             $class = 'CI_Controller';
         }
-        
+
         self::$instance = new $class();
-        
+
         return self::$instance;
     }
-    
+
     /**
      * Getter for the CodeIgniter instance object
      * 
@@ -178,7 +179,6 @@ class WebbyInstance
         }
         return self::$instance;
     }
-    
 }
 
 /**

@@ -40,16 +40,16 @@ $assignToConfig = [
     'composer_directory' => $composer_directory, // needed
     'apppath' => $cipath,
     'environment' => $environment,
-]; 
+];
 
 $webby = null;
 
 // Create Webby instance
 try {
     $webby = \WebbyInstance::init(
-        $cipath, 
-        $corepath, 
-        $environment, 
+        $cipath,
+        $corepath,
+        $environment,
         $assignToConfig
     );
 } catch (\WebbyInstanceException $e) {
@@ -58,7 +58,8 @@ try {
 
 // Store the CI3 or Webby instance to make it accessible in our tests
 // This static property can be used on a base TestCase or a helper function
-class Webby {
+class Webby
+{
     public static $app;
 
     public static function instance()
