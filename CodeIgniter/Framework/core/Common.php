@@ -53,8 +53,7 @@ defined('BASEPATH') || exit('No direct script access allowed');
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('is_php'))
-{
+if (! function_exists('is_php')) {
 	/**
 	 * Determines if the current version of PHP is equal to or greater than the supplied value
 	 *
@@ -66,8 +65,7 @@ if ( ! function_exists('is_php'))
 		static $_is_php;
 		$version = (string) $version;
 
-		if ( ! isset($_is_php[$version]))
-		{
+		if (! isset($_is_php[$version])) {
 			$_is_php[$version] = version_compare(PHP_VERSION, $version, '>=');
 		}
 
@@ -77,8 +75,7 @@ if ( ! function_exists('is_php'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('is_really_writable'))
-{
+if (! function_exists('is_really_writable')) {
 	/**
 	 * Tests for file writability
 	 *
@@ -93,19 +90,16 @@ if ( ! function_exists('is_really_writable'))
 	function is_really_writable($file)
 	{
 		// If we're on a Unix server with safe_mode off we call is_writable
-		if (DIRECTORY_SEPARATOR === '/' && (is_php('5.4') OR ! ini_get('safe_mode')))
-		{
+		if (DIRECTORY_SEPARATOR === '/' && (is_php('5.4') or ! ini_get('safe_mode'))) {
 			return is_writable($file);
 		}
 
 		/* For Windows servers and safe_mode "on" installations we'll actually
 		 * write a file then read it. Bah...
 		 */
-		if (is_dir($file))
-		{
-			$file = rtrim($file, '/').'/'.md5(mt_rand());
-			if (($fp = @fopen($file, 'ab')) === false)
-			{
+		if (is_dir($file)) {
+			$file = rtrim($file, '/') . '/' . md5(mt_rand());
+			if (($fp = @fopen($file, 'ab')) === false) {
 				return false;
 			}
 
@@ -113,9 +107,7 @@ if ( ! function_exists('is_really_writable'))
 			@chmod($file, 0777);
 			@unlink($file);
 			return true;
-		}
-		elseif ( ! is_file($file) OR ($fp = @fopen($file, 'ab')) === false)
-		{
+		} elseif (! is_file($file) or ($fp = @fopen($file, 'ab')) === false) {
 			return false;
 		}
 
@@ -126,8 +118,7 @@ if ( ! function_exists('is_really_writable'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('is'))
-{
+if (! function_exists('is')) {
 	/**
 	 *  'Is' function to handle codeigniter 
 	 *   interanl is_* helper functions
@@ -142,67 +133,55 @@ if ( ! function_exists('is'))
 		$useragent	= ['browser', 'mobile', 'referral', 'robot'];
 		$environment = ['production', 'testing', 'staging', 'development'];
 
-		if (in_array($key, $environment)) 
-		{
+		if (in_array($key, $environment)) {
 			return $key === ENVIRONMENT;
 		}
 
-		if (in_array($key, $useragent))
-		{
-			return get_instance()->user_agent->{'is_'.$key}($value);
+		if (in_array($key, $useragent)) {
+			return get_instance()->user_agent->{'is_' . $key}($value);
 		}
 
-		if (in_array($key, $common))
-		{
+		if (in_array($key, $common)) {
 			$function = ($key == 'writable')
 				? 'is_really_writable'
-				: 'is_'.$key;
+				: 'is_' . $key;
 
 			return $function($value);
 		}
 
-		if ($key == 'ajax')
-		{
+		if ($key == 'ajax') {
 			return get_instance()->input->is_ajax_request();
 		}
 
-		if ($key == 'htmx' || $key === 'HTMX')
-		{
+		if ($key == 'htmx' || $key === 'HTMX') {
 			return get_instance()->input->isHtmx();
 		}
 
-		if ($key == 'boosted' || $key === 'BOOSTED')
-		{
+		if ($key == 'boosted' || $key === 'BOOSTED') {
 			return get_instance()->input->isBoosted();
 		}
 
-		if ($key == 'get')
-		{
+		if ($key == 'get') {
 			return (get_instance()->input->server('REQUEST_METHOD') === 'GET');
 		}
 
-		if ($key == 'post')
-		{
+		if ($key == 'post') {
 			return (get_instance()->input->server('REQUEST_METHOD') === 'POST');
 		}
 
-		if ($key == 'put')
-		{
+		if ($key == 'put') {
 			return (get_instance()->input->server('REQUEST_METHOD') === 'PUT');
 		}
 
-		if ($key == 'patch')
-		{
+		if ($key == 'patch') {
 			return (get_instance()->input->server('REQUEST_METHOD') === 'PATCH');
 		}
 
-		if ($key == 'delete')
-		{
+		if ($key == 'delete') {
 			return (get_instance()->input->server('REQUEST_METHOD') === 'DELETE');
 		}
 
-		if ($key == 'loaded' OR $key == 'load')
-		{
+		if ($key == 'loaded' or $key == 'load') {
 			return (bool) get_instance()->load->is_loaded($value);
 		}
 
@@ -212,8 +191,7 @@ if ( ! function_exists('is'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('boolify'))
-{
+if (! function_exists('boolify')) {
 	/**
 	 * Convert common true/false strings into boolean values
 	 *
@@ -231,8 +209,7 @@ if ( ! function_exists('boolify'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('is_blank'))
-{
+if (! function_exists('is_blank')) {
 	/**
 	 * Determines if the given value is "blank"
 	 *
@@ -261,13 +238,11 @@ if ( ! function_exists('is_blank'))
 
 		return empty($value);
 	}
-	
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('import'))
-{
+if (! function_exists('import')) {
 	/**
 	 * Include once webby syntax
 	 *
@@ -282,8 +257,7 @@ if ( ! function_exists('import'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('calendar'))
-{
+if (! function_exists('calendar')) {
 
 	/**
 	 * Calendar class helper function
@@ -306,8 +280,7 @@ if ( ! function_exists('calendar'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('hooks'))
-{
+if (! function_exists('hooks')) {
 	/**
 	 * Helper function to load and return an instance of the Hooks class.
 	 *
@@ -333,8 +306,7 @@ if ( ! function_exists('hooks'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('load_class'))
-{
+if (! function_exists('load_class')) {
 	/**
 	 * Class registry
 	 *
@@ -352,8 +324,7 @@ if ( ! function_exists('load_class'))
 		static $_classes = [];
 
 		// Does the class exist? If so, we're done...
-		if (isset($_classes[$class]))
-		{
+		if (isset($_classes[$class])) {
 			return $_classes[$class];
 		}
 
@@ -361,15 +332,12 @@ if ( ! function_exists('load_class'))
 
 		// Look for the class first in the local application/libraries folder
 		// then in the native system/libraries folder
-		foreach ([COREPATH, BASEPATH] as $path)
-		{
-			if (file_exists($path.$directory.'/'.$class.'.php'))
-			{
-				$name = 'CI_'.$class;
+		foreach ([COREPATH, BASEPATH] as $path) {
+			if (file_exists($path . $directory . '/' . $class . '.php')) {
+				$name = 'CI_' . $class;
 
-				if (class_exists($name, false) === false)
-				{
-					require_once($path.$directory.'/'.$class.'.php');
+				if (class_exists($name, false) === false) {
+					require_once($path . $directory . '/' . $class . '.php');
 				}
 
 				break;
@@ -377,23 +345,20 @@ if ( ! function_exists('load_class'))
 		}
 
 		// Is the request a class extension? If so we load it too
-		if (file_exists(COREPATH.$directory.'/'.config_item('subclass_prefix').$class.'.php'))
-		{
-			$name = config_item('subclass_prefix').$class;
+		if (file_exists(COREPATH . $directory . '/' . config_item('subclass_prefix') . $class . '.php')) {
+			$name = config_item('subclass_prefix') . $class;
 
-			if (class_exists($name, false) === false)
-			{
-				require_once(COREPATH.$directory.'/'.$name.'.php');
+			if (class_exists($name, false) === false) {
+				require_once(COREPATH . $directory . '/' . $name . '.php');
 			}
 		}
 
 		// Did we find the class?
-		if ($name === false)
-		{
+		if ($name === false) {
 			// Note: We use exit() rather than show_error() in order to avoid a
 			// self-referencing loop with the Exceptions class
 			set_status_header(503);
-			echo 'Unable to locate the specified class: '.$class.'.php';
+			echo 'Unable to locate the specified class: ' . $class . '.php';
 			exit(5); // EXIT_UNK_CLASS
 		}
 
@@ -407,10 +372,31 @@ if ( ! function_exists('load_class'))
 	}
 }
 
+if (! function_exists('use_class')) {
+	/**
+	 * Class registry
+	 * 
+	 * Alias to the load_class() function
+	 * 
+	 * This function acts as a singleton. If the requested class does not
+	 * exist it is instantiated and set to a static variable. If it has
+	 * previously been instantiated the variable is returned.
+	 * 
+	 * @param	string	the class name being requested
+	 * @param	string	the directory where the class should be found
+	 * @param	mixed	an optional argument to pass to the class constructor
+	 * @return	object
+	 */
+
+	function &use_class($class, $directory = 'libraries', $param = null)
+	{
+		return load_class($class, $directory, $param);
+	}
+}
+
 // --------------------------------------------------------------------
 
-if ( ! function_exists('is_loaded'))
-{
+if (! function_exists('is_loaded')) {
 	/**
 	 * Keeps track of which libraries have been loaded. This function is
 	 * called by the load_class() function above
@@ -422,8 +408,7 @@ if ( ! function_exists('is_loaded'))
 	{
 		static $_is_loaded = [];
 
-		if ($class !== '')
-		{
+		if ($class !== '') {
 			$_is_loaded[strtolower($class)] = $class;
 		}
 
@@ -433,8 +418,7 @@ if ( ! function_exists('is_loaded'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('get_config'))
-{
+if (! function_exists('get_config')) {
 	/**
 	 * Loads the main config.php file
 	 *
@@ -483,8 +467,7 @@ if ( ! function_exists('get_config'))
 			}
 
 			// Does the $config array exist in the file?
-			if ( ! isset($config) OR ! is_array($config))
-			{
+			if (! isset($config) or ! is_array($config)) {
 				set_status_header(503);
 				echo 'Your config file does not appear to be formatted correctly.';
 				exit(3); // EXIT_CONFIG
@@ -492,8 +475,7 @@ if ( ! function_exists('get_config'))
 		}
 
 		// Are any values being dynamically added or replaced?
-		foreach ($replace as $key => $val)
-		{
+		foreach ($replace as $key => $val) {
 			$config[$key] = $val;
 		}
 
@@ -503,8 +485,7 @@ if ( ! function_exists('get_config'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('config_item'))
-{
+if (! function_exists('config_item')) {
 	/**
 	 * Returns the specified config item
 	 *
@@ -515,8 +496,7 @@ if ( ! function_exists('config_item'))
 	{
 		static $_config;
 
-		if (empty($_config))
-		{
+		if (empty($_config)) {
 			// references cannot be directly assigned to static variables, so we use an array
 			$_config[0] = get_config();
 		}
@@ -527,8 +507,7 @@ if ( ! function_exists('config_item'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('get_mimes'))
-{
+if (! function_exists('get_mimes')) {
 	/**
 	 * Returns the MIME types array from config/mimes.php
 	 *
@@ -538,15 +517,13 @@ if ( ! function_exists('get_mimes'))
 	{
 		static $_mimes;
 
-		if (empty($_mimes))
-		{
-			$_mimes = file_exists(COREPATH.'config/mimes.php')
-				? include(COREPATH.'config/mimes.php')
+		if (empty($_mimes)) {
+			$_mimes = file_exists(COREPATH . 'config/mimes.php')
+				? include(COREPATH . 'config/mimes.php')
 				: [];
 
-			if (file_exists(COREPATH.'config/'.ENVIRONMENT.'/mimes.php'))
-			{
-				$_mimes = array_merge($_mimes, include(COREPATH.'config/'.ENVIRONMENT.'/mimes.php'));
+			if (file_exists(COREPATH . 'config/' . ENVIRONMENT . '/mimes.php')) {
+				$_mimes = array_merge($_mimes, include(COREPATH . 'config/' . ENVIRONMENT . '/mimes.php'));
 			}
 		}
 
@@ -556,8 +533,7 @@ if ( ! function_exists('get_mimes'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('is_https'))
-{
+if (! function_exists('is_https')) {
 	/**
 	 * Is HTTPS?
 	 *
@@ -568,16 +544,11 @@ if ( ! function_exists('is_https'))
 	 */
 	function is_https()
 	{
-		if ( ! empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
-		{
+		if (! empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
 			return true;
-		}
-		elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
-		{
+		} elseif (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') {
 			return true;
-		}
-		elseif ( ! empty($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) !== 'off')
-		{
+		} elseif (! empty($_SERVER['HTTP_FRONT_END_HTTPS']) && strtolower($_SERVER['HTTP_FRONT_END_HTTPS']) !== 'off') {
 			return true;
 		}
 
@@ -587,8 +558,7 @@ if ( ! function_exists('is_https'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('is_cli'))
-{
+if (! function_exists('is_cli')) {
 
 	/**
 	 * Is CLI?
@@ -599,7 +569,7 @@ if ( ! function_exists('is_cli'))
 	 */
 	function is_cli()
 	{
-		return (PHP_SAPI === 'cli' OR defined('STDIN'));
+		return (PHP_SAPI === 'cli' or defined('STDIN'));
 	}
 }
 
@@ -607,8 +577,7 @@ if ( ! function_exists('is_cli'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('show_error'))
-{
+if (! function_exists('show_error')) {
 	/**
 	 * Error Handler
 	 *
@@ -629,43 +598,40 @@ if ( ! function_exists('show_error'))
 		$status_code = abs($status_code);
 
 		switch ($context) {
-          	case 'web':
-              // Create exception for ErrorHandler
-              $exception = new Exception($message, $status_code);
-              $errorHandler = get_error_handler_instance();
-              $errorHandler->handleException($exception);
-              return;
-		  	case 'api':
+			case 'web':
+				// Create exception for ErrorHandler
+				$exception = new Exception($message, $status_code);
+				$errorHandler = get_error_handler_instance();
+				$errorHandler->handleException($exception);
+				return;
+			case 'api':
 				// display_api_error($severity, $message, $filepath, $line);
-			  $exception = new Exception($message, $status_code);
-              $errorHandler = get_error_handler_instance();
-              $errorHandler->handleException($exception);
-              return;
+				$exception = new Exception($message, $status_code);
+				$errorHandler = get_error_handler_instance();
+				$errorHandler->handleException($exception);
+				return;
 
 			case 'cli':
-			  $exception = new Exception($message, $status_code);
-              $errorHandler = get_error_handler_instance();
-              $errorHandler->handleException($exception);
-              return;
-			// 	display_cli_error($severity, $message, $filepath, $line);
-			// 	break;
+				$exception = new Exception($message, $status_code);
+				$errorHandler = get_error_handler_instance();
+				$errorHandler->handleException($exception);
+				return;
+				// 	display_cli_error($severity, $message, $filepath, $line);
+				// 	break;
 
-			//   case 'api':
-			//     //   display_api_error($heading, $message, $status_code);
-			//       break;
+				//   case 'api':
+				//     //   display_api_error($heading, $message, $status_code);
+				//       break;
 
-			//   case 'cli':
-			//     //   display_cli_error($heading, $message, $status_code);
-			//       break;
-      }
+				//   case 'cli':
+				//     //   display_cli_error($heading, $message, $status_code);
+				//       break;
+		}
 
-		if ($status_code < 100)
-		{
+		if ($status_code < 100) {
 			$exit_status = $status_code + 9; // 9 is EXIT__AUTO_MIN
 			$status_code = 500;
-		}
-		else
-		{
+		} else {
 			$exit_status = 1; // EXIT_ERROR
 		}
 
@@ -677,8 +643,7 @@ if ( ! function_exists('show_error'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('show_404'))
-{
+if (! function_exists('show_404')) {
 	/**
 	 * 404 Page Handler
 	 *
@@ -702,8 +667,7 @@ if ( ! function_exists('show_404'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('log_message'))
-{
+if (! function_exists('log_message')) {
 	/**
 	 * Error Logging Interface
 	 *
@@ -718,8 +682,7 @@ if ( ! function_exists('log_message'))
 	{
 		static $_log;
 
-		if ($_log === null)
-		{
+		if ($_log === null) {
 			// references cannot be directly assigned to static variables, so we use an array
 			$_log[0] = load_class('Log', 'core');
 		}
@@ -728,11 +691,9 @@ if ( ! function_exists('log_message'))
 	}
 }
 
-
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('logmsg'))
-{
+if (! function_exists('logmsg')) {
 	/**
 	 * Debug Log logmsg()
 	 * 
@@ -745,8 +706,8 @@ if ( ! function_exists('logmsg'))
 	 */
 	function logmsg()
 	{
-	    $log = new class {
-			
+		$log = new class {
+
 			/**
 			 * Log levels available
 			 * 'USER' => '1',
@@ -761,33 +722,33 @@ if ( ! function_exists('logmsg'))
 			 * @param string $errorLevel
 			 * @return string
 			 */
-	        public function app(string $message)
-	        {
-	            log_message('app', $message);
+			public function app(string $message)
+			{
+				log_message('app', $message);
 
-	            return $message;
-	        }
+				return $message;
+			}
 
-	        public function user(string $message)
-	        {
-	            log_message('user', $message);
+			public function user(string $message)
+			{
+				log_message('user', $message);
 
-	            return $message;
-	        }
+				return $message;
+			}
 
 			public function dev(string $message)
-	        {
-	            log_message('dev', $message);
+			{
+				log_message('dev', $message);
 
-	            return $message;
-	        }
+				return $message;
+			}
 
-	        public function error(string $message)
-	        {
-	            log_message('error', $message);
+			public function error(string $message)
+			{
+				log_message('error', $message);
 
-	            return $message;
-	        }
+				return $message;
+			}
 
 			public function log(string $message, string $errorLevel)
 			{
@@ -795,18 +756,15 @@ if ( ! function_exists('logmsg'))
 
 				return $errorLevel . ' | ' . $message;
 			}
+		};
 
-	    };
-
-	    return $log;
-
+		return $log;
 	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('set_status_header'))
-{
+if (! function_exists('set_status_header')) {
 	/**
 	 * Set HTTP Status Header
 	 *
@@ -816,19 +774,16 @@ if ( ! function_exists('set_status_header'))
 	 */
 	function set_status_header($code = 200, $text = '')
 	{
-		if (is_cli())
-		{
+		if (is_cli()) {
 			return;
 		}
 
-		if (empty($code) OR ! is_numeric($code))
-		{
+		if (empty($code) or ! is_numeric($code)) {
 			show_error('Status codes must be numeric', 500);
 		}
 
-		if (empty($text))
-		{
-			is_int($code) OR $code = (int) $code;
+		if (empty($text)) {
+			is_int($code) or $code = (int) $code;
 			$stati = [
 				100	=> 'Continue',
 				101	=> 'Switching Protocols',
@@ -882,32 +837,27 @@ if ( ! function_exists('set_status_header'))
 				511	=> 'Network Authentication Required',
 			];
 
-			if (isset($stati[$code]))
-			{
+			if (isset($stati[$code])) {
 				$text = $stati[$code];
-			}
-			else
-			{
+			} else {
 				show_error('No status text available. Please check your status code number or supply your own message text.', 500);
 			}
 		}
 
-		if (strpos(PHP_SAPI, 'cgi') === 0)
-		{
-			header('Status: '.$code.' '.$text, true);
+		if (strpos(PHP_SAPI, 'cgi') === 0) {
+			header('Status: ' . $code . ' ' . $text, true);
 			return;
 		}
 
 		$server_protocol = (isset($_SERVER['SERVER_PROTOCOL']) && in_array($_SERVER['SERVER_PROTOCOL'], ['HTTP/1.0', 'HTTP/1.1', 'HTTP/2', 'HTTP/2.0'], true))
 			? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
-		header($server_protocol.' '.$code.' '.$text, true, $code);
+		header($server_protocol . ' ' . $code . ' ' . $text, true, $code);
 	}
 }
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('_error_handler'))
-{
+if (! function_exists('_error_handler')) {
 	/**
 	 * Error Handler
 	 *
@@ -930,7 +880,7 @@ if ( ! function_exists('_error_handler'))
 		$is_error = (((E_ERROR | E_PARSE | E_COMPILE_ERROR | E_CORE_ERROR | E_USER_ERROR) & $severity) === $severity);
 
 		// Detect request context
-        $context = detect_request_context(); // 'cli', 'api', or 'web'
+		$context = detect_request_context(); // 'cli', 'api', or 'web'
 
 		// When an error occurred, set the status header to '500 Internal Server Error'
 		// to indicate to the client something went wrong.
@@ -938,15 +888,13 @@ if ( ! function_exists('_error_handler'))
 		// it is only called when the display_errors flag is set (which isn't usually
 		// the case in a production environment) or when errors are ignored because
 		// they are above the error_reporting threshold.
-		if ($is_error && $context !== 'cli')
-		{
+		if ($is_error && $context !== 'cli') {
 			set_status_header(500);
 		}
 
 		// Should we ignore the error? We'll get the current error_reporting
 		// level and add its bits with the severity bits to find out.
-		if (($severity & error_reporting()) !== $severity)
-		{
+		if (($severity & error_reporting()) !== $severity) {
 			return;
 		}
 
@@ -954,8 +902,7 @@ if ( ! function_exists('_error_handler'))
 		$_error->log_exception($severity, $message, $filepath, $line);
 
 		// Should we display the error?
-		if (str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors')))
-		{
+		if (str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors'))) {
 			$_error->show_php_error($severity, $message, $filepath, $line);
 		}
 
@@ -981,8 +928,7 @@ if ( ! function_exists('_error_handler'))
 		// If the error is fatal, the execution of the script should be stopped because
 		// errors can't be recovered from. Halting the script conforms with PHP's
 		// default error handling. See http://www.php.net/manual/en/errorfunc.constants.php
-		if ($is_error)
-		{
+		if ($is_error) {
 			exit(1); // EXIT_ERROR
 		}
 	}
@@ -990,8 +936,7 @@ if ( ! function_exists('_error_handler'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('_exception_handler'))
-{
+if (! function_exists('_exception_handler')) {
 	/**
 	 * Exception Handler
 	 *
@@ -1007,34 +952,33 @@ if ( ! function_exists('_exception_handler'))
 		$context = detect_request_context();
 
 		$_error = load_class('Exceptions', 'core');
-		$_error->log_exception('error', 'Exception: '.$exception->getMessage(), $exception->getFile(), $exception->getLine());
+		$_error->log_exception('error', 'Exception: ' . $exception->getMessage(), $exception->getFile(), $exception->getLine());
 
 		// is_cli() OR set_status_header(500);
 
 		if ($context !== 'cli') {
-          set_status_header(500);
-      	}
+			set_status_header(500);
+		}
 
 		if (should_display_errors()) {
-          switch ($context) {
-              case 'web':
-                  $errorHandler = get_error_handler_instance();
-                  $errorHandler->handleException($exception);
-                  return;
+			switch ($context) {
+				case 'web':
+					$errorHandler = get_error_handler_instance();
+					$errorHandler->handleException($exception);
+					return;
 
-              case 'api':
-                  display_api_exception($exception);
-                  break;
+				case 'api':
+					display_api_exception($exception);
+					break;
 
-              case 'cli':
-                  display_cli_exception($exception);
-                  break;
+				case 'cli':
+					display_cli_exception($exception);
+					break;
 			}
 		}
 
 		// Should we display the error?
-		if (str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors')))
-		{
+		if (str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors'))) {
 			$_error->show_exception($exception);
 		}
 
@@ -1044,8 +988,7 @@ if ( ! function_exists('_exception_handler'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('_shutdown_handler'))
-{
+if (! function_exists('_shutdown_handler')) {
 	/**
 	 * Shutdown Handler
 	 *
@@ -1062,9 +1005,10 @@ if ( ! function_exists('_shutdown_handler'))
 	function _shutdown_handler()
 	{
 		$last_error = error_get_last();
-		if (isset($last_error) &&
-			($last_error['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING)))
-		{
+		if (
+			isset($last_error) &&
+			($last_error['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR | E_COMPILE_WARNING))
+		) {
 			_error_handler($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
 		}
 	}
@@ -1072,11 +1016,10 @@ if ( ! function_exists('_shutdown_handler'))
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('detect_request_context'))
-{
+if (! function_exists('detect_request_context')) {
 	function detect_request_context()
-  	{
-        // CLI detection
+	{
+		// CLI detection
 		if (php_sapi_name() === 'cli' || defined('STDIN')) {
 			return 'cli';
 		}
@@ -1089,15 +1032,14 @@ if ( ! function_exists('detect_request_context'))
 		}
 
 		return 'web';
-  	}
+	}
 }
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('get_error_handler_instance'))
-{
+if (! function_exists('get_error_handler_instance')) {
 	function get_error_handler_instance($config = [])
-  	{
+	{
 		static $handler = null;
 
 		if ($handler === null) {
@@ -1112,7 +1054,7 @@ if ( ! function_exists('get_error_handler_instance'))
 		}
 
 		return $handler;
-  	}
+	}
 }
 
 /**
@@ -1125,600 +1067,567 @@ if ( ! function_exists('get_error_handler_instance'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('detect_request_context'))
-{
-    /**
-     * Detect Request Context (CLI/API/Web)
-     * 
-     * Determines the type of request being handled to format errors appropriately
-     * 
-     * @return string 'cli', 'api', or 'web'
-     */
-    function detect_request_context()
-    {
-        // CLI context
-        if (php_sapi_name() === 'cli' || (defined('STDIN') && is_resource(STDIN)))
-        {
-            return 'cli';
-        }
-        
-        // API context detection
-        if (is_api_request())
-        {
-            return 'api';
-        }
-        
-        // Default to web context
-        return 'web';
-    }
+if (! function_exists('detect_request_context')) {
+	/**
+	 * Detect Request Context (CLI/API/Web)
+	 * 
+	 * Determines the type of request being handled to format errors appropriately
+	 * 
+	 * @return string 'cli', 'api', or 'web'
+	 */
+	function detect_request_context()
+	{
+		// CLI context
+		if (php_sapi_name() === 'cli' || (defined('STDIN') && is_resource(STDIN))) {
+			return 'cli';
+		}
+
+		// API context detection
+		if (is_api_request()) {
+			return 'api';
+		}
+
+		// Default to web context
+		return 'web';
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('is_api_request'))
-{
-    /**
-     * Check if current request is an API request
-     * 
-     * @return bool
-     */
-    function is_api_request()
-    {
-        // Check for AJAX requests
-        if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
-        {
-            return true;
-        }
-		
-        // Check Accept header for JSON
-        if (isset($_SERVER['HTTP_ACCEPT']))
-        {
+if (! function_exists('is_api_request')) {
+	/**
+	 * Check if current request is an API request
+	 * 
+	 * @return bool
+	 */
+	function is_api_request()
+	{
+		// Check for AJAX requests
+		if (
+			!empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+			strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+		) {
+			return true;
+		}
 
-            $accept = strtolower($_SERVER['HTTP_ACCEPT']);
-            if (strpos($accept, 'application/json') !== false ||
-                // strpos($accept, 'application/xml') !== false ||
-                strpos($accept, 'text/json') !== false)
-            {
-                return true;
-            }
-        }
+		// Check Accept header for JSON
+		if (isset($_SERVER['HTTP_ACCEPT'])) {
+
+			$accept = strtolower($_SERVER['HTTP_ACCEPT']);
+			if (
+				strpos($accept, 'application/json') !== false ||
+				// strpos($accept, 'application/xml') !== false ||
+				strpos($accept, 'text/json') !== false
+			) {
+				return true;
+			}
+		}
 
 		// Check Accept header for XML and Content-Type is XML
-        if (isset($_SERVER['HTTP_ACCEPT']) && isset($_SERVER['CONTENT_TYPE']))
-        {
+		if (isset($_SERVER['HTTP_ACCEPT']) && isset($_SERVER['CONTENT_TYPE'])) {
 
-            $accept = strtolower($_SERVER['HTTP_ACCEPT']);
+			$accept = strtolower($_SERVER['HTTP_ACCEPT']);
 			$contentType = strtolower($_SERVER['CONTENT_TYPE']);
 
-            if (strpos($accept, 'application/xml') !== false &&
-                strpos($contentType, 'application/xml') !== false)
-            {
-                return true;
-            }
-        }
+			if (
+				strpos($accept, 'application/xml') !== false &&
+				strpos($contentType, 'application/xml') !== false
+			) {
+				return true;
+			}
+		}
 
 		// Check Content-Type header for API requests
-        if (isset($_SERVER['CONTENT_TYPE']))
-        {
-            $contentType = strtolower($_SERVER['CONTENT_TYPE']);
-            if (strpos($contentType, 'application/json') !== false ||
-                strpos($contentType, 'application/xml') !== false)
-            {
-                return true;
-            }
-        }
-        
-        // Check for common API route patterns
-        if (isset($_SERVER['REQUEST_URI']))
-        {
-            $uri = strtolower($_SERVER['REQUEST_URI']);
-            if (strpos($uri, '/api/') !== false || 
-                strpos($uri, '/rest/') !== false ||
-                preg_match('/\.(json|xml)(\?|$)/', $uri))
-            {
-                return true;
-            }
-        }
-        
-        return false;
-    }
+		if (isset($_SERVER['CONTENT_TYPE'])) {
+			$contentType = strtolower($_SERVER['CONTENT_TYPE']);
+			if (
+				strpos($contentType, 'application/json') !== false ||
+				strpos($contentType, 'application/xml') !== false
+			) {
+				return true;
+			}
+		}
+
+		// Check for common API route patterns
+		if (isset($_SERVER['REQUEST_URI'])) {
+			$uri = strtolower($_SERVER['REQUEST_URI']);
+			if (
+				strpos($uri, '/api/') !== false ||
+				strpos($uri, '/rest/') !== false ||
+				preg_match('/\.(json|xml)(\?|$)/', $uri)
+			) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('get_enhanced_error_handler'))
-{
-    /**
-     * Get or create enhanced error handler instance
-     * 
-     * @return \CI_ErrorHandler
-     */
-    function get_enhanced_error_handler()
-    {
-        static $errorHandler = null;
-        
-        if ($errorHandler === null)
-        {
-            // Load the ErrorHandler class if not already loaded
-            if (!class_exists('ErrorHandler'))
-            {
-                require_once(__DIR__ . 'ErrorHandler.php');
-            }
-            
-            // Create enhanced configuration
-            $config = [
-                'environment' => ENVIRONMENT,
-                'debug' => (ENVIRONMENT !== 'production'),
-                'enable_ajax_errors' => true,
-                'log_errors' => true,
-                'show_request_data' => (ENVIRONMENT === 'development'),
-                'dark_theme' => true
-            ];
-            
-            $errorHandler = new \CI_ErrorHandler($config);
-        }
-        
-        return $errorHandler;
-    }
+if (! function_exists('get_enhanced_error_handler')) {
+	/**
+	 * Get or create enhanced error handler instance
+	 * 
+	 * @return \CI_ErrorHandler
+	 */
+	function get_enhanced_error_handler()
+	{
+		static $errorHandler = null;
+
+		if ($errorHandler === null) {
+			// Load the ErrorHandler class if not already loaded
+			if (!class_exists('ErrorHandler')) {
+				require_once(__DIR__ . 'ErrorHandler.php');
+			}
+
+			// Create enhanced configuration
+			$config = [
+				'environment' => ENVIRONMENT,
+				'debug' => (ENVIRONMENT !== 'production'),
+				'enable_ajax_errors' => true,
+				'log_errors' => true,
+				'show_request_data' => (ENVIRONMENT === 'development'),
+				'dark_theme' => true
+			];
+
+			$errorHandler = new \CI_ErrorHandler($config);
+		}
+
+		return $errorHandler;
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('enhanced_error_handler'))
-{
-    /**
-     * Enhanced Error Handler
-     * 
-     * Improved version of _error_handler that uses ErrorHandler class
-     * and provides context-aware error responses
-     * 
-     * @param int    $severity
-     * @param string $message
-     * @param string $filepath
-     * @param int    $line
-     * @return void
-     */
-    function enhanced_error_handler($severity, $message, $filepath, $line)
-    {
-        $is_error = (((E_ERROR | E_PARSE | E_COMPILE_ERROR | E_CORE_ERROR | E_USER_ERROR) & $severity) === $severity);
-        $context = detect_request_context();
-        
-        // Set status header for web/api requests
-        if ($is_error && $context !== 'cli')
-        {
-            set_status_header(500);
-        }
-        
-        // Check if we should ignore the error
-        if (($severity & error_reporting()) !== $severity)
-        {
-            return;
-        }
-        
-        // Log the error using CI's logging system
-        $_error = load_class('Exceptions', 'core');
-        $_error->log_exception($severity, $message, $filepath, $line);
-        
-        // Handle error display based on context
-        if (should_display_errors())
-        {
-            switch ($context)
-            {
-                case 'cli':
-                    display_cli_error($severity, $message, $filepath, $line);
-                    break;
-                    
-                case 'api':
-                    display_api_error($severity, $message, $filepath, $line);
-                    break;
-                    
-                case 'web':
-                default:
-                    // Use ErrorHandler class for web errors
-                    $errorHandler = get_enhanced_error_handler();
-                    $errorHandler->handleError($severity, $message, $filepath, $line, []);
-                    return; // ErrorHandler handles exit
-            }
-        }
-        
-        // Exit for fatal errors
-        if ($is_error)
-        {
-            exit(1);
-        }
-    }
+if (! function_exists('enhanced_error_handler')) {
+	/**
+	 * Enhanced Error Handler
+	 * 
+	 * Improved version of _error_handler that uses ErrorHandler class
+	 * and provides context-aware error responses
+	 * 
+	 * @param int    $severity
+	 * @param string $message
+	 * @param string $filepath
+	 * @param int    $line
+	 * @return void
+	 */
+	function enhanced_error_handler($severity, $message, $filepath, $line)
+	{
+		$is_error = (((E_ERROR | E_PARSE | E_COMPILE_ERROR | E_CORE_ERROR | E_USER_ERROR) & $severity) === $severity);
+		$context = detect_request_context();
+
+		// Set status header for web/api requests
+		if ($is_error && $context !== 'cli') {
+			set_status_header(500);
+		}
+
+		// Check if we should ignore the error
+		if (($severity & error_reporting()) !== $severity) {
+			return;
+		}
+
+		// Log the error using CI's logging system
+		$_error = load_class('Exceptions', 'core');
+		$_error->log_exception($severity, $message, $filepath, $line);
+
+		// Handle error display based on context
+		if (should_display_errors()) {
+			switch ($context) {
+				case 'cli':
+					display_cli_error($severity, $message, $filepath, $line);
+					break;
+
+				case 'api':
+					display_api_error($severity, $message, $filepath, $line);
+					break;
+
+				case 'web':
+				default:
+					// Use ErrorHandler class for web errors
+					$errorHandler = get_enhanced_error_handler();
+					$errorHandler->handleError($severity, $message, $filepath, $line, []);
+					return; // ErrorHandler handles exit
+			}
+		}
+
+		// Exit for fatal errors
+		if ($is_error) {
+			exit(1);
+		}
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('enhanced_exception_handler'))
-{
-    /**
-     * Enhanced Exception Handler
-     * 
-     * Improved version of _exception_handler that uses ErrorHandler class
-     * and provides context-aware exception responses
-     * 
-     * @param Exception $exception
-     * @return void
-     */
-    function enhanced_exception_handler($exception)
-    {
-        $context = detect_request_context();
-        
-        // Log the exception
-        $_error = load_class('Exceptions', 'core');
-        $_error->log_exception('error', 'Exception: '.$exception->getMessage(), $exception->getFile(), $exception->getLine());
-        
-        // Set status header for web/api requests
-        if ($context !== 'cli')
-        {
-            set_status_header(500);
-        }
-        
-        // Handle exception display based on context
-        if (should_display_errors())
-        {
-            switch ($context)
-            {
-                case 'cli':
-                    display_cli_exception($exception);
-                    break;
-                    
-                case 'api':
-                    display_api_exception($exception);
-                    break;
-                    
-                case 'web':
-                default:
-                    // Use ErrorHandler class for web exceptions
-                    $errorHandler = get_enhanced_error_handler();
-                    $errorHandler->handleException($exception);
-                    return; // ErrorHandler handles exit
-            }
-        }
-        
-        exit(1);
-    }
+if (! function_exists('enhanced_exception_handler')) {
+	/**
+	 * Enhanced Exception Handler
+	 * 
+	 * Improved version of _exception_handler that uses ErrorHandler class
+	 * and provides context-aware exception responses
+	 * 
+	 * @param Exception $exception
+	 * @return void
+	 */
+	function enhanced_exception_handler($exception)
+	{
+		$context = detect_request_context();
+
+		// Log the exception
+		$_error = load_class('Exceptions', 'core');
+		$_error->log_exception('error', 'Exception: ' . $exception->getMessage(), $exception->getFile(), $exception->getLine());
+
+		// Set status header for web/api requests
+		if ($context !== 'cli') {
+			set_status_header(500);
+		}
+
+		// Handle exception display based on context
+		if (should_display_errors()) {
+			switch ($context) {
+				case 'cli':
+					display_cli_exception($exception);
+					break;
+
+				case 'api':
+					display_api_exception($exception);
+					break;
+
+				case 'web':
+				default:
+					// Use ErrorHandler class for web exceptions
+					$errorHandler = get_enhanced_error_handler();
+					$errorHandler->handleException($exception);
+					return; // ErrorHandler handles exit
+			}
+		}
+
+		exit(1);
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('enhanced_show_error'))
-{
-    /**
-     * Enhanced Show Error Function
-     * 
-     * Context-aware version of show_error that uses ErrorHandler class
-     * for web requests and appropriate formatting for CLI/API
-     * 
-     * @param string $message
-     * @param int    $status_code
-     * @param string $heading
-     * @return void
-     */
-    function enhanced_show_error($message, $status_code = 500, $heading = 'An Error Was Encountered')
-    {
-        $context = detect_request_context();
-        $status_code = abs($status_code);
-        
-        if ($status_code < 100)
-        {
-            $exit_status = $status_code + 9;
-            $status_code = 500;
-        }
-        else
-        {
-            $exit_status = 1;
-        }
-        
-        switch ($context)
-        {
-            case 'cli':
-                display_cli_show_error($heading, $message, $status_code);
-                break;
-                
-            case 'api':
-                display_api_show_error($heading, $message, $status_code);
-                break;
-                
-            case 'web':
-            default:
-                // Create a mock exception to use with ErrorHandler
-                $exception = new Exception($message, $status_code);
-                $errorHandler = get_enhanced_error_handler();
-                $errorHandler->handleException($exception);
-                return; // ErrorHandler handles exit
-        }
-        
-        exit($exit_status);
-    }
+if (! function_exists('enhanced_show_error')) {
+	/**
+	 * Enhanced Show Error Function
+	 * 
+	 * Context-aware version of show_error that uses ErrorHandler class
+	 * for web requests and appropriate formatting for CLI/API
+	 * 
+	 * @param string $message
+	 * @param int    $status_code
+	 * @param string $heading
+	 * @return void
+	 */
+	function enhanced_show_error($message, $status_code = 500, $heading = 'An Error Was Encountered')
+	{
+		$context = detect_request_context();
+		$status_code = abs($status_code);
+
+		if ($status_code < 100) {
+			$exit_status = $status_code + 9;
+			$status_code = 500;
+		} else {
+			$exit_status = 1;
+		}
+
+		switch ($context) {
+			case 'cli':
+				display_cli_show_error($heading, $message, $status_code);
+				break;
+
+			case 'api':
+				display_api_show_error($heading, $message, $status_code);
+				break;
+
+			case 'web':
+			default:
+				// Create a mock exception to use with ErrorHandler
+				$exception = new Exception($message, $status_code);
+				$errorHandler = get_enhanced_error_handler();
+				$errorHandler->handleException($exception);
+				return; // ErrorHandler handles exit
+		}
+
+		exit($exit_status);
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('should_display_errors'))
-{
-    /**
-     * Check if errors should be displayed
-     * 
-     * @return bool
-     */
-    function should_display_errors()
-    {
-        return str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors')) ||
-               ENVIRONMENT === 'development';
-    }
+if (! function_exists('should_display_errors')) {
+	/**
+	 * Check if errors should be displayed
+	 * 
+	 * @return bool
+	 */
+	function should_display_errors()
+	{
+		return str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors')) ||
+			ENVIRONMENT === 'development';
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('display_cli_error'))
-{
-    /**
-     * Display error for CLI context
-     * 
-     * @param int    $severity
-     * @param string $message
-     * @param string $filepath
-     * @param int    $line
-     * @return void
-     */
-    function display_cli_error($severity, $message, $filepath, $line)
-    {
-        $errorTypes = [
-            E_ERROR => 'Fatal Error',
-            E_WARNING => 'Warning',
-            E_PARSE => 'Parse Error',
-            E_NOTICE => 'Notice',
-            E_CORE_ERROR => 'Core Error',
-            E_CORE_WARNING => 'Core Warning',
-            E_COMPILE_ERROR => 'Compile Error',
-            E_COMPILE_WARNING => 'Compile Warning',
-            E_USER_ERROR => 'User Error',
-            E_USER_WARNING => 'User Warning',
-            E_USER_NOTICE => 'User Notice',
-            E_RECOVERABLE_ERROR => 'Recoverable Error',
-            E_DEPRECATED => 'Deprecated',
-            E_USER_DEPRECATED => 'User Deprecated'
-        ];
-        
-        $errorType = isset($errorTypes[$severity]) ? $errorTypes[$severity] : 'Unknown Error';
-        
-        $output = "\n" . str_repeat('=', 60) . "\n";
-        $output .= "PHP " . $errorType . "\n";
-        $output .= str_repeat('=', 60) . "\n";
-        $output .= "Message: " . $message . "\n";
-        $output .= "File: " . $filepath . "\n";
-        $output .= "Line: " . $line . "\n";
-        $output .= "Time: " . date('Y-m-d H:i:s') . "\n";
-        $output .= str_repeat('=', 60) . "\n\n";
-        
-        // Add stack trace if available
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        if (!empty($trace))
-        {
-            $output .= "Stack Trace:\n";
-            $output .= str_repeat('-', 40) . "\n";
-            foreach (array_slice($trace, 1, 10) as $i => $frame)
-            {
-                $file = isset($frame['file']) ? $frame['file'] : 'unknown';
-                $line = isset($frame['line']) ? $frame['line'] : 0;
-                $function = isset($frame['function']) ? $frame['function'] : 'unknown';
-                $class = isset($frame['class']) ? $frame['class'] . '::' : '';
-                
-                $output .= sprintf("#%d %s%s() called at %s:%d\n", $i, $class, $function, $file, $line);
-            }
-            $output .= str_repeat('-', 40) . "\n\n";
-        }
-        
-        fwrite(STDERR, $output);
-    }
+if (! function_exists('display_cli_error')) {
+	/**
+	 * Display error for CLI context
+	 * 
+	 * @param int    $severity
+	 * @param string $message
+	 * @param string $filepath
+	 * @param int    $line
+	 * @return void
+	 */
+	function display_cli_error($severity, $message, $filepath, $line)
+	{
+		$errorTypes = [
+			E_ERROR => 'Fatal Error',
+			E_WARNING => 'Warning',
+			E_PARSE => 'Parse Error',
+			E_NOTICE => 'Notice',
+			E_CORE_ERROR => 'Core Error',
+			E_CORE_WARNING => 'Core Warning',
+			E_COMPILE_ERROR => 'Compile Error',
+			E_COMPILE_WARNING => 'Compile Warning',
+			E_USER_ERROR => 'User Error',
+			E_USER_WARNING => 'User Warning',
+			E_USER_NOTICE => 'User Notice',
+			E_RECOVERABLE_ERROR => 'Recoverable Error',
+			E_DEPRECATED => 'Deprecated',
+			E_USER_DEPRECATED => 'User Deprecated'
+		];
+
+		$errorType = isset($errorTypes[$severity]) ? $errorTypes[$severity] : 'Unknown Error';
+
+		$output = "\n" . str_repeat('=', 60) . "\n";
+		$output .= "PHP " . $errorType . "\n";
+		$output .= str_repeat('=', 60) . "\n";
+		$output .= "Message: " . $message . "\n";
+		$output .= "File: " . $filepath . "\n";
+		$output .= "Line: " . $line . "\n";
+		$output .= "Time: " . date('Y-m-d H:i:s') . "\n";
+		$output .= str_repeat('=', 60) . "\n\n";
+
+		// Add stack trace if available
+		$trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+		if (!empty($trace)) {
+			$output .= "Stack Trace:\n";
+			$output .= str_repeat('-', 40) . "\n";
+			foreach (array_slice($trace, 1, 10) as $i => $frame) {
+				$file = isset($frame['file']) ? $frame['file'] : 'unknown';
+				$line = isset($frame['line']) ? $frame['line'] : 0;
+				$function = isset($frame['function']) ? $frame['function'] : 'unknown';
+				$class = isset($frame['class']) ? $frame['class'] . '::' : '';
+
+				$output .= sprintf("#%d %s%s() called at %s:%d\n", $i, $class, $function, $file, $line);
+			}
+			$output .= str_repeat('-', 40) . "\n\n";
+		}
+
+		fwrite(STDERR, $output);
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('display_api_error'))
-{
-    /**
-     * Display error for API context
-     * 
-     * @param int    $severity
-     * @param string $message
-     * @param string $filepath
-     * @param int    $line
-     * @return void
-     */
-    function display_api_error($severity, $message, $filepath, $line)
-    {
-        $errorTypes = [
-            E_ERROR => 'fatal_error',
-            E_WARNING => 'warning',
-            E_PARSE => 'parse_error',
-            E_NOTICE => 'notice',
-            E_CORE_ERROR => 'core_error',
-            E_CORE_WARNING => 'core_warning',
-            E_COMPILE_ERROR => 'compile_error',
-            E_COMPILE_WARNING => 'compile_warning',
-            E_USER_ERROR => 'user_error',
-            E_USER_WARNING => 'user_warning',
-            E_USER_NOTICE => 'user_notice',
-            E_RECOVERABLE_ERROR => 'recoverable_error',
-            E_DEPRECATED => 'deprecated',
-            E_USER_DEPRECATED => 'user_deprecated'
-        ];
-        
-        $errorType = isset($errorTypes[$severity]) ? $errorTypes[$severity] : 'unknown_error';
-        
-        $response = [
-            'error' => true,
-            'type' => $errorType,
-            'message' => $message,
-            'timestamp' => date('c'),
-            'request_id' => uniqid()
-        ];
-        
-        // Add debug information in development
-        if (ENVIRONMENT === 'development')
-        {
-            $response['debug'] = [
-                'file' => $filepath,
-                'line' => $line,
-                'severity' => $severity,
-                'trace' => array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 1, 5)
-            ];
-        }
-        
-        // Clear any previous output
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-        
-        header('Content-Type: application/json');
-        echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    }
+if (! function_exists('display_api_error')) {
+	/**
+	 * Display error for API context
+	 * 
+	 * @param int    $severity
+	 * @param string $message
+	 * @param string $filepath
+	 * @param int    $line
+	 * @return void
+	 */
+	function display_api_error($severity, $message, $filepath, $line)
+	{
+		$errorTypes = [
+			E_ERROR => 'fatal_error',
+			E_WARNING => 'warning',
+			E_PARSE => 'parse_error',
+			E_NOTICE => 'notice',
+			E_CORE_ERROR => 'core_error',
+			E_CORE_WARNING => 'core_warning',
+			E_COMPILE_ERROR => 'compile_error',
+			E_COMPILE_WARNING => 'compile_warning',
+			E_USER_ERROR => 'user_error',
+			E_USER_WARNING => 'user_warning',
+			E_USER_NOTICE => 'user_notice',
+			E_RECOVERABLE_ERROR => 'recoverable_error',
+			E_DEPRECATED => 'deprecated',
+			E_USER_DEPRECATED => 'user_deprecated'
+		];
+
+		$errorType = isset($errorTypes[$severity]) ? $errorTypes[$severity] : 'unknown_error';
+
+		$response = [
+			'error' => true,
+			'type' => $errorType,
+			'message' => $message,
+			'timestamp' => date('c'),
+			'request_id' => uniqid()
+		];
+
+		// Add debug information in development
+		if (ENVIRONMENT === 'development') {
+			$response['debug'] = [
+				'file' => $filepath,
+				'line' => $line,
+				'severity' => $severity,
+				'trace' => array_slice(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), 1, 5)
+			];
+		}
+
+		// Clear any previous output
+		while (ob_get_level()) {
+			ob_end_clean();
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('display_cli_exception'))
-{
-    /**
-     * Display exception for CLI context
-     * 
-     * @param Exception $exception
-     * @return void
-     */
-    function display_cli_exception($exception)
-    {
-        $output = "\n" . str_repeat('=', 60) . "\n";
-        $output .= "UNCAUGHT EXCEPTION\n";
-        $output .= str_repeat('=', 60) . "\n";
-        $output .= "Type: " . get_class($exception) . "\n";
-        $output .= "Message: " . $exception->getMessage() . "\n";
-        $output .= "File: " . $exception->getFile() . "\n";
-        $output .= "Line: " . $exception->getLine() . "\n";
-        $output .= "Code: " . $exception->getCode() . "\n";
-        $output .= "Time: " . date('Y-m-d H:i:s') . "\n";
-        $output .= str_repeat('=', 60) . "\n\n";
-        
-        // Add stack trace
-        $output .= "Stack Trace:\n";
-        $output .= str_repeat('-', 40) . "\n";
-        $output .= $exception->getTraceAsString() . "\n";
-        $output .= str_repeat('-', 40) . "\n\n";
-        
-        fwrite(STDERR, $output);
-    }
+if (! function_exists('display_cli_exception')) {
+	/**
+	 * Display exception for CLI context
+	 * 
+	 * @param Exception $exception
+	 * @return void
+	 */
+	function display_cli_exception($exception)
+	{
+		$output = "\n" . str_repeat('=', 60) . "\n";
+		$output .= "UNCAUGHT EXCEPTION\n";
+		$output .= str_repeat('=', 60) . "\n";
+		$output .= "Type: " . get_class($exception) . "\n";
+		$output .= "Message: " . $exception->getMessage() . "\n";
+		$output .= "File: " . $exception->getFile() . "\n";
+		$output .= "Line: " . $exception->getLine() . "\n";
+		$output .= "Code: " . $exception->getCode() . "\n";
+		$output .= "Time: " . date('Y-m-d H:i:s') . "\n";
+		$output .= str_repeat('=', 60) . "\n\n";
+
+		// Add stack trace
+		$output .= "Stack Trace:\n";
+		$output .= str_repeat('-', 40) . "\n";
+		$output .= $exception->getTraceAsString() . "\n";
+		$output .= str_repeat('-', 40) . "\n\n";
+
+		fwrite(STDERR, $output);
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('display_api_exception'))
-{
-    /**
-     * Display exception for API context
-     * 
-     * @param Exception $exception
-     * @return void
-     */
-    function display_api_exception($exception)
-    {
-        $response = [
-            'error' => true,
-            'type' => 'exception',
-            'exception_class' => get_class($exception),
-            'message' => $exception->getMessage(),
-            'code' => $exception->getCode(),
-            'timestamp' => date('c'),
-            'request_id' => uniqid()
-        ];
-        
-        // Add debug information in development
-        if (ENVIRONMENT === 'development')
-        {
-            $response['debug'] = [
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'trace' => array_slice($exception->getTrace(), 0, 10)
-            ];
-        }
-        
-        // Clear any previous output
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-        
-        header('Content-Type: application/json');
-        echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    }
+if (! function_exists('display_api_exception')) {
+	/**
+	 * Display exception for API context
+	 * 
+	 * @param Exception $exception
+	 * @return void
+	 */
+	function display_api_exception($exception)
+	{
+		$response = [
+			'error' => true,
+			'type' => 'exception',
+			'exception_class' => get_class($exception),
+			'message' => $exception->getMessage(),
+			'code' => $exception->getCode(),
+			'timestamp' => date('c'),
+			'request_id' => uniqid()
+		];
+
+		// Add debug information in development
+		if (ENVIRONMENT === 'development') {
+			$response['debug'] = [
+				'file' => $exception->getFile(),
+				'line' => $exception->getLine(),
+				'trace' => array_slice($exception->getTrace(), 0, 10)
+			];
+		}
+
+		// Clear any previous output
+		while (ob_get_level()) {
+			ob_end_clean();
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('display_cli_show_error'))
-{
-    /**
-     * Display show_error for CLI context
-     * 
-     * @param string $heading
-     * @param string $message
-     * @param int    $status_code
-     * @return void
-     */
-    function display_cli_show_error($heading, $message, $status_code)
-    {
-        $output = "\n" . str_repeat('=', 60) . "\n";
-        $output .= strtoupper($heading) . " (HTTP {$status_code})\n";
-        $output .= str_repeat('=', 60) . "\n";
-        $output .= $message . "\n";
-        $output .= "Time: " . date('Y-m-d H:i:s') . "\n";
-        $output .= str_repeat('=', 60) . "\n\n";
-        
-        fwrite(STDERR, $output);
-    }
+if (! function_exists('display_cli_show_error')) {
+	/**
+	 * Display show_error for CLI context
+	 * 
+	 * @param string $heading
+	 * @param string $message
+	 * @param int    $status_code
+	 * @return void
+	 */
+	function display_cli_show_error($heading, $message, $status_code)
+	{
+		$output = "\n" . str_repeat('=', 60) . "\n";
+		$output .= strtoupper($heading) . " (HTTP {$status_code})\n";
+		$output .= str_repeat('=', 60) . "\n";
+		$output .= $message . "\n";
+		$output .= "Time: " . date('Y-m-d H:i:s') . "\n";
+		$output .= str_repeat('=', 60) . "\n\n";
+
+		fwrite(STDERR, $output);
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('display_api_show_error'))
-{
-    /**
-     * Display show_error for API context
-     * 
-     * @param string $heading
-     * @param string $message
-     * @param int    $status_code
-     * @return void
-     */
-    function display_api_show_error($heading, $message, $status_code)
-    {
-        $response = [
-            'error' => true,
-            'type' => 'application_error',
-            'heading' => $heading,
-            'message' => $message,
-            'status_code' => $status_code,
-            'timestamp' => date('c'),
-            'request_id' => uniqid()
-        ];
-        
-        // Clear any previous output
-        while (ob_get_level()) {
-            ob_end_clean();
-        }
-        
-        http_response_code($status_code);
-        header('Content-Type: application/json');
-        echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    }
+if (! function_exists('display_api_show_error')) {
+	/**
+	 * Display show_error for API context
+	 * 
+	 * @param string $heading
+	 * @param string $message
+	 * @param int    $status_code
+	 * @return void
+	 */
+	function display_api_show_error($heading, $message, $status_code)
+	{
+		$response = [
+			'error' => true,
+			'type' => 'application_error',
+			'heading' => $heading,
+			'message' => $message,
+			'status_code' => $status_code,
+			'timestamp' => date('c'),
+			'request_id' => uniqid()
+		];
+
+		// Clear any previous output
+		while (ob_get_level()) {
+			ob_end_clean();
+		}
+
+		http_response_code($status_code);
+		header('Content-Type: application/json');
+		echo json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+	}
 }
 
 // --------------------------------------------------------------------
 
-if ( ! function_exists('remove_invisible_characters'))
-{
+if (! function_exists('remove_invisible_characters')) {
 	/**
 	 * Remove Invisible Characters
 	 *
@@ -1735,8 +1644,7 @@ if ( ! function_exists('remove_invisible_characters'))
 
 		// every control character except newline (dec 10),
 		// carriage return (dec 13) and horizontal tab (dec 09)
-		if ($url_encoded)
-		{
+		if ($url_encoded) {
 			$non_displayables[] = '/%0[0-8bcef]/i';	// url encoded 00-08, 11, 12, 14, 15
 			$non_displayables[] = '/%1[0-9a-f]/i';	// url encoded 16-31
 			$non_displayables[] = '/%7f/i';	// url encoded 127
@@ -1744,15 +1652,13 @@ if ( ! function_exists('remove_invisible_characters'))
 
 		$non_displayables[] = '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S';	// 00-08, 11, 12, 14-31, 127
 
-		do
-		{
+		do {
 			if ($str == null) {
 				$str = '';
 			}
 
 			$str = preg_replace($non_displayables, '', (string) $str, -1, $count);
-		}
-		while ($count);
+		} while ($count);
 
 		return $str;
 	}
@@ -1760,8 +1666,7 @@ if ( ! function_exists('remove_invisible_characters'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('html_escape'))
-{
+if (! function_exists('html_escape')) {
 	/**
 	 * Returns HTML escaped variable.
 	 *
@@ -1771,15 +1676,12 @@ if ( ! function_exists('html_escape'))
 	 */
 	function html_escape($var, $double_encode = true)
 	{
-		if (empty($var))
-		{
+		if (empty($var)) {
 			return $var;
 		}
 
-		if (is_array($var))
-		{
-			foreach (array_keys($var) as $key)
-			{
+		if (is_array($var)) {
+			foreach (array_keys($var) as $key) {
 				$var[$key] = html_escape($var[$key], $double_encode);
 			}
 
@@ -1792,8 +1694,7 @@ if ( ! function_exists('html_escape'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('esc'))
-{
+if (! function_exists('esc')) {
 	/**
 	 * Returns HTML escaped variable.
 	 * Or escaped javascript literal
@@ -1818,8 +1719,7 @@ if ( ! function_exists('esc'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('_evaluated'))
-{
+if (! function_exists('_evaluated')) {
 	/**
 	 * Verify if eval()'d code is contained in a string
 	 * This feels unhealthy since eval() is seen as evil
@@ -1839,13 +1739,11 @@ if ( ! function_exists('_evaluated'))
 
 		return false;
 	}
-
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('request'))
-{
+if (! function_exists('request')) {
 	/**
 	 * CI Input class function
 	 *
@@ -1855,13 +1753,11 @@ if ( ! function_exists('request'))
 	{
 		return get_instance()->input;
 	}
-
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('response'))
-{
+if (! function_exists('response')) {
 	/**
 	 * CI Output class function
 	 *
@@ -1871,13 +1767,11 @@ if ( ! function_exists('response'))
 	{
 		return get_instance()->output;
 	}
-
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('_stringify_attributes'))
-{
+if (! function_exists('_stringify_attributes')) {
 	/**
 	 * Stringify attributes for use in HTML tags.
 	 *
@@ -1892,21 +1786,18 @@ if ( ! function_exists('_stringify_attributes'))
 	{
 		$atts = null;
 
-		if (empty($attributes))
-		{
+		if (empty($attributes)) {
 			return $atts;
 		}
 
-		if (is_string($attributes))
-		{
-			return ' '.$attributes;
+		if (is_string($attributes)) {
+			return ' ' . $attributes;
 		}
 
 		$attributes = (array) $attributes;
 
-		foreach ($attributes as $key => $val)
-		{
-			$atts .= ($js) ? $key.'='.$val.',' : ' '.$key.'="'.$val.'"';
+		foreach ($attributes as $key => $val) {
+			$atts .= ($js) ? $key . '=' . $val . ',' : ' ' . $key . '="' . $val . '"';
 		}
 
 		return rtrim($atts, ',');
@@ -1915,8 +1806,7 @@ if ( ! function_exists('_stringify_attributes'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('function_usable'))
-{
+if (! function_exists('function_usable')) {
 	/**
 	 * Function usable
 	 *
@@ -1944,10 +1834,8 @@ if ( ! function_exists('function_usable'))
 	{
 		static $_suhosin_func_blacklist;
 
-		if (function_exists($function_name))
-		{
-			if ( ! isset($_suhosin_func_blacklist))
-			{
+		if (function_exists($function_name)) {
+			if (! isset($_suhosin_func_blacklist)) {
 				$_suhosin_func_blacklist = extension_loaded('suhosin')
 					? explode(',', trim(ini_get('suhosin.executor.func.blacklist')))
 					: [];
@@ -1965,8 +1853,7 @@ if ( ! function_exists('function_usable'))
 // Global container instance
 $GLOBALS['service_container'] = null;
 
-if ( ! function_exists('container')) 
-{
+if (! function_exists('container')) {
 	/**
 	 * Get the global service container instance
 	 * 
@@ -1974,9 +1861,9 @@ if ( ! function_exists('container'))
 	 */
 	function container(): CI_ServiceContainer
 	{
-		if ( ! isset($GLOBALS['service_container'])) {
+		if (! isset($GLOBALS['service_container'])) {
 			// Load the ServiceContainer class if not already loaded
-			if ( ! class_exists('CI_ServiceContainer', FALSE)) {
+			if (! class_exists('CI_ServiceContainer', FALSE)) {
 				require_once BASEPATH . 'core/ServiceContainer.php';
 			}
 			$GLOBALS['service_container'] = new CI_ServiceContainer();
@@ -1988,72 +1875,70 @@ if ( ! function_exists('container'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('ci')) 
-{
-    /**
-     * CodeIgniter Instance function
-     * Powered with loading internal libraries
-     * in an expressive manner
-     * 
-     * @param string $class
-     * @param array $params
-     * @return object CodeIgniter Instance
-     */
-    function ci(?string $class = null, array $params = [])
-    {
-        if ($class === null) {
-            return get_instance();
-        }
-
-        if ($class === 'database') {
-            get_instance()->use->database();
-            return get_instance()->db;
-        }
-
-        //	Special cases 'user_agent' and 'unit_test' are loaded
-		//	with diferent names
-		if ($class !== 'user_agent') {
-            $library = ($class == 'unit_test') ? 'unit' : $class;
-		} else {
-            $library = 'agent';
+if (! function_exists('ci')) {
+	/**
+	 * CodeIgniter Instance function
+	 * Powered with loading internal libraries
+	 * in an expressive manner
+	 * 
+	 * @param string $class
+	 * @param array $params
+	 * @return object CodeIgniter Instance
+	 */
+	function ci(?string $class = null, array $params = [])
+	{
+		if ($class === null) {
+			return get_instance();
 		}
 
-        $ci = ci();
+		if ($class === 'database') {
+			get_instance()->use->database();
+			return get_instance()->db;
+		}
 
-        //	Library not loaded
-		if ( ! isset($ci->$library)) {
-            
-            //	Special case 'cache' is a driver
+		//	Special cases 'user_agent' and 'unit_test' are loaded
+		//	with diferent names
+		if ($class !== 'user_agent') {
+			$library = ($class == 'unit_test') ? 'unit' : $class;
+		} else {
+			$library = 'agent';
+		}
+
+		$ci = ci();
+
+		//	Library not loaded
+		if (! isset($ci->$library)) {
+
+			//	Special case 'cache' is a driver
 			if ($class == 'cache') {
 				$ci->load->driver($class, $params);
-            }
-            
-            // Let's guess it's a library
+			}
+
+			// Let's guess it's a library
 			$ci->load->library($class, $params);
-        } 
-        
-        //	Special name for 'unit_test' is 'unit'
+		}
+
+		//	Special name for 'unit_test' is 'unit'
 		if ($class == 'unit_test') {
 			return $ci->unit;
 		}
 		//	Special name for 'user_agent' is 'agent'
-        elseif ($class == 'user_agent') {
+		elseif ($class == 'user_agent') {
 			return $ci->agent;
-		}	
-        
-        if (! ends_with($class, '_model') || !ends_with($class, '_m')) {
+		}
+
+		if (! ends_with($class, '_model') || !ends_with($class, '_m')) {
 			return $ci->$class;
 		} else {
-			$class = ($params == []) ? $class : $params ;
+			$class = ($params == []) ? $class : $params;
 			return $ci->$class;
-        }
-    }
+		}
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('app')) 
-{
+if (! function_exists('app')) {
 	/**
 	 * Updated app helper function
 	 * 
@@ -2077,7 +1962,7 @@ if ( ! function_exists('app'))
 		$ci = null;
 
 		try {
-        	return $container->get($abstract, $parameters);
+			return $container->get($abstract, $parameters);
 		} catch (Exception $e) {
 			$ci = ci();
 		}
@@ -2113,12 +1998,13 @@ if ( ! function_exists('app'))
 
 		$getClass = explode('/', has_dot($abstract));
 		$classType = count($getClass);
-		$className = ($classType == 2) ? $getClass[1]: $getClass[0];
+		$className = ($classType == 2) ? $getClass[1] : $getClass[0];
 
 		if (
-			ends_with($abstract, '_model') 
+			ends_with($abstract, '_model')
 			|| ends_with($abstract, '_m')
-			|| contains('Model', $abstract)) {
+			|| contains('Model', $abstract)
+		) {
 
 			use_model($abstract); // load model
 
@@ -2148,14 +2034,14 @@ if ( ! function_exists('app'))
 		try {
 			$ci->load->model(has_dot($abstract));
 		} catch (Exception $e) {
-			(!empty($ci->{$abstract}) && is_object($ci->{$abstract})) 
-				? $ci->{$abstract} 
+			(!empty($ci->{$abstract}) && is_object($ci->{$abstract}))
+				? $ci->{$abstract}
 				: $ci->load->library(has_dot($abstract));
 		}
 
-        if (!is_object($ci->{$className})) {
-            return ci(has_dot($abstract), $parameters);
-        }
+		if (!is_object($ci->{$className})) {
+			return ci(has_dot($abstract), $parameters);
+		}
 
 		if (isset($ci->{$className})) {
 			return $ci->{$className};
@@ -2163,25 +2049,22 @@ if ( ! function_exists('app'))
 
 		// Final fallback - try container resolution (might throw exception)
 		return $container->get($abstract, $parameters);
-
 	}
-
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('service')) 
-{
-    /**
-     * Easy access to services
-     *
-     * @param string $class
-     * @param string $alias
-     * @param mixed $params
-     * @return object
-     */
-    function service(string $class = '', string $alias = '', $params = [])
-    {
+if (! function_exists('service')) {
+	/**
+	 * Easy access to services
+	 *
+	 * @param string $class
+	 * @param string $alias
+	 * @param mixed $params
+	 * @return object
+	 */
+	function service(string $class = '', string $alias = '', $params = [])
+	{
 
 		// Special case: return container instance
 		if ($class === 'container' || $class === 'service_container') {
@@ -2192,139 +2075,135 @@ if ( ! function_exists('service'))
 		$ci = null;
 
 		try {
-        	return $container->get($class, $params);
+			return $container->get($class, $params);
 		} catch (Exception $e) {
 			$ci = ci();
 		}
 
-        $getClass = explode('/', has_dot($class));
-        $classType = count($getClass);
-        $className = ($classType == 2) ? $getClass[1] : $getClass[0];
-        
-        if (contains('Service', $class)) {
-			(!empty($alias)) 
-				? use_service($class, $alias) 
+		$getClass = explode('/', has_dot($class));
+		$classType = count($getClass);
+		$className = ($classType == 2) ? $getClass[1] : $getClass[0];
+
+		if (contains('Service', $class)) {
+			(!empty($alias))
+				? use_service($class, $alias)
 				: use_service($class);
-            return (!empty($alias)) ? $ci->{$alias} : $ci->{$className};
-        }
+			return (!empty($alias)) ? $ci->{$alias} : $ci->{$className};
+		}
 
-        $app_services = $ci->config->item('app_services');
+		$app_services = $ci->config->item('app_services');
 
-        if (array_key_exists($class, $app_services)) {
+		if (array_key_exists($class, $app_services)) {
 
-            $class = isset($app_services[$class]) ? $app_services[$class] : [];
+			$class = isset($app_services[$class]) ? $app_services[$class] : [];
 
-            return (is_object(new $class()))
-                ? (!empty($params) ?: (new $class($params))) : (new $class());
+			return (is_object(new $class()))
+				? (!empty($params) ?: (new $class($params))) : (new $class());
+		}
 
-        }
+		$webby_services = $ci->config->item('webby_services');
 
-        $webby_services = $ci->config->item('webby_services');
+		if (array_key_exists($class, $webby_services)) {
 
-        if (array_key_exists($class, $webby_services)) {
-            
-            $class = isset($webby_services[$class]) ? $webby_services[$class] : [];
+			$class = isset($webby_services[$class]) ? $webby_services[$class] : [];
 
-            $class = has_dot($class);
+			$class = has_dot($class);
 
-            use_service($class, $className);
+			use_service($class, $className);
 
-            return $ci->{$className};
-        }
+			return $ci->{$className};
+		}
 
-        if (is_object($class) && !empty($alias)) {
-            class_alias(get_class($class), $alias);
-            return new $alias;
-        }
+		if (is_object($class) && !empty($alias)) {
+			class_alias(get_class($class), $alias);
+			return new $alias;
+		}
 
-        if (is_object(new $class()) && !empty($alias)) {
-            $class = new $class($params);
-            class_alias(get_class($class), $alias);
-            return new $alias;
-        }
+		if (is_object(new $class()) && !empty($alias)) {
+			$class = new $class($params);
+			class_alias(get_class($class), $alias);
+			return new $alias;
+		}
 
-        if (is_object(new $class())) {
-            return new $class;
-        }
+		if (is_object(new $class())) {
+			return new $class;
+		}
 
-        (!empty($alias)) ? use_service($className, $alias) : use_service($className);
+		(!empty($alias)) ? use_service($className, $alias) : use_service($className);
 
-        return (!empty($alias)) ? $ci->{$alias} : $ci->{$className};
-
-    }
+		return (!empty($alias)) ? $ci->{$alias} : $ci->{$className};
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('env')) 
-{
-    /**
-     * Allows user to retrieve values from the environment
-     * variables that have been set. Especially useful for
-     * retrieving values set from the .env file for
-     * use in config files.
-     *
-     * @param string $key
-     * @param string   $default
-     *
-     * @return mixed
-     */
-    function env(string $key, ?string $default = null, $set = false)
-    {
-        $value = getenv($key);
+if (! function_exists('env')) {
+	/**
+	 * Allows user to retrieve values from the environment
+	 * variables that have been set. Especially useful for
+	 * retrieving values set from the .env file for
+	 * use in config files.
+	 *
+	 * @param string $key
+	 * @param string   $default
+	 *
+	 * @return mixed
+	 */
+	function env(string $key, ?string $default = null, $set = false)
+	{
+		$value = getenv($key);
 
-        if ($value === false) {
-            $value = $_ENV[$key] ?? $_SERVER[$key] ?? false;
-        }
+		if ($value === false) {
+			$value = $_ENV[$key] ?? $_SERVER[$key] ?? false;
+		}
 
-        // Not found? Return the default value
-        if ($value === false && $set === false) {
-            return $default;
-        }
+		// Not found? Return the default value
+		if ($value === false && $set === false) {
+			return $default;
+		}
 
-        // Not found? Then set to $_ENV
-        if ($value === false && $set === true) {
-            $value = $_ENV[$key] = $default;
-        }
+		// Not found? Then set to $_ENV
+		if ($value === false && $set === true) {
+			$value = $_ENV[$key] = $default;
+		}
 
-        $env = new DotEnv(ROOTPATH);
+		$env = new DotEnv(ROOTPATH);
 
-        $value = $env->prepareVariable($value);
+		$value = $env->prepareVariable($value);
 
-        // Handle any boolean values
-        switch (strtolower($value)) {
-            case 'true':
-                return true;
-            case 'false':
-                return false;
-            case 'empty':
-                return '';
-            case 'null':
-                return null;
-        }
+		// Handle any boolean values
+		switch (strtolower($value)) {
+			case 'true':
+				return true;
+			case 'false':
+				return false;
+			case 'empty':
+				return '';
+			case 'null':
+				return null;
+		}
 
-        return $value;
-    }
+		return $value;
+	}
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('bind')) 
-{
-    function bind($abstract, $concrete) {
-        return container()->bind($abstract, $concrete);
-    }
+if (! function_exists('bind')) {
+	function bind($abstract, $concrete)
+	{
+		return container()->bind($abstract, $concrete);
+	}
 }
 
-if ( ! function_exists('singleton')) 
-{
-    function singleton($abstract, $concrete) {
-        return container()->singleton($abstract, $concrete);
-    }
+if (! function_exists('singleton')) {
+	function singleton($abstract, $concrete)
+	{
+		return container()->singleton($abstract, $concrete);
+	}
 }
 
-if ( ! function_exists('class_basename'))
-{
+if (! function_exists('class_basename')) {
 	/**
 	 *  Get the class 'basename' of the given object/class
 	 *
@@ -2341,8 +2220,7 @@ if ( ! function_exists('class_basename'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('class_uses_recursive'))
-{
+if (! function_exists('class_uses_recursive')) {
 	/**
 	 *  Return all traits used by a class, it's subclasses and trait of their traits
 	 *
@@ -2353,8 +2231,7 @@ if ( ! function_exists('class_uses_recursive'))
 	{
 		$result = [];
 
-		foreach (array_merge([$class => $class], class_parents($class)) as $class)
-		{
+		foreach (array_merge([$class => $class], class_parents($class)) as $class) {
 			$result += trait_uses_recursive($class);
 		}
 
@@ -2362,8 +2239,7 @@ if ( ! function_exists('class_uses_recursive'))
 	}
 }
 
-if ( ! function_exists('trait_uses_recursive'))
-{
+if (! function_exists('trait_uses_recursive')) {
 	/**
 	 *  Returns all traits used by a trait and its traits
 	 *
@@ -2374,8 +2250,7 @@ if ( ! function_exists('trait_uses_recursive'))
 	{
 		$traits = class_uses($trait);
 
-		foreach ($traits as $trait)
-		{
+		foreach ($traits as $trait) {
 			$traits += trait_uses_recursive($trait);
 		}
 
@@ -2385,8 +2260,7 @@ if ( ! function_exists('trait_uses_recursive'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('retry'))
-{
+if (! function_exists('retry')) {
 	/**
 	 *  Attempt to execute an operation a given number of times
 	 *
@@ -2402,21 +2276,16 @@ if ( ! function_exists('retry'))
 		$attempts--;	//	Decrement the number of attempts
 
 		beginning:
-		try
-		{
+		try {
 			return $callback();
-		}
-		catch (Exception $e)
-		{
-			if ( ! $attempts)
-			{
+		} catch (Exception $e) {
+			if (! $attempts) {
 				throw $e;
 			}
 
 			$attempts--;	//	Decrement the number of attempts
 
-			if ($sleep)
-			{
+			if ($sleep) {
 				usleep($sleep * 1000);
 			}
 
