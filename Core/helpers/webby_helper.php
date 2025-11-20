@@ -214,6 +214,7 @@ if ( ! function_exists('config'))
 
         return $config->item($key);
     }
+
 }
 
 /* ------------------------------- Session Functions ---------------------------------*/
@@ -631,7 +632,7 @@ if ( ! function_exists('hex2str'))
      * @return string
      */
     function hex2str(/*hexadecimal*/ $hex_string)
-    {   
+    {
         $hex_string = hex2bin($hex_string); 
         return trim($hex_string);;
     }
@@ -640,7 +641,7 @@ if ( ! function_exists('hex2str'))
 if ( ! function_exists('dec2str')) 
 {
     /**
-     * convert decimal to string using base
+     * Convert decimal to string using base
      * this is made for special use case
      * else use strval() i.e from int to string
      * 
@@ -655,7 +656,6 @@ if ( ! function_exists('dec2str'))
         $base = (int) $base;
         if ($base < 2 | $base > 36 | $base == 10) {
             throw new \Exception('$base must be in the range 2-9 or 11-36');
-            exit;
         }
 
         // maximum character string is 36 characters
@@ -666,7 +666,6 @@ if ( ! function_exists('dec2str'))
 
         if (!preg_match('/^[0-9]{1,50}$/', trim($decimal))) {
             throw new \Exception('Value must be a positive integer with < 50 digits');
-            return false;
         } 
 
         do {
@@ -683,6 +682,29 @@ if ( ! function_exists('dec2str'))
 
         return $string;
 
+    }
+}
+
+if ( ! function_exists('bchexdec')) 
+{
+    /**
+     * Summary of bchexdec
+     * @param mixed $hex
+     * @return bool|int|string
+     */
+    function bchexdec(mixed $hex) 
+    {
+        if (!ctype_xdigit($hex)) return false; // Or throw an error
+        $decimal = '0';
+        $length = strlen($hex);
+        for ($i = 0; $i < $length; $i++)
+        {
+            $char = $hex[$i];
+            $value = hexdec($char); // Get decimal value of single hex char
+            // Multiply current decimal by 16, then add new char's value
+            $decimal = bcadd(bcmul($decimal, '16'), (string)$value);
+        }
+        return $decimal;
     }
 }
 
@@ -926,12 +948,12 @@ if ( ! function_exists('truncate_text'))
 }
 
 if ( ! function_exists('str_censor')) 
-{ 
+{
     /**
      * Censor bad words from string
      *
      * @param string $text
-     * @param array $words_to_censor
+     * @param string|array $words_to_censor
      * @param boolean $replacement
      * @return string
      */
@@ -1082,18 +1104,17 @@ if ( ! function_exists('with_each'))
 {
     /**
      * Replaces the deprecated each function
-     * since PHP 7.2 but limited 
-     * in it's implementation
+     * since PHP 7.2 but limited in its implementation
      *
      * @param array $array
      * @return mixed
      */
-    function with_each(&$array)
+    function with_each(array &$array): mixed
     {
         $key = key($array);
         $result = ($key === null) 
-                            ? false 
-                            : [$key, current($array), 'key' => $key, 'value' => current($array)];
+                    ? false 
+                    : [$key, current($array), 'key' => $key, 'value' => current($array)];
         next($array);
         return $result;
     }
@@ -1108,7 +1129,7 @@ if ( ! function_exists('strtoarr'))
      * @param string $string
      * @return array
      */
-    function strtoarr($symbol, $string)
+    function strtoarr(string $symbol, string $string): array
     {
         return explode($symbol, $string);
     }
@@ -1117,14 +1138,13 @@ if ( ! function_exists('strtoarr'))
 if ( ! function_exists('arrtostr')) 
 {
     /**
-     * Converts an array to a string
-     * using a given symbol e.g. ',' or ':'
+     * Converts an array to a string using a given symbol
      * 
      * @param string $symbol
      * @param array $array
-     * @return string
+     * @return string|false
      */
-    function arrtostr($symbol, $array)
+    function arrtostr(string $symbol, ?array $array): string|false
     {
         if ($array === null) {
             return false;
@@ -1137,27 +1157,26 @@ if ( ! function_exists('arrtostr'))
 if ( ! function_exists('add_array')) 
 {
     /**
-     * This is a function that 
-     * helps to add an element to an array
+     * Add an element to an array
      *
-     * @param array $array
-     * @param string $element
-     * @param string $symbol
+     * @param array|string $array
+     * @param mixed $element
+     * @param string|null $symbol
      * @param boolean $return_string
      * @return array|string
      */
-    function add_array($array, $element, $symbol = null, $return_string = false)
+    function add_array(array|string $array, mixed $element, ?string $symbol = null, bool $return_string = false): array|string
     {
-        if (!is_array($array) && $symbol != null) {
+        if (!is_array($array) && $symbol !== null) {
             $array = strtoarr($symbol, $array);
         }
 
         if (is_array($array)) {
-            array_push($array, $element);
+            $array[] = $element;
         }
 
-        if ($return_string == true) {
-            return $array = arrtostr($symbol, $array);
+        if ($return_string === true && $symbol !== null) {
+            return arrtostr($symbol, $array);
         }
 
         return $array;
@@ -1355,7 +1374,6 @@ if ( ! function_exists('arrayfy'))
      */
     function arrayfy($object, $asGenerator = false, $threshold = 1000)
     {
-        
         if ($asGenerator) {
             $object = to_generator($object, $threshold);
         }
@@ -1386,13 +1404,8 @@ if ( ! function_exists('arrayfy'))
         if (!is_array($object)) {
             return json_decode(json_encode($object), true);
         }
-    
-        if (is_array($object)) {
-            return $object;
-        }
 
         throw new \Exception("Parameter must be an object or a supporting type", 1);
-        
     }
 }
 
@@ -2509,6 +2522,34 @@ if ( ! function_exists('honey_style'))
     }
 }
 
+if ( ! function_exists('encrypt'))
+{
+	/**
+	 *  Encrypt a given string
+	 *
+	 *  @param     string    $value
+	 *  @return    string
+	 */
+	function encrypt($value)
+	{
+		return app('encryption')->encrypt($value);
+	}
+}
+
+if ( ! function_exists('decrypt'))
+{
+	/**
+	 *  Decrypt a given string
+	 *
+	 *  @param     string    $value
+	 *  @return    string
+	 */
+	function decrypt($value)
+	{
+		return app('encryption')->decrypt($value);
+	}
+}
+
 if ( ! function_exists('clean')) 
 {
     /**
@@ -2693,7 +2734,7 @@ if ( ! function_exists('is_email_injected'))
 }
 
 if ( ! function_exists('is_email_valid')) 
-{   
+{
     /**
      * checks whether the email address is valid
      *
