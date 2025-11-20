@@ -952,7 +952,7 @@ if (! function_exists('_exception_handler')) {
 		$context = detect_request_context();
 
 		$_error = load_class('Exceptions', 'core');
-		$_error->log_exception('error', 'Exception: ' . $exception->getMessage(), $exception->getFile(), $exception->getLine());
+		$_error->log_exception(E_ERROR, 'Exception: ' . $exception->getMessage(), $exception->getFile(), $exception->getLine());
 
 		// is_cli() OR set_status_header(500);
 
@@ -1278,7 +1278,7 @@ if (! function_exists('enhanced_exception_handler')) {
 
 		// Log the exception
 		$_error = load_class('Exceptions', 'core');
-		$_error->log_exception('error', 'Exception: ' . $exception->getMessage(), $exception->getFile(), $exception->getLine());
+		$_error->log_exception(E_ERROR, 'Exception: ' . $exception->getMessage(), $exception->getFile(), $exception->getLine());
 
 		// Set status header for web/api requests
 		if ($context !== 'cli') {

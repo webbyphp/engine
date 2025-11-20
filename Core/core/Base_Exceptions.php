@@ -250,7 +250,7 @@ class Base_Exceptions extends \CI_Exceptions
 		if (str_contains($is_json_request ?? '', 'application/json')) {
 
 			get_instance()->output->json([
-				"Severity: "    => $severity,
+				"Severity: "    => $severity ?? 'Error',
 				"Message: "     => $message,
 				"Filename: "    => $filepath,
 				"Line Number: " => $line,
