@@ -8,7 +8,7 @@
 namespace Base\Helpers;
 
 
-class Inflector 
+class Inflector
 {
     /**
      * Singular
@@ -20,11 +20,11 @@ class Inflector
     public static function singularize(string $string): string
     {
         $result = $string;
- 
+
         if (!static::isPluralizable($result)) {
             return $result;
         }
- 
+
         // Arranged in order.
         $singularRules = [
             '/(matr)ices$/'                                                   => '\1ix',
@@ -56,16 +56,15 @@ class Inflector
             '/(quiz)zes$/'                                                    => '\1',
             '/([^us])s$/'                                                     => '\1',
         ];
- 
+
         foreach ($singularRules as $rule => $replacement) {
             if (preg_match($rule, $result)) {
                 $result = preg_replace($rule, $replacement, $result);
                 break;
             }
         }
- 
+
         return $result;
-    
     }
 
 
@@ -348,5 +347,4 @@ class Inflector
     {
         return $integer . static::ordinal($integer);
     }
-
 }

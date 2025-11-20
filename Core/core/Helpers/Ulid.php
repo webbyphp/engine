@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * ULID Helper
@@ -105,7 +105,7 @@ class Ulid
 
         for ($i = static::TIME_LENGTH - 1; $i >= 0; $i--) {
             $mod = $milliseconds % static::ENCODING_LENGTH;
-            $timeChars = $encodingChars[$mod].$timeChars;
+            $timeChars = $encodingChars[$mod] . $timeChars;
             $milliseconds = ($milliseconds - $mod) / static::ENCODING_LENGTH;
         }
 
@@ -139,7 +139,7 @@ class Ulid
     public static function generate(bool $lowercase = false): self
     {
         $now = (int) (microtime(true) * 1000);
-        
+
         return static::useTimestamp($now, $lowercase);
     }
 

@@ -118,5 +118,4 @@ class TraverseClassFile
 
         return $classes[0];
     }
-
 }

@@ -52,7 +52,8 @@ class Uuid
 		// Calculate hash value
 		$hash = md5($nstr . $name);
 
-		return sprintf('%08s-%04s-%04x-%04x-%12s',
+		return sprintf(
+			'%08s-%04s-%04x-%04x-%12s',
 
 			// 32 bits for "time_low"
 			substr($hash, 0, 8),
@@ -133,7 +134,8 @@ class Uuid
 		// Calculate hash value
 		$hash = sha1($nstr . $name);
 
-		return sprintf('%08s-%04s-%04x-%04x-%12s',
+		return sprintf(
+			'%08s-%04s-%04x-%04x-%12s',
 
 			// 32 bits for "time_low"
 			substr($hash, 0, 8),
