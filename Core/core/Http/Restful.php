@@ -75,11 +75,11 @@ class Restful extends Controller
      * @var object Base\Http\Response;
      */
     protected $response;
-    
-    function __construct() 
+
+    function __construct()
     {
         parent::__construct();
-        
+
         // Request initialization
         $this->request = new Request;
         // Response initialization
@@ -87,7 +87,7 @@ class Restful extends Controller
 
         // Response setting
         if ($this->format) {
-		    $this->response->setFormat($this->format);
+            $this->response->setFormat($this->format);
         }
     }
 
@@ -101,7 +101,7 @@ class Restful extends Controller
      * 
      * @param int|string Resource ID
      */
-    public function route($resourceID=null)
+    public function route($resourceID = null)
     {
         switch ($this->request->getMethod()) {
             case 'POST':
@@ -136,7 +136,7 @@ class Restful extends Controller
      *
      * `resource/api` URI pattern
      */
-    public function api($resourceID=null)
+    public function api($resourceID = null)
     {
         return $this->route($resourceID);
     }
@@ -146,7 +146,7 @@ class Restful extends Controller
      *
      * `resource/ajax` URI pattern
      */
-    public function ajax($resourceID=null)
+    public function ajax($resourceID = null)
     {
         return $this->route($resourceID);
     }
@@ -163,11 +163,11 @@ class Restful extends Controller
      * @example
      *  json(false, true, 401, 'Login Required', 'Unauthorized');
      */
-    protected function json($data=[], $bodyFormat=null, $statusCode=null, $message=null)
+    protected function json($data = [], $bodyFormat = null, $statusCode = null, $message = null)
     {
         // Check default Body Format setting if not assigning
-        $bodyFormat = ($bodyFormat!==null) ? $bodyFormat : $this->bodyFormat;
-        
+        $bodyFormat = ($bodyFormat !== null) ? $bodyFormat : $this->bodyFormat;
+
         if ($bodyFormat) {
             // Pack data
             $data = $this->format($statusCode, $message, $data);
@@ -187,11 +187,11 @@ class Restful extends Controller
      * @param array|mixed|bool Callback data body, false will remove body key 
      * @return array Formated array data
      */
-    protected function format($statusCode=null, $message=null, $body=false)
+    protected function format($statusCode = null, $message = null, $body = false)
     {
         $format = [];
         // Status Code field is necessary
-        $format['code'] = ($statusCode) 
+        $format['code'] = ($statusCode)
             ?: $this->response->getStatusCode();
         // Message field
         if ($message) {
@@ -201,7 +201,7 @@ class Restful extends Controller
         if ($body !== false) {
             $format['data'] = $body;
         }
-        
+
         return $format;
     }
 
@@ -217,7 +217,7 @@ class Restful extends Controller
      * @example
      *  $packedData = pack(['bar'=>'foo], 401, 'Login Required');
      */
-    protected function pack($data, $statusCode=HttpStatus::OK, $message=null)
+    protected function pack($data, $statusCode = HttpStatus::OK, $message = null)
     {
         $packBody = [];
 
@@ -233,7 +233,7 @@ class Restful extends Controller
         if (is_array($data) || is_string($data)) {
             $packBody['data'] = $data;
         }
-        
+
         return $packBody;
     }
 
@@ -244,8 +244,8 @@ class Restful extends Controller
     {
         /* Response sample code */
         // $response->data = ['foo'=>'bar'];
-		// $response->setStatusCode(401);
-        
+        // $response->setStatusCode(401);
+
         // Codeigniter 404 Error Handling
         show_404();
     }
@@ -257,7 +257,7 @@ class Restful extends Controller
      * @param Callable $function
      * @return boolean Result
      */
-    protected function setBehavior($action, Callable $function)
+    protected function setBehavior($action, callable $function)
     {
         if (array_key_exists($action, $this->behaviors)) {
 

@@ -2,7 +2,7 @@
 
 namespace Base\Http;
 
-class HttpStatus 
+class HttpStatus
 {
 
     // Note: Only the widely used HTTP status codes are documented

@@ -25,7 +25,7 @@ class Request
      * @var array Body params
      */
     private $bodyParams;
-    
+
     /**
      * Retrieves the HTTP method of the request.
      *
@@ -42,7 +42,7 @@ class Request
         return 'GET';
     }
 
-    public function __construct() 
+    public function __construct()
     {
         // CodeIgniter initialization
         $this->ci = get_instance();
@@ -89,7 +89,7 @@ class Request
     public function getBodyParams()
     {
         if ($this->bodyParams === null) {
-        
+
             $contentType = $this->getContentType();
 
             if (strcasecmp($contentType, 'application/json') == 0) {
@@ -114,7 +114,7 @@ class Request
     {
         return $this->getBodyParams();
     }
-    
+
     /**
      * Get Credentials with HTTP Basic Authentication 
      *
@@ -128,25 +128,25 @@ class Request
     public function getAuthCredentialsWithBasic()
     {
         if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-            
+
             return [$_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']];
-        } 
-        
+        }
+
         $authToken = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : null;
-        $authToken = (!$authToken && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) 
-            ? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] 
+        $authToken = (!$authToken && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']))
+            ? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
             : $authToken;
-        
-        if ($authToken !== null && strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']), 'basic ')===0) {
-            
+
+        if ($authToken !== null && strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']), 'basic ') === 0) {
+
             $parts = array_map(function ($value) {
                 return strlen($value) === 0 ? null : $value;
             }, explode(':', base64_decode(mb_substr($authToken, 6)), 2));
-            
+
             if (count($parts) < 2) {
                 return [$parts[0], null];
             }
-            
+
             return $parts;
         }
 
@@ -161,10 +161,10 @@ class Request
     public function getAuthCredentialsWithBearer()
     {
         $b64token = null;
-        
+
         if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
-            if (strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']), 'bearer ')===0) {
+            if (strpos(strtolower($_SERVER['HTTP_AUTHORIZATION']), 'bearer ') === 0) {
 
                 $b64token = substr($_SERVER['HTTP_AUTHORIZATION'], 7);
             }

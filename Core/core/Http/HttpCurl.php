@@ -284,11 +284,11 @@ class HttpCurl
                 $filePath = $fileData['path'] ?? $fileData['file'] ?? '';
                 $mimeType = $fileData['type'] ?? $fileData['mime'] ?? null;
                 $filename = $fileData['name'] ?? $fileData['filename'] ?? null;
-                
+
                 $this->addFile($field, $filePath, $mimeType, $filename);
             }
         }
-        
+
         return $this;
     }
 
@@ -305,10 +305,10 @@ class HttpCurl
     {
         $fullUrl = $this->buildUrl($path);
         $this->create($fullUrl);
-        
+
         // Add files to the request
         $this->addFiles($files);
-        
+
         // Setup POST with parameters
         $this->setupPost($params);
         $this->options($options);
@@ -330,13 +330,13 @@ class HttpCurl
     public function request($method, $path = '', array $params = [], $options = [])
     {
         $method = strtolower($method);
-        
+
         // Build full URL
         $fullUrl = $this->buildUrl($path);
-        
+
         // Create session with full URL
         $this->create($fullUrl);
-        
+
         // Call the appropriate method
         switch ($method) {
             case 'get':
@@ -383,7 +383,7 @@ class HttpCurl
         // Combine base URL with path
         $baseUrl = rtrim($this->baseUrl, '/');
         $path = ltrim($path, '/');
-        
+
         return $baseUrl . '/' . $path;
     }
 
@@ -397,7 +397,7 @@ class HttpCurl
     public function get($path = '', $params = [])
     {
         $fullUrl = $this->buildUrl($path);
-        
+
         // Add query parameters to URL for GET requests
         if (!empty($params)) {
             $separator = strpos($fullUrl, '?') !== false ? '&' : '?';
@@ -435,7 +435,7 @@ class HttpCurl
     {
         $fullUrl = $this->buildUrl($path);
         $this->create($fullUrl);
-        
+
         $this->setupPost($params);
         $this->options($options);
 
@@ -452,13 +452,13 @@ class HttpCurl
     {
         $this->method(self::POST);
         $this->option(CURLOPT_POST, true);
-        
+
         // Handle file uploads
         if (!empty($this->files)) {
             // When files are present, merge with regular params
             $postData = array_merge((array)$params, $this->files);
             $this->option(CURLOPT_POSTFIELDS, $postData);
-            
+
             // Don't set Content-Type header when uploading files
             // Let cURL set it automatically with boundary
         } elseif (!empty($params)) {
@@ -482,7 +482,7 @@ class HttpCurl
     {
         $fullUrl = $this->buildUrl($path);
         $this->create($fullUrl);
-        
+
         $this->setupPut($params);
         $this->options($options);
 
@@ -498,7 +498,7 @@ class HttpCurl
     private function setupPut($params = [])
     {
         $this->method(self::PUT);
-        
+
         // Handle file uploads
         if (!empty($this->files)) {
             // For PUT with files, we need to use POST fields
@@ -524,7 +524,7 @@ class HttpCurl
     {
         $fullUrl = $this->buildUrl($path);
         $this->create($fullUrl);
-        
+
         $this->setupPatch($params);
         $this->options($options);
 
@@ -540,7 +540,7 @@ class HttpCurl
     private function setupPatch($params = [])
     {
         $this->method(self::PATCH);
-        
+
         if (!empty($params)) {
             if (is_array($params)) {
                 $params = http_build_query($params, '', '&');
@@ -561,7 +561,7 @@ class HttpCurl
     {
         $fullUrl = $this->buildUrl($path);
         $this->create($fullUrl);
-        
+
         $this->setupDelete($params);
         $this->options($options);
 
@@ -577,7 +577,7 @@ class HttpCurl
     private function setupDelete($params = [])
     {
         $this->method(self::DELETE);
-        
+
         if (!empty($params)) {
             if (is_array($params)) {
                 $params = http_build_query($params, '', '&');

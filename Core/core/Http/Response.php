@@ -75,15 +75,15 @@ class Response
     /**
      * @var int the HTTP status code to send with the response.
      */
-    
+
     private $statusCode = HttpStatus::OK;
 
-    function __construct() 
+    function __construct()
     {
         // CodeIgniter initialization
         $this->ci = get_instance();
     }
-    
+
     /**
      * Set Response Format into CI_Output
      * 
@@ -145,7 +145,7 @@ class Response
      * @throws Exception if the status code is invalid.
      * @return $this the response object itself
      */
-    public function setStatusCode($code, $text=null)
+    public function setStatusCode($code, $text = null)
     {
         if ($code === null) {
             $code = HttpStatus::OK;
@@ -154,7 +154,7 @@ class Response
         $this->statusCode = (int) $code;
         // Check status code
         if ($this->getIsInvalid()) {
-            throw new Exception("The HTTP status code is invalid: ". $this->statusCode);
+            throw new Exception("The HTTP status code is invalid: " . $this->statusCode);
         }
         // Set HTTP status code with options
         if ($text) {
@@ -199,10 +199,9 @@ class Response
         $formatFunc = "format" . $format;
         // Use formatter if exists
         if (method_exists($this, $formatFunc)) {
-            
+
             $data = $this->{$formatFunc}($data);
-        } 
-        elseif (is_array($data)) {
+        } elseif (is_array($data)) {
             // Use JSON while the Formatter not found and the data is array
             $data = $this->formatJson($data);
         }
@@ -228,19 +227,19 @@ class Response
      * @param int Callback status code
      * @return string Response body data
      */
-    public function json($data, $statusCode=null)
+    public function json($data, $statusCode = null)
     {
         // Set Status Code
         if ($statusCode) {
             $this->setStatusCode($statusCode);
         }
-        
+
         $this->setFormat(Response::FORMAT_JSON);
 
         if (!is_null($data)) {
             $this->setData($data);
         }
-        
+
         return $this->send();
     }
 
@@ -258,7 +257,7 @@ class Response
     public function withHeader($name, $value)
     {
         $this->ci->output->set_header("{$name}: {$value}");
-        
+
         return $this;
     }
 
@@ -278,7 +277,7 @@ class Response
     public function withAddedHeader($name, $value)
     {
         $this->withHeader($name, $value);
-        
+
         return $this;
     }
 }
