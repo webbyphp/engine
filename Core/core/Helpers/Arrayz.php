@@ -107,7 +107,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if (is_array($data)) {
             return new static($data);
         }
-        
+
         if (is_object($data)) {
 
             // Handle query results as array
@@ -119,15 +119,15 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
             if (method_exists($data, 'result')) {
                 return new static($data->result());
             }
-            
+
             // Handle other objects
             return new static((array) $data);
         }
-        
+
         if (is_string($data) && is_json($data)) {
             return new static(json_decode($data, true));
         }
-        
+
         return new static([$data]);
     }
 
@@ -153,12 +153,12 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
      */
     private function isValidSource($source): bool
     {
-        return is_array($source) || 
-               is_iterable($source) || 
-               $source instanceof Generator ||
-               (is_object($source) && method_exists($source, 'result_array')) ||
-               (is_object($source) && method_exists($source, 'result')) ||
-               (is_object($source) && method_exists($source, 'toArray'));
+        return is_array($source) ||
+            is_iterable($source) ||
+            $source instanceof Generator ||
+            (is_object($source) && method_exists($source, 'result_array')) ||
+            (is_object($source) && method_exists($source, 'result')) ||
+            (is_object($source) && method_exists($source, 'toArray'));
     }
 
     /**
@@ -170,7 +170,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if (is_array($source)) {
             return $source;
         }
-        
+
         if ($source instanceof Generator || is_iterable($source)) {
             // Only convert to array when necessary for memory efficiency
             return $source;
@@ -187,7 +187,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if (is_object($source) && method_exists($source, 'toArray')) {
             return $source->toArray();
         }
-        
+
         return [];
     }
 
@@ -196,7 +196,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
      */
     private function ensureArray()
     {
-        if ( ! is_array($this->items)) {
+        if (! is_array($this->items)) {
             if (is_iterable($this->items)) {
                 $this->items = iterator_to_array($this->items, true);
             } else {
@@ -215,7 +215,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
     {
         $allowedTypes = ['serialize', 'json', 'igbinary'];
 
-        if ( ! in_array($type, $allowedTypes)) {
+        if (! in_array($type, $allowedTypes)) {
             throw new InvalidArgumentException(
                 "Invalid cache type. Allowed: " . implode(', ', $allowedTypes)
             );
@@ -287,7 +287,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($this->cache->isCached($this->cacheItem)) {
             $this->cache->deleteCacheItem($this->cacheItem);
         }
-        
+
         return $this;
     }
 
@@ -318,7 +318,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($callback === null) {
             return new static(array_filter($this->items));
         }
-        
+
         return new static(array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH));
     }
 
@@ -335,7 +335,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
 
         return $this->filter(function ($item) use ($key, $operator, $value) {
             $itemValue = $this->getValue($item, $key);
-            
+
             return match ($operator) {
                 '=', '==' => $itemValue == $value,
                 '===' => $itemValue === $value,
@@ -391,10 +391,10 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
     public function pluck(string $key, ?string $keyBy = null): self
     {
         $result = [];
-        
+
         foreach ($this->items as $item) {
             $value = $this->getValue($item, $key);
-            
+
             if ($keyBy === null) {
                 $result[] = $value;
             } else {
@@ -402,7 +402,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
                 $result[$keyValue] = $value;
             }
         }
-        
+
         return new static($result);
     }
 
@@ -436,18 +436,18 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
     public function groupBy(string|callable $groupBy): self
     {
         $groups = [];
-        
+
         foreach ($this->items as $item) {
             if (is_callable($groupBy)) {
                 $key = $groupBy($item);
             } else {
                 $key = $this->getValue($item, $groupBy);
             }
-            
+
             $groups[$key] = $groups[$key] ?? [];
             $groups[$key][] = $item;
         }
-        
+
         return new static(array_map(fn($group) => new static($group), $groups));
     }
 
@@ -457,20 +457,20 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
     public function sortBy(string|callable $sortBy, string $direction = 'asc'): self
     {
         $sorted = $this->items;
-        
+
         if (is_callable($sortBy)) {
             usort($sorted, $sortBy);
         } else {
             usort($sorted, function ($a, $b) use ($sortBy, $direction) {
                 $valueA = $this->getValue($a, $sortBy);
                 $valueB = $this->getValue($b, $sortBy);
-                
+
                 $result = $valueA <=> $valueB;
-                
+
                 return $direction === 'desc' ? -$result : $result;
             });
         }
-        
+
         return new static($sorted);
     }
 
@@ -508,11 +508,11 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($limit < 0) {
             return new static(array_slice($this->items, $limit));
         }
-        
+
         return new static(array_slice($this->items, $offset, $limit));
     }
 
-     /**
+    /**
      *  Limit method with better bounds checking
      */
     public function limit(int $limit, int $offset = 0): Arrayz
@@ -560,10 +560,10 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($key === null) {
             return new static(array_unique($this->items, SORT_REGULAR));
         }
-        
+
         $seen = [];
         $result = [];
-        
+
         foreach ($this->items as $item) {
             $value = $this->getValue($item, $key);
             if (!in_array($value, $seen, true)) {
@@ -571,7 +571,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
                 $result[] = $item;
             }
         }
-        
+
         return new static($result);
     }
 
@@ -589,7 +589,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
     public function merge(array|self ...$collections): self
     {
         $merged = $this->items;
-        
+
         foreach ($collections as $collection) {
             if ($collection instanceof self) {
                 $merged = array_merge($merged, $collection->toArray());
@@ -597,7 +597,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
                 $merged = array_merge($merged, $collection);
             }
         }
-        
+
         return new static($merged);
     }
 
@@ -646,7 +646,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($callback === null && is_array($this->items)) {
             return empty($this->items) ? null : reset($this->items);
         }
-        
+
         if ($callback === null && is_iterable($this->items)) {
             foreach ($this->items as $item) {
                 return $item;
@@ -658,7 +658,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
                 return $item;
             }
         }
-        
+
         return null;
     }
 
@@ -670,14 +670,14 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($callback === null) {
             return empty($this->items) ? null : end($this->items);
         }
-        
+
         $items = array_reverse($this->items, true);
         foreach ($items as $item) {
             if ($callback($item)) {
                 return $item;
             }
         }
-        
+
         return null;
     }
 
@@ -705,7 +705,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($key !== null) {
             return $this->pluck($key)->contains($value);
         }
-        
+
         return in_array($value, $this->items, true);
     }
 
@@ -743,15 +743,15 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if (is_array($this->items)) {
             return count($this->items);
         }
-        
+
         if ($this->items instanceof Countable) {
             return $this->items->count();
         }
-        
+
         if (is_iterable($this->items)) {
             return iterator_count($this->items);
         }
-        
+
         return 0;
     }
 
@@ -779,7 +779,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($key !== null) {
             return $this->pluck($key)->sum();
         }
-        
+
         return array_sum($this->items);
     }
 
@@ -799,18 +799,18 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
     {
         $values = $key !== null ? $this->pluck($key)->toArray() : $this->items;
         $count = count($values);
-        
+
         if ($count === 0) {
             return null;
         }
-        
+
         sort($values);
         $middle = floor($count / 2);
-        
+
         if ($count % 2 === 0) {
             return ($values[$middle - 1] + $values[$middle]) / 2;
         }
-        
+
         return $values[$middle];
     }
 
@@ -822,7 +822,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($key !== null) {
             return $this->pluck($key)->min();
         }
-        
+
         return empty($this->items) ? null : min($this->items);
     }
 
@@ -834,7 +834,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($key !== null) {
             return $this->pluck($key)->max();
         }
-        
+
         return empty($this->items) ? null : max($this->items);
     }
 
@@ -850,7 +850,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
                 break;
             }
         }
-        
+
         return $this;
     }
 
@@ -877,11 +877,11 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
     public function isAssocArray(?array $array = null): bool
     {
         $array = $array ?? $this->items;
-        
+
         if ([] === $array) {
             return true;
         }
-        
+
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
@@ -891,13 +891,13 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
     public function isMultiArray(?array $array = null): bool
     {
         $array = $array ?? $this->items;
-        
+
         foreach ($array as $value) {
             if (is_array($value)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -953,7 +953,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if (str_contains($key, '.')) {
             $keys = explode('.', $key);
             $value = $item;
-            
+
             foreach ($keys as $k) {
                 if (is_array($value) && array_key_exists($k, $value)) {
                     $value = $value[$k];
@@ -963,18 +963,18 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
                     return null;
                 }
             }
-            
+
             return $value;
         }
-        
+
         if (is_array($item)) {
             return $item[$key] ?? null;
         }
-        
+
         if (is_object($item)) {
             return $item->$key ?? null;
         }
-        
+
         return null;
     }
 
@@ -986,18 +986,18 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if (is_array($data)) {
             return $data;
         }
-        
+
         if (is_object($data)) {
             if (method_exists($data, 'result_array')) {
                 return $data->result_array();
             }
             return (array) $data;
         }
-        
+
         if (is_string($data) && function_exists('is_json') && is_json($data)) {
             return json_decode($data, true);
         }
-        
+
         return (array) $data;
     }
 
@@ -1009,9 +1009,9 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         if ($depth === 0) {
             return $array;
         }
-        
+
         $result = [];
-        
+
         foreach ($array as $value) {
             if (is_array($value)) {
                 $result = array_merge($result, $this->flattenArray($value, $depth - 1));
@@ -1019,7 +1019,7 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
                 $result[] = $value;
             }
         }
-        
+
         return $result;
     }
 
@@ -1086,4 +1086,3 @@ class Arrayz implements ArrayAccess, Iterator, Countable, JsonSerializable
         return $this->items;
     }
 }
-

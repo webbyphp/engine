@@ -299,94 +299,94 @@ class Rayz
 	// ------ Wrapper array_* methods ----------------
 
 	/**
-     * Wrapper method for array_map
-     *
-     * @param callable $callback
-     * @return array
-     */
-    public function map(callable $callback): array
-    {
-        return array_map($callback, $this->source);
-    }
+	 * Wrapper method for array_map
+	 *
+	 * @param callable $callback
+	 * @return array
+	 */
+	public function map(callable $callback): array
+	{
+		return array_map($callback, $this->source);
+	}
 
-    /**
-     * Wrapper method for array_filter
-     *
-     * @param callable $callback
-     * @return array
-     */
-    public function filter(callable $callback): array
-    {
-        return array_filter($this->source, $callback);
-    }
+	/**
+	 * Wrapper method for array_filter
+	 *
+	 * @param callable $callback
+	 * @return array
+	 */
+	public function filter(callable $callback): array
+	{
+		return array_filter($this->source, $callback);
+	}
 
-    /**
-     * Wrapper method for in_array
-     *
-     * @param mixed $item
-     * @return bool
-     */
-    public function exists(mixed $item): bool
-    {
-        return in_array($item, $this->source);
-    }
+	/**
+	 * Wrapper method for in_array
+	 *
+	 * @param mixed $item
+	 * @return bool
+	 */
+	public function exists(mixed $item): bool
+	{
+		return in_array($item, $this->source);
+	}
 
-    /**
-     * Wrapper method for array_values
-     *
-     * @return array
-     */
-    public function getValues(): array
-    {
-        return array_values($this->source);
-    }
+	/**
+	 * Wrapper method for array_values
+	 *
+	 * @return array
+	 */
+	public function getValues(): array
+	{
+		return array_values($this->source);
+	}
 
-    /**
-     * Wrapper method for array_keys
-     *
-     * @return array
-     */
-    public function getKeys(): array
-    {
-        return array_keys($this->source);
-    }
+	/**
+	 * Wrapper method for array_keys
+	 *
+	 * @return array
+	 */
+	public function getKeys(): array
+	{
+		return array_keys($this->source);
+	}
 
-    /**
-     * Wrapper method for array_search
-     *
-     * @param mixed $searchParam
-     * @return false|int|string
-     */
-    public function search(mixed $searchParam, bool $strict = false): int|string|false
-    {
-        return array_search($searchParam, $this->source, $strict);
-    }
+	/**
+	 * Wrapper method for array_search
+	 *
+	 * @param mixed $searchParam
+	 * @return false|int|string
+	 */
+	public function search(mixed $searchParam, bool $strict = false): int|string|false
+	{
+		return array_search($searchParam, $this->source, $strict);
+	}
 
-    /**
-     * Wrapper method for array_reduce
-     *
-     * @param callable $callback
-     * @param mixed $initial
-     * 
-     * @return mixed
-     */
-    public function reduce(callable $callback, mixed $initial = null): mixed
-    {
-        return array_reduce($this->source, $callback, $initial);
-    }
+	/**
+	 * Wrapper method for array_reduce
+	 *
+	 * @param callable $callback
+	 * @param mixed $initial
+	 * 
+	 * @return mixed
+	 */
+	public function reduce(callable $callback, mixed $initial = null): mixed
+	{
+		return array_reduce($this->source, $callback, $initial);
+	}
 
-    /**
-     * Wrapper method for array_chunk
-     *
-     * @param int $length
-     * @param bool $preserve_keys
-     * 
-     * @return array
-     */
-    public function chunk(int $length, bool $preserve_keys = false): array
-    {
-        return array_chunk($this->source, $length, $preserve_keys);
-    }
+	/**
+	 * Wrapper method for array_chunk
+	 *
+	 * @param int $length
+	 * @param bool $preserve_keys
+	 * 
+	 * @return array
+	 */
+	public function chunk(int $length, bool $preserve_keys = false): array
+	{
+		return array_chunk($this->source, $length, $preserve_keys);
+	}
 
 	/**
 	 * Like an SQL where clause
@@ -685,20 +685,19 @@ class Rayz
 		$pagination = [
 			'length' => $perPage,
 			'total' => sizeof($array),
-			'currentPage' => $page 
+			'currentPage' => $page
 		];
 
 		$pagination['pages'] = ceil($pagination['total'] / $pagination['length']);
 		$pagination['offset'] = ($pagination['currentPage'] * $pagination['length']) - $pagination['length'];
 
 		$results = array_slice($array, $pagination['offset'], $pagination['length'], true);
-		
+
 		$this->source = $results;
 		$this->results = $results;
 		$this->pager = (object) $pagination;
-		
-		return $this;
 
+		return $this;
 	}
 
 	/**
@@ -745,7 +744,7 @@ class Rayz
 		return $this;
 	}
 
-/*
+	/*
 	* Group by a key value 
 	*/
 	public function groupBy(): Rayz
@@ -1130,7 +1129,7 @@ class Rayz
 	public function unique()
 	{
 		if ($this->isMultiArray($this->source)) {
-			$this->source = array_unique($this->source, SORT_REGULAR);		
+			$this->source = array_unique($this->source, SORT_REGULAR);
 		}
 
 		return $this;
@@ -1147,8 +1146,7 @@ class Rayz
 	{
 		$result = [];
 
-		array_walk_recursive($this->source, function($array) use (&$result)
-		{
+		array_walk_recursive($this->source, function ($array) use (&$result) {
 			$result[] = $array;
 		});
 
@@ -1157,7 +1155,7 @@ class Rayz
 		if ($toArray) {
 			$this->source = arrayfy($result);
 		}
-		
+
 		return $this;
 	}
 
@@ -1176,9 +1174,9 @@ class Rayz
 		}
 
 		$count = count($array);
-		
+
 		for ($i = 0; $i < $count; $i++) {
-			if(!array_key_exists($i, $array)) {
+			if (!array_key_exists($i, $array)) {
 				return true;
 			}
 		}
@@ -1212,13 +1210,12 @@ class Rayz
 	{
 		return is_json($string);
 	}
-	
-    // ------------------ MAGIC METHODS ------------------
 
-    public function __toString(): string
-    {
-        return $this->toJson();
-    }
+	// ------------------ MAGIC METHODS ------------------
 
+	public function __toString(): string
+	{
+		return $this->toJson();
+	}
 }
 /* End of the file Rayz.php */
