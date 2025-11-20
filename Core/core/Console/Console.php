@@ -148,8 +148,7 @@ class Console
             exit;
         }
 
-        switch($arg1)
-        {
+        switch ($arg1) {
             case '--help':
             case '-h':
                 static::consoleEnv();
@@ -192,10 +191,6 @@ class Console
                 }
 
                 static::runSystemCommand(Console::phpCommand() . 'key');
-                break;
-            case 'migrate':
-                static::consoleEnv();
-                static::runSystemCommand(Console::phpCommand() . 'migrate');
                 break;
             case 'list:routes':
                 static::runSystemCommand(Console::phpCommand() . 'routes');
@@ -487,7 +482,7 @@ class Console
         if (isset($args[2]) && $args[2] == '--dir') {
             $location = $lastArg;
         } elseif (isset($args[3]) && $args[3] == '--dir') {
-            $location = '--dir' .':'. $lastArg;
+            $location = '--dir' . ':' . $lastArg;
         }
 
         if ($nonModuleController !== true) {
@@ -953,7 +948,6 @@ class Console
                 static::runSystemCommand($command);
                 exit;
             }
-
         }
 
         if ($key === '--rollback') {
@@ -987,7 +981,6 @@ class Console
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for migrate --rollback", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
-
         }
 
         if ($key === '--later') {
@@ -1126,7 +1119,6 @@ class Console
                 static::runSystemCommand($command);
                 exit;
             }
-
         }
 
         if ($key[0] === '--table') {
@@ -1145,7 +1137,6 @@ class Console
                 echo $output . "\n";
                 exit;
             }
-
         }
 
         $output =   " \n";
@@ -1261,7 +1252,7 @@ class Console
         $type = $args[0];
         $file = $args[1];
 
-        if($type == null) {
+        if ($type == null) {
             $type = '--file';
         }
 
@@ -1407,6 +1398,7 @@ class Console
         }
 
         $project_dir = static::$rootpath; //__DIR__;
+
         $dir = realpath($project_dir . '/public/');
 
         if ($host === 'expose') {
@@ -1420,7 +1412,7 @@ class Console
 
         if ($host === self::UIP) {
 
-           $clientIp = static::getLocalIPAddress();
+            $clientIp = static::getLocalIPAddress();
 
             $output .= ConsoleColor::green("\n\tYou can also access your project at ");
             $output .= ConsoleColor::cyan("http://{$clientIp}:{$port} \n");
@@ -1531,7 +1523,6 @@ class Console
         }
 
         exec("fuser -n tcp -k {$port}");
-
     }
 
     /**
@@ -1634,5 +1625,4 @@ class Console
             Console::noCommand();
         }
     }
-
 }
