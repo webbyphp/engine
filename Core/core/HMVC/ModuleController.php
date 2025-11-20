@@ -45,7 +45,7 @@ class ModuleController
 	public $load;
 	public $use;
 
-	public function __construct() 
+	public function __construct()
 	{
 		$ci = CI_Instance::create();
 
@@ -55,14 +55,14 @@ class ModuleController
 
 		/* copy a loader instance and initialize */
 		$this->load = clone load_class('Loader');
-		$this->use =& $this->load;
-		$this->load->initialize();	
+		$this->use = &$this->load;
+		$this->load->initialize($this);
 
 		/* autoload module items */
 		$this->load->_autoloader($this->autoload);
 	}
-	
-	public function __get($class) 
+
+	public function __get($class)
 	{
 		$ci = CI_Instance::create();
 		return $ci->$class;
