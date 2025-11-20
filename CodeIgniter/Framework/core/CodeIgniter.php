@@ -100,7 +100,7 @@ set_exception_handler('_exception_handler');
 register_shutdown_function('_shutdown_handler');
 
 if (config_item('beautiful_error_handler')) {
-	
+
 	// Require Beautiful ErrorHandler
 	require_once __DIR__ . DS . "ErrorHandler.php";
 
@@ -413,7 +413,7 @@ function getNamespacedController($class, $dir = null)
 	$isCLI = PHP_SAPI === 'cli' or defined('STDIN');
 
 	if (str_contains($dir, $isModule) || $isCLI) {
-		return ['fqcn' => $class,'path' => ''];
+		return ['fqcn' => $class, 'path' => ''];
 	}
 
 	if ($namespace && !empty($dir)) {
@@ -422,8 +422,7 @@ function getNamespacedController($class, $dir = null)
 
 	$path = APPROOT . 'Controllers/' . $dir . $class . ".php";
 
-	return ['fqcn' => $class,'path' => $path];
-
+	return ['fqcn' => $class, 'path' => $path];
 }
 
 $e404 = false;
@@ -461,16 +460,16 @@ if (
 		$e404 = true;
 	}
 	/**
-     * DO NOT CHANGE THIS, NOTHING ELSE WORKS!
-     *
-     * - method_exists() returns true for non-public methods, which passes the previous elseif
-     * - is_callable() returns false for PHP 4-style constructors, even if there's a __construct()
-     * - method_exists($class, '__construct') won't work because CI_Controller::__construct() is inherited
-     * - People will only complain if this doesn't work, even though it is documented that it shouldn't.
-     *
-     * ReflectionMethod::isConstructor() is the ONLY reliable check,
-     * knowing which method will be executed as a constructor.
-     */
+	 * DO NOT CHANGE THIS, NOTHING ELSE WORKS!
+	 *
+	 * - method_exists() returns true for non-public methods, which passes the previous elseif
+	 * - is_callable() returns false for PHP 4-style constructors, even if there's a __construct()
+	 * - method_exists($class, '__construct') won't work because CI_Controller::__construct() is inherited
+	 * - People will only complain if this doesn't work, even though it is documented that it shouldn't.
+	 *
+	 * ReflectionMethod::isConstructor() is the ONLY reliable check,
+	 * knowing which method will be executed as a constructor.
+	 */
 	else {
 		$reflection = ReflectionMethod::createFromMethodName($class . '::' . $method);
 		if (!$reflection->isPublic() or $reflection->isConstructor()) {
@@ -552,7 +551,7 @@ $EXT->call_hook('post_controller_constructor');
  * ------------------------------------------------------
  */
 if (method_exists($CI, '_runMiddlewares')) {
-    $CI->_runMiddlewares();
+	$CI->_runMiddlewares();
 }
 
 /*
