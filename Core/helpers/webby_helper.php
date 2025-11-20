@@ -156,31 +156,63 @@ if ( ! function_exists('utf8_decode'))
 if ( ! function_exists('config')) 
 {
      /**
-      * Fetch/Set a config file item
+      * Fetch or Set a config file item
+      * or get an instance of a namespaced 
+      * Config class.
       *
       * @param array|string $key
       * @param mixed $value
       * @return mixed
       */
-    function config($key = null, $value = null)
+    function config(string|array|null $key = null, mixed $value = null)
     {
-        if (is_null($key)) {
-            return ci('config');
-        }
+
+        $config = ci('config');
 
         if (is_array($key)) {
             foreach ($key as $item => $val) {
-                config($item, $val);
+                $config->set_item($item, $val);
+            }
+            return $config;
+        }
+
+        if ($key === null) {
+            return $config;
+        }
+
+        if ($value !== null) {
+            $config->set_item($key, $value);
+            return $config;
+        }
+
+        // Handle Namespaced Config Classes
+        // If the first letter is uppercase, 
+        // assume it's a Config Class.
+        if (ctype_upper($key[0])) {
+            
+            static $instances = [];
+
+            if (strpos($key, '.') !== false) {
+                [$class, $property] = explode('.', $key, 2);
+            } else {
+                $class = $key;
+                $property = null;
             }
 
-            return '';
+            $className = ucfirst($class);
+            $fqcn = 'App\\Config\\' . $className;
+
+            if (!isset($instances[$fqcn])) {
+                if (!class_exists($fqcn)) {
+                    return $config->item($key);
+                }
+                $instances[$fqcn] = new $fqcn();
+            }
+
+            return $property === null ? $instances[$fqcn] : $instances[$fqcn]->get($property);
         }
 
-        if ( ! is_null($value)) {
-            return ci('config')->set_item($key, $value);
-        }
-
-        return ci('config')->item($key);
+        return $config->item($key);
     }
 }
 
