@@ -45,7 +45,7 @@ interface ConfigInterface
      * @return boolean
      */
     public function has($key);
-    
+
     /**
      * Get all of the configuration items
      *

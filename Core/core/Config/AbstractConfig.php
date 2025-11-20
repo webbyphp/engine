@@ -267,7 +267,7 @@ abstract class AbstractConfig extends \Base_Config implements ConfigInterface, A
      */
     public function next(): void
     {
-         (is_array($this->data) ? next($this->data) : null);
+        (is_array($this->data) ? next($this->data) : null);
     }
 
     /**
@@ -304,5 +304,4 @@ abstract class AbstractConfig extends \Base_Config implements ConfigInterface, A
     {
         $this->offsetUnset($key);
     }
-
 }

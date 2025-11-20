@@ -27,7 +27,7 @@ class Json extends AbstractWriter
     public function toFile($config, $filename)
     {
         $data = $this->toString($config);
-        $success = @file_put_contents($filename, $data.PHP_EOL);
+        $success = @file_put_contents($filename, $data . PHP_EOL);
         if ($success === false) {
             throw new WriteException(['file' => $filename]);
         }

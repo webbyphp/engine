@@ -37,5 +37,4 @@ interface WriterInterface
      * @return array
      */
     public static function getSupportedExtensions();
-    
 }

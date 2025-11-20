@@ -37,7 +37,7 @@ class UndefinedOption extends InvalidArgumentException
       $lev = levenshtein($item, $name, 10, 11, 10);
 
       if ($lev <= 0 || $lev >= $min) {
-          continue;
+        continue;
       }
 
       $min = $lev;

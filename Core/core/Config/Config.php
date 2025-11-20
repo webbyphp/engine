@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Base\Config;
 
@@ -87,8 +87,8 @@ class Config extends AbstractConfig
     {
 
         if (
-            is_string($options) 
-            && $parser == 'json' 
+            is_string($options)
+            && $parser == 'json'
             || str_contains($options, '.json')
         ) {
             return $this->useJson($options);
@@ -97,7 +97,7 @@ class Config extends AbstractConfig
         if (is_string($options)) {
             $options = new $options;
         }
-        
+
         if (!is_object($options)) {
             throw new Exception('Config object must be an object');
         }
@@ -141,7 +141,7 @@ class Config extends AbstractConfig
         return new static($this->data);
     }
 
-        /**
+    /**
      * Loads configuration from file.
      *
      * @param  string|array     $path   Filenames or directories with configuration
@@ -155,7 +155,7 @@ class Config extends AbstractConfig
         $this->data = [];
 
         foreach ($paths as $path) {
-            
+
             if ($parser === null) {
                 // Get file information
                 $info      = pathinfo($path);
@@ -194,7 +194,7 @@ class Config extends AbstractConfig
      */
     public function toFile($filename, ?WriterInterface $writer = null)
     {
-       
+
         if ($writer === null) {
             // Get file information
             $info      = pathinfo($filename);
@@ -270,7 +270,7 @@ class Config extends AbstractConfig
         }
 
         // If none exist, then throw an exception
-        throw new UnsupportedFormatException('Unsupported configuration format'.$extension);
+        throw new UnsupportedFormatException('Unsupported configuration format' . $extension);
     }
 
     /**
@@ -347,5 +347,4 @@ class Config extends AbstractConfig
 
         return [$path];
     }
-
 }
