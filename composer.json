@@ -1,7 +1,7 @@
 {
-    "name": "sylynder/engine",
+    "name": "webbyphp/engine",
     "description": "",
-    "keywords": ["composer", "codeigniter", "webby", "sylynder"],
+    "keywords": ["composer", "codeigniter", "webby", "webbyphp", "sylynder"],
     "license": "MIT",
     "authors": [{
         "name": "otengkwame",
@@ -19,9 +19,5 @@
             "CodeIgniter/Framework"
         ]
     },
-    "minimum-stability": "stable",
-    "require-dev": {
-        "rector/rector": "^0.14.2",
-        "samsara/roster": "^0.1"
-    }
+    "minimum-stability": "stable"
 }
