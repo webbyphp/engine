@@ -14,24 +14,22 @@ class Error
 	 *
 	 * @param bool $end Whether to restore warnings
 	 */
-	public static function suppressWarnings( bool $end = false ): void 
+	public static function suppressWarnings(bool $end = false): void
 	{
-		if ( $end ) {
+		if ($end) {
 
-			if ( self::$suppressCount ) {
+			if (self::$suppressCount) {
 
 				--self::$suppressCount;
-				if ( !self::$suppressCount ) {
-					error_reporting( self::$originalLevel );
+				if (!self::$suppressCount) {
+					error_reporting(self::$originalLevel);
 				}
-
 			}
-
 		} else {
-			
-			if ( !self::$suppressCount ) {
+
+			if (!self::$suppressCount) {
 				self::$originalLevel =
-					error_reporting( E_ALL & ~(
+					error_reporting(E_ALL & ~(
 						E_WARNING |
 						E_NOTICE |
 						E_USER_WARNING |
@@ -39,7 +37,7 @@ class Error
 						E_DEPRECATED |
 						E_USER_DEPRECATED |
 						2048 // E_STRICT - which has been deprecated
-					) );
+					));
 			}
 
 			++self::$suppressCount;
@@ -49,9 +47,9 @@ class Error
 	/**
 	 * Restore error level to previous value
 	 */
-	public static function restoreWarnings(): void 
+	public static function restoreWarnings(): void
 	{
-		self::suppressWarnings( true );
+		self::suppressWarnings(true);
 	}
 
 	/**
@@ -61,17 +59,16 @@ class Error
 	 * @param mixed ...$args Optional arguments for the function call
 	 * @return mixed
 	 */
-	public static function quietCall( callable $callback, ...$args ) 
+	public static function quietCall(callable $callback, ...$args)
 	{
 		self::suppressWarnings();
-		
+
 		try {
-			$rv = $callback( ...$args );
+			$rv = $callback(...$args);
 		} finally {
 			self::restoreWarnings();
 		}
 
 		return $rv;
 	}
-
 }
