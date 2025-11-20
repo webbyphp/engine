@@ -14,8 +14,7 @@ use Base\Route\Route;
 
 /* ------------------------------- Uri Functions ---------------------------------*/
 
-if ( ! function_exists('app_url')) 
-{
+if (! function_exists('app_url')) {
     /**
      * alias of base_url.
      *
@@ -24,13 +23,12 @@ if ( ! function_exists('app_url'))
      * @return string
      */
     function app_url($uri = '', $protocol = null)
-    {   
+    {
         return base_url($uri, $protocol);
     }
 }
 
-if ( ! function_exists('url')) 
-{
+if (! function_exists('url')) {
     /**
      * Improved alias of site_url
      *
@@ -41,18 +39,18 @@ if ( ! function_exists('url'))
     function url($uri = '', $param = '', $protocol = null)
     {
         $uri = ltrim($uri, '/');
-        
+
         if ($uri === 'void') {
             return void_url();
         }
 
         // Detect if the $uri is string and starts with 'https://' or 'http://'
-        if (is_string ($uri) && (strpos($uri, 'https://') === 0 || strpos($uri, 'http://') === 0)) {
+        if (is_string($uri) && (strpos($uri, 'https://') === 0 || strpos($uri, 'http://') === 0)) {
             return "{$uri}{$param}";
         }
-        
+
         // Detect if the $uri starts with 'www.'
-        if (is_string ($uri) && strpos($uri, 'www.') === 0) {
+        if (is_string($uri) && strpos($uri, 'www.') === 0) {
             return "{$uri}{$param}";
         }
 
@@ -74,8 +72,7 @@ if ( ! function_exists('url'))
     }
 }
 
-if ( ! function_exists('void_url')) 
-{
+if (! function_exists('void_url')) {
     /**
      * A function that adds a void url
      *
@@ -89,8 +86,7 @@ if ( ! function_exists('void_url'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('uri'))
-{
+if (! function_exists('uri')) {
     /**
      *  Fetch URI string or Segment Array
      *
@@ -102,17 +98,15 @@ if ( ! function_exists('uri'))
     {
         $preffix = ($rsegment !== false) ? 'r' : '';
 
-        if ($array !== false)
-        {
-            return app('uri')->{$preffix.'segment_array'}();
+        if ($array !== false) {
+            return app('uri')->{$preffix . 'segment_array'}();
         }
 
-        return app('uri')->{$preffix.'uri_string'}();
+        return app('uri')->{$preffix . 'uri_string'}();
     }
 }
 
-if ( ! function_exists('action')) 
-{
+if (! function_exists('action')) {
     /**
      * Use it for form actions.
      *
@@ -125,17 +119,16 @@ if ( ! function_exists('action'))
         if (is_null($uri)) {
             return "action='' ";
         }
-        
+
         if (!is_null($method) && $method === 'post' || $method === 'get') {
-            return "action='" . site_url($uri) . "'" .' '. "method='" . $method . "'" . ' ';
+            return "action='" . site_url($uri) . "'" . ' ' . "method='" . $method . "'" . ' ';
         }
 
         return "action='" . site_url($uri) . "'" . ' ';
     }
 }
 
-if ( ! function_exists('is_active')) 
-{
+if (! function_exists('is_active')) {
     /**
      * Use it to set active or current url for 
      * css classes. Default class name is (active)
@@ -157,8 +150,7 @@ if ( ! function_exists('is_active'))
     }
 }
 
-if ( ! function_exists('active_link')) 
-{
+if (! function_exists('active_link')) {
     /**
      * Alias for is_active
      *
@@ -178,8 +170,7 @@ if ( ! function_exists('active_link'))
     }
 }
 
-if ( ! function_exists('active_segment')) 
-{
+if (! function_exists('active_segment')) {
     /**
      * Use it to set active or current uri_segment for 
      * css classes. Default class name is (active)
@@ -196,8 +187,7 @@ if ( ! function_exists('active_segment'))
 }
 
 
-if ( ! function_exists('uri_segment')) 
-{
+if (! function_exists('uri_segment')) {
     /**
      * Alias for CodeIgniter's $this->uri->segment
      *
@@ -211,8 +201,7 @@ if ( ! function_exists('uri_segment'))
     }
 }
 
-if ( ! function_exists('go_back')) 
-{
+if (! function_exists('go_back')) {
     /**
      * Go back using Html5 previous history
      * with a styled anchor tag
@@ -227,8 +216,7 @@ if ( ! function_exists('go_back'))
     }
 }
 
-if ( ! function_exists('html5_back')) 
-{
+if (! function_exists('html5_back')) {
     /**
      * Similar to go_back() function
      * 
@@ -242,15 +230,14 @@ if ( ! function_exists('html5_back'))
     }
 }
 
-if ( ! function_exists('route')) 
-{
+if (! function_exists('route')) {
     /**
      * @param string $uri 
      * @return object
      */
     function route($uri = null)
     {
-        
+
         $route = new Route();
 
         if (is_null($uri)) {
@@ -261,8 +248,7 @@ if ( ! function_exists('route'))
     }
 }
 
-if ( ! function_exists('route_to')) 
-{
+if (! function_exists('route_to')) {
     /**
      * @param string $uri 
      * @return object
@@ -273,8 +259,7 @@ if ( ! function_exists('route_to'))
     }
 }
 
-if ( ! function_exists('route_view')) 
-{
+if (! function_exists('route_view')) {
     /**
      * Return a view using 
      * view names from routes
@@ -294,8 +279,7 @@ if ( ! function_exists('route_view'))
     }
 }
 
-if ( ! function_exists('current_route'))
-{
+if (! function_exists('current_route')) {
     /**
      * Returns the current route
      *
@@ -303,14 +287,13 @@ if ( ! function_exists('current_route'))
      */
     function current_route()
     {
-        return uri_string(); 
+        return uri_string();
     }
 }
 
 /* ------------------------------- Request | Resource && User Agent Functions ---------------------------------*/
 
-if ( ! function_exists('files')) 
-{
+if (! function_exists('files')) {
     /**
      * function to get $_FILES values
      *
@@ -331,8 +314,7 @@ if ( ! function_exists('files'))
     }
 }
 
-if ( ! function_exists('has_file')) 
-{
+if (! function_exists('has_file')) {
     /**
      * Check if file to upload is not empty
      *
@@ -351,8 +333,7 @@ if ( ! function_exists('has_file'))
     }
 }
 
-if ( ! function_exists('is_file_empty')) 
-{
+if (! function_exists('is_file_empty')) {
     /**
      * Check if file is truely empty
      * 
@@ -373,8 +354,7 @@ if ( ! function_exists('is_file_empty'))
     }
 }
 
-if ( ! function_exists('uploader')) 
-{
+if (! function_exists('uploader')) {
     /**
      * Helper function to load the 
      * enhanced uploader library
@@ -382,16 +362,14 @@ if ( ! function_exists('uploader'))
      * @param array $config
      * @return object
      */
-    function uploader($config = []) 
+    function uploader($config = [])
     {
         ci()->load->library('uploader', $config);
         return ci()->uploader;
     }
-
 }
 
-if ( ! function_exists('input')) 
-{
+if (! function_exists('input')) {
     /**
      * Function to set the input object
      *
@@ -403,8 +381,7 @@ if ( ! function_exists('input'))
     }
 }
 
-if ( ! function_exists('post')) 
-{
+if (! function_exists('post')) {
     /**
      * Function to set only post methods
      *
@@ -418,8 +395,7 @@ if ( ! function_exists('post'))
     }
 }
 
-if ( ! function_exists('get')) 
-{
+if (! function_exists('get')) {
     /**
      * Function to set only get methods
      *
@@ -433,8 +409,7 @@ if ( ! function_exists('get'))
     }
 }
 
-if ( ! function_exists('is_ajax_request')) 
-{
+if (! function_exists('is_ajax_request')) {
     /**
      * Check whether request is an ajax request
      *
@@ -446,8 +421,7 @@ if ( ! function_exists('is_ajax_request'))
     }
 }
 
-if ( ! function_exists('server')) 
-{
+if (! function_exists('server')) {
     /**
      * Fetch an item or all items 
      * from the SERVER array
@@ -458,7 +432,7 @@ if ( ! function_exists('server'))
      */
     function server($index = null, $xss_clean = null)
     {
-        if(is_null($index)) {
+        if (is_null($index)) {
             return $_SERVER;
         }
 
@@ -466,8 +440,7 @@ if ( ! function_exists('server'))
     }
 }
 
-if ( ! function_exists('ip_address')) 
-{
+if (! function_exists('ip_address')) {
     /**
      * Alias of IP Address Fetching from 
      * CodeIgniter's Input Class
@@ -480,8 +453,7 @@ if ( ! function_exists('ip_address'))
     }
 }
 
-if ( ! function_exists('raw_input_stream')) 
-{
+if (! function_exists('raw_input_stream')) {
     /**
      * Holds a cache of php://input contents
      *
@@ -493,8 +465,7 @@ if ( ! function_exists('raw_input_stream'))
     }
 }
 
-if ( ! function_exists('raw_input_contents')) 
-{
+if (! function_exists('raw_input_contents')) {
     /**
      * Get a uri and treat as php://input contents
      *
@@ -504,7 +475,7 @@ if ( ! function_exists('raw_input_contents'))
     function raw_input_contents($uri = null)
     {
 
-        if ( ! is_null($uri) && ! is_array($uri)) {
+        if (! is_null($uri) && ! is_array($uri)) {
             return file_get_contents($uri);
         }
 
@@ -519,8 +490,7 @@ if ( ! function_exists('raw_input_contents'))
 
 /* ------------------------------- Form Functions ---------------------------------*/
 
-if ( ! function_exists('old')) 
-{
+if (! function_exists('old')) {
 
     /**
      * Use it as an alias and fill in for 
@@ -542,8 +512,7 @@ if ( ! function_exists('old'))
     }
 }
 
-if ( ! function_exists('old_radio')) 
-{
+if (! function_exists('old_radio')) {
 
     /**
      * Use it as a fill in for 
@@ -566,8 +535,7 @@ if ( ! function_exists('old_radio'))
     }
 }
 
-if ( ! function_exists('old_checkbox')) 
-{
+if (! function_exists('old_checkbox')) {
 
     /**
      * Use it as a fill in for 
@@ -586,8 +554,7 @@ if ( ! function_exists('old_checkbox'))
     }
 }
 
-if ( ! function_exists('selected')) 
-{
+if (! function_exists('selected')) {
     /**
      * Use it to compare values without 
      * CodeIgniter's set_select function
@@ -602,8 +569,7 @@ if ( ! function_exists('selected'))
     }
 }
 
-if ( ! function_exists('multi_selected')) 
-{
+if (! function_exists('multi_selected')) {
     /**
      * Use it to compare values that have
      * multiple selected values
@@ -622,8 +588,7 @@ if ( ! function_exists('multi_selected'))
 
 
 
-if ( ! function_exists('verify_selected')) 
-{
+if (! function_exists('verify_selected')) {
     /**
      * Works similarly as the above function
      * This time use it to compare values with CodeIgniter's 
@@ -641,12 +606,11 @@ if ( ! function_exists('verify_selected'))
     function verify_selected($existing_value, $comparing_value)
     {
         //Use it to compare values
-        return ($existing_value === $comparing_value) ? true: false;
+        return ($existing_value === $comparing_value) ? true : false;
     }
 }
 
-if ( ! function_exists('use_form_validation')) 
-{
+if (! function_exists('use_form_validation')) {
     /**
      * Alias of CodeIgniter's $this->form_validation
      * 
@@ -666,8 +630,7 @@ if ( ! function_exists('use_form_validation'))
     }
 }
 
-if ( ! function_exists('validate')) 
-{
+if (! function_exists('validate')) {
     /**
      * Alias of CodeIgniter's 
      * $this->form_validation->set_rules
@@ -685,12 +648,10 @@ if ( ! function_exists('validate'))
         }
 
         return ci()->form_validation;
-
     }
 }
 
-if ( ! function_exists('form_valid')) 
-{
+if (! function_exists('form_valid')) {
     /**
      * Checks if form is valid
      * Can use parameter ($rules) to specify a
@@ -705,8 +666,7 @@ if ( ! function_exists('form_valid'))
     }
 }
 
-if ( ! function_exists('form_error_exists')) 
-{
+if (! function_exists('form_error_exists')) {
     /**
      * Checks if a form error exists
      *
@@ -722,7 +682,7 @@ if ( ! function_exists('form_error_exists'))
             return '';
         }
 
-        if ( ! empty($error) ) {
+        if (! empty($error)) {
             return true;
         }
 
@@ -734,8 +694,7 @@ if ( ! function_exists('form_error_exists'))
     }
 }
 
-if ( ! function_exists('form_error_array')) 
-{
+if (! function_exists('form_error_array')) {
     /**
      * Gets form errors in an array form
      *
@@ -747,8 +706,7 @@ if ( ! function_exists('form_error_array'))
     }
 }
 
-if ( ! function_exists('get_form_error')) 
-{
+if (! function_exists('get_form_error')) {
     /**
      * Retrieve a form error from
      * error array
@@ -760,17 +718,16 @@ if ( ! function_exists('get_form_error'))
     {
         $error_array = !empty(session('form_error')) ? session('form_error') : [];
         $error_array = array_merge(form_error_array(), $error_array);
-        
+
         if (array_key_exists($error_key, $error_array)) {
             return $error_array[$error_key];
         }
-        
+
         return '';
     }
 }
 
-if ( ! function_exists('set_error')) 
-{
+if (! function_exists('set_error')) {
     /**
      * Sets form error on a 
      * named input field
@@ -785,8 +742,7 @@ if ( ! function_exists('set_error'))
     }
 }
 
-if ( ! function_exists('set_error_delimeter')) 
-{
+if (! function_exists('set_error_delimeter')) {
     /**
      * Sets error delimeter to
      * be used when displaying errors
@@ -801,8 +757,7 @@ if ( ! function_exists('set_error_delimeter'))
     }
 }
 
-if ( ! function_exists('set_form_data')) 
-{
+if (! function_exists('set_form_data')) {
     /**
      * Set form data
      *
@@ -817,8 +772,7 @@ if ( ! function_exists('set_form_data'))
 
 /* ------------------------------- Loader Functions ---------------------------------*/
 
-if ( ! function_exists('use_config')) 
-{
+if (! function_exists('use_config')) {
     /**
      * Load a config file and instantiate
      *
@@ -828,8 +782,8 @@ if ( ! function_exists('use_config'))
      * @return bool true if the file was loaded correctly or false on failure
      */
     function use_config(
-        $config_file = '', 
-        $use_sections = false, 
+        $config_file = '',
+        $use_sections = false,
         $fail_gracefully = false
     ) {
 
@@ -839,8 +793,7 @@ if ( ! function_exists('use_config'))
     }
 }
 
-if ( ! function_exists('use_thirdparty')) 
-{
+if (! function_exists('use_thirdparty')) {
     /**
      * Use a package from a specific directory
      * and use it's available models, libraries etc
@@ -858,8 +811,7 @@ if ( ! function_exists('use_thirdparty'))
     }
 }
 
-if ( ! function_exists('remove_thirdparty')) 
-{
+if (! function_exists('remove_thirdparty')) {
     /**
      * Remove a package from a Third Party directory
      * including it's available models, libraries etc
@@ -874,8 +826,7 @@ if ( ! function_exists('remove_thirdparty'))
     }
 }
 
-if ( ! function_exists('use_package')) 
-{
+if (! function_exists('use_package')) {
     /**
      * Use a package from a specific directory
      * and use it's available models, libraries etc
@@ -891,8 +842,7 @@ if ( ! function_exists('use_package'))
     }
 }
 
-if ( ! function_exists('remove_package')) 
-{
+if (! function_exists('remove_package')) {
     /**
      * Remove a package from a specific directory
      * including it's available models, libraries etc
@@ -907,8 +857,7 @@ if ( ! function_exists('remove_package'))
     }
 }
 
-if ( ! function_exists('use_library')) 
-{
+if (! function_exists('use_library')) {
     /**
      * Use a library/libraries and instantiate
      *
@@ -925,8 +874,7 @@ if ( ! function_exists('use_library'))
     }
 }
 
-if ( ! function_exists('use_driver')) 
-{
+if (! function_exists('use_driver')) {
     /**
      * Use a driver/drivers and instantiate
      *
@@ -943,8 +891,7 @@ if ( ! function_exists('use_driver'))
     }
 }
 
-if ( ! function_exists('use_action')) 
-{
+if (! function_exists('use_action')) {
     /**
      * Use an action/actions and instantiate
      *
@@ -960,8 +907,7 @@ if ( ! function_exists('use_action'))
 }
 
 
-if ( ! function_exists('use_service')) 
-{
+if (! function_exists('use_service')) {
     /**
      * Use a service/services and instantiate
      *
@@ -978,8 +924,7 @@ if ( ! function_exists('use_service'))
     }
 }
 
-if ( ! function_exists('use_services')) 
-{
+if (! function_exists('use_services')) {
     /**
      * Discover services listed in
      * the service.php config file
@@ -1016,8 +961,7 @@ if ( ! function_exists('use_services'))
     }
 }
 
-if ( ! function_exists('use_model')) 
-{
+if (! function_exists('use_model')) {
     /**
      * Use a model/models and instantiate
      *
@@ -1049,8 +993,7 @@ if ( ! function_exists('use_model'))
     }
 }
 
-if ( ! function_exists('use_helper')) 
-{
+if (! function_exists('use_helper')) {
     /**
      * Use a helper/helpers
      *
@@ -1065,32 +1008,32 @@ if ( ! function_exists('use_helper'))
     }
 
     /**
-	 *  Load any CI3 helper with dot notation
-	 *
-	 *  @param     string    $name
-	 *  @param     array     $params
-	 *  @return    mixed
-	 */
-	function helper($name, $params)
-	{
-		//	Separate 'file' and 'helper' by dot notation
-		[$helper, $function] = array_pad(
-            explode('.', $name), 2, null
+     *  Load any CI3 helper with dot notation
+     *
+     *  @param     string    $name
+     *  @param     array     $params
+     *  @return    mixed
+     */
+    function helper($name, $params)
+    {
+        //	Separate 'file' and 'helper' by dot notation
+        [$helper, $function] = array_pad(
+            explode('.', $name),
+            2,
+            null
         );
 
-		//	If using dot notation
-		if ($function !== null)
-		{
-			get_instance()->load->helper($helper);
-			$helper = $function;
-		}
+        //	If using dot notation
+        if ($function !== null) {
+            get_instance()->load->helper($helper);
+            $helper = $function;
+        }
 
-		return call_user_func_array($helper, $params);
+        return call_user_func_array($helper, $params);
     }
 }
 
-if ( ! function_exists('use_rule')) 
-{
+if (! function_exists('use_rule')) {
     /**
      * Use a rule
      * This function lets users load rules.
@@ -1110,8 +1053,7 @@ if ( ! function_exists('use_rule'))
     }
 }
 
-if ( ! function_exists('use_form')) 
-{
+if (! function_exists('use_form')) {
     /**
      * Use a form
      * This function lets users load forms.
@@ -1131,8 +1073,7 @@ if ( ! function_exists('use_form'))
     }
 }
 
-if ( ! function_exists('rules')) 
-{
+if (! function_exists('rules')) {
     /**
      * Return available rules
      * Call this function when you load
@@ -1147,8 +1088,7 @@ if ( ! function_exists('rules'))
     }
 }
 
-if ( ! function_exists('use_language')) 
-{
+if (! function_exists('use_language')) {
     /**
      * load a language file 
      *
@@ -1165,8 +1105,7 @@ if ( ! function_exists('use_language'))
     }
 }
 
-if ( ! function_exists('trans')) 
-{
+if (! function_exists('trans')) {
     /**
      * specify a line to use 
      * from the language file
@@ -1181,8 +1120,7 @@ if ( ! function_exists('trans'))
     }
 }
 
-if ( ! function_exists('__')) 
-{
+if (! function_exists('__')) {
     /**
      * alias to the function above
      *
@@ -1196,8 +1134,7 @@ if ( ! function_exists('__'))
     }
 }
 
-if ( ! function_exists('parse_lang')) 
-{
+if (! function_exists('parse_lang')) {
     /**
      * Translate a language line
      * with placeholders

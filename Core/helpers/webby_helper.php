@@ -12,8 +12,7 @@ defined('COREPATH') or exit('No direct script access allowed');
 
 /* ------------------------------- Random Code Generation Functions ---------------------------------*/
 
-if ( ! function_exists('unique_code')) 
-{
+if (! function_exists('unique_code')) {
     /**
      * Generates unique ids/codes
      *
@@ -22,19 +21,18 @@ if ( ! function_exists('unique_code'))
      */
     function unique_code(int $limit = 13)
     {
-      return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
+        return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
     }
 }
 
-if ( ! function_exists('unique_id')) 
-{
+if (! function_exists('unique_id')) {
     /**
      * Generates unique ids
      *
      * @param integer $length
      * @return string
      */
-    function unique_id(int $length = 13) 
+    function unique_id(int $length = 13)
     {
 
         if (function_exists("random_bytes")) {
@@ -46,8 +44,7 @@ if ( ! function_exists('unique_id'))
     }
 }
 
-if ( ! function_exists('hash_id')) 
-{
+if (! function_exists('hash_id')) {
 
     /**
      * Generate unique fake ids
@@ -58,12 +55,11 @@ if ( ! function_exists('hash_id'))
      */
     function hash_id(mixed $string, int $length = 6)
     {
-        return Base\Helpers\FakeId::encode( $string, $length);
+        return Base\Helpers\FakeId::encode($string, $length);
     }
 }
 
-if ( ! function_exists('unhash_id')) 
-{
+if (! function_exists('unhash_id')) {
 
     /**
      * Unhash fake ids
@@ -73,14 +69,13 @@ if ( ! function_exists('unhash_id'))
      */
     function unhash_id(mixed $string)
     {
-        return Base\Helpers\FakeId::decode( $string);
+        return Base\Helpers\FakeId::decode($string);
     }
 }
 
 /* ----------------------------- Polyfill Functions ---------------------------------*/
 
-if ( ! function_exists('utf8_encode')) 
-{
+if (! function_exists('utf8_encode')) {
     /**
      * A function to restore utf8_encode
      * 
@@ -98,9 +93,17 @@ if ( ! function_exists('utf8_encode'))
 
         for ($i = $length >> 1, $j = 0; $i < $length; ++$i, ++$j) {
             switch (true) {
-                case $string[$i] < "\x80": $string[$j] = $string[$i]; break;
-                case $string[$i] < "\xC0": $string[$j] = "\xC2"; $string[++$j] = $string[$i]; break;
-                default: $string[$j] = "\xC3"; $string[++$j] = \chr(\ord($string[$i]) - 64); break;
+                case $string[$i] < "\x80":
+                    $string[$j] = $string[$i];
+                    break;
+                case $string[$i] < "\xC0":
+                    $string[$j] = "\xC2";
+                    $string[++$j] = $string[$i];
+                    break;
+                default:
+                    $string[$j] = "\xC3";
+                    $string[++$j] = \chr(\ord($string[$i]) - 64);
+                    break;
             }
         }
 
@@ -108,8 +111,7 @@ if ( ! function_exists('utf8_encode'))
     }
 }
 
-if ( ! function_exists('utf8_decode')) 
-{
+if (! function_exists('utf8_decode')) {
     /**
      * A function to restore utf8_decode
      *
@@ -119,7 +121,7 @@ if ( ! function_exists('utf8_decode'))
     function utf8_decode($string, $as_obsolete = false)
     {
         if (!$as_obsolete) {
-             return mb_convert_encoding($string, 'ISO-8859-1', 'UTF-8');
+            return mb_convert_encoding($string, 'ISO-8859-1', 'UTF-8');
         }
 
         $string = (string) $string;
@@ -153,17 +155,16 @@ if ( ! function_exists('utf8_decode'))
 
 /* ------------------------------- Config Functions ---------------------------------*/
 
-if ( ! function_exists('config')) 
-{
-     /**
-      * Fetch or Set a config file item
-      * or get an instance of a namespaced 
-      * Config class.
-      *
-      * @param array|string $key
-      * @param mixed $value
-      * @return mixed
-      */
+if (! function_exists('config')) {
+    /**
+     * Fetch or Set a config file item
+     * or get an instance of a namespaced 
+     * Config class.
+     *
+     * @param array|string $key
+     * @param mixed $value
+     * @return mixed
+     */
     function config(string|array|null $key = null, mixed $value = null)
     {
 
@@ -189,7 +190,7 @@ if ( ! function_exists('config'))
         // If the first letter is uppercase, 
         // assume it's a Config Class.
         if (ctype_upper($key[0])) {
-            
+
             static $instances = [];
 
             if (strpos($key, '.') !== false) {
@@ -214,13 +215,11 @@ if ( ! function_exists('config'))
 
         return $config->item($key);
     }
-
 }
 
 /* ------------------------------- Session Functions ---------------------------------*/
 
-if ( ! function_exists('init_session'))
-{
+if (! function_exists('init_session')) {
     /**
      * This function is used to initialize or create sessions
      * same as the native session_start function.
@@ -234,8 +233,7 @@ if ( ! function_exists('init_session'))
     }
 }
 
-if ( ! function_exists('sessions'))
-{
+if (! function_exists('sessions')) {
     /**
      * This function is used for retrieving all Session Data
      * @return array (all session data)
@@ -247,8 +245,7 @@ if ( ! function_exists('sessions'))
     }
 }
 
-if ( ! function_exists('session'))
-{
+if (! function_exists('session')) {
     /**
      * Add or retrieve a session data
      *
@@ -258,7 +255,7 @@ if ( ! function_exists('session'))
      */
     function session($key = null, $value = null)
     {
-        ci()->load->library('session'); 
+        ci()->load->library('session');
 
         if (empty($key)) {
             return ci()->session;
@@ -276,8 +273,7 @@ if ( ! function_exists('session'))
     }
 }
 
-if ( ! function_exists('remove_session'))
-{
+if (! function_exists('remove_session')) {
     /**
      * Remove session data
      *
@@ -291,8 +287,7 @@ if ( ! function_exists('remove_session'))
     }
 }
 
-if ( ! function_exists('has_session'))
-{
+if (! function_exists('has_session')) {
     /**
      * Verify if a session value exists
      *
@@ -306,8 +301,7 @@ if ( ! function_exists('has_session'))
     }
 }
 
-if ( ! function_exists('flash_session'))
-{
+if (! function_exists('flash_session')) {
     /**
      * Set or retrieve flash data
      *
@@ -315,7 +309,7 @@ if ( ! function_exists('flash_session'))
      * @param string $value
      * @return string|void
      */
-    function flash_session($key, $value=null)
+    function flash_session($key, $value = null)
     {
         ci()->load->library('session');
 
@@ -328,17 +322,15 @@ if ( ! function_exists('flash_session'))
         }
 
         return ci()->session->flashdata($key);
-
     }
 }
 
-if ( ! function_exists('destroy_session'))
-{
+if (! function_exists('destroy_session')) {
     /**
-    * Destroy session data
-    *
-    * @return void
-    */
+     * Destroy session data
+     *
+     * @return void
+     */
     function destroy_session()
     {
         ci()->load->library('session');
@@ -346,88 +338,79 @@ if ( ! function_exists('destroy_session'))
     }
 }
 
-if ( ! function_exists('success_message'))
-{
+if (! function_exists('success_message')) {
     /**
      * Set/Get success message
      *
      * @param string $message
      * @return string
      */
-    function success_message(?string $message = null)  
+    function success_message(?string $message = null)
     {
 
         if ($message !== null) {
-           return flash_session('success_message', $message);
+            return flash_session('success_message', $message);
         }
 
         return flash_session('success_message');
-        
     }
 }
 
-if ( ! function_exists('error_message'))
-{
+if (! function_exists('error_message')) {
     /**
      * Set/Get error message
      *
      * @param string $message
      * @return string
      */
-    function error_message(?string $message = null)  
+    function error_message(?string $message = null)
     {
 
         if ($message !== null) {
-           return flash_session('error_message', $message);
+            return flash_session('error_message', $message);
         }
 
         return flash_session('error_message');
-        
     }
 }
 
-if ( ! function_exists('info_message'))
-{
+if (! function_exists('info_message')) {
     /**
      * Set/Get info message
      *
      * @param string $message
      * @return string
      */
-    function info_message(?string $message = null)  
+    function info_message(?string $message = null)
     {
 
         if ($message !== null) {
-           return flash_session('info_message', $message);
+            return flash_session('info_message', $message);
         }
 
         return flash_session('info_message');
-        
     }
 }
 
-if ( ! function_exists('warn_message'))
-{
+if (! function_exists('warn_message')) {
     /**
      * Set/Get warning message
      *
      * @param string $message
      * @return string
      */
-    function warn_message(?string $message = null)  
+    function warn_message(?string $message = null)
     {
 
         if ($message !== null) {
-           return flash_session('warn_message', $message);
+            return flash_session('warn_message', $message);
         }
 
         return flash_session('warn_message');
-        
     }
 }
 
-if ( ! function_exists('clear_message'))
-{
+if (! function_exists('clear_message')) {
     /**
      * Clearing message type
      * @return void
@@ -440,8 +423,7 @@ if ( ! function_exists('clear_message'))
 
 /* ------------------------------- Cache Functions ---------------------------------*/
 
-if ( ! function_exists('cache')) 
-{
+if (! function_exists('cache')) {
     /**
      * Cache items or retreive items
      *
@@ -467,15 +449,14 @@ if ( ! function_exists('cache'))
         if (is_string($key) && $value !== null) {
             return $cache->cacheItem($key, $value);
         }
-        
+
         return $cache->getCacheItem($key);
     }
 }
 
 /* ------------------------------- String Functions ---------------------------------*/
 
-if ( ! function_exists('dotToslash'))
-{
+if (! function_exists('dotToslash')) {
     /**
      * Replace dots with forward slashes in a string.
      *
@@ -488,8 +469,7 @@ if ( ! function_exists('dotToslash'))
     }
 }
 
-if ( ! function_exists('convertDotsToSlashes'))
-{
+if (! function_exists('convertDotsToSlashes')) {
     /**
      * Recursively convert dots to forward slashes in strings, arrays, or mixed data.
      * 
@@ -506,18 +486,17 @@ if ( ! function_exists('convertDotsToSlashes'))
         if (is_string($input)) {
             return dotToslash($input);
         }
-        
+
         if (is_array($input)) {
             return array_map('convertDotsToSlashes', $input);
         }
-        
+
         // Return other types unchanged
         return $input;
     }
 }
 
-if ( ! function_exists('convertDotsInArray')) 
-{
+if (! function_exists('convertDotsInArray')) {
     // Alternative version with more specific typing for arrays
 
     /**
@@ -533,8 +512,7 @@ if ( ! function_exists('convertDotsInArray'))
 }
 
 
-if ( ! function_exists('has_dot')) 
-{
+if (! function_exists('has_dot')) {
     /**
      * Alias to convertDotsToSlashes() instead
      * @param mixed $string
@@ -546,8 +524,7 @@ if ( ! function_exists('has_dot'))
     }
 }
 
-if ( ! function_exists('pad_left')) 
-{
+if (! function_exists('pad_left')) {
     /**
      * prefix string at the beginning of a string
      *
@@ -562,8 +539,7 @@ if ( ! function_exists('pad_left'))
     }
 }
 
-if ( ! function_exists('pad_right')) 
-{
+if (! function_exists('pad_right')) {
     /**
      * suffix string at the end of a string
      *
@@ -578,8 +554,7 @@ if ( ! function_exists('pad_right'))
     }
 }
 
-if ( ! function_exists('str_left_zeros')) 
-{
+if (! function_exists('str_left_zeros')) {
     /**
      * prefix zeros at the beginning of a string
      * 
@@ -593,8 +568,7 @@ if ( ! function_exists('str_left_zeros'))
     }
 }
 
-if ( ! function_exists('str_right_zeros')) 
-{
+if (! function_exists('str_right_zeros')) {
     /**
      * suffix zeros at the end of a string
      *
@@ -608,8 +582,7 @@ if ( ! function_exists('str_right_zeros'))
     }
 }
 
-if ( ! function_exists('str2hex')) 
-{
+if (! function_exists('str2hex')) {
     /**
      * convert string to hexadecimal
      *
@@ -623,23 +596,21 @@ if ( ! function_exists('str2hex'))
     }
 }
 
-if ( ! function_exists('hex2str')) 
-{
+if (! function_exists('hex2str')) {
     /**
      * convert hexadecimal to string
      *
      * @param string $hex_string
      * @return string
      */
-    function hex2str(/*hexadecimal*/ $hex_string)
+    function hex2str(/*hexadecimal*/$hex_string)
     {
-        $hex_string = hex2bin($hex_string); 
+        $hex_string = hex2bin($hex_string);
         return trim($hex_string);;
     }
 }
 
-if ( ! function_exists('dec2str')) 
-{
+if (! function_exists('dec2str')) {
     /**
      * Convert decimal to string using base
      * this is made for special use case
@@ -649,7 +620,7 @@ if ( ! function_exists('dec2str'))
      * @param int $base
      * @return string
      */
-    function dec2str(/*decimal*/ $decimal, $base = 36) 
+    function dec2str(/*decimal*/$decimal, $base = 36)
     {
         $string = null;
 
@@ -666,7 +637,7 @@ if ( ! function_exists('dec2str'))
 
         if (!preg_match('/^[0-9]{1,50}$/', trim($decimal))) {
             throw new \Exception('Value must be a positive integer with < 50 digits');
-        } 
+        }
 
         do {
             // get remainder after dividing by BASE
@@ -677,28 +648,24 @@ if ( ! function_exists('dec2str'))
 
             //$decimal = ($decimal - $remainder) / $base;
             $decimal = bcdiv(bcsub($decimal, $remainder), $base);
-
         } while ($decimal > 0);
 
         return $string;
-
     }
 }
 
-if ( ! function_exists('bchexdec')) 
-{
+if (! function_exists('bchexdec')) {
     /**
      * Summary of bchexdec
      * @param mixed $hex
      * @return bool|int|string
      */
-    function bchexdec(mixed $hex) 
+    function bchexdec(mixed $hex)
     {
         if (!ctype_xdigit($hex)) return false; // Or throw an error
         $decimal = '0';
         $length = strlen($hex);
-        for ($i = 0; $i < $length; $i++)
-        {
+        for ($i = 0; $i < $length; $i++) {
             $char = $hex[$i];
             $value = hexdec($char); // Get decimal value of single hex char
             // Multiply current decimal by 16, then add new char's value
@@ -708,8 +675,7 @@ if ( ! function_exists('bchexdec'))
     }
 }
 
-if ( ! function_exists('slugify')) 
-{
+if (! function_exists('slugify')) {
     /**
      * create strings with hyphen seperated
      *
@@ -720,7 +686,7 @@ if ( ! function_exists('slugify'))
     {
         ci()->load->helper('url');
         ci()->load->helper('text');
-        
+
         // Replace unsupported 
         // characters (if necessary more will be added)
         $string = str_replace("'", '-', $string);
@@ -729,15 +695,14 @@ if ( ! function_exists('slugify'))
 
         // Slugify and return the string
         return url_title(
-            convert_accented_characters($string), 
-            $separator, 
+            convert_accented_characters($string),
+            $separator,
             $lowercase
         );
     }
 }
 
-if ( ! function_exists('extract_email_name')) 
-{
+if (! function_exists('extract_email_name')) {
     /**
      * Extract name from a given email address
      *
@@ -752,8 +717,7 @@ if ( ! function_exists('extract_email_name'))
     }
 }
 
-if ( ! function_exists('str_extract')) 
-{
+if (! function_exists('str_extract')) {
     /**
      * Extract symbol,character,word from a string
      *
@@ -769,8 +733,7 @@ if ( ! function_exists('str_extract'))
     }
 }
 
-if ( ! function_exists('exploded_title')) 
-{
+if (! function_exists('exploded_title')) {
     /**
      * Explode Title
      *
@@ -783,8 +746,7 @@ if ( ! function_exists('exploded_title'))
     }
 }
 
-if ( ! function_exists('str_clean')) 
-{
+if (! function_exists('str_clean')) {
     /**
      * Clean by removing spaces and special 
      * characters from string
@@ -800,8 +762,7 @@ if ( ! function_exists('str_clean'))
     }
 }
 
-if ( ! function_exists('replace_string')) 
-{
+if (! function_exists('replace_string')) {
     /**
      * search for a string 
      * and replace string with another
@@ -821,8 +782,7 @@ if ( ! function_exists('replace_string'))
     }
 }
 
-if ( ! function_exists('remove_underscore')) 
-{  
+if (! function_exists('remove_underscore')) {
     /**
      * remove underscore from string
      *
@@ -836,8 +796,7 @@ if ( ! function_exists('remove_underscore'))
 }
 
 
-if ( ! function_exists('remove_hyphen')) 
-{
+if (! function_exists('remove_hyphen')) {
 
     /**
      * remove hyphen from string
@@ -851,8 +810,7 @@ if ( ! function_exists('remove_hyphen'))
     }
 }
 
-if ( ! function_exists('str_humanize')) 
-{
+if (! function_exists('str_humanize')) {
     /**
      *
      * remove hyphen or underscore from 
@@ -875,8 +833,7 @@ if ( ! function_exists('str_humanize'))
     }
 }
 
-if ( ! function_exists('str_ext')) 
-{
+if (! function_exists('str_ext')) {
     /**
      * Strips filename from extension Or
      * file extension from name
@@ -897,8 +854,7 @@ if ( ! function_exists('str_ext'))
     }
 }
 
-if ( ! function_exists('str_last_word')) 
-{
+if (! function_exists('str_last_word')) {
     /**
      * Return last word of a string
      * 
@@ -911,8 +867,7 @@ if ( ! function_exists('str_last_word'))
     }
 }
 
-if ( ! function_exists('limit_words')) 
-{
+if (! function_exists('limit_words')) {
     /**
      * Limit length of a given string
      *
@@ -929,8 +884,7 @@ if ( ! function_exists('limit_words'))
     }
 }
 
-if ( ! function_exists('truncate_text')) 
-{
+if (! function_exists('truncate_text')) {
     /**
      * Truncate words of a given string
      *
@@ -947,8 +901,7 @@ if ( ! function_exists('truncate_text'))
     }
 }
 
-if ( ! function_exists('str_censor')) 
-{
+if (! function_exists('str_censor')) {
     /**
      * Censor bad words from string
      *
@@ -965,8 +918,7 @@ if ( ! function_exists('str_censor'))
     }
 }
 
-if ( ! function_exists('find_word')) 
-{
+if (! function_exists('find_word')) {
     /**
      * search for word from a string
      *
@@ -988,8 +940,7 @@ if ( ! function_exists('find_word'))
     }
 }
 
-if ( ! function_exists('contains')) 
-{
+if (! function_exists('contains')) {
     /**
      * Returns true if $needle
      * is a substring of $haystack
@@ -1004,8 +955,7 @@ if ( ! function_exists('contains'))
     }
 }
 
-if ( ! function_exists('starts_with')) 
-{
+if (! function_exists('starts_with')) {
     /**
      *  Determine if a given string 
      *  starts with a given substring
@@ -1029,8 +979,7 @@ if ( ! function_exists('starts_with'))
     }
 }
 
-if ( ! function_exists('ends_with')) 
-{
+if (! function_exists('ends_with')) {
     /**
      *  Determine if a given string 
      *  ends with a given substring
@@ -1053,8 +1002,7 @@ if ( ! function_exists('ends_with'))
 
 /* ------------------------------- Array Functions ---------------------------------*/
 
-if ( ! function_exists('rayz')) 
-{
+if (! function_exists('rayz')) {
     /**
      *  Helper function to instantiate the Rayz Class
      *
@@ -1063,12 +1011,11 @@ if ( ! function_exists('rayz'))
      */
     function rayz(array|iterator $array = [])
     {
-        return(new \Base\Helpers\Rayz($array));
+        return (new \Base\Helpers\Rayz($array));
     }
 }
 
-if ( ! function_exists('arrayz')) 
-{
+if (! function_exists('arrayz')) {
     /**
      * Helper function for Arrayz Class
      *
@@ -1081,8 +1028,7 @@ if ( ! function_exists('arrayz'))
     }
 }
 
-if ( ! function_exists('has_element')) 
-{
+if (! function_exists('has_element')) {
     /**
      * Check if array element exists
      *
@@ -1100,8 +1046,7 @@ if ( ! function_exists('has_element'))
     }
 }
 
-if ( ! function_exists('with_each')) 
-{
+if (! function_exists('with_each')) {
     /**
      * Replaces the deprecated each function
      * since PHP 7.2 but limited in its implementation
@@ -1112,16 +1057,15 @@ if ( ! function_exists('with_each'))
     function with_each(array &$array): mixed
     {
         $key = key($array);
-        $result = ($key === null) 
-                    ? false 
-                    : [$key, current($array), 'key' => $key, 'value' => current($array)];
+        $result = ($key === null)
+            ? false
+            : [$key, current($array), 'key' => $key, 'value' => current($array)];
         next($array);
         return $result;
     }
 }
 
-if ( ! function_exists('strtoarr')) 
-{
+if (! function_exists('strtoarr')) {
     /**
      * Converts a string to an array
      *
@@ -1135,8 +1079,7 @@ if ( ! function_exists('strtoarr'))
     }
 }
 
-if ( ! function_exists('arrtostr')) 
-{
+if (! function_exists('arrtostr')) {
     /**
      * Converts an array to a string using a given symbol
      * 
@@ -1154,8 +1097,7 @@ if ( ! function_exists('arrtostr'))
     }
 }
 
-if ( ! function_exists('add_array')) 
-{
+if (! function_exists('add_array')) {
     /**
      * Add an element to an array
      *
@@ -1183,8 +1125,7 @@ if ( ! function_exists('add_array'))
     }
 }
 
-if ( ! function_exists('add_associative_array')) 
-{
+if (! function_exists('add_associative_array')) {
     /**
      * This is a function that helps to 
      * add associative key => value
@@ -1205,8 +1146,8 @@ if ( ! function_exists('add_associative_array'))
             $array[$key] = $value;
             return $array;
         }
-        
-        $array = array_map(function($array) use ($key, $value){
+
+        $array = array_map(function ($array) use ($key, $value) {
             return $array + [$key => $value];
         }, $array);
 
@@ -1214,8 +1155,7 @@ if ( ! function_exists('add_associative_array'))
     }
 }
 
-if ( ! function_exists('set_array')) 
-{
+if (! function_exists('set_array')) {
     /**
      * Alias of the above function
      *
@@ -1230,8 +1170,7 @@ if ( ! function_exists('set_array'))
     }
 }
 
-if ( ! function_exists('remove_empty_elements')) 
-{
+if (! function_exists('remove_empty_elements')) {
     /**
      * Remove keys and values 
      * that are empty
@@ -1241,20 +1180,19 @@ if ( ! function_exists('remove_empty_elements'))
      */
     function remove_empty_elements($array)
     {
-            $array = array_map('array_filter', $array);
-            return $array = array_filter($array);
+        $array = array_map('array_filter', $array);
+        return $array = array_filter($array);
     }
 }
 
-if ( ! function_exists('remove_first_element')) 
-{
+if (! function_exists('remove_first_element')) {
     /**
      * Removes first element of an array
      *
      * @param array $array
      * @return array
      */
-    function remove_first_element($array) : array
+    function remove_first_element($array): array
     {
         if (is_object($array)) {
             $array = get_object_vars($array);
@@ -1266,8 +1204,7 @@ if ( ! function_exists('remove_first_element'))
     }
 }
 
-if ( ! function_exists('remove_from_array')) 
-{
+if (! function_exists('remove_from_array')) {
     /**
      * Removes a key or keys from an array
      *
@@ -1278,11 +1215,11 @@ if ( ! function_exists('remove_from_array'))
      * @return mixed
      */
     function remove_from_array(
-        $array, 
-        $element, 
-        $symbol = null, 
+        $array,
+        $element,
+        $symbol = null,
         $return_string = false
-    ) :mixed {
+    ): mixed {
         if (!is_array($array) && $symbol != null) {
             $array = strtoarr($symbol, $array);
         }
@@ -1299,8 +1236,7 @@ if ( ! function_exists('remove_from_array'))
     }
 }
 
-if ( ! function_exists('remove_with_value')) 
-{
+if (! function_exists('remove_with_value')) {
     /**
      * Remove key and value from multidimensional array
      *
@@ -1311,7 +1247,7 @@ if ( ! function_exists('remove_with_value'))
      */
     function remove_with_value($array, $key, $value)
     {
-        
+
         foreach ($array as $innerKey => $innerArray) {
             if ($innerArray[$key] == $value) {
                 unset($array[$innerKey]);
@@ -1322,8 +1258,7 @@ if ( ! function_exists('remove_with_value'))
     }
 }
 
-if ( ! function_exists('array_keys_case_insensitive_value')) 
-{
+if (! function_exists('array_keys_case_insensitive_value')) {
     function array_keys_case_insensitive_value(array $array, string $search_value): array
     {
         $matching_keys = [];
@@ -1334,13 +1269,12 @@ if ( ! function_exists('array_keys_case_insensitive_value'))
                 $matching_keys[] = $key;
             }
         }
-        
+
         return $matching_keys;
     }
 }
 
-if ( ! function_exists('object_array')) 
-{
+if (! function_exists('object_array')) {
     /**
      * Retrieve arrays with single objects
      * And their index (For specific table 
@@ -1360,9 +1294,8 @@ if ( ! function_exists('object_array'))
     }
 }
 
-if ( ! function_exists('arrayfy')) 
-{
-    
+if (! function_exists('arrayfy')) {
+
     /**
      * Convert an array-object and retrieve
      * as an array or generator
@@ -1409,8 +1342,7 @@ if ( ! function_exists('arrayfy'))
     }
 }
 
-if ( ! function_exists('objectify')) 
-{
+if (! function_exists('objectify')) {
 
     /**
      * Convert an array and retrieve
@@ -1450,8 +1382,7 @@ if ( ! function_exists('objectify'))
     }
 }
 
-if ( ! function_exists('to_object')) 
-{
+if (! function_exists('to_object')) {
     /**
      * Alias of objectify()
      *
@@ -1464,11 +1395,9 @@ if ( ! function_exists('to_object'))
     {
         return objectify($array, $natural, $class);
     }
-
 }
 
-if ( ! function_exists('contains_object'))
-{
+if (! function_exists('contains_object')) {
     function contains_object(array $array): bool
     {
         foreach ($array as $value) {
@@ -1481,38 +1410,35 @@ if ( ! function_exists('contains_object'))
     }
 }
 
-if ( ! function_exists('value'))
-{
-	/**
-	 *  Return the default value of the given value
-	 *
-	 *  @param     mixed    $value
-	 *  @return    mixed
-	 */
-	function value($value)
-	{
-		return $value instanceof Closure ? $value() : $value;
-	}
+if (! function_exists('value')) {
+    /**
+     *  Return the default value of the given value
+     *
+     *  @param     mixed    $value
+     *  @return    mixed
+     */
+    function value($value)
+    {
+        return $value instanceof Closure ? $value() : $value;
+    }
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('with'))
-{
-	/**
-	 *  Return the given object (useful for chaining)
-	 *
-	 *  @param     mixed    $object
-	 *  @return    mixed
-	 */
-	function with($object)
-	{
-		return $object;
-	}
+if (! function_exists('with')) {
+    /**
+     *  Return the given object (useful for chaining)
+     *
+     *  @param     mixed    $object
+     *  @return    mixed
+     */
+    function with($object)
+    {
+        return $object;
+    }
 }
 
-if ( ! function_exists('is_json')) 
-{
+if (! function_exists('is_json')) {
 
     /**
      * Check if string is json
@@ -1527,8 +1453,7 @@ if ( ! function_exists('is_json'))
     }
 }
 
-if ( ! function_exists('compare_json')) 
-{
+if (! function_exists('compare_json')) {
     /**
      * Compare two json objects
      *
@@ -1548,8 +1473,7 @@ if ( ! function_exists('compare_json'))
     }
 }
 
-if ( ! function_exists('to_array')) 
-{
+if (! function_exists('to_array')) {
     /**
      * Alias of arrayfy()
      *
@@ -1557,16 +1481,14 @@ if ( ! function_exists('to_array'))
      * @param bool $asGenerator
      * @param int $threshold
      * @return \Generator|array
-     */ 
+     */
     function to_array($object, $asGenerator = false, $threshold = 1000)
     {
         return arrayfy($object, $asGenerator, $threshold);
     }
-
 }
 
-if ( ! function_exists('to_generator')) 
-{
+if (! function_exists('to_generator')) {
     /**
      * Convert an array or object
      * to a generator
@@ -1578,15 +1500,15 @@ if ( ! function_exists('to_generator'))
     function to_generator($data, $threshold = 1000)
     {
         $count = 0;
-    
+
         if (is_array($data)) {
             $count = count($data);
-        } 
-        
+        }
+
         if (is_object($data)) {
             $count = count(get_object_vars($data));
         }
-    
+
         if ($count > $threshold) {
             foreach ($data as $key => $value) {
                 yield $key => $value;
@@ -1594,12 +1516,10 @@ if ( ! function_exists('to_generator'))
         } else {
             return $data;
         }
-
     }
 }
 
-if ( ! function_exists('collect_from')) 
-{
+if (! function_exists('collect_from')) {
     /**
      * Create collection from various data types
      *
@@ -1612,8 +1532,7 @@ if ( ! function_exists('collect_from'))
     }
 }
 
-if ( ! function_exists('collection_from_query')) 
-{
+if (! function_exists('collection_from_query')) {
     /**
      * Create collection from CodeIgniter query result
      *
@@ -1626,8 +1545,7 @@ if ( ! function_exists('collection_from_query'))
     }
 }
 
-if ( ! function_exists('make_list')) 
-{
+if (! function_exists('make_list')) {
     /**
      * Create a simple list (beginner-friendly)
      *
@@ -1640,8 +1558,7 @@ if ( ! function_exists('make_list'))
     }
 }
 
-if ( ! function_exists('filter_list')) 
-{
+if (! function_exists('filter_list')) {
     /**
      * Filter a list by condition (beginner-friendly)
      *
@@ -1655,8 +1572,7 @@ if ( ! function_exists('filter_list'))
     }
 }
 
-if ( ! function_exists('map_list')) 
-{
+if (! function_exists('map_list')) {
     /**
      * Transform each item in a list (beginner-friendly)
      *
@@ -1670,8 +1586,7 @@ if ( ! function_exists('map_list'))
     }
 }
 
-if ( ! function_exists('find_in_list')) 
-{
+if (! function_exists('find_in_list')) {
     /**
      * Find first item matching condition (beginner-friendly)
      *
@@ -1685,8 +1600,7 @@ if ( ! function_exists('find_in_list'))
     }
 }
 
-if ( ! function_exists('count_where')) 
-{
+if (! function_exists('count_where')) {
     /**
      * Count items matching condition
      *
@@ -1700,8 +1614,7 @@ if ( ! function_exists('count_where'))
     }
 }
 
-if ( ! function_exists('list_contains')) 
-{
+if (! function_exists('list_contains')) {
     /**
      * Check if list contains value (beginner-friendly)
      *
@@ -1715,8 +1628,7 @@ if ( ! function_exists('list_contains'))
     }
 }
 
-if ( ! function_exists('get_column')) 
-{
+if (! function_exists('get_column')) {
     /**
      * Extract a column from array of arrays/objects (beginner-friendly)
      *
@@ -1730,8 +1642,7 @@ if ( ! function_exists('get_column'))
     }
 }
 
-if ( ! function_exists('sort_list_by')) 
-{
+if (! function_exists('sort_list_by')) {
     /**
      * Sort list by a field (beginner-friendly)
      *
@@ -1747,8 +1658,7 @@ if ( ! function_exists('sort_list_by'))
     }
 }
 
-if ( ! function_exists('group_list_by')) 
-{
+if (! function_exists('group_list_by')) {
     /**
      * Group list by a field (beginner-friendly)
      *
@@ -1762,8 +1672,7 @@ if ( ! function_exists('group_list_by'))
     }
 }
 
-if ( ! function_exists('take_from_list')) 
-{
+if (! function_exists('take_from_list')) {
     /**
      * Take first n items from list (beginner-friendly)
      *
@@ -1777,8 +1686,7 @@ if ( ! function_exists('take_from_list'))
     }
 }
 
-if ( ! function_exists('skip_from_list')) 
-{
+if (! function_exists('skip_from_list')) {
     /**
      * Skip first n items from list (beginner-friendly)
      *
@@ -1792,8 +1700,7 @@ if ( ! function_exists('skip_from_list'))
     }
 }
 
-if ( ! function_exists('chunk_list')) 
-{
+if (! function_exists('chunk_list')) {
     /**
      * Split list into smaller chunks (beginner-friendly)
      *
@@ -1809,8 +1716,7 @@ if ( ! function_exists('chunk_list'))
 
 /* ------------------------------- Date | Time | Format Functions ---------------------------------*/
 
-if ( ! function_exists('now')) 
-{
+if (! function_exists('now')) {
     // /**
     //  * Current timestamp
     //  * 
@@ -1879,7 +1785,7 @@ if ( ! function_exists('now'))
                 // The current $timezone (PHP's default) will be used for the currentDt creation below
             }
         }
-        
+
         // Handle array parameter for advanced usage (timezone + format/timestamp)
         if (is_array($param)) {
             if (isset($param['timezone']) && !empty($param['timezone'])) {
@@ -1899,32 +1805,46 @@ if ( ! function_exists('now'))
         if ($param === true || (is_array($param) && isset($param['timestamp']) && $param['timestamp'] === true)) {
             // Return Unix timestamp
             return $currentDt->getTimestamp();
-        } 
-        
+        }
+
         if (is_string($param) && !empty($param) && is_valid_date_format($param)) {
             // Return formatted string
             return $currentDt->format($param);
         }
 
         if (is_array($param) && isset($param['format']) && is_string($param['format'])) {
-             // Return formatted string from array
+            // Return formatted string from array
             return $currentDt->format($param['format']);
         }
-        
+
         // Default: return the DateTimeImmutable object
         return $currentDt;
     }
 
     // Helper function to loosely check if a string is a date format
     // This is a basic check; real validation might be more complex
-    function is_valid_date_format(string $str): bool 
+    function is_valid_date_format(string $str): bool
     {
 
         // Look for common format characters, exclude 
         // common timezone string parts
         $commonFormatChars = [
-            'Y', 'm', 'd', 'H', 'i', 's', 'A', 'a', 
-            'F', 'M', 'j', 'D', 'l', 'P', 'Z', 'T'
+            'Y',
+            'm',
+            'd',
+            'H',
+            'i',
+            's',
+            'A',
+            'a',
+            'F',
+            'M',
+            'j',
+            'D',
+            'l',
+            'P',
+            'Z',
+            'T'
         ];
 
         foreach ($commonFormatChars as $char) {
@@ -1937,17 +1857,19 @@ if ( ! function_exists('now'))
         // some timezone names (e.g., "GMT")
         // This is not foolproof but helps.
         if (
-            in_array(strtolower($str), 
-            ['gmt', 'utc', 'z'])
-        ) { return false; }
+            in_array(
+                strtolower($str),
+                ['gmt', 'utc', 'z']
+            )
+        ) {
+            return false;
+        }
 
         return false;
     }
-
 }
 
-if ( ! function_exists('timezone')) 
-{
+if (! function_exists('timezone')) {
     /**
      * Timezone from TIMEZONE Constants
      * in the config/constants.php file
@@ -1960,8 +1882,7 @@ if ( ! function_exists('timezone'))
     }
 }
 
-if ( ! function_exists('datetime')) 
-{
+if (! function_exists('datetime')) {
     /**
      * Datetime from DATETIME Constants
      * in the config/constants.php file
@@ -1974,8 +1895,7 @@ if ( ! function_exists('datetime'))
     }
 }
 
-if ( ! function_exists('today')) 
-{
+if (! function_exists('today')) {
     /**
      * Today from TODAY Constants
      * in the config/constants.php file
@@ -1988,8 +1908,7 @@ if ( ! function_exists('today'))
     }
 }
 
-if ( ! function_exists('system_default_timezone')) 
-{
+if (! function_exists('system_default_timezone')) {
     /**
      * Default Timezone from DEFAULT_TIMEZONE Constants
      * in the config/constants.php file
@@ -2002,8 +1921,7 @@ if ( ! function_exists('system_default_timezone'))
     }
 }
 
-if ( ! function_exists('arrange_date')) 
-{
+if (! function_exists('arrange_date')) {
     /**
      * This takes out forward slashes and
      * replaces them with hyphens
@@ -2019,11 +1937,9 @@ if ( ! function_exists('arrange_date'))
 
         return $date;
     }
-
 }
 
-if ( ! function_exists('real_date')) 
-{
+if (! function_exists('real_date')) {
     /**
      * Output a human readable date
      *
@@ -2031,14 +1947,14 @@ if ( ! function_exists('real_date'))
      * @param string $format
      * @return string
      */
-    function real_date($date, $format=null)
+    function real_date($date, $format = null)
     {
         if ($date == "0000-00-00 00:00:00") {
             return '';
         } elseif ($date == "0000-00-00") {
             return '';
         } else {
-            if(!empty($format)) {
+            if (!empty($format)) {
                 return format_date($format, $date);
             } else {
                 return format_date('jS F, Y', $date);
@@ -2047,8 +1963,7 @@ if ( ! function_exists('real_date'))
     }
 }
 
-if ( ! function_exists('correct_date')) 
-{
+if (! function_exists('correct_date')) {
     /**
      * Take date and format it in Y-m-d
      * This fixes a date and can be stored
@@ -2069,8 +1984,7 @@ if ( ! function_exists('correct_date'))
     }
 }
 
-if ( ! function_exists('correct_datetime')) 
-{
+if (! function_exists('correct_datetime')) {
     /**
      * Take datetime and format it in Y-m-d H:i:a
      * This fixes a datetime and can be stored
@@ -2091,8 +2005,7 @@ if ( ! function_exists('correct_datetime'))
     }
 }
 
-if ( ! function_exists('real_time')) 
-{
+if (! function_exists('real_time')) {
     /**
      * Take date and format it in H:i:a
      *
@@ -2110,14 +2023,12 @@ if ( ! function_exists('real_time'))
         if ($withSeconds) {
             return format_date('H:i:s a', $date);
         }
-        
+
         return format_date('H:i a', $date);
-        
     }
 }
 
-if ( ! function_exists('format_date')) 
-{
+if (! function_exists('format_date')) {
     /**
      * Take date and set a custom date format
      *
@@ -2131,8 +2042,7 @@ if ( ! function_exists('format_date'))
     }
 }
 
-if ( ! function_exists('time_difference')) 
-{
+if (! function_exists('time_difference')) {
     /**
      * Calculate time difference
      *
@@ -2147,7 +2057,7 @@ if ( ! function_exists('time_difference'))
 
         // difference between two dates or times
         $interval = date_diff($start, $end);
-        
+
         $minutes   = $interval->format('%i');
         $seconds   = $interval->format('%s');
         $hours     = $interval->format('%h');
@@ -2158,30 +2068,29 @@ if ( ! function_exists('time_difference'))
         // get time difference
         if ($interval->format('%i%h%d%m%y') == "00000") {
             return $seconds . " Seconds";
-        } 
-        
+        }
+
         if ($interval->format('%h%d%m%y') == "0000") {
             return $minutes . " Minutes";
-        } 
-        
+        }
+
         if ($interval->format('%d%m%y') == "000") {
             return $hours . " Hours";
-        } 
-        
+        }
+
         if ($interval->format('%m%y') == "00") {
             return $days . " Days";
-        } 
-        
+        }
+
         if ($interval->format('%y') == "0") {
             return $months . " Months";
         }
-        
-        return $years . " Years";    
+
+        return $years . " Years";
     }
 }
 
-if ( ! function_exists('date_difference')) 
-{
+if (! function_exists('date_difference')) {
     /**
      * Calculate date difference
      * return interval as object
@@ -2202,8 +2111,7 @@ if ( ! function_exists('date_difference'))
     }
 }
 
-if ( ! function_exists('date_plus_day')) 
-{
+if (! function_exists('date_plus_day')) {
     /**
      * Add days to a given date
      *
@@ -2215,15 +2123,14 @@ if ( ! function_exists('date_plus_day'))
     function date_plus_day($date, $days, $format = null)
     {
         if ($format != null) {
-            return date($format, strtotime($date. ' + ' . $days. 'days'));
+            return date($format, strtotime($date . ' + ' . $days . 'days'));
         } else {
-            return date('Y-m-d', strtotime($date. ' + ' . $days. 'days'));
+            return date('Y-m-d', strtotime($date . ' + ' . $days . 'days'));
         }
     }
 }
 
-if ( ! function_exists('date_minus_day')) 
-{
+if (! function_exists('date_minus_day')) {
     /**
      * Subtract days from a given date
      *
@@ -2235,15 +2142,14 @@ if ( ! function_exists('date_minus_day'))
     function date_minus_day($date, $days, $format = null)
     {
         if ($format != null) {
-            return date($format, strtotime($date. ' - ' . $days. 'days'));
+            return date($format, strtotime($date . ' - ' . $days . 'days'));
         } else {
-            return date('Y-m-d', strtotime($date. ' - ' . $days. 'days'));
+            return date('Y-m-d', strtotime($date . ' - ' . $days . 'days'));
         }
     }
 }
 
-if ( ! function_exists('time_ago')) 
-{
+if (! function_exists('time_ago')) {
     /**
      * Time ago
      *
@@ -2257,24 +2163,23 @@ if ( ! function_exists('time_ago'))
         $time_difference = time() - strtotime($datetime);
 
         $different_times = [
-                    12 * 30 * 24 * 60 * 60  =>  'year',
-                    30 * 24 * 60 * 60       =>  'month',
-                    24 * 60 * 60            =>  'day',
-                    60 * 60                 =>  'hour',
-                    60                      =>  'minute',
-                    1                       =>  'second'
+            12 * 30 * 24 * 60 * 60  =>  'year',
+            30 * 24 * 60 * 60       =>  'month',
+            24 * 60 * 60            =>  'day',
+            60 * 60                 =>  'hour',
+            60                      =>  'minute',
+            1                       =>  'second'
         ];
 
-        foreach( $different_times as $seconds => $period )
-        {
+        foreach ($different_times as $seconds => $period) {
             $derived_time = $time_difference / $seconds;
 
-            if ( $derived_time >= 1 ) {
-                $time = round( $derived_time );
+            if ($derived_time >= 1) {
+                $time = round($derived_time);
                 return ($show_ago)
-                        ? $time . ' ' . $period . ($time > 1 ? 's' : '') . ' ago'
-                        // 'about ' . $time . ' ' . $period . ( $time > 1 ? 's' : '' ) . ' ago';
-                        : $time . ' ' . $period . ($time > 1 ? 's' : '');
+                    ? $time . ' ' . $period . ($time > 1 ? 's' : '') . ' ago'
+                    // 'about ' . $time . ' ' . $period . ( $time > 1 ? 's' : '' ) . ' ago';
+                    : $time . ' ' . $period . ($time > 1 ? 's' : '');
             }
         }
 
@@ -2282,62 +2187,58 @@ if ( ! function_exists('time_ago'))
     }
 }
 
-if ( ! function_exists('travel')) 
-{
+if (! function_exists('travel')) {
     /**
      * Travel through time
      *
      * @return \Base\Helpers\TimeTravel
      */
     function travel(
-        $timezone = null, 
-        $autoFormat = false, 
+        $timezone = null,
+        $autoFormat = false,
         $format = 'Y-m-d H:i:s'
     ) {
         return new Base\Helpers\TimeTravel(
-            $timezone, 
-            $autoFormat, 
+            $timezone,
+            $autoFormat,
             $format
         );
     }
 }
 
 // Create a quick formatter helper
-if (!function_exists('quick_travel')) 
-    {
+if (!function_exists('quick_travel')) {
     /**
      * Quick travel
      * @param mixed $format
      * @return Base\Helpers\TimeTravel
      */
-    function quick_travel($format = 'Y-m-d H:i:s') 
+    function quick_travel($format = 'Y-m-d H:i:s')
     {
         return new Base\Helpers\TimeTravel(
-            null, 
-            true, 
+            null,
+            true,
             $format
         );
     }
 }
 
-if ( ! function_exists('format'))
-{
-	/**
-	 * Format helper function for webby
-	 *
-	 * @param string $path
-	 * @return \Base\Helpers\Format
-	 */
-	function format()
-	{
-		return new \Base\Helpers\Format;
-	}
+if (! function_exists('format')) {
+    /**
+     * Format helper function for webby
+     *
+     * @param string $path
+     * @return \Base\Helpers\Format
+     */
+    function format()
+    {
+        return new \Base\Helpers\Format;
+    }
 }
 
 /* ------------------------------- Security Functions ---------------------------------*/
 
-if ( ! function_exists('hash_algo')) 
-{
+if (! function_exists('hash_algo')) {
     /**
      * A wrapper for php hash function
      *
@@ -2351,8 +2252,7 @@ if ( ! function_exists('hash_algo'))
     }
 }
 
-if ( ! function_exists('escape'))
-{
+if (! function_exists('escape')) {
 
     /**
      * Escape HTML entities in a string
@@ -2366,8 +2266,7 @@ if ( ! function_exists('escape'))
     }
 }
 
-if ( ! function_exists('csrf')) 
-{
+if (! function_exists('csrf')) {
     /**
      * Creates a CSRF hidden form input
      *
@@ -2379,8 +2278,7 @@ if ( ! function_exists('csrf'))
     }
 }
 
-if ( ! function_exists('csrf_token')) 
-{
+if (! function_exists('csrf_token')) {
     /**
      * Grab CSRF token name
      *
@@ -2392,8 +2290,7 @@ if ( ! function_exists('csrf_token'))
     }
 }
 
-if ( ! function_exists('csrf_hash')) 
-{
+if (! function_exists('csrf_hash')) {
     /**
      * Grab CSRF hash
      *
@@ -2405,8 +2302,7 @@ if ( ! function_exists('csrf_hash'))
     }
 }
 
-if ( ! function_exists('honeypot')) 
-{
+if (! function_exists('honeypot')) {
     /**
      * Generate a honeypot field
      *
@@ -2438,7 +2334,7 @@ if ( ! function_exists('honeypot'))
         if (!empty($data['container'])) {
             $output = str_replace('{name}', $data['name'], $data['template']);
             $output = str_replace('{template}', $output, $output);
-            $output = str_replace(['{template}','{honeyfield}'], [$output, $data['honeyfield']], $data['container']);
+            $output = str_replace(['{template}', '{honeyfield}'], [$output, $data['honeyfield']], $data['container']);
             return $output;
         }
 
@@ -2447,8 +2343,7 @@ if ( ! function_exists('honeypot'))
     }
 }
 
-if ( ! function_exists('honey_check')) 
-{
+if (! function_exists('honey_check')) {
     /**
      * Checks if the honeypot field 
      * is not filled
@@ -2470,8 +2365,7 @@ if ( ! function_exists('honey_check'))
     }
 }
 
-if ( ! function_exists('honey_time')) 
-{
+if (! function_exists('honey_time')) {
     /**
      * Checks the time it takes a 
      * form to be submitted
@@ -2491,7 +2385,7 @@ if ( ! function_exists('honey_time'))
         $time =  (int) $time ?: (int) config('honeypot')['time'];
 
         $seconds = time() - (int)$honeytime;
-        
+
         if ($seconds < $time) {
             return false;
         } else {
@@ -2500,8 +2394,7 @@ if ( ! function_exists('honey_time'))
     }
 }
 
-if ( ! function_exists('honey_style')) 
-{
+if (! function_exists('honey_style')) {
     /**
      * Styles the honey_pot container
      *
@@ -2517,41 +2410,38 @@ if ( ! function_exists('honey_style'))
         if (empty($custom_style)) {
             return config('honeypot')['style'];
         }
-        
+
         return $custom_style;
     }
 }
 
-if ( ! function_exists('encrypt'))
-{
-	/**
-	 *  Encrypt a given string
-	 *
-	 *  @param     string    $value
-	 *  @return    string
-	 */
-	function encrypt($value)
-	{
-		return app('encryption')->encrypt($value);
-	}
+if (! function_exists('encrypt')) {
+    /**
+     *  Encrypt a given string
+     *
+     *  @param     string    $value
+     *  @return    string
+     */
+    function encrypt($value)
+    {
+        return app('encryption')->encrypt($value);
+    }
 }
 
-if ( ! function_exists('decrypt'))
-{
-	/**
-	 *  Decrypt a given string
-	 *
-	 *  @param     string    $value
-	 *  @return    string
-	 */
-	function decrypt($value)
-	{
-		return app('encryption')->decrypt($value);
-	}
+if (! function_exists('decrypt')) {
+    /**
+     *  Decrypt a given string
+     *
+     *  @param     string    $value
+     *  @return    string
+     */
+    function decrypt($value)
+    {
+        return app('encryption')->decrypt($value);
+    }
 }
 
-if ( ! function_exists('clean')) 
-{
+if (! function_exists('clean')) {
     /**
      *  Clean string from XSS
      *
@@ -2566,8 +2456,7 @@ if ( ! function_exists('clean'))
     }
 }
 
-if ( ! function_exists('cleanxss')) 
-{
+if (! function_exists('cleanxss')) {
     /**
      * Prevents XXS Attacks
      *
@@ -2587,13 +2476,12 @@ if ( ! function_exists('cleanxss'))
         $inputx = trim($inputx);
         $inputx = stripslashes($inputx);
         $inputx = stripslashes($inputx);
-        
+
         return clean($inputx);
     }
 }
 
-if ( ! function_exists('ping_url')) 
-{
+if (! function_exists('ping_url')) {
     /**
      * Ping url to check
      * if it is online or exists
@@ -2605,7 +2493,7 @@ if ( ! function_exists('ping_url'))
     {
         $url = parse_url($url);
 
-        if (!isset($url["host"])) { 
+        if (!isset($url["host"])) {
             return false;
         }
 
@@ -2613,8 +2501,7 @@ if ( ! function_exists('ping_url'))
     }
 }
 
-if ( ! function_exists('filter_url')) 
-{
+if (! function_exists('filter_url')) {
     /**
      *  filter url
      *
@@ -2627,17 +2514,16 @@ if ( ! function_exists('filter_url'))
     }
 }
 
-if ( ! function_exists('is_url')) 
-{
+if (! function_exists('is_url')) {
 
-     /**
-      * check if string is url
-      *
-      * @param string $url
-      * @param bool $is_live
-      * @param bool $return
-      * @return bool|string
-      */
+    /**
+     * check if string is url
+     *
+     * @param string $url
+     * @param bool $is_live
+     * @param bool $return
+     * @return bool|string
+     */
     function is_url($url, $is_live = false, $return = false)
     {
         $url = filter_url($url);
@@ -2665,8 +2551,7 @@ if ( ! function_exists('is_url'))
     }
 }
 
-if ( ! function_exists('is_email')) 
-{
+if (! function_exists('is_email')) {
     /**
      * Check if email is valid
      *
@@ -2683,8 +2568,7 @@ if ( ! function_exists('is_email'))
     }
 }
 
-if ( ! function_exists('is_domain')) 
-{
+if (! function_exists('is_domain')) {
     /**
      * Checks if an email is from 
      * a given domain e.g. @webby
@@ -2703,8 +2587,7 @@ if ( ! function_exists('is_domain'))
     }
 }
 
-if ( ! function_exists('is_email_injected')) 
-{
+if (! function_exists('is_email_injected')) {
     /**
      * validate against any email injection attempts
      *
@@ -2733,8 +2616,7 @@ if ( ! function_exists('is_email_injected'))
     }
 }
 
-if ( ! function_exists('is_email_valid')) 
-{
+if (! function_exists('is_email_valid')) {
     /**
      * checks whether the email address is valid
      *
@@ -2744,7 +2626,7 @@ if ( ! function_exists('is_email_valid'))
     function is_email_valid($email)
     {
         $pattern = "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/i";
-        
+
         if (preg_match($pattern, $email)) {
             return true;
         } else {
