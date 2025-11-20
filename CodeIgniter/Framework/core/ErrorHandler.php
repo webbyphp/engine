@@ -20,7 +20,7 @@ class CI_ErrorHandler
     private $config;
     private $errorTemplatesPath;
     private $originalErrorHandler;
-    private $original_exception_handler;
+    private $originalExceptionHandler;
     private $isInitialized = false;
 
     public function __construct($config = [])
@@ -32,20 +32,22 @@ class CI_ErrorHandler
             'environment' => ENVIRONMENT,
             'debug' => (ENVIRONMENT !== 'production'),
             'ide_links' => [
+                'antigravity' => 'antigravity://file/{file}:{line}',
                 'vscode' => 'vscode://file/{file}:{line}',
+                'cursor' => 'cursor://file/{file}:{line}',
                 'phpstorm' => 'phpstorm://open?file={file}&line={line}',
                 'sublime' => 'subl://open?url=file://{file}&line={line}',
                 'atom' => 'atom://core/open/file?filename={file}&line={line}',
                 'vim' => 'vim://open?url=file://{file}&line={line}',
                 'emacs' => 'emacs://open?url=file://{file}&line={line}'
             ],
-            'default_ide' => 'vscode',
+            'default_ide' => config_item('use_editor') ?? 'vscode',
             'max_trace_files' => 15,
-            'show_source_code' => true,
-            'source_code_lines' => 12,
+            'show_sourceCode' => true,
+            'sourceCode_lines' => 12,
             'enable_ajax_errors' => true,
             'log_errors' => true,
-            'cache_source_code' => true,
+            'cache_sourceCode' => true,
             'show_request_data' => true,
             'highlight_syntax' => true,
             'dark_theme' => true
@@ -67,7 +69,7 @@ class CI_ErrorHandler
         if (!$this->isInitialized) {
             // Store original handlers for restoration if needed
             $this->originalErrorHandler = set_error_handler([$this, 'handleError']);
-            $this->original_exception_handler = set_exception_handler([$this, 'handleException']);
+            $this->originalExceptionHandler = set_exception_handler([$this, 'handleException']);
             register_shutdown_function([$this, 'handleShutdown']);
 
             $this->isInitialized = true;
@@ -83,8 +85,8 @@ class CI_ErrorHandler
             if ($this->originalErrorHandler) {
                 set_error_handler($this->originalErrorHandler);
             }
-            if ($this->original_exception_handler) {
-                set_exception_handler($this->original_exception_handler);
+            if ($this->originalExceptionHandler) {
+                set_exception_handler($this->originalExceptionHandler);
             }
             $this->isInitialized = false;
         }
@@ -207,25 +209,25 @@ class CI_ErrorHandler
 
         // Set proper HTTP response code
         if (!headers_sent()) {
-            http_response_code(500);
+            // http_response_code(500);
             header('Content-Type: text/html; charset=utf-8');
             header('X-Error-Request-ID: ' . $errorData['request_id']);
         }
 
         // Get enhanced source code context
-        $source_code = $this->getEnhancedSourceCode($errorData['file'], $errorData['line']);
+        $sourceCode = $this->getEnhancedSourceCode($errorData['file'], $errorData['line']);
 
         // Get formatted stack trace
-        $stack_trace = $this->formatEnhancedStackTrace($errorData['trace']);
+        $stackTrace = $this->formatEnhancedStackTrace($errorData['trace']);
 
         // Get comprehensive environment info
-        $env_info = $this->getComprehensiveEnvironmentInfo();
+        $envInfo = $this->getComprehensiveEnvironmentInfo();
 
         // Get request information
-        $request_info = $this->config['show_request_data'] ? $this->getRequestInfo() : [];
+        $requestInfo = $this->config['show_request_data'] ? $this->getRequestInfo() : [];
 
         // Generate the enhanced error page
-        $html = $this->generateEnhancedErrorHtml($errorData, $source_code, $stack_trace, $env_info, $request_info);
+        $html = $this->generateEnhancedErrorHtml($errorData, $sourceCode, $stackTrace, $envInfo, $requestInfo);
 
         echo $html;
         exit(1);
@@ -237,7 +239,7 @@ class CI_ErrorHandler
     private function displayAjaxError($errorData)
     {
         if (!headers_sent()) {
-            http_response_code(500);
+            // http_response_code(500);
             header('Content-Type: application/json');
             header('X-Error-Request-ID: ' . $errorData['request_id']);
         }
@@ -255,7 +257,7 @@ class CI_ErrorHandler
         // In debug mode, include more details
         if ($this->config['debug']) {
             $response['full_file_path'] = $errorData['file'];
-            $response['stack_trace'] = array_slice($errorData['trace'], 0, 5); // Limit for JSON
+            $response['stackTrace'] = array_slice($errorData['trace'], 0, 5); // Limit for JSON
             $response['ide_link'] = $this->generateIdeLink($errorData['file'], $errorData['line']);
         }
 
@@ -317,7 +319,7 @@ class CI_ErrorHandler
     private function displayApiError($errorData)
     {
         if (!headers_sent()) {
-            http_response_code(500);
+            // http_response_code(500);
             header('Content-Type: application/json; charset=utf-8');
             header('X-Error-Request-ID: ' . $errorData['request_id']);
         }
@@ -338,7 +340,7 @@ class CI_ErrorHandler
             $response['error']['debug'] = [
                 'file' => $errorData['file'],
                 'line' => $errorData['line'],
-                'stack_trace' => array_slice($errorData['trace'], 0, 3) // Limited for API
+                'stackTrace' => array_slice($errorData['trace'], 0, 3) // Limited for API
             ];
         }
 
@@ -351,7 +353,7 @@ class CI_ErrorHandler
      */
     private function getEnhancedSourceCode($file, $line)
     {
-        if (!$this->config['show_source_code'] || !file_exists($file)) {
+        if (!$this->config['show_sourceCode'] || !file_exists($file)) {
             return [];
         }
 
@@ -360,17 +362,17 @@ class CI_ErrorHandler
         // Simple in-memory cache for this request
         static $source_cache = [];
 
-        if ($this->config['cache_source_code'] && isset($source_cache[$cache_key])) {
+        if ($this->config['cache_sourceCode'] && isset($source_cache[$cache_key])) {
             $lines = $source_cache[$cache_key];
         } else {
             $lines = file($file);
-            if ($this->config['cache_source_code']) {
+            if ($this->config['cache_sourceCode']) {
                 $source_cache[$cache_key] = $lines;
             }
         }
 
         $total_lines = count($lines);
-        $context_lines = $this->config['source_code_lines'];
+        $context_lines = $this->config['sourceCode_lines'];
 
         $start = max(0, $line - $context_lines - 1);
         $end = min($total_lines, $line + $context_lines);
@@ -381,7 +383,7 @@ class CI_ErrorHandler
 
             // Basic syntax highlighting for PHP
             if ($this->config['highlight_syntax'] && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-                $code = $this->highlightPhpSyntax($code);
+                $code = $this->elegantHighlightSyntax($code);
             }
 
             $source[] = [
@@ -489,7 +491,7 @@ class CI_ErrorHandler
     /**
      * Generate enhanced error HTML with improved design
      */
-    private function generateEnhancedErrorHtml($errorData, $source_code, $stack_trace, $env_info, $request_info = [])
+    private function generateEnhancedErrorHtml($errorData, $sourceCode, $stackTrace, $envInfo, $requestInfo = [])
     {
         $ide_link = $this->generateIdeLink($errorData['file'], $errorData['line']);
         $theme_class = $this->config['dark_theme'] ? 'dark-theme' : 'light-theme';
@@ -819,11 +821,16 @@ class CI_ErrorHandler
             .section-content { padding: 20px; }
         }
         
-        .syntax-keyword { color: #ff79c6; font-weight: bold; }
-        .syntax-string { color: #f1fa8c; }
-        .syntax-comment { color: #6272a4; font-style: italic; }
-        .syntax-variable { color: #8be9fd; }
-        .syntax-function { color: #50fa7b; }
+        .syntax-keyword { color: #437fc9; font-weight: bold; }
+        .syntax-string { color: #09bc61; }
+        .syntax-comment { color: #976ade; font-style: italic; }
+        .syntax-variable *,
+        .syntax-variable
+        { color: inherit; color: #ba5793; }
+        .syntax-function { color: #c6b123; }
+        .syntax-brace { color: #cbd0ae; }
+        .syntax-arr { color: #96f9fe; }
+
     </style>
 </head>
 <body>
@@ -846,16 +853,17 @@ class CI_ErrorHandler
         </div>';
 
         // Source Code Section
-        if (!empty($source_code)) {
+        if (!empty($sourceCode)) {
             $html .= '<div class="section">
                 <div class="section-header">
                     📄 Source Code
                     <span style="font-size: 14px; font-weight: normal;">' . basename($errorData['file']) . '</span>
                 </div>
                 <div class="section-content">
-                    <div class="source-code">';
+                    <div class="source-code">
+                    <pre class="overflow">';
 
-            foreach ($source_code as $line) {
+            foreach ($sourceCode as $line) {
                 $class = 'source-line';
                 if ($line['is_error_line']) {
                     $class .= ' error';
@@ -869,7 +877,8 @@ class CI_ErrorHandler
                           </div>';
             }
 
-            $html .= '</div>
+            $html .= '</pre>
+                    </div>
                 </div>
             </div>';
         }
@@ -879,7 +888,7 @@ class CI_ErrorHandler
             <div class="section-header">🔍 Stack Trace</div>
             <div class="section-content">';
 
-        foreach ($stack_trace as $i => $frame) {
+        foreach ($stackTrace as $i => $frame) {
             $badges = '';
             if ($frame['is_vendor']) {
                 $badges .= '<span class="badge badge-vendor">Vendor</span> ';
@@ -917,7 +926,7 @@ class CI_ErrorHandler
             <div class="tabs">
                 <div class="tab active" onclick="switchTab(\'environment\')">🌍 Environment</div>';
 
-        if (!empty($request_info)) {
+        if (!empty($requestInfo)) {
             $html .= '<div class="tab" onclick="switchTab(\'request\')">📥 Request Data</div>';
         }
 
@@ -927,7 +936,7 @@ class CI_ErrorHandler
                 <div class="section-content">
                     <div class="env-grid">';
 
-        foreach ($env_info as $key => $value) {
+        foreach ($envInfo as $key => $value) {
             if (is_array($value)) {
                 $value = implode(', ', $value);
             }
@@ -945,12 +954,12 @@ class CI_ErrorHandler
             </div>';
 
         // Request data tab
-        if (!empty($request_info)) {
+        if (!empty($requestInfo)) {
             $html .= '<div class="tab-content" id="request-content">
                 <div class="section-content">
                     <div class="request-grid">';
 
-            foreach ($request_info as $key => $value) {
+            foreach ($requestInfo as $key => $value) {
                 if (is_array($value)) {
                     $value = json_encode($value, JSON_PRETTY_PRINT);
                 }
@@ -1026,6 +1035,38 @@ Timestamp: ' . date('Y-m-d H:i:s', intval($errorData['timestamp'])) . '
 
     /**
      * Simple PHP syntax highlighting
+     */
+    private function elegantHighlightSyntax(string $code)
+    {
+        $code = str_replace("\n", "", $code);
+        $code = htmlspecialchars($code, ENT_QUOTES, 'UTF-8', true);
+
+        $code = preg_replace("/(&quot;(.*)&quot;)/ui", "<span class=\"syntax-string\">$1</span>", $code);
+        $code = preg_replace("/(&#039;(.*)&#039;)/ui", "<span class=\"syntax-string\">$1</span>", $code);
+
+        $code = preg_replace("/(if|for|switch|elseif|while|foreach)(\s*\()/ui", "<span class=\"syntax-keyword\">$1</span>$2", $code);
+        $code = preg_replace("/((function|public|class|private|const|use|namespace|throw|new|require_once|require|include|include_once)\s+)/ui", "<span class=\"syntax-keyword\">$1</span>", $code);
+        $code = preg_replace("/((null|true|false|else|continue|break|self::|self|static::|static|\$this)\s*)/ui", "<span class=\"syntax-keyword\">$1</span>", $code);
+        $code = preg_replace("/((echo|return|extends|implements|protected)\s+)/ui", "<span class=\"syntax-keyword\">$1</span>", $code);
+
+        $code = preg_replace("/([a-z_]+[a-z_0-9]*\s*)(\()/ui", "<span class=\"syntax-function\">$1</span>$2", $code);
+        $code = preg_replace("/([a-z_]+\s*)(\()/ui", "<span class=\"syntax-function\">$1</span>$2", $code);
+
+        $code = preg_replace("/(-&gt;)([a-z]+[a-z0-9_]*)/ui", "$1<span class=\"syntax-variable\">$2</span>", $code);
+        $code = preg_replace("/(\\$([a-z_]+[a-z0-9_]*))/ui", "<span class=\"syntax-variable\">$1</span>", $code);
+
+        $code = preg_replace("/(\)|\(|\}|\{)/ui", "<span class=\"syntax-brace\">$1</span>", $code);
+        $code = preg_replace("/(\]|\[)/ui", "<span class=\"syntax-arr\">$1</span>", $code);
+
+        $code = preg_replace("/((\/|\s)\*+(.*))/ui", "<span class=\"syntax-comment\">$1</span>", $code);
+        $code = preg_replace("/^(\*+(.*))/ui", "<span class=\"syntax-comment\">$1</span>", $code);
+        $code = preg_replace("/(\/\/(.*)$)/ui", "<span class=\"syntax-comment\">$1</span>", $code);
+
+        return $code;
+    }
+
+    /**
+     * Alternate PHP syntax highlighting
      */
     private function highlightPhpSyntax($code)
     {
