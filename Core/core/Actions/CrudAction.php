@@ -31,5 +31,4 @@ abstract class CrudAction extends Action
      * @return object
      */
     abstract public function model();
-
 }
