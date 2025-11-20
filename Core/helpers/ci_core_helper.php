@@ -4,10 +4,10 @@ defined('COREPATH') or exit('No direct script access allowed');
 /**
  *  CI_CORE Helper functions
  *
- *  @package		Webby
- *	@subpackage		Helpers
- *	@category		Helpers
- *	@author			Kwame Oteng Appiah-Nti
+ *  @package        Webby
+ *  @subpackage     Helpers
+ *  @category       Helpers
+ *  @author         Kwame Oteng Appiah-Nti
  */
 
 use Base\Route\Route;
@@ -23,7 +23,7 @@ if ( ! function_exists('app_url'))
      * @param bool $protocol
      * @return string
      */
-    function app_url($uri = '', $protocol = NULL)
+    function app_url($uri = '', $protocol = null)
     {   
         return base_url($uri, $protocol);
     }
@@ -36,7 +36,7 @@ if ( ! function_exists('url'))
      *
      * @param string|array $uri
      * @param bool $protocol
-     * @return string
+     * @return mixed
      */
     function url($uri = '', $param = '', $protocol = null)
     {
@@ -48,12 +48,12 @@ if ( ! function_exists('url'))
 
         // Detect if the $uri is string and starts with 'https://' or 'http://'
         if (is_string ($uri) && (strpos($uri, 'https://') === 0 || strpos($uri, 'http://') === 0)) {
-            return $uri . $param;
+            return "{$uri}{$param}";
         }
         
         // Detect if the $uri starts with 'www.'
         if (is_string ($uri) && strpos($uri, 'www.') === 0) {
-            return $uri . $param;
+            return "{$uri}{$param}";
         }
 
         if (is_array($uri)) {
@@ -67,7 +67,7 @@ if ( ! function_exists('url'))
         $uri = dotToslash($uri);
 
         if (!empty($param) && $protocol === null) {
-            return site_url($uri.'/'. $param);
+            return site_url("{$uri}/{$param}");
         }
 
         return site_url($uri, $protocol);
@@ -79,11 +79,35 @@ if ( ! function_exists('void_url'))
     /**
      * A function that adds a void url
      *
-     * @return string
+     * @return void
      */
     function void_url()
     {
         echo 'javascript:void(0)';
+    }
+}
+
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('uri'))
+{
+    /**
+     *  Fetch URI string or Segment Array
+     *
+     *  @param     boolean    $array
+     *  @param     boolean    $rsegment
+     *  @return    array|string
+     */
+    function uri($array = false, $rsegment = false)
+    {
+        $preffix = ($rsegment !== false) ? 'r' : '';
+
+        if ($array !== false)
+        {
+            return app('uri')->{$preffix.'segment_array'}();
+        }
+
+        return app('uri')->{$preffix.'uri_string'}();
     }
 }
 
@@ -99,7 +123,7 @@ if ( ! function_exists('action'))
     function action($uri = '', $method = null)
     {
         if (is_null($uri)) {
-            return "action=''" . ' ';
+            return "action='' ";
         }
         
         if (!is_null($method) && $method === 'post' || $method === 'get') {
@@ -118,17 +142,18 @@ if ( ! function_exists('is_active'))
      *
      * @param string $link
      * @param string $class
+     * @param string $default
      * @return string
      */
-    function is_active($link, $class = null)
+    function is_active($link, $class = null, $default = 'active')
     {
         $link = dotToslash($link);
 
         if ($class != null) {
-            return ci()->uri->uri_string() == $link ? $class : '';
+            return ci()->uri->uri_string() == $link ? $class : $default;
         }
 
-        return ci()->uri->uri_string() == $link ? 'active' : '';
+        return ci()->uri->uri_string() == $link ? $default : '';
     }
 }
 
@@ -139,11 +164,17 @@ if ( ! function_exists('active_link'))
      *
      * @param string $link
      * @param string $class
-     * @return string
+     * @param string $default
+     * @param string $contains
+     * @return bool|string
      */
-    function active_link($link, $class = null)
+    function active_link($link, $class = null, $default = 'active', $contains = '')
     {
-        return is_active($link, $class);
+        if (!empty($contains)) {
+            return str_contains(current_route(), $contains);
+        }
+
+        return is_active($link, $class, $default);
     }
 }
 
@@ -188,7 +219,7 @@ if ( ! function_exists('go_back'))
      * 
      * @param string $text
      * @param string $style
-     * @return string
+     * @return void
      */
     function go_back($text, $style = null)
     {
@@ -217,9 +248,16 @@ if ( ! function_exists('route'))
      * @param string $uri 
      * @return object
      */
-    function route($uri = '')
+    function route($uri = null)
     {
-        return (new Route())->setRoute($uri);
+        
+        $route = new Route();
+
+        if (is_null($uri)) {
+            return $route->back();
+        }
+
+        return $route->setRoute($uri);
     }
 }
 
@@ -248,9 +286,9 @@ if ( ! function_exists('route_view'))
     {
         $path = trim(server('REQUEST_URI'), '/');
 
-		if (strpos($path, '/') !== false) {
-			$view = $path;
-		}
+        if (strpos($path, '/') !== false) {
+            $view = $path;
+        }
 
         return $view;
     }
@@ -797,7 +835,7 @@ if ( ! function_exists('use_config'))
 
         $config_file = has_dot($config_file);
 
-        ci()->config->load($config_file, $use_sections, $fail_gracefully);
+        return ci()->config->load($config_file, $use_sections, $fail_gracefully);
     }
 }
 
@@ -816,7 +854,7 @@ if ( ! function_exists('use_thirdparty'))
      */
     function use_thirdparty($path, $file = '', $file_content = false, $view_cascade = true)
     {
-        return ci()->load->thirdparty($path, $file, $file_content, $view_cascade);
+        ci()->load->thirdparty($path, $file, $file_content, $view_cascade);
     }
 }
 
@@ -877,7 +915,7 @@ if ( ! function_exists('use_library'))
      * @param string|array $library
      * @param array $params
      * @param string $object_name
-     * @return object
+     * @return void
      */
     function use_library($library, $params = null, $object_name = null)
     {
@@ -895,7 +933,7 @@ if ( ! function_exists('use_driver'))
      * @param string|array $driver
      * @param array $params
      * @param string $object_name
-     * @return object
+     * @return void
      */
     function use_driver($driver, $params = null, $object_name = null)
     {
@@ -911,7 +949,7 @@ if ( ! function_exists('use_action'))
      * Use an action/actions and instantiate
      *
      * @param string|array $action
-     * @return object
+     * @return void
      */
     function use_action($action)
     {
@@ -930,7 +968,7 @@ if ( ! function_exists('use_service'))
      * @param string|array $service
      * @param array $params
      * @param string $object_name
-     * @return object
+     * @return void
      */
     function use_service($service, $object_name = null, $params = null)
     {
@@ -986,7 +1024,7 @@ if ( ! function_exists('use_model'))
      * @param string|array $model
      * @param string $name
      * @param boolean $db_conn
-     * @return object
+     * @return mixed
      */
     function use_model($model, $name = '', $db_conn = false)
     {
@@ -1017,7 +1055,7 @@ if ( ! function_exists('use_helper'))
      * Use a helper/helpers
      *
      * @param string|array $helper
-     * @return object
+     * @return void
      */
     function use_helper($helper)
     {
@@ -1056,11 +1094,11 @@ if ( ! function_exists('use_rule'))
     /**
      * Use a rule
      * This function lets users load rules.
-	 * That can be used when validating forms 
+     * That can be used when validating forms 
      * It is designed to be called from a user's app
-	 * It can be used in controllers or models
+     * It can be used in controllers or models
      *
-	 * @param string|array $rule
+     * @param string|array $rule
      * @param boolean $return_array
      * @return void
      */
@@ -1100,8 +1138,8 @@ if ( ! function_exists('rules'))
      * Call this function when you load
      * files that use $rules array variable
      *
-	 * @param string $rule
-	 * @return mixed
+     * @param string $rule
+     * @return mixed
      */
     function rules()
     {
