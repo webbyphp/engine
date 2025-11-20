@@ -444,29 +444,41 @@ if ( ! function_exists('get_config'))
 	 * @param	array
 	 * @return	array
 	 */
-	function &get_config(Array $replace = [])
+	function &get_config(array $replace = [])
 	{
 		static $config;
 
-		if (empty($config))
-		{
-			$file_path = COREPATH.'config/config.php';
+		if (empty($config)) {
+			$file_path = COREPATH . 'config/config.php';
 			$found = false;
-			if (file_exists($file_path))
-			{
+			if (file_exists($file_path)) {
 				$found = true;
 				require($file_path);
 			}
 
 			// Is the config file in the environment folder?
-			if (file_exists($file_path = COREPATH.'config/'.ENVIRONMENT.'/config.php'))
-			{
+			if (file_exists($file_path = COREPATH . 'config/' . ENVIRONMENT . '/config.php')) {
 				require($file_path);
-			}
-			elseif ( ! $found)
-			{
+			} elseif (! $found) {
 				set_status_header(503);
 				echo 'The configuration file does not exist.';
+				exit(3); // EXIT_CONFIG
+			}
+
+			$root_file_path = ROOTPATH . 'config/config.php';
+
+			$found = false;
+			if (file_exists($root_file_path)) {
+				$found = true;
+				require($root_file_path);
+			}
+
+			// Is the config file in the environment folder?
+			if (file_exists($root_file_path = ROOTPATH . 'config/' . ENVIRONMENT . '/config.php')) {
+				require($root_file_path);
+			} elseif (! $found) {
+				set_status_header(503);
+				echo 'The root configuration file does not exist.';
 				exit(3); // EXIT_CONFIG
 			}
 
@@ -506,7 +518,7 @@ if ( ! function_exists('config_item'))
 		if (empty($_config))
 		{
 			// references cannot be directly assigned to static variables, so we use an array
-			$_config[0] =& get_config();
+			$_config[0] = get_config();
 		}
 
 		return isset($_config[0][$item]) ? $_config[0][$item] : null;

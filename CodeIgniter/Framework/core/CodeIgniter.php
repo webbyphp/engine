@@ -61,12 +61,12 @@ defined('BASEPATH') || exit('No direct script access allowed');
 const CI_VERSION = '3.1.11';
 
 /**
- * Sylynder Engine Version
+ * WebbyPHP Engine Version
  *
  * @var	string
  *
  */
-const CI_VERSION = '3.2.0';
+const WEBBY_ENGINE_VERSION = '3.0.0';
 
 /*
  * ------------------------------------------------------
@@ -152,16 +152,17 @@ $SERVER_HTTP_HOST = !(PHP_SAPI === 'cli' or defined('STDIN'))
 $SUBDOMAIN = substr(
 	(string) $SERVER_HTTP_HOST,
 	0,
-	(int) strrpos(substr((string) $SERVER_HTTP_HOST, 0, (int) strrpos((string) $SERVER_HTTP_HOST, ".")), 
-	'.'
+	(int) strrpos(
+		substr((string) $SERVER_HTTP_HOST, 0, (int) strrpos((string) $SERVER_HTTP_HOST, ".")),
+		'.'
 	)
 );
 
 // Define subdomain
 if ($SUBDOMAIN !== 'www' && $SUBDOMAIN !== '') {
- 	define('SUBDOMAIN', $SUBDOMAIN);
+	define('SUBDOMAIN', $SUBDOMAIN);
 } else {
- 	define('SUBDOMAIN', FALSE);
+	define('SUBDOMAIN', FALSE);
 }
 
 /*

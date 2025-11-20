@@ -39,7 +39,7 @@ class Console
 
     private const UIP = '0.0.0.0';
 
-    private static $sylynderEngine = 'sylynder/engine';
+    private static $webbyphpEngine = 'webbyphp/engine';
 
     public static function phpCommand()
     {
@@ -77,7 +77,7 @@ class Console
     {
         static::$cliversion = defined('WEBBY_VERSION') ? WEBBY_VERSION : self::WEBBY_CLI_VERSION;
 
-        return ConsoleColor::cyan("Webby PHP Framework") . " " . ConsoleColor::green(static::$cliversion) . "\n";
+        return ConsoleColor::cyan("\t\tWebby PHP Framework") . " " . ConsoleColor::green(static::$cliversion) . "\n";
     }
 
     /**
@@ -143,8 +143,7 @@ class Console
             list($webby, $arg1, $arg2, $arg3, $arg4, $arg5, $arg6) = $listArguments;
         }
 
-        if (!isset($webby)) 
-        {
+        if (!isset($webby)) {
             static::noCommand();
             exit;
         }
@@ -332,7 +331,7 @@ class Console
             case 'update:engine':
                 static::consoleEnv();
                 $installOption = 'require ';
-                static::runSystemCommand(static::$composerCommand . $installOption . static::$sylynderEngine);
+                static::runSystemCommand(static::$composerCommand . $installOption . static::$webbyphpEngine);
                 break;
             case 'create:jsondb':
                 static::consoleEnv();
@@ -341,8 +340,8 @@ class Console
             case 'install:package':
                 static::consoleEnv();
                 $installOption = 'require ';
-                static::runSystemCommand(static::$composerCommand . $installOption. $arg2 . ' ' . $arg3);
-            break;
+                static::runSystemCommand(static::$composerCommand . $installOption . $arg2 . ' ' . $arg3);
+                break;
             // case 'publish:package':
             //     static::consoleEnv();
             // break;

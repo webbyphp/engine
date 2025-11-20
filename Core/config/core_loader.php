@@ -2,7 +2,7 @@
 defined('COREPATH') or exit('No direct script access allowed');
 
 /*
- *  Core helpers found @ vendor/sylynder/engine/Core/helpers/
+ *  Core helpers found @ vendor/webbyphp/engine/Core/helpers/
  */
 $core_helpers = [
 
@@ -15,6 +15,6 @@ $core_helpers = [
 ];
 
 /*
- * Core Libraries found @ vendor/sylynder/engine/Core/libraries/
+ * Core Libraries found @ vendor/webbyphp/engine/Core/libraries/
 */
 $core_libraries = [];
