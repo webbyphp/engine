@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -35,7 +36,7 @@
  * @since	Version 3.0.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * PHP ext/mbstring compatibility package
@@ -50,15 +51,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 // ------------------------------------------------------------------------
 
-if (MB_ENABLED === true)
-{
+if (MB_ENABLED === true) {
 	return;
 }
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('mb_strlen'))
-{
+if (! function_exists('mb_strlen')) {
 	/**
 	 * mb_strlen()
 	 *
@@ -72,8 +71,7 @@ if ( ! function_exists('mb_strlen'))
 	 */
 	function mb_strlen($str, $encoding = null)
 	{
-		if (ICONV_ENABLED === true)
-		{
+		if (ICONV_ENABLED === true) {
 			return iconv_strlen($str, isset($encoding) ? $encoding : config_item('charset'));
 		}
 
@@ -84,8 +82,7 @@ if ( ! function_exists('mb_strlen'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('mb_strpos'))
-{
+if (! function_exists('mb_strpos')) {
 	/**
 	 * mb_strpos()
 	 *
@@ -101,8 +98,7 @@ if ( ! function_exists('mb_strpos'))
 	 */
 	function mb_strpos($haystack, $needle, $offset = 0, $encoding = null)
 	{
-		if (ICONV_ENABLED === true)
-		{
+		if (ICONV_ENABLED === true) {
 			return iconv_strpos($haystack, $needle, $offset, isset($encoding) ? $encoding : config_item('charset'));
 		}
 
@@ -113,8 +109,7 @@ if ( ! function_exists('mb_strpos'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('mb_substr'))
-{
+if (! function_exists('mb_substr')) {
 	/**
 	 * mb_substr()
 	 *
@@ -130,9 +125,8 @@ if ( ! function_exists('mb_substr'))
 	 */
 	function mb_substr($str, $start, $length = null, $encoding = null)
 	{
-		if (ICONV_ENABLED === true)
-		{
-			isset($encoding) OR $encoding = config_item('charset');
+		if (ICONV_ENABLED === true) {
+			isset($encoding) or $encoding = config_item('charset');
 			return iconv_substr(
 				$str,
 				$start,
