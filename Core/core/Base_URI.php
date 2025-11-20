@@ -1,4 +1,4 @@
-<?php 
+<?php
 defined('COREPATH') or exit('No direct script access allowed');
 
 class Base_URI extends \CI_URI
@@ -151,6 +151,5 @@ class Base_URI extends \CI_URI
 
 		return "UNKNOWN";
 	}
-
 }
 /* end of file Base_URI.php */

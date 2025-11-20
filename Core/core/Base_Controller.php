@@ -1,4 +1,4 @@
-<?php 
+<?php
 defined('COREPATH') or exit('No direct script access allowed');
 
 use Base\HMVC\ModuleController;
@@ -22,6 +22,5 @@ class Base_Controller extends ModuleController
         header('X-Frame-Options: SAMEORIGIN');
         header('X-XSS-Protection: 1; mode=block');
     }
-
 }
 /* end of file Base_Controller.php */

@@ -26,14 +26,14 @@ class Base_Exceptions extends \CI_Exceptions
 	];
 
 	/**
-     * Parse Error Constant
-     */
-    private const PARSE_ERROR = 4;
+	 * Parse Error Constant
+	 */
+	private const PARSE_ERROR = 4;
 
-    /**
-     * Error Zero Constant
-     */
-    private const ERROR_ZERO = 0;
+	/**
+	 * Error Zero Constant
+	 */
+	private const ERROR_ZERO = 0;
 
 
 	public function __construct()
@@ -41,7 +41,7 @@ class Base_Exceptions extends \CI_Exceptions
 		parent::__construct();
 	}
 
-	private function redirectTo404Handler($router): void 
+	private function redirectTo404Handler($router): void
 	{
 		$missingRoute = ucfirst($router->class) . '/' . $router->method;
 		$redirectUrl = sprintf(
@@ -50,7 +50,7 @@ class Base_Exceptions extends \CI_Exceptions
 			$router->routes['404_override'],
 			urlencode($missingRoute)
 		);
-		
+
 		header('Location: ' . $redirectUrl, true, 302);
 		exit;
 	}
@@ -71,7 +71,6 @@ class Base_Exceptions extends \CI_Exceptions
 				"Severity: "    => $severity ?? 'Error',
 				"Message: "     => (is_array($message) ? implode("\n\t", $message) : $message),
 			], 500);
-
 		}
 
 		if (is_cli()) {
@@ -103,7 +102,6 @@ class Base_Exceptions extends \CI_Exceptions
 			}
 
 			include($templates_path . $template . config_item('view_extension') ?? PHPEXT);
-			
 		} else {
 			include($templates_path . $template . '.php');
 		}
@@ -111,7 +109,7 @@ class Base_Exceptions extends \CI_Exceptions
 		$buffer = ob_get_contents();
 
 		ob_end_clean();
-		
+
 		return $buffer;
 	}
 
@@ -127,7 +125,7 @@ class Base_Exceptions extends \CI_Exceptions
 
 		// @Todo
 		$currentClass = $currentMethod = $source = '';
-		
+
 		if (isset($GLOBALS['CI']) && isset($GLOBALS['method'])) {
 			$currentClass = $GLOBALS['CI'];
 			$currentMethod = $GLOBALS['method'];
@@ -144,13 +142,13 @@ class Base_Exceptions extends \CI_Exceptions
 		$directory = '';
 
 		if (!is_cli()) {
-			$directory = (get_instance()?->router?->directory != null) 
-				? get_instance()->router->directory 
+			$directory = (get_instance()?->router?->directory != null)
+				? get_instance()->router->directory
 				: '';
 		}
-		
+
 		$location = str_replace('../', '', (string) $directory);
-		
+
 		$filepath = $exception->getFile();
 		$line = $exception->getLine();
 		$message = $exception->getMessage();
@@ -164,13 +162,12 @@ class Base_Exceptions extends \CI_Exceptions
 
 			$evaluated = true;
 
-			if ($num == self::ERROR_ZERO) { 
-                $num = self::PARSE_ERROR;
-            }
+			if ($num == self::ERROR_ZERO) {
+				$num = self::PARSE_ERROR;
+			}
 
 			$_error = load_class('Exceptions', 'core');
 			$_error->log_exception($num, $message, $filepath, $line);
-
 		}
 
 		$is_json_request = get_instance()->request->server('CONTENT_TYPE');
@@ -183,9 +180,8 @@ class Base_Exceptions extends \CI_Exceptions
 				"Filename: "    => $filepath,
 				"Line Number: " => $line,
 			], 500);
-
 		}
-		
+
 		if (is_cli()) {
 			$templates_path .= 'cli' . DIRECTORY_SEPARATOR;
 		} else {
@@ -232,12 +228,12 @@ class Base_Exceptions extends \CI_Exceptions
 
 		if (!is_cli()) {
 			$directory = (get_instance()?->router?->directory != null)
-				? get_instance()->router->directory 
+				? get_instance()->router->directory
 				: '';
 		}
-		
+
 		$location = str_replace('../', '', (string) $directory);
-		
+
 		$filelocation = $filepath;
 		$severity = isset($this->levels[$severity]) ? $this->levels[$severity] : $severity;
 
@@ -247,7 +243,6 @@ class Base_Exceptions extends \CI_Exceptions
 			$file = '';
 			$_error = load_class('Exceptions', 'core');
 			$_error->log_exception($severity, $message, $file, $line);
-
 		}
 
 		$is_json_request = get_instance()->request->server('CONTENT_TYPE');
@@ -260,7 +255,6 @@ class Base_Exceptions extends \CI_Exceptions
 				"Filename: "    => $filepath,
 				"Line Number: " => $line,
 			], 500);
-
 		}
 
 		// For safety reasons we don't show the full file path in non-CLI requests
@@ -274,7 +268,6 @@ class Base_Exceptions extends \CI_Exceptions
 			}
 
 			$template = 'html' . DIRECTORY_SEPARATOR . 'error_php';
-
 		} else {
 			$template = 'cli' . DIRECTORY_SEPARATOR . 'error_php';
 		}
@@ -282,7 +275,7 @@ class Base_Exceptions extends \CI_Exceptions
 		if (ob_get_level() > $this->ob_level + 1) {
 			ob_end_flush();
 		}
-		
+
 		ob_start();
 
 		include($templates_path . $template . '.php');
@@ -290,9 +283,8 @@ class Base_Exceptions extends \CI_Exceptions
 		$buffer = ob_get_contents();
 
 		ob_end_clean();
-		
+
 		echo $buffer;
 	}
-
 }
 /* end of file Base_Exceptions.php */

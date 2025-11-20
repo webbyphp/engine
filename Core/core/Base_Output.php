@@ -1,4 +1,4 @@
-<?php 
+<?php
 defined('COREPATH') or exit('No direct script access allowed');
 
 class Base_Output extends \CI_Output
@@ -17,12 +17,12 @@ class Base_Output extends \CI_Output
      */
     public $customPath = '';
 
-	public function __construct()
-	{
-		parent::__construct();
+    public function __construct()
+    {
+        parent::__construct();
 
         $this->customPath = $this->defaultPath; // set to default path
-	}
+    }
 
     /**
      * Use custom cache path
@@ -50,9 +50,9 @@ class Base_Output extends \CI_Output
      */
     public function _write_cache($output)
     {
-        
+
         $ci = get_instance();
-        
+
         $path = $ci->config->item('web_cache_path');
         $cachePath = ($path === '') ? $ci->config->item('cache_path') . $this->defaultPath . DIRECTORY_SEPARATOR : rtrim($path, '/\\') . DIRECTORY_SEPARATOR;
 
@@ -66,8 +66,8 @@ class Base_Output extends \CI_Output
         }
 
         $uri = $ci->config->item('base_url')
-                . $ci->config->slash_item('index_page')
-                . $ci->uri->uri_string();
+            . $ci->config->slash_item('index_page')
+            . $ci->uri->uri_string();
 
         if (($cacheQueryString = $ci->config->item('cache_query_string')) && !empty($_SERVER['QUERY_STRING'])) {
             if (is_array($cacheQueryString)) {
@@ -153,7 +153,7 @@ class Base_Output extends \CI_Output
 
         if ($CFG->item('enable_custom_cache')) {
             $cachePath = $this->cacheCustomPath();
-        } 
+        }
 
         // Build the file path. The file name is an MD5 hash of the full URI
         $uri = $CFG->item('base_url') . $CFG->slash_item('index_page') . $URI->uri_string;
@@ -220,13 +220,13 @@ class Base_Output extends \CI_Output
     public function delete_cache($uri = '')
     {
         $ci = get_instance();
-        
+
         $cachePath = $this->filesCachePath();
 
         if ($ci->config->item('enable_custom_cache')) {
             $cachePath = $this->cacheCustomPath();
         }
-        
+
         if (!is_dir($cachePath)) {
             log_message('error', 'Unable to find cache path: ' . $cachePath);
             return false;

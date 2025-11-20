@@ -23,7 +23,7 @@ defined('COREPATH') or exit('No direct script access allowed');
 	* @since       Version 1.0
 */
 
-class ConsoleProfiler 
+class ConsoleProfiler
 {
 
 	/*
@@ -43,7 +43,7 @@ class ConsoleProfiler
 	private static $ci;
 
 	//--------------------------------------------------------------------
-	
+
 	/*
 		Method: __construct()
 		
@@ -53,27 +53,27 @@ class ConsoleProfiler
 		Return:
 			void
 	 */
-	public function __construct() 
-	{			
+	public function __construct()
+	{
 		self::init();
-		
+
 		log_message('debug', 'Forensics Console library loaded');
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 	/*
 		Method: init()
 		
 		Grabs an instance of CI and gets things ready to run.
 	*/
-	public static function init() 
+	public static function init()
 	{
 		self::$ci = get_instance();
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 	/*
 		Method: log()
 		
@@ -82,23 +82,22 @@ class ConsoleProfiler
 		Parameters:
 			$data	- The variable to log.
 	*/
-	public static function log($data=null) 
+	public static function log($data = null)
 	{
-		if ($data !== 0 && empty($data)) 
-		{ 
+		if ($data !== 0 && empty($data)) {
 			$data = 'empty';
 		}
-		
+
 		$log_item = array(
 			'data' => $data,
 			'type' => 'log'
 		);
-		
+
 		self::add_to_console('log_count', $log_item);
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 	/*
 		Method: log_memory()
 		
@@ -108,15 +107,14 @@ class ConsoleProfiler
 			$object	- The object to store the memory usage of.
 			$name	- The name to be displayed in the console.
 	*/
-	public static function log_memory($object=false, $name='PHP') 
+	public static function log_memory($object = false, $name = 'PHP')
 	{
 		$memory = memory_get_usage();
-		
-		if ($object) 
-		{
+
+		if ($object) {
 			$memory = strlen(serialize($object));
 		}
-		
+
 		$log_item = array(
 			'data' => $memory,
 			'type' => 'memory',
@@ -126,39 +124,38 @@ class ConsoleProfiler
 
 		self::add_to_console('memory_count', $log_item);
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 	/*
 		Method: get_logs()
 		
 		Returns the logs array for use in external classes. (Namely the
 		Forensics Profiler.
 	*/
-	public static function get_logs() 
+	public static function get_logs()
 	{
 		return self::$logs;
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
-	
-	public static function add_to_console($log=null, $item=null) 
+
+	public static function add_to_console($log = null, $item = null)
 	{
-		if (empty($log) || empty($item)) 
-		{ 
+		if (empty($log) || empty($item)) {
 			return;
 		}
-		
+
 		self::$logs['console'][]	= $item;
 		self::$logs[$log] 			+= 1;
 	}
-	
+
 	//--------------------------------------------------------------------
-	
+
 }
 
 // End Console class

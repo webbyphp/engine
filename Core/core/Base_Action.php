@@ -29,14 +29,12 @@ class Base_Action
     public function __get($key)
     {
         // Give access to protected class vars
-        if (isset($this->$key))
-        {
+        if (isset($this->$key)) {
             return $this->$key;
         }
 
         $CI = get_instance();
         return $CI->$key;
     }
-
 }
 /* end of file Base_Action.php */

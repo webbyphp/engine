@@ -1,7 +1,8 @@
-<?php 
+<?php
 defined('COREPATH') or exit('No direct script access allowed');
 
-class Base_Model extends \CI_Model {
+class Base_Model extends \CI_Model
+{
 
     /**
      * Construct the CI_Model
@@ -10,6 +11,5 @@ class Base_Model extends \CI_Model {
     {
         parent::__construct();
     }
-
 }
 /* end of file Base_Model.php */

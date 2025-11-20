@@ -217,7 +217,7 @@ class Base_Profiler extends \CI_Profiler
             ci()->use->model('Eloquent/Assets/Action');
         }
 
-        if ( ! class_exists('Illuminate\Database\Capsule\Manager', false)) {
+        if (! class_exists('Illuminate\Database\Capsule\Manager', false)) {
             $output = 'Illuminate\Database has not been loaded.';
         } else {
             // Load the text helper so we can highlight the SQL
@@ -455,7 +455,7 @@ class Base_Profiler extends \CI_Profiler
     public function _compile_console()
     {
         $logs = ConsoleProfiler::get_logs();
-        
+
         if ($logs['console']) {
             foreach ($logs['console'] as $key => $log) {
                 if ($log['type'] == 'log') {
