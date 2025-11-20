@@ -282,9 +282,7 @@ class ApiServerController extends Controller
      *
      * @return void
      */
-    protected function earlyChecks()
-    {
-    }
+    protected function earlyChecks() {}
 
     /**
      * Constructor for the REST API.
@@ -582,7 +580,7 @@ class ApiServerController extends Controller
         $object_called = preg_replace('/^(.*)\.(?:' . implode('|', array_keys($this->supportedFormats)) . ')$/', '$1', $object_called);
 
         $controllerMethod = $this->resolveControllerMethod($object_called, $arguments);
-        
+
         if ($controllerMethod === null) {
             $this->response([
                 $this->config->item('api_status_field_name')  => false,
@@ -955,7 +953,7 @@ class ApiServerController extends Controller
         if (($key = isset($this->args[$apiKeyVariable]) ? $this->args[$apiKeyVariable] : $this->input->server($keyName))) {
 
             $this->api->key = $key;
-            
+
             if (!($row = $this->api->db->where($this->config->item('api_key_column'), $key)->get($this->config->item('api_keys_table'))->row())) {
                 return false;
             }
@@ -1474,7 +1472,7 @@ class ApiServerController extends Controller
     protected function accepts($methods)
     {
         $this->enforceMethodValidation = true;
-        
+
         if (is_string($methods)) {
             // Handle string format like 'GET|POST|PUT'
             $methodArray = explode('|', strtoupper($methods));
@@ -1486,7 +1484,7 @@ class ApiServerController extends Controller
         }
 
         $this->acceptedMethods = array_map('trim', $methodArray);
-        
+
         // Validate current request method
         $currentMethod = strtoupper($this->request->method);
         if (!in_array($currentMethod, $this->acceptedMethods, true)) {
@@ -1513,7 +1511,7 @@ class ApiServerController extends Controller
         if ($key === null) {
             return $this->requestData;
         }
-        
+
         return isset($this->requestData[$key]) ? $this->xssClean($this->requestData[$key], $xss_clean) : null;
     }
 
@@ -1530,7 +1528,7 @@ class ApiServerController extends Controller
         } else {
             $methodArray = array_map('strtoupper', (array)$methods);
         }
-        
+
         return in_array(strtoupper($this->request->method), $methodArray, true);
     }
 
@@ -1560,44 +1558,44 @@ class ApiServerController extends Controller
     {
         $httpMethod = strtolower($this->request->method);
         $httpMethodUpper = strtoupper($this->request->method);
-        
+
         // Pattern 1: Modern verb prefix (e.g., getUsers, postUsers, putUsers)
         $modernMethod = $httpMethod . ucfirst($object_called);
         if (method_exists($this, $modernMethod)) {
             return $modernMethod;
         }
-        
+
         // Pattern 2: Legacy verb suffix (e.g., users_get, users_post) - backward compatibility
         $legacyMethod = $object_called . '_' . $httpMethod;
         if (method_exists($this, $legacyMethod)) {
             return $legacyMethod;
         }
-        
+
         // Pattern 3: Generic method (e.g., users()) - will be validated by accepts() if used
         if (method_exists($this, $object_called)) {
             return $object_called;
         }
-        
+
         // Pattern 4: Try with index method and modern verb prefix
         $indexModernMethod = $httpMethod . 'Index';
         if (method_exists($this, $indexModernMethod)) {
             array_unshift($arguments, $object_called);
             return $indexModernMethod;
         }
-        
+
         // Pattern 5: Try with index method legacy (e.g., index_get)
         $indexLegacyMethod = 'index_' . $httpMethod;
         if (method_exists($this, $indexLegacyMethod)) {
             array_unshift($arguments, $object_called);
             return $indexLegacyMethod;
         }
-        
+
         // Pattern 6: Generic index method
         if (method_exists($this, 'index')) {
             array_unshift($arguments, $object_called);
             return 'index';
         }
-        
+
         return null;
     }
 
