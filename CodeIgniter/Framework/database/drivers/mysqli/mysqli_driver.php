@@ -118,11 +118,6 @@ class CI_DB_mysqli_driver extends CI_DB
 	 */
 	public function db_connect($persistent = false)
 	{
-		// PHP 8.1 changes default error handling mode from silent to exceptions - reverse that
-		if (is_php('8.1')) {
-			$mysqli_driver = new mysqli_driver();
-			$mysqli_driver->report_mode = MYSQLI_REPORT_OFF;
-		}
 
 		// Do we have a socket path?
 		if ($this->hostname[0] === '/') {
@@ -197,7 +192,31 @@ class CI_DB_mysqli_driver extends CI_DB
 			}
 		}
 
-		if ($this->_mysqli->real_connect($hostname, $this->username, $this->password, $this->database, $port, $socket, $client_flags)) {
+		$connectionSuccessful = false;
+
+		try {
+
+			$this->_mysqli->real_connect(
+				$hostname,
+				$this->username,
+				$this->password,
+				$this->database,
+				$port,
+				$socket,
+				$client_flags
+			);
+
+			$connectionSuccessful = true;
+		} catch (Exception $e) {
+
+			if ($e->getMessage() == "Connection refused") {
+				throw new Exception('MySQLi Error: MySQL server is not active');
+			}
+
+			throw new Exception('MySQLi Error:  (' . $e->getMessage() . '). MySQL server issues');
+		}
+
+		if ($connectionSuccessful) {
 			// Prior to version 5.7.3, MySQL silently downgrades to an unencrypted connection if SSL setup fails
 			if (
 				($client_flags & MYSQLI_CLIENT_SSL)
