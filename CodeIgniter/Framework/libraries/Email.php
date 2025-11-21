@@ -649,17 +649,6 @@ class CI_Email
 	public function message($body)
 	{
 		$this->_body = rtrim(str_replace("\r", '', $body));
-
-		/* strip slashes only if magic quotes is ON
-		   if we do it with magic quotes OFF, it strips real, user-inputted chars.
-
-		   NOTE: In PHP 5.4 get_magic_quotes_gpc() will always return 0 and
-			 it will probably not exist in future versions at all.
-		*/
-		if (! is_php('5.4') && get_magic_quotes_gpc()) {
-			$this->_body = stripslashes($this->_body);
-		}
-
 		return $this;
 	}
 
@@ -1833,7 +1822,7 @@ class CI_Email
 		// so this needs to be assigned to a variable
 		$from = $this->clean_email($this->_headers['Return-Path']);
 
-		if ($this->_safe_mode === true || ! $this->_validate_email_for_shell($from)) {
+		if (! $this->_validate_email_for_shell($from)) {
 			return mail($this->_recipients, $this->_subject, $this->_finalbody, $this->_header_str);
 		} else {
 			// most documentation of sendmail using the "-f" flag lacks a space after it, however

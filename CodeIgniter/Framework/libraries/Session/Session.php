@@ -99,28 +99,9 @@ class CI_Session
 
 		$class   = new $class($this->_config);
 
-		include_once('OldSessionWrapper.php'); // Support PHP 8.1 and 8.2
+		$wrapper = new CI_PHP8SessionWrapper($class);
 
-		$wrapper = new CI_SessionWrapper($class);
-
-		if (is_php('8.0')) {
-			$wrapper = new CI_PHP8SessionWrapper($class);
-		}
-
-		if (is_php('5.4')) {
-			session_set_save_handler($wrapper, true);
-		} else {
-			session_set_save_handler(
-				[$wrapper, 'open'],
-				[$wrapper, 'close'],
-				[$wrapper, 'read'],
-				[$wrapper, 'write'],
-				[$wrapper, 'destroy'],
-				[$wrapper, 'gc']
-			);
-
-			register_shutdown_function('session_write_close');
-		}
+		session_set_save_handler($wrapper, true);
 
 		// Sanitize the cookie, because apparently PHP doesn't do that for userspace handlers
 		if (
