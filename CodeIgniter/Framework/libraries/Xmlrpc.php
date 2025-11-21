@@ -1789,6 +1789,6 @@ class XML_RPC_Values extends CI_Xmlrpc
 	 */
 	public function iso8601_encode($time, $utc = false)
 	{
-		return ($utc) ? strftime('%Y%m%dT%H:%i:%s', $time) : gmstrftime('%Y%m%dT%H:%i:%s', $time);
+		return ($utc) ? gmdate('YmdTH:i:s', $time) : date('YmdTH:i:s', $time);
 	}
 } // END XML_RPC_Values Class
