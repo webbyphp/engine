@@ -1132,10 +1132,10 @@ class XML_RPC_Message extends CI_Xmlrpc
 			);
 
 			$r = new XML_RPC_Response(0, $this->xmlrpcerr['invalid_return'], $this->xmlrpcstr['invalid_return']);
-			xml_parser_free($parser);
+			// xml_parser_free($parser); // Deprecated in 8.5 and dropped since 8.0
 			return $r;
 		}
-		xml_parser_free($parser);
+		// xml_parser_free($parser);
 
 		// Got ourselves some badness, it seems
 		if ($this->xh[$pname]['isf'] > 1) {
