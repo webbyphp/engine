@@ -1152,7 +1152,6 @@ class CI_Upload
 			if (is_resource($finfo)) // It is possible that a false value is returned, if there is no magic MIME database file found on the system
 			{
 				$mime = @finfo_file($finfo, $file['tmp_name']);
-				finfo_close($finfo);
 
 				/* According to the comments section of the PHP manual page,
 				 * it is possible that this function returns an empty string
