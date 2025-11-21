@@ -492,7 +492,7 @@ if (! function_exists('array_random')) {
 	 *  Get a random value from an array
 	 *
 	 *  @param     array           $array
-	 *  @param     integer|null    $amount
+	 *  @param     int|null    $amount
 	 *  @return    mixed
 	 */
 	function array_random($array, $amount = null)

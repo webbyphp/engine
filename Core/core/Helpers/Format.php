@@ -169,7 +169,7 @@ class Format
     /**
      * Get human readable size
      *
-     * @param integer|float $bytes
+     * @param int|float $bytes
      * @return string
      */
     public function size(int|float $bytes)

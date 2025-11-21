@@ -15,7 +15,7 @@ class Helper
      * Get JSON Chunk
      *
      * @param string|mixed $file
-     * @param integer $startDepth
+     * @param int $startDepth
      * @return mixed
      */
     public static function getJsonChunk($file, int $startDepth = -1)

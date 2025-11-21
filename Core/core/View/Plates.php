@@ -37,7 +37,7 @@ class Plates
 	/**
 	 *  The amount of time to keep the file in cache
 	 *
-	 *  @var   integer
+	 *  @var   int
 	 */
 	public $cacheTime		= 3600;
 

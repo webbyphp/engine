@@ -1479,7 +1479,7 @@ class Console
      * Quit Webby Server
      *
      * @param array $args Console arguments
-     * @param integer $ttq Time given to quit server
+     * @param int $ttq Time given to quit server
      * @return void
      */
     public static function quitServer(array $args = [], int $ttq = 10): void

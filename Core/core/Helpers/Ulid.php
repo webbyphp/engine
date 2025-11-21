@@ -30,7 +30,7 @@ class Ulid
     /**
      * Last Generated Time variable
      *
-     * @var integer
+     * @var int
      */
     private static $lastGeneratedTime = 0;
 
@@ -186,7 +186,7 @@ class Ulid
     /**
      * To Timestamp
      *
-     * @return integer
+     * @return int
      */
     public function toTimestamp(): int
     {
@@ -207,7 +207,7 @@ class Ulid
      * Decode Time
      *
      * @param string $time
-     * @return integer
+     * @return int
      */
     private function decodeTime(string $time): int
     {

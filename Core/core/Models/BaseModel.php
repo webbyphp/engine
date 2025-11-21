@@ -3589,7 +3589,7 @@ class BaseModel extends Model implements \ArrayAccess
      * Get the total records in the table
      *
      * @param  string|array  $where
-     * @return integer
+     * @return int
      */
     public function getTotal($where = null)
     {
@@ -3608,7 +3608,7 @@ class BaseModel extends Model implements \ArrayAccess
     /**
      * Limit number of data to retrieve from table
      *
-     * @param integer $limit
+     * @param int $limit
      * @return mixed
      */
     public function setLimit($limit)
@@ -3621,7 +3621,7 @@ class BaseModel extends Model implements \ArrayAccess
      * Limit number of data to retrieve from table
      * by setting limit offsets
      *
-     * @param integer $limit
+     * @param int $limit
      * @return mixed
      */
     public function setLimitStart($limit, $start)
@@ -3902,7 +3902,7 @@ class BaseModel extends Model implements \ArrayAccess
     /**
      * Find with id
      *
-     * @param string|integer|array $idOrRow
+     * @param string|int|array $idOrRow
      * @return array|object|null
      */
     public function findOne($idOrRow = null)
@@ -3919,7 +3919,7 @@ class BaseModel extends Model implements \ArrayAccess
     /**
      * Find all
      *
-     * @param string|integer|array $idOrRow
+     * @param string|int|array $idOrRow
      * @param mixed $optionalValue
      * @param mixed $orderBy
      * @return array|object
@@ -3931,7 +3931,7 @@ class BaseModel extends Model implements \ArrayAccess
 
     /**
      * Alias to findAll()
-     * @param string|integer|array $idOrRow
+     * @param string|int|array $idOrRow
      * @param mixed $optionalValue
      * @param mixed $orderBy
      * @return array|object
@@ -3963,7 +3963,7 @@ class BaseModel extends Model implements \ArrayAccess
      *
      * @param string $fields
      * @param array $where
-     * @param integer $limit
+     * @param int $limit
      * @param mixed $orderBy
      * @return array|object
      */
@@ -3998,7 +3998,7 @@ class BaseModel extends Model implements \ArrayAccess
      * @param string  $field
      * @param array  $where
      * @param array $orwhere
-     * @param integer $limit
+     * @param int $limit
      * @param mixed $orderBy
      * @return array|object
      */
@@ -4035,7 +4035,7 @@ class BaseModel extends Model implements \ArrayAccess
      * Find limit where
      *
      * @param string $fields
-     * @param integer $limit
+     * @param int $limit
      * @param array $where
      * @return array|object
      */
@@ -4173,7 +4173,7 @@ class BaseModel extends Model implements \ArrayAccess
      * Insert a record
      * 
      * @param  array $data
-     * @return integer
+     * @return int
      */
     public function setSave($data)
     {
@@ -4188,7 +4188,7 @@ class BaseModel extends Model implements \ArrayAccess
      *
      * @param     array   $data key value pair of mySQL fields
      *
-     * @return    integer  insert id
+     * @return    int  insert id
      */
     public function insert($data)
     {
@@ -4214,8 +4214,8 @@ class BaseModel extends Model implements \ArrayAccess
      *
      * @param array $data
      * @param bool $escape
-     * @param integer $size
-     * @return integer
+     * @param int $size
+     * @return int
      */
     public function insertBatch($data, $escape = null, $size = 100)
     {
@@ -4230,14 +4230,14 @@ class BaseModel extends Model implements \ArrayAccess
      *
      * @param array $data Associative array [column => value]
      *
-     * @param   integer|string $idOrRow (Optional)
+     * @param   int|string $idOrRow (Optional)
      *           null    = Fetch all table records
      *           number  = Fetch where primary key = $id
      *           string  = Fetch based on a different column name
      *
-     * @param integer|string $optionalValue (Optional)
+     * @param int|string $optionalValue (Optional)
      *
-     * @return integer InsertID|Update Result
+     * @return int InsertID|Update Result
      */
     public function upsert($idOrRow, $optionalValue = null, $data = [])
     {
@@ -4334,12 +4334,12 @@ class BaseModel extends Model implements \ArrayAccess
      *              'age' => 25
      *          ]);
      *
-     * @param   integer|string|array $idOrRow (Optional)
+     * @param   int|string|array $idOrRow (Optional)
      *          number  = Delete primary key ID
      *          string  = Column Name
      *          array   = key/value pairs
      *
-     * @param integer|string|array $optionalValue
+     * @param int|string|array $optionalValue
      *              (Optional) Use when first param is string
      *
      * @return boolean result
@@ -4498,7 +4498,7 @@ class BaseModel extends Model implements \ArrayAccess
      * 
      * @param mixed $id
      * @param string|array $fields
-     * @param integer $value
+     * @param int $value
      * @param array $columns
      * @return bool|static
      */
@@ -4546,7 +4546,7 @@ class BaseModel extends Model implements \ArrayAccess
      * 
      * @param mixed $id
      * @param string|array $fields
-     * @param integer $value
+     * @param int $value
      * @param array $columns
      * @return bool|static
      */

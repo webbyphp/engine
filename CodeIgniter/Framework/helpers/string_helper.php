@@ -332,7 +332,7 @@ if (! function_exists('length')) {
 	 *
 	 *  @param     string    $value
 	 *  @param     string    $encoding
-	 *  @return    integer
+	 *  @return    int
 	 */
 	function length($value, $encoding = NULL)
 	{
@@ -590,8 +590,8 @@ if (! function_exists('str_limit')) {
 	 *  Ellipsize a string
 	 *
 	 *  @param     string     $str
-	 *  @param     integer    $max_length
-	 *  @param     integer    $position
+	 *  @param     int    $max_length
+	 *  @param     int    $position
 	 *  @param     string     $ellipsis
 	 *  @return    string
 	 */
@@ -607,7 +607,7 @@ if (! function_exists('str_random')) {
 	/**
 	 *  Create a "Random" String
 	 *
-	 *  @param     integer    $length
+	 *  @param     int    $length
 	 *  @param     string     $type
 	 *  @return    string
 	 */
@@ -623,7 +623,7 @@ if (! function_exists('int_random')) {
 	/**
 	 *  Create a "Random" Integer
 	 *
-	 *  @param     integer    $length
+	 *  @param     int    $length
 	 *  @param     string     $type
 	 *  @return    string
 	 */

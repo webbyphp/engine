@@ -191,7 +191,7 @@ class Rayz
 	 * Set arrayz cache data with ttl
 	 *
 	 * @param string|object|array $data
-	 * @param integer $ttl
+	 * @param int $ttl
 	 * @return \Base\Helpers\Rayz
 	 */
 	public function set($data, $ttl = 1800): Rayz

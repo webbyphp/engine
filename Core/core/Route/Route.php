@@ -144,7 +144,7 @@ class Route
 	/**
 	 * Nested Depth variable
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	protected static $nestedDepth  = 0;
 

@@ -622,7 +622,7 @@ class CI_DB_json_driver extends CI_DB_driver
      * Alias to above static function
      *
      * @param string $pattern
-     * @param integer $pregMatchFlags
+     * @param int $pregMatchFlags
      * @return object
      */
     public function search(string $pattern, int $pregMatchFlags = 0): object
@@ -1373,7 +1373,7 @@ class CI_DB_json_driver extends CI_DB_driver
     {
         if ($type == 'bool') {
             $return = 'BOOLEAN';
-        } elseif ($type == 'integer') {
+        } elseif ($type == 'integer' || $type == 'int') {
             $return = 'INT';
         } elseif ($type == 'double') {
             $return = strtoupper($type);

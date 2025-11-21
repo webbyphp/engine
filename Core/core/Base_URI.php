@@ -38,7 +38,7 @@ class Base_URI extends \CI_URI
 	 * Note: In order for this to work, you must include the following 2 characters in $config['permitted_uri_chars']: ";" and "="
 	 * 
 	 * @access public
-	 * @param integer $n The number of the segment to retrieve
+	 * @param int $n The number of the segment to retrieve
 	 * @param array $default Array of default values
 	 * @return array|bool
 	 */
@@ -51,7 +51,7 @@ class Base_URI extends \CI_URI
 	 * Identical to segment_to_assoc() only it uses the re-routed segment
 	 *
 	 * @access 	public
-	 * @param integer $n The number of the segment to retrieve
+	 * @param int $n The number of the segment to retrieve
 	 * @param array $default Array of default values
 	 * @return array|bool
 	 *
@@ -66,7 +66,7 @@ class Base_URI extends \CI_URI
 	 * Use a semi-colon as an argument separator if using multiple arguments
 	 *
 	 * @access private
-	 * @param integer $n The number of the segment to retrieve
+	 * @param int $n The number of the segment to retrieve
 	 * @param array $default Array of default values
 	 * @param string $which 'segment' or 'rsegment', used internally
 	 * @return array|bool

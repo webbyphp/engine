@@ -16,7 +16,7 @@ if (! function_exists('unique_code')) {
     /**
      * Generates unique ids/codes
      *
-     * @param integer $limit
+     * @param int $limit
      * @return string
      */
     function unique_code(int $limit = 13)
@@ -29,7 +29,7 @@ if (! function_exists('unique_id')) {
     /**
      * Generates unique ids
      *
-     * @param integer $length
+     * @param int $length
      * @return string
      */
     function unique_id(int $length = 13)
@@ -430,7 +430,7 @@ if (! function_exists('cache')) {
      * @param string $key
      * @param mixed $value
      * @param string $cache_path
-     * @param integer $ttl
+     * @param int $ttl
      * @return mixed
      */
     function cache($key = null, $value = null, $cache_path = '', $ttl = 1800)

@@ -60,7 +60,7 @@ class CI_DB_json_result extends CI_DB_result
      * Number of rows in the result set
      *
      * @access	public
-     * @return	integer
+     * @return	int
      */
     function num_rows()
     {
@@ -73,7 +73,7 @@ class CI_DB_json_result extends CI_DB_result
      * Number of fields in the result set
      *
      * @access	public
-     * @return	integer
+     * @return	int
      */
     function num_fields()
     {

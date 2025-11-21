@@ -319,7 +319,7 @@ class Migration extends ConsoleController
 	/**
 	 * Run Migrations
 	 *
-	 * @param integer $step
+	 * @param int $step
 	 * @return void
 	 */
 	public function run($step = 0)
@@ -680,7 +680,7 @@ class Migration extends ConsoleController
 	/**
 	 * Rollback Migrations
 	 *
-	 * @param integer $step
+	 * @param int $step
 	 * @return void
 	 */
 	public function rollback($step = 0)

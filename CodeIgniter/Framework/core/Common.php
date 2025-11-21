@@ -2266,7 +2266,7 @@ if (! function_exists('retry')) {
 	 *
 	 *  @param     int         $attempts
 	 *  @param     callable    $callback
-	 *  @param     integer     $sleep
+	 *  @param     int     $sleep
 	 *  @return    mixed
 	 *
 	 *  @throws    \Exception

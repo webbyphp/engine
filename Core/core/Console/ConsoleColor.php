@@ -115,7 +115,7 @@ class ConsoleColor
 
     /**
      * Plays a bell sound in console (if available)
-     * @param  integer $count Bell play count
+     * @param  int $count Bell play count
      * @return string         Bell play string
      */
     public static function bell($count = 1)

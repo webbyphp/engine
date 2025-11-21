@@ -17,7 +17,7 @@ class Cache extends \Base_Output
      * Number of seconds that a 
      * cached item will be considered current
      *
-     * @var integer
+     * @var int
      */
     public $ttl = 1800;
 

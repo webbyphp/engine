@@ -184,7 +184,7 @@ class FakeId
      * Create a short hash and output it
      *
      * @param int|string $number
-     * @param integer $length
+     * @param int $length
      * @return string
      */
     public static function encode($num, $length = 5)
