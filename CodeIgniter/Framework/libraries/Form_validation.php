@@ -413,7 +413,7 @@ class CI_Form_validation
 	 * Lets users set their own error messages on the fly. Note:
 	 * The key name has to match the function name that it corresponds to.
 	 *
-	  * @param	array|string $lang
+	 * @param	array|string $lang
 	 * @param	string $var
 	 * @return	CI_Form_validation
 	 */
@@ -492,59 +492,59 @@ class CI_Form_validation
 	// --------------------------------------------------------------------
 
 	/**
-      * Get Validation Errors As Array
-      *
-      * @return array
-      */
-     public function errorsAsArray()
-     {
-          return $this->_error_array;
-     }
+	 * Get Validation Errors As Array
+	 *
+	 * @return array
+	 */
+	public function errorsAsArray()
+	{
+		return $this->_error_array;
+	}
 
 	// --------------------------------------------------------------------
 
 	/**
-      * Get Validation Rules From Configurations
-      *
-      * @return array
-      */
-     public function configurationRules()
-     {
-          return $this->_config_rules;
-     }
+	 * Get Validation Rules From Configurations
+	 *
+	 * @return array
+	 */
+	public function configurationRules()
+	{
+		return $this->_config_rules;
+	}
 
 	// --------------------------------------------------------------------
 
-     /**
-      * Get All Validated Fields Except Specified Fields
-      *
-      * @param mixed $request
-      * @return CI_Form_validation
-      */
-     public function useExcept(array $except)
-	 {
-	
+	/**
+	 * Get All Validated Fields Except Specified Fields
+	 *
+	 * @param mixed $request
+	 * @return CI_Form_validation
+	 */
+	public function useExcept(array $except)
+	{
+
 		$fields = $this->validation_data;
 
-		foreach($except as $key) {
+		foreach ($except as $key) {
 			unset($fields[$key]);
 		}
 
 		$this->validation_data = $fields;
 
 		return $this;
-	 }
+	}
 
 	 // --------------------------------------------------------------------
 
-	 /**
-	  * Get Only Specified Fields From The Validated Fields
-	  *
-	  * @param array $only
-	  * @return CI_Form_validation
-	  */
-	 public function useOnly(array $only)
-	 {
+	/**
+	 * Get Only Specified Fields From The Validated Fields
+	 *
+	 * @param array $only
+	 * @return CI_Form_validation
+	 */
+	public function useOnly(array $only)
+	{
 
 		$only = !is_array($only) ? [$only] : $only;
 
@@ -553,8 +553,7 @@ class CI_Form_validation
 		$this->validation_data = array_intersect_key($fields, array_flip($only));
 
 		return $this;
-
-	 }
+	}
 
 	// --------------------------------------------------------------------
 
@@ -722,40 +721,40 @@ class CI_Form_validation
 	 * @param array $data
 	 * @return array
 	 */
-    public function apply($functions, $fields = null, $data = []) 
-    {
+	public function apply($functions, $fields = null, $data = [])
+	{
 		if (empty($data) && !empty($this->validation_data)) {
 			$data = $this->validation_data;
 		}
 
-        $data = !empty($data) ? clean($data): clean($this->CI->load->input->post());
+		$data = !empty($data) ? clean($data) : clean($this->CI->load->input->post());
 
-        if (is_null($fields)) {
-            $fields = array_keys($data); // Use all available fields
-        }
+		if (is_null($fields)) {
+			$fields = array_keys($data); // Use all available fields
+		}
 
-        if (!is_array($functions)) {
-            $functions = explode('|', str_replace(',', '|', $functions));
-        }
+		if (!is_array($functions)) {
+			$functions = explode('|', str_replace(',', '|', $functions));
+		}
 
-        if (!is_array($fields)) {
-            $fields = explode('|', str_replace(',', '|', $fields));
-        }
+		if (!is_array($fields)) {
+			$fields = explode('|', str_replace(',', '|', $fields));
+		}
 
-        foreach ($fields as $field) {
-            if (isset($data[$field])) {
-                foreach ($functions as $function) {
-                    if (function_exists($function)) {
-                        $data[$field] = $function($data[$field]);
-                    }
-                }
-            }
-        }
+		foreach ($fields as $field) {
+			if (isset($data[$field])) {
+				foreach ($functions as $function) {
+					if (function_exists($function)) {
+						$data[$field] = $function($data[$field]);
+					}
+				}
+			}
+		}
 
 		$this->validated_data = $data;
 
-        return $data;
-    }
+		return $data;
+	}
 
 	/**
 	 * Retrieves the validated data.
@@ -983,19 +982,19 @@ class CI_Form_validation
 				} elseif ($custom_rule_object !== null) {
 					// Handle custom rule objects with passes() method
 					$result = $this->_execute_custom_rule($custom_rule_object, $postdata, $row, $param);
-					
+
 					if ($result === false) {
 						// Custom rule failed, error already set
 						return;
 					}
-					
+
 					// Update postdata if custom rule modified it
 					if ($_in_array === true) {
 						$this->_field_data[$row['field']]['postdata'][$cycles] = is_bool($result) ? $postdata : $result;
 					} else {
 						$this->_field_data[$row['field']]['postdata'] = is_bool($result) ? $postdata : $result;
 					}
-					
+
 					continue; // Move to next rule
 				} else {
 					$result = is_array($rule)
@@ -1054,7 +1053,7 @@ class CI_Form_validation
 				if (isset($this->_field_data[$param], $this->_field_data[$param]['label'])) {
 					$param = $this->_translate_fieldname($this->_field_data[$param]['label']);
 				}
-				
+
 				// Build the error message
 				$message = $this->_build_error_msg($line, $this->_translate_fieldname($row['label']), $param);
 
@@ -1086,38 +1085,38 @@ class CI_Form_validation
 		// Check if it's a ValidationRule interface implementation
 		if (method_exists($ruleObject, 'passes') && method_exists($ruleObject, 'message')) {
 			$allData = empty($this->validation_data) ? $_POST : $this->validation_data;
-			
+
 			$result = $ruleObject->passes($value, $allData);
-			
+
 			if ($result === false) {
 				$message = $ruleObject->message();
-				
+
 				// Replace placeholders in message
 				$message = str_replace('{field}', $this->_translate_fieldname($row['label']), $message);
 				$message = str_replace('{value}', $value, $message);
-				
+
 				if ($param !== false) {
 					$message = str_replace('{param}', $param, $message);
 				}
-				
+
 				// Save the error message
 				$this->_field_data[$row['field']]['error'] = $message;
-				
+
 				if (!isset($this->_error_array[$row['field']])) {
 					$this->_error_array[$row['field']] = $message;
 				}
-				
+
 				return false;
 			}
-			
+
 			return true;
 		}
-		
+
 		// Fallback: try to call it as a closure/callable
 		if (is_callable($ruleObject)) {
 			return $ruleObject($value, $param);
 		}
-		
+
 		log_message('error', 'Custom rule object does not implement required methods: passes() and message()');
 		return false;
 	}
@@ -1368,12 +1367,12 @@ class CI_Form_validation
 		if (is_array($file) && isset($file['size'])) {
 			return $file['size'] !== 0;
 		}
-		
+
 		return false;
 	}
 
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Returns false if the file is bigger than the given size
 	 *
@@ -1386,13 +1385,13 @@ class CI_Form_validation
 		if (!is_array($file) || !isset($file['size'])) {
 			return false;
 		}
-		
+
 		$max_size_bit = $this->set_to_bit($max_size);
 
 		if ($file['size'] > $max_size_bit) {
-			
+
 			$this->set_message('file_max_size', "The {field} file is too big. (max size allowed is $max_size)");
-			
+
 			return false;
 		}
 
@@ -1413,15 +1412,14 @@ class CI_Form_validation
 		if (!is_array($file) || !isset($file['size'])) {
 			return false;
 		}
-		
+
 		$min_size_bit = $this->set_to_bit($min_size);
 
 		if ($file['size'] < $min_size_bit) {
 
 			$this->set_message('file_min_size', "The {field} file is too small. (min size allowed is $min_size)");
-			
-			return false;
 
+			return false;
 		}
 		return true;
 	}
@@ -1451,7 +1449,7 @@ class CI_Form_validation
 		}
 
 		$bit = (substr($matched[2], -1) == 'B') ? 1024 : 1000;
-		
+
 		// Calculate bits:
 		switch (strtoupper(substr($matched[2], 0, 1))) {
 			case 'P':
@@ -1518,7 +1516,6 @@ class CI_Form_validation
 					return true;
 				}
 			}
-
 		}
 
 		// is type a group type? image, application, word_document, code, zip .... -> load proper array
@@ -1544,7 +1541,7 @@ class CI_Form_validation
 		// if we can use the finfo function to check the mime AND the mime
 		// exists in the mime file of codeigniter...
 		if (function_exists('finfo_open') and !empty($intersection)) {
-			
+
 			$exts = [];
 
 			foreach ($intersection as $in) {
@@ -1593,161 +1590,152 @@ class CI_Form_validation
     // --------------------------------------------------------------------
 
 	/**
-     * Returns false if the image is bigger than given dimension
-     *
-     * @param    string
-     * @param    mixed
-     * @return    bool
-     */
+	 * Returns false if the image is bigger than given dimension
+	 *
+	 * @param    string
+	 * @param    mixed
+	 * @return    bool
+	 */
 	public function file_image_maxdim($file, $dimension)
-    {
+	{
 		if (!is_array($file) || !isset($file['tmp_name'])) {
 			return false;
 		}
-		
-        log_message('debug', 'Form_validation: file_image_maxdim ' . $dimension);
+
+		log_message('debug', 'Form_validation: file_image_maxdim ' . $dimension);
 
 		$dimension = explode(',', $dimension);
 
-        if (count($dimension) !== 2)
-        {
-            // Bad size given
-            log_message('error', 'Form_validation: invalid rule, expecting a rule like [150,300].');
+		if (count($dimension) !== 2) {
+			// Bad size given
+			log_message('error', 'Form_validation: invalid rule, expecting a rule like [150,300].');
 			$this->set_message('file_image_maxdim', 'The {field} file has invalid rule, expecting a rule like [150,300].');
-           
-            return false;
-        }
 
-        log_message('debug', 'Form_validation: file_image_maxdim ' . $dimension[0] . ' ' . $dimension[1]);
+			return false;
+		}
 
-        // get image size
-        $dim = $this->get_image_dimension($file['tmp_name']);
+		log_message('debug', 'Form_validation: file_image_maxdim ' . $dimension[0] . ' ' . $dimension[1]);
+
+		// get image size
+		$dim = $this->get_image_dimension($file['tmp_name']);
 
 		if (is_array($dim)) {
 			log_message('debug', $dim[0] . ' ' . $dim[1]);
 		}
 
-        if (!$dim)
-        {
+		if (!$dim) {
 			log_message('error', 'Form_validation: dimensions not detected for file with type ' . $file['type'] . '.');
 
 			$this->set_message('file_image_maxdim', 'The {field} file dimensions was not detected.');
-            return false;
-        }
+			return false;
+		}
 
-        if ($dim[0] <= $dimension[0] && $dim[1] <= $dimension[1])
-        {
-            return true;
-        }
+		if ($dim[0] <= $dimension[0] && $dim[1] <= $dimension[1]) {
+			return true;
+		}
 
 		$this->set_message('file_image_maxdim', 'The {field} file image size is too big.');
-        return false;
-    }
+		return false;
+	}
 
     // --------------------------------------------------------------------
 
-    /**
-     * Returns false if the image is smaller than given dimension
-     *
-     * @param    mixed
-     * @param    mixed
-     * @return   bool
-     */
+	/**
+	 * Returns false if the image is smaller than given dimension
+	 *
+	 * @param    mixed
+	 * @param    mixed
+	 * @return   bool
+	 */
 	public function file_image_mindim($file, $dimension)
-    {
+	{
 		if (!is_array($file) || !isset($file['tmp_name'])) {
 			return false;
 		}
-		
+
 		$dimension = explode(',', $dimension);
 
-        if (count($dimension) !== 2)
-        {
-            // Bad size given
-            log_message('error', 'Form_validation: invalid rule, expecting a rule like [150,300].');
-			
+		if (count($dimension) !== 2) {
+			// Bad size given
+			log_message('error', 'Form_validation: invalid rule, expecting a rule like [150,300].');
+
 			$this->set_message('file_image_mindim', 'The {field} file has invalid rule, expecting a rule like [150,300].');
-           
-            return false;
-        }
 
-        // get image size
-        $dim = $this->get_image_dimension($file['tmp_name']);
-
-        if (!$dim)
-        {
-            log_message('error', 'Form_validation: dimensions not detected for file with type '.$file['type'].'.');
-			
-			$this->set_message('file_image_mindim', 'The {field} file dimensions was not detected.');
-			
 			return false;
-        }
+		}
+
+		// get image size
+		$dim = $this->get_image_dimension($file['tmp_name']);
+
+		if (!$dim) {
+			log_message('error', 'Form_validation: dimensions not detected for file with type ' . $file['type'] . '.');
+
+			$this->set_message('file_image_mindim', 'The {field} file dimensions was not detected.');
+
+			return false;
+		}
 
 		if (is_array($dim)) {
 			log_message('debug', $dim[0] . ' ' . $dim[1]);
 		}
 
-        if ($dim[0] >= $dimension[0] && $dim[1] >= $dimension[1])
-        {
-            return true;
-        }
+		if ($dim[0] >= $dimension[0] && $dim[1] >= $dimension[1]) {
+			return true;
+		}
 
 		$this->set_message('file_image_mindim', 'The {field} file image size is too small.');
-		
+
 		return false;
-    }
+	}
 
     // --------------------------------------------------------------------
 
-    /**
-     * Returns false if the image is not the given exact dimension
-     *
-     * @param    mixed
-     * @param    mixed
-     * @return   bool
-     */
+	/**
+	 * Returns false if the image is not the given exact dimension
+	 *
+	 * @param    mixed
+	 * @param    mixed
+	 * @return   bool
+	 */
 	public function file_image_exactdim($file, $dimension)
-    {
+	{
 		if (!is_array($file) || !isset($file['tmp_name'])) {
 			return false;
 		}
-		
+
 		$dimension = explode(',', $dimension);
 
-        if (count($dimension) !== 2)
-        {
-            // Bad size given
-            log_message('error', 'Form_validation: invalid rule, expecting a rule like [150,300].');
-			
+		if (count($dimension) !== 2) {
+			// Bad size given
+			log_message('error', 'Form_validation: invalid rule, expecting a rule like [150,300].');
+
 			$this->set_message('file_image_exactdim', 'The {field} file has invalid rule, expecting a rule like [150,300].');
-           
-            return false;
-        }
 
-        // get image size
-        $dim = $this->get_image_dimension($file['tmp_name']);
+			return false;
+		}
 
-        if (!$dim)
-        {
+		// get image size
+		$dim = $this->get_image_dimension($file['tmp_name']);
+
+		if (!$dim) {
 			log_message('error', 'Form_validation: dimensions not detected for file with type ' . $file['type'] . '.');
 			$this->set_message('file_image_exactdim', 'The {field} file dimensions was not detected.');
-			
-            return false;
-        }
+
+			return false;
+		}
 
 		if (is_array($dim)) {
 			log_message('debug', $dim[0] . ' ' . $dim[1]);
 		}
 
-        if ($dim[0] == $dimension[0] && $dim[1] == $dimension[1])
-        {
-            return true;
-        }
+		if ($dim[0] == $dimension[0] && $dim[1] == $dimension[1]) {
+			return true;
+		}
 
 		$this->set_message('file_image_exactdim', 'The {field} file image size is not the exact dimension.');
-		
+
 		return false;
-    }
+	}
 
 	// --------------------------------------------------------------------
 
@@ -1776,7 +1764,7 @@ class CI_Form_validation
 	public function is_not($str, $list)
 	{
 		$list = str_replace(', ', ',', $list); // Just taking some precautions
-		
+
 		$list = explode(',', $list);
 
 		if (in_array(trim($str), $list)) {
@@ -1787,7 +1775,7 @@ class CI_Form_validation
 	}
 
 	// --------------------------------------------------------------------
-	
+
 	/**
 	 * Strip html tags from Wysiwyg Editors
 	 * Except anchor tags
@@ -1854,8 +1842,7 @@ class CI_Form_validation
 	 */
 	public function valid_date(?string $str = null, ?string $format = null): bool
 	{
-		if (empty($format))
-		{
+		if (empty($format)) {
 			return (bool) strtotime($str);
 		}
 
@@ -2039,7 +2026,8 @@ class CI_Form_validation
 	 * @param float|int|string $long Longitude
 	 * @return bool `true` if $long is valid, `false` if not
 	 */
-	public function valid_longitude($longitude) {
+	public function valid_longitude($longitude)
+	{
 		return (bool) preg_match('/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/', $longitude);
 	}
 
@@ -2345,49 +2333,49 @@ class CI_Form_validation
 		$regex_special = '/[!@#$%^&*()\-_=+{};:,<.>§~]/';
 
 		if (empty($password)) {
-			
+
 			$this->set_message('valid_password', 'The {field} field is required.');
 
 			return false;
 		}
 
 		if (preg_match_all($regex_lowercase, $password) < 1) {
-			
+
 			$this->set_message('valid_password', 'The {field} field must be at least one lowercase letter.');
 
 			return false;
 		}
 
 		if (preg_match_all($regex_uppercase, $password) < 1) {
-			
+
 			$this->set_message('valid_password', 'The {field} field must have at least one uppercase letter.');
 
 			return false;
 		}
 
 		if (preg_match_all($regex_number, $password) < 1) {
-			
+
 			$this->set_message('valid_password', 'The {field} field must have at least one number.');
 
 			return false;
 		}
 
 		if (preg_match_all($regex_special, $password) < 1) {
-			
+
 			$this->set_message('valid_password', 'The {field} field must have at least one special character.' . ' ' . htmlentities('!@#$%^&*()\-_=+{};:,<.>§~'));
 
 			return false;
 		}
 
 		if (strlen($password) < 5) {
-			
+
 			$this->set_message('valid_password', 'The {field} field must be at least 5 characters in length.');
 
 			return false;
 		}
 
 		if (strlen($password) > 32) {
-			
+
 			$this->set_message('valid_password', 'The {field} field cannot exceed 32 characters in length.');
 
 			return false;

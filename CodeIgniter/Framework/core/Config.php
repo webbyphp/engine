@@ -48,7 +48,8 @@
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/libraries/config.html
  */
-class CI_Config {
+class CI_Config
+{
 
 	/**
 	 * List of all loaded config values
@@ -86,24 +87,17 @@ class CI_Config {
 		$this->config = get_config();
 
 		// Set the base_url automatically if none was provided
-		if (empty($this->config['base_url']))
-		{
-			if (isset($_SERVER['SERVER_ADDR']))
-			{
-				if (str_contains((string) $_SERVER['SERVER_ADDR'], ':'))
-				{
-					$server_addr = '['.$_SERVER['SERVER_ADDR'].']';
-				}
-				else
-				{
+		if (empty($this->config['base_url'])) {
+			if (isset($_SERVER['SERVER_ADDR'])) {
+				if (str_contains((string) $_SERVER['SERVER_ADDR'], ':')) {
+					$server_addr = '[' . $_SERVER['SERVER_ADDR'] . ']';
+				} else {
 					$server_addr = $_SERVER['SERVER_ADDR'];
 				}
 
-				$base_url = (is_https() ? 'https' : 'http').'://'.$server_addr
-					.substr((string) $_SERVER['SCRIPT_NAME'], 0, strpos((string) $_SERVER['SCRIPT_NAME'], basename((string) $_SERVER['SCRIPT_FILENAME'])));
-			}
-			else
-			{
+				$base_url = (is_https() ? 'https' : 'http') . '://' . $server_addr
+					. substr((string) $_SERVER['SCRIPT_NAME'], 0, strpos((string) $_SERVER['SCRIPT_NAME'], basename((string) $_SERVER['SCRIPT_FILENAME'])));
+			} else {
 				$base_url = 'http://localhost/';
 			}
 
@@ -128,61 +122,49 @@ class CI_Config {
 		$file = ($file === '') ? 'config' : str_replace('.php', '', $file);
 		$loaded = false;
 
-		foreach ($this->_config_paths as $path)
-		{
-			foreach ([$file, ENVIRONMENT.DIRECTORY_SEPARATOR.$file] as $location)
-			{
-				$file_path = $path.'config/'.$location.'.php';
-				if (in_array($file_path, $this->is_loaded, true))
-				{
+		foreach ($this->_config_paths as $path) {
+			foreach ([$file, ENVIRONMENT . DIRECTORY_SEPARATOR . $file] as $location) {
+				$file_path = $path . 'config/' . $location . '.php';
+				if (in_array($file_path, $this->is_loaded, true)) {
 					return true;
 				}
 
-				if ( ! file_exists($file_path))
-				{
+				if (! file_exists($file_path)) {
 					continue;
 				}
 
 				include($file_path);
 
-				if ( ! isset($config) OR ! is_array($config))
-				{
-					if ($fail_gracefully === true)
-					{
+				if (! isset($config) or ! is_array($config)) {
+					if ($fail_gracefully === true) {
 						return false;
 					}
 
-					show_error('Your '.$file_path.' file does not appear to contain a valid configuration array.');
+					show_error('Your ' . $file_path . ' file does not appear to contain a valid configuration array.');
 				}
 
-				if ($use_sections === true)
-				{
+				if ($use_sections === true) {
 					$this->config[$file] = isset($this->config[$file])
 						? array_merge($this->config[$file], $config)
 						: $config;
-				}
-				else
-				{
+				} else {
 					$this->config = array_merge($this->config, $config);
 				}
 
 				$this->is_loaded[] = $file_path;
 				$config = null;
 				$loaded = true;
-				log_message('debug', 'Config file loaded: '.$file_path);
+				log_message('debug', 'Config file loaded: ' . $file_path);
 			}
 		}
 
-		if ($loaded === true)
-		{
+		if ($loaded === true) {
 			return true;
-		}
-		elseif ($fail_gracefully === true)
-		{
+		} elseif ($fail_gracefully === true) {
 			return false;
 		}
 
-		show_error('The configuration file '.$file.'.php does not exist.');
+		show_error('The configuration file ' . $file . '.php does not exist.');
 	}
 
 	// --------------------------------------------------------------------
@@ -196,8 +178,7 @@ class CI_Config {
 	 */
 	public function item(string|array $item, string $index = ''): mixed
 	{
-		if ($index == '')
-		{
+		if ($index == '') {
 			return $this->config[$item] ?? null;
 		}
 
@@ -259,41 +240,36 @@ class CI_Config {
 			return '';
 		}
 
-		return rtrim((string) $this->config[$item], '/').'/';
+		return rtrim((string) $this->config[$item], '/') . '/';
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
 	 * Site URL
-	*
-	* Returns base_url . index_page [. uri_string]
-	*
-	* @uses	CI_Config::_uri_string()
-	*
-	* @param	string|array $uri	URI string or an array of segments
-	* @param	string $protocol
-	*/
+	 *
+	 * Returns base_url . index_page [. uri_string]
+	 *
+	 * @uses	CI_Config::_uri_string()
+	 *
+	 * @param	string|array $uri	URI string or an array of segments
+	 * @param	string $protocol
+	 */
 	public function site_url(string|array $uri = '', $protocol = null): string
 	{
 		$base_url = $this->slash_item('base_url');
 
-		if (isset($protocol))
-		{
+		if (isset($protocol)) {
 			// For protocol-relative links
-			if ($protocol === '')
-			{
+			if ($protocol === '') {
 				$base_url = substr($base_url, strpos($base_url, '//'));
-			}
-			else
-			{
-				$base_url = $protocol.substr($base_url, strpos($base_url, '://'));
+			} else {
+				$base_url = $protocol . substr($base_url, strpos($base_url, '://'));
 			}
 		}
 
-		if (empty($uri))
-		{
-			return $base_url.$this->item('index_page');
+		if (empty($uri)) {
+			return $base_url . $this->item('index_page');
 		}
 
 		$uri = $this->_uri_string($uri);
@@ -301,71 +277,63 @@ class CI_Config {
 		if ($this->item('enable_query_strings') === false) {
 
 			$suffix = $this->config['url_suffix'] ?? '';
-		  
-		  if ($suffix !== '')
-		  {
-			  if (($offset = strpos($uri, '?')) !== false)
-			  {
-				  $uri = substr($uri, 0, $offset).$suffix.substr($uri, $offset);
-			  }
-			  else
-			  {
-				  $uri .= $suffix;
-			  }
-		  }
 
-		  return $base_url.$this->slash_item('index_page').$uri;
-	  }
+			if ($suffix !== '') {
+				if (($offset = strpos($uri, '?')) !== false) {
+					$uri = substr($uri, 0, $offset) . $suffix . substr($uri, $offset);
+				} else {
+					$uri .= $suffix;
+				}
+			}
 
-	  if (!str_contains($uri, '?')) {
-		  $uri = '?'.$uri;
-	  }
+			return $base_url . $this->slash_item('index_page') . $uri;
+		}
 
-		return $base_url.$this->item('index_page').$uri;
+		if (!str_contains($uri, '?')) {
+			$uri = '?' . $uri;
+		}
+
+		return $base_url . $this->item('index_page') . $uri;
 	}
 
 	// -------------------------------------------------------------
 
 	/**
-	* Base URL
-	*
-	* Returns base_url [. uri_string]
-	*
-	* @uses	CI_Config::_uri_string()
-	*
-	* @param	string|string[]	$uri	URI string or an array of segments
-	* @param	string	$protocol
-	*/
+	 * Base URL
+	 *
+	 * Returns base_url [. uri_string]
+	 *
+	 * @uses	CI_Config::_uri_string()
+	 *
+	 * @param	string|string[]	$uri	URI string or an array of segments
+	 * @param	string	$protocol
+	 */
 	public function base_url(string|array $uri = '', $protocol = null): string
 	{
 		$base_url = $this->slash_item('base_url');
 
-		if (isset($protocol))
-		{
+		if (isset($protocol)) {
 			// For protocol-relative links
-			if ($protocol === '')
-			{
+			if ($protocol === '') {
 				$base_url = substr($base_url, strpos($base_url, '//'));
-			}
-			else
-			{
-				$base_url = $protocol.substr($base_url, strpos($base_url, '://'));
+			} else {
+				$base_url = $protocol . substr($base_url, strpos($base_url, '://'));
 			}
 		}
 
-		return $base_url.$this->_uri_string($uri);
+		return $base_url . $this->_uri_string($uri);
 	}
 
 	// -------------------------------------------------------------
 
 	/**
 	 * Build URI string
-	*
-	* @used-by	CI_Config::site_url()
-	* @used-by	CI_Config::base_url()
-	*
-	* @param	string|string[]	$uri	URI string or an array of segments
-	*/
+	 *
+	 * @used-by	CI_Config::site_url()
+	 * @used-by	CI_Config::base_url()
+	 *
+	 * @param	string|string[]	$uri	URI string or an array of segments
+	 */
 	protected function _uri_string(string|array $uri): string
 	{
 		if ($this->item('enable_query_strings') === false) {
@@ -384,23 +352,23 @@ class CI_Config {
 
 	/**
 	 * System URL
-	*
-	* @deprecated	3.0.0	Encourages insecure practices
-	*/
+	 *
+	 * @deprecated	3.0.0	Encourages insecure practices
+	 */
 	public function system_url(): string
 	{
 		$x = explode('/', preg_replace('|/*(.+?)/*$|', '\\1', BASEPATH));
-		return $this->slash_item('base_url').end($x).'/';
+		return $this->slash_item('base_url') . end($x) . '/';
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
 	 * Set a config file item
-	*
-	* @param	string	$item	Config item key
-	* @param	string	$value	Config item value
-	*/
+	 *
+	 * @param	string	$item	Config item key
+	 * @param	string	$value	Config item value
+	 */
 	public function set_item(string $item, string $value): void
 	{
 		$this->config[$item] = $value;
@@ -419,5 +387,4 @@ class CI_Config {
 	{
 		return $this->set_item($item, $value);
 	}
-
 }

@@ -56,10 +56,25 @@ class CI_Security
 	 * @var	array
 	 */
 	public $filename_bad_chars =	[
-		'../', '<!--', '-->', '<', '>',
-		"'", '"', '&', '$', '#',
-		'{', '}', '[', ']', '=',
-		';', '?', '%20', '%22',
+		'../',
+		'<!--',
+		'-->',
+		'<',
+		'>',
+		"'",
+		'"',
+		'&',
+		'$',
+		'#',
+		'{',
+		'}',
+		'[',
+		']',
+		'=',
+		';',
+		'?',
+		'%20',
+		'%22',
 		'%3c',		// <
 		'%253c',	// <
 		'%3e',		// >
@@ -256,7 +271,7 @@ class CI_Security
 	 */
 	public function csrf_set_cookie()
 	{
-		$expire = time() + $this->_csrf_expire;
+		$expire = time() + config_item('csrf_expire') ?: $this->_csrf_expire;
 		$secure_cookie = (bool) config_item('cookie_secure');
 
 		if ($secure_cookie && !is_https()) {
@@ -448,9 +463,23 @@ class CI_Security
 		 * These words are compacted back to their correct state.
 		 */
 		$words = [
-			'javascript', 'expression', 'vbscript', 'jscript', 'wscript',
-			'vbs', 'script', 'base64', 'applet', 'alert', 'document',
-			'write', 'cookie', 'window', 'confirm', 'prompt', 'eval'
+			'javascript',
+			'expression',
+			'vbscript',
+			'jscript',
+			'wscript',
+			'vbs',
+			'script',
+			'base64',
+			'applet',
+			'alert',
+			'document',
+			'write',
+			'cookie',
+			'window',
+			'confirm',
+			'prompt',
+			'eval'
 		];
 
 		foreach ($words as $word) {
@@ -811,14 +840,57 @@ class CI_Security
 	protected function _sanitize_naughty_html($matches)
 	{
 		static $naughty_tags    = [
-			'alert', 'area', 'prompt', 'confirm', 'applet', 'audio', 'basefont', 'base', 'behavior', 'bgsound',
-			'blink', 'body', 'embed', 'expression', 'form', 'frameset', 'frame', 'head', 'html', 'ilayer',
-			'iframe', 'input', 'button', 'select', 'isindex', 'layer', 'link', 'meta', 'keygen', 'object',
-			'plaintext', 'style', 'script', 'textarea', 'title', 'math', 'video', 'svg', 'xml', 'xss'
+			'alert',
+			'area',
+			'prompt',
+			'confirm',
+			'applet',
+			'audio',
+			'basefont',
+			'base',
+			'behavior',
+			'bgsound',
+			'blink',
+			'body',
+			'embed',
+			'expression',
+			'form',
+			'frameset',
+			'frame',
+			'head',
+			'html',
+			'ilayer',
+			'iframe',
+			'input',
+			'button',
+			'select',
+			'isindex',
+			'layer',
+			'link',
+			'meta',
+			'keygen',
+			'object',
+			'plaintext',
+			'style',
+			'script',
+			'textarea',
+			'title',
+			'math',
+			'video',
+			'svg',
+			'xml',
+			'xss'
 		];
 
 		static $evil_attributes = [
-			'on\w+', 'style', 'xmlns', 'formaction', 'form', 'xlink:href', 'FSCommand', 'seekSegmentTime'
+			'on\w+',
+			'style',
+			'xmlns',
+			'formaction',
+			'form',
+			'xlink:href',
+			'FSCommand',
+			'seekSegmentTime'
 		];
 
 		// First, escape unclosed tags

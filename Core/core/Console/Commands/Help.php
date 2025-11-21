@@ -57,7 +57,7 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    use:command") .  ConsoleColor::cyan("         Enables you to access console controllers to perform cli tasks")  . " \n";
         $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("       Update webbyphp engine")  . " \n";
         $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("            Initialize your project to use git")  . " \n";
-        
+
         $output .=  " \n";
         $output .=  ConsoleColor::yellow(" Generator Commands:") . " \n";
         $output .=  ConsoleColor::light_purple("    key:generate") .  ConsoleColor::cyan("        Generate an encryption key in the .env file")  . " \n";
@@ -1022,118 +1022,118 @@ class Help extends Console
 
             case 'serve':
                 Help::serve();
-            break;
+                break;
             case 'quit':
                 Help::quit();
-            break;
+                break;
             case 'key:generate':
                 Help::keyGenerate();
-            break;
+                break;
             case 'migrate':
                 Help::migration();
-            break;
+                break;
             case 'db:seed':
                 Help::seed();
-            break;
+                break;
             case 'db:truncate':
                 Help::truncate();
-            break;
+                break;
             case 'list:routes':
                 Help::listRoutes();
-            break;
+                break;
             case 'app:on':
                 Help::AppOn();
-            break;
+                break;
             case 'app:off':
                 Help::AppOff();
-            break;
+                break;
             case 'app:to-development':
                 Help::AppToDevelopment();
-            break;
+                break;
             case 'app:to-testing':
                 Help::AppToTesting();
-            break;
+                break;
             case 'app:to-production':
                 Help::AppToProduction();
-            break;
+                break;
             case 'app:baseurl':
                 Help::baseUrl();
-            break;
+                break;
             case 'resource:link':
                 Help::resourceLink();
-            break;
+                break;
             case 'use:command':
                 Help::useCommand();
-            break;
+                break;
             case 'git:init':
                 Help::gitInit();
-            break;
+                break;
             case 'clear:cache':
                 Help::clear_cache();
-            break;
+                break;
             case 'clear:session':
                 Help::clear_session();
-            break;
+                break;
             case 'create:migration':
                 Help::create_migration();
-            break;
+                break;
             case 'create:seeder':
                 Help::create_seeder();
-            break;
+                break;
             case 'create:module':
                 Help::create_module();
-            break;
+                break;
             case 'create:package':
                 Help::create_package();
-            break;
+                break;
             case 'create:command':
                 Help::create_command();
-            break;
+                break;
             case 'create:controller':
                 Help::create_controller();
-            break;
+                break;
             case 'create:model':
                 Help::create_model();
-            break;
+                break;
             case 'create:view':
                 Help::create_view();
-            break;
+                break;
             case 'create:service':
                 Help::create_service();
-            break;
+                break;
             case 'create:action':
                 Help::create_action();
-            break;
+                break;
             case 'create:library':
                 Help::create_library();
-            break;
+                break;
             case 'create:helper':
                 Help::create_helper();
-            break;
+                break;
             case 'create:form':
                 Help::create_form();
-            break;
+                break;
             case 'create:rule':
                 Help::create_rule();
-            break;
+                break;
             case 'create:middleware':
                 Help::create_middleware();
-            break;
+                break;
             case 'create:enum':
                 Help::create_enum();
-            break;
+                break;
             case 'create:tap':
                 Help::create_tap();
-            break;
+                break;
             case 'update:engine':
                 Help::update_engine();
-            break;
+                break;
             case 'create:jsondb':
                 Help::create_jsondb();
-            break;
+                break;
             default:
                 Help::showHelp();
-            break;
+                break;
         }
 
         return;
@@ -1165,7 +1165,5 @@ class Help extends Console
             default:
                 return ConsoleColor::white($string);
         }
-
     }
-
 }

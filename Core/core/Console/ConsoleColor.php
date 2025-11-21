@@ -5,13 +5,14 @@
  * 
  * Console Color
  * Used to log strings with custom colors to console using php
- * Modified to work with Webby
- * 
- * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com> (Developer Kwame)
+ * Modified to work with WebbyPHP
  * 
  * Colored CLI Output is created by: (C) Jesse Donat
  * https://gist.github.com/donatj/1315354
  * 
+ * @author Jesse Donat
+ * @author Kwame Oteng Appiah-Nti <developerkwame@gmail.com> (Developer Kwame)
+ * @version 1.0.0
  */
 
 namespace Base\Console;
@@ -20,28 +21,43 @@ class ConsoleColor
 {
 
     static $foregroundColors = [
-        'bold'         => '1',    'dim'          => '2',
-        'black'        => '1;30', 'dark_gray'    => '1;30',
-        'blue'         => '1;34', 'light_blue'   => '1;34',
-        'green'        => '1;32', 'light_green'  => '1;32',
-        'cyan'         => '1;36', 'light_cyan'   => '1;36',
-        'red'          => '1;31', 'light_red'    => '1;31',
-        'purple'       => '1;35', 'light_purple' => '1;35',
-        'brown'        => '1;33', 'yellow'       => '1;33',
-        'light_gray'   => '1;37', 'white'        => '1;37',
+        'bold'         => '1',
+        'dim'          => '2',
+        'black'        => '1;30',
+        'dark_gray'    => '1;30',
+        'blue'         => '1;34',
+        'light_blue'   => '1;34',
+        'green'        => '1;32',
+        'light_green'  => '1;32',
+        'cyan'         => '1;36',
+        'light_cyan'   => '1;36',
+        'red'          => '1;31',
+        'light_red'    => '1;31',
+        'purple'       => '1;35',
+        'light_purple' => '1;35',
+        'brown'        => '1;33',
+        'yellow'       => '1;33',
+        'light_gray'   => '1;37',
+        'white'        => '1;37',
         'normal'       => '1;39',
     ];
 
     static $backgroundColors = [
-        'black'        => '40',   'red'          => '41',
-        'green'        => '42',   'yellow'       => '43',
-        'blue'         => '44',   'magenta'      => '45',
-        'cyan'         => '46',   'light_gray'   => '47',
+        'black'        => '40',
+        'red'          => '41',
+        'green'        => '42',
+        'yellow'       => '43',
+        'blue'         => '44',
+        'magenta'      => '45',
+        'cyan'         => '46',
+        'light_gray'   => '47',
     ];
 
     static $options = [
-        'underline'    => '4',    'blink'         => '5',
-        'reverse'      => '7',    'hidden'        => '8',
+        'underline'    => '4',
+        'blink'         => '5',
+        'reverse'      => '7',
+        'hidden'        => '8',
     ];
 
     static $EOF = "\n";
@@ -75,7 +91,7 @@ class ConsoleColor
      * https://gist.github.com/donatj/1315354
      * 
      */
-    
+
     // ---------------------------------------------------------
 
     /**

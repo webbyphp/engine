@@ -68,9 +68,9 @@ declare(strict_types=1);
  * @property CI_DB_query_builder $db Database connection (if loaded)
  * @property CI_Form_validation $form_validation Form validation library (if loaded)
  * 
-*/
+ */
 
-class CI_Controller 
+class CI_Controller
 {
 
 	/**
@@ -82,12 +82,12 @@ class CI_Controller
 
 	/**
 	 * Reference to the CI singleton
-     * super-object instance reference 
+	 * super-object instance reference 
 	 * (legacy get_instance()).
-     *
-     * @var CI_Controller|null
-     */
-    private static ?CI_Controller $instance = null;
+	 *
+	 * @var CI_Controller|null
+	 */
+	private static ?CI_Controller $instance = null;
 
 	/**
 	 * CI_Loader
@@ -122,7 +122,7 @@ class CI_Controller
 	 *
 	 * @var	CI_Output
 	 */
-	public $output;	
+	public $output;
 
 	/**
 	 * CI_Output
@@ -138,21 +138,20 @@ class CI_Controller
 	 */
 	public function __construct()
 	{
-		self::$instance =& $this;
+		self::$instance = &$this;
 
 		// Assign all the class objects that were instantiated by the
 		// bootstrap file (CodeIgniter.php) to local class variables
 		// so that CI can run as one big super object.
-		foreach (is_loaded() as $var => $class)
-		{
+		foreach (is_loaded() as $var => $class) {
 			$this->$var = load_class($class);
 
 			// place into container so __get will return it
-            $this->container[$var] = $this->$var;
+			$this->container[$var] = $this->$var;
 		}
 
 		$this->load = load_class('Loader', 'core');
-		$this->use =& $this->load;
+		$this->use = &$this->load;
 		$this->request = load_class('Input', 'core');
 		$this->response = load_class('Output', 'core');
 		$this->load->initialize();
@@ -180,48 +179,47 @@ class CI_Controller
 	// public function _output($output) {}
 
 	/**
-     * Magic setter for dynamic properties 
+	 * Magic setter for dynamic properties 
 	 * -> store into container.
-     *
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set(string $name, mixed $value): void
-    {
-        $this->container[$name] = $value;
-    }
+	 *
+	 * @param string $name
+	 * @param mixed $value
+	 */
+	public function __set(string $name, mixed $value): void
+	{
+		$this->container[$name] = $value;
+	}
 
-    /**
-     * Magic getter for properties 
+	/**
+	 * Magic getter for properties 
 	 * -> read from container.
-     *
-     * @param string $name
-     * @return mixed|null
-     */
-    public function __get(string $name)
-    {
-        // If the property exists in the container, return it
-        if (array_key_exists($name, $this->container)) {
-            return $this->container[$name];
-        }
+	 *
+	 * @param string $name
+	 * @return mixed|null
+	 */
+	public function __get(string $name)
+	{
+		// If the property exists in the container, return it
+		if (array_key_exists($name, $this->container)) {
+			return $this->container[$name];
+		}
 
-        // As a fallback, let the loader try to lazy-load the item (same behavior as CI)
-        if (isset($this->load) && method_exists($this->load, $name)) {
-            return $this->load->$name;
-        }
+		// As a fallback, let the loader try to lazy-load the item (same behavior as CI)
+		if (isset($this->load) && method_exists($this->load, $name)) {
+			return $this->load->$name;
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Optionally expose isset behavior.
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function __isset(string $name): bool
-    {
-        return array_key_exists($name, $this->container);
-    }
-
+	/**
+	 * Optionally expose isset behavior.
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	public function __isset(string $name): bool
+	{
+		return array_key_exists($name, $this->container);
+	}
 }

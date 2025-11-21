@@ -21,6 +21,5 @@ class MakeDirectory
         }
 
         return false;
-
     }
 }

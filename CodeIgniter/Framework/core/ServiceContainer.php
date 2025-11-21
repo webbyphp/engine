@@ -150,9 +150,9 @@ class CI_ServiceContainer
      */
     public function has(string $abstract): bool
     {
-        return isset($this->bindings[$abstract]) || 
-               isset($this->instances[$abstract]) ||
-               $this->canResolveFromCI($abstract);
+        return isset($this->bindings[$abstract]) ||
+            isset($this->instances[$abstract]) ||
+            $this->canResolveFromCI($abstract);
     }
 
     /**
@@ -234,10 +234,10 @@ class CI_ServiceContainer
     protected function canResolveFromCI(string $abstract): bool
     {
         return isset($this->ci->{$abstract}) ||
-               $this->isModel($abstract) ||
-               $this->isLibrary($abstract) ||
-               $this->isHelper($abstract) ||
-               class_exists($abstract);
+            $this->isModel($abstract) ||
+            $this->isLibrary($abstract) ||
+            $this->isHelper($abstract) ||
+            class_exists($abstract);
     }
 
     /**
@@ -255,7 +255,7 @@ class CI_ServiceContainer
 
         $this->ci->load->model($model);
         $modelName = $this->getModelName($model);
-        
+
         if (!isset($this->ci->{$modelName})) {
             throw new Exception("Model [{$model}] could not be loaded");
         }
@@ -278,7 +278,7 @@ class CI_ServiceContainer
 
         $this->ci->load->library($library, $parameters);
         $libraryName = $this->getLibraryName($library);
-        
+
         if (!isset($this->ci->{$libraryName})) {
             throw new Exception("Library [{$library}] could not be loaded");
         }
@@ -294,9 +294,9 @@ class CI_ServiceContainer
      */
     protected function isModel(string $name): bool
     {
-        return str_ends_with(strtolower($name), '_model') || 
-               str_ends_with(strtolower($name), '_m') ||
-               str_contains($name, 'Model');
+        return str_ends_with(strtolower($name), '_model') ||
+            str_ends_with(strtolower($name), '_m') ||
+            str_contains($name, 'Model');
     }
 
     /**
@@ -310,7 +310,7 @@ class CI_ServiceContainer
         $libraryPath = APPPATH . 'libraries/' . ucfirst($name) . '.php';
         $appLibraryPath = APPROOT . 'Libraries/' . ucfirst($name) . '.php';
         $systemLibraryPath = BASEPATH . 'libraries/' . ucfirst($name) . '.php';
-        
+
         return
             file_exists($libraryPath)
             || file_exists($appLibraryPath)
@@ -328,9 +328,9 @@ class CI_ServiceContainer
         $helperPath = APPPATH . 'helpers/' . $name . '_helper.php';
         $appHelperPath = APPROOT . 'Helpers/' . ucfirst($name) . '.php';
         $systemHelperPath = BASEPATH . 'helpers/' . $name . '_helper.php';
-        
-        return 
-            file_exists($helperPath) 
+
+        return
+            file_exists($helperPath)
             || file_exists($appHelperPath)
             || file_exists($systemHelperPath);
     }
@@ -345,7 +345,7 @@ class CI_ServiceContainer
     {
         $parts = explode('/', $model);
         $modelName = end($parts);
-        
+
         return strtolower($modelName);
     }
 
@@ -359,7 +359,7 @@ class CI_ServiceContainer
     {
         $parts = explode('/', $library);
         $libraryName = end($parts);
-        
+
         return strtolower($libraryName);
     }
 
@@ -371,29 +371,29 @@ class CI_ServiceContainer
     protected function registerCoreServices(): void
     {
         // Register database as singleton
-        $this->singleton('database', function() {
+        $this->singleton('database', function () {
             $this->ci->load->database();
             return $this->ci->db;
         });
 
         // Register other core services
-        $this->singleton('load', function() {
+        $this->singleton('load', function () {
             return $this->ci->load;
         });
 
-        $this->singleton('input', function() {
+        $this->singleton('input', function () {
             return $this->ci->input;
         });
 
-        $this->singleton('output', function() {
+        $this->singleton('output', function () {
             return $this->ci->output;
         });
 
-        $this->singleton('config', function() {
+        $this->singleton('config', function () {
             return $this->ci->config;
         });
 
-        $this->singleton('session', function() {
+        $this->singleton('session', function () {
             return $this->ci->session;
         });
     }
@@ -419,5 +419,4 @@ class CI_ServiceContainer
     {
         return $this->bindings;
     }
-
 }

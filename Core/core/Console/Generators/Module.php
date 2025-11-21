@@ -9,7 +9,7 @@ use Base\Console\Commands\MakeDirectory;
  * On Hold
  * 
  */
-class Module 
+class Module
 {
     private $web      = 'Web';
     private $console  = 'Console';
@@ -35,21 +35,20 @@ class Module
         switch ($type) {
 
             case 'console':
-                
-            break;
+
+                break;
             case 'web':
                 MakeDirectory::createModuleDirectory(ROOTPATH . ucfirst($this->web), $directoryName);
-            break;
+                break;
             case 'api':
                 # code...
-            break;
+                break;
             case 'packages':
                 # code...
-            break;
+                break;
             default:
                 # code...
-            break;
-
+                break;
         }
 
         return true;
