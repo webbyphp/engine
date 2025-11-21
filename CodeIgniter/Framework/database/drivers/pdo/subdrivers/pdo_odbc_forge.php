@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -36,7 +37,7 @@
  * @since	Version 3.0.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * PDO ODBC Forge Class
@@ -45,7 +46,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/database/
  */
-class CI_DB_pdo_odbc_forge extends CI_DB_pdo_forge {
+class CI_DB_pdo_odbc_forge extends CI_DB_pdo_forge
+{
 
 	/**
 	 * UNSIGNED support
@@ -67,5 +69,4 @@ class CI_DB_pdo_odbc_forge extends CI_DB_pdo_forge {
 	{
 		// Not supported (in most databases at least)
 	}
-
 }

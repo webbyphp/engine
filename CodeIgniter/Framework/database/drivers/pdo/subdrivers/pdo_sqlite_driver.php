@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -36,7 +37,7 @@
  * @since	Version 3.0.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * PDO SQLite Database Adapter Class
@@ -51,7 +52,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/database/
  */
-class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
+class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver
+{
 
 	/**
 	 * Sub-driver
@@ -83,12 +85,10 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 	{
 		parent::__construct($params);
 
-		if (empty($this->dsn))
-		{
+		if (empty($this->dsn)) {
 			$this->dsn = 'sqlite:';
 
-			if (empty($this->database) && empty($this->hostname))
-			{
+			if (empty($this->database) && empty($this->hostname)) {
 				$this->database = ':memory:';
 			}
 
@@ -110,10 +110,9 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 	{
 		$sql = 'SELECT "NAME" FROM "SQLITE_MASTER" WHERE "TYPE" = \'table\'';
 
-		if ($prefix_limit === true && $this->dbprefix !== '')
-		{
-			return $sql.' AND "NAME" LIKE \''.$this->escape_like_str($this->dbprefix)."%' "
-				.sprintf($this->_like_escape_str, $this->_like_escape_chr);
+		if ($prefix_limit === true && $this->dbprefix !== '') {
+			return $sql . ' AND "NAME" LIKE \'' . $this->escape_like_str($this->dbprefix) . "%' "
+				. sprintf($this->_like_escape_str, $this->_like_escape_chr);
 		}
 
 		return $sql;
@@ -129,14 +128,12 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 	 */
 	public function list_fields($table)
 	{
-		if (($result = $this->query('PRAGMA TABLE_INFO('.$this->protect_identifiers($table, true, null, false).')')) === false)
-		{
+		if (($result = $this->query('PRAGMA TABLE_INFO(' . $this->protect_identifiers($table, true, null, false) . ')')) === false) {
 			return false;
 		}
 
 		$fields = [];
-		foreach ($result->result_array() as $row)
-		{
+		foreach ($result->result_array() as $row) {
 			$fields[] = $row['name'];
 		}
 
@@ -153,20 +150,17 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 	 */
 	public function field_data($table)
 	{
-		if (($query = $this->query('PRAGMA TABLE_INFO('.$this->protect_identifiers($table, true, null, false).')')) === false)
-		{
+		if (($query = $this->query('PRAGMA TABLE_INFO(' . $this->protect_identifiers($table, true, null, false) . ')')) === false) {
 			return false;
 		}
 
 		$query = $query->result_array();
-		if (empty($query))
-		{
+		if (empty($query)) {
 			return false;
 		}
 
 		$retval = [];
-		for ($i = 0, $c = count($query); $i < $c; $i++)
-		{
+		for ($i = 0, $c = count($query); $i < $c; $i++) {
 			$retval[$i]			= new stdClass();
 			$retval[$i]->name		= $query[$i]['name'];
 			$retval[$i]->type		= $query[$i]['type'];
@@ -190,7 +184,7 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 	 */
 	protected function _replace($table, $keys, $values): string
 	{
-		return 'INSERT OR '.parent::_replace($table, $keys, $values);
+		return 'INSERT OR ' . parent::_replace($table, $keys, $values);
 	}
 
 	// --------------------------------------------------------------------
@@ -208,7 +202,6 @@ class CI_DB_pdo_sqlite_driver extends CI_DB_pdo_driver {
 	 */
 	protected function _truncate($table): string
 	{
-		return 'DELETE FROM '.$table;
+		return 'DELETE FROM ' . $table;
 	}
-
 }

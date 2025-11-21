@@ -1,4 +1,5 @@
 <?php
+
 /**
  * CodeIgniter
  *
@@ -36,7 +37,7 @@
  * @since	Version 1.3.0
  * @filesource
  */
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * ODBC Forge Class
@@ -47,7 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/database/
  */
-class CI_DB_odbc_forge extends CI_DB_forge {
+class CI_DB_odbc_forge extends CI_DB_forge
+{
 
 	/**
 	 * CREATE TABLE IF statement
@@ -83,5 +85,4 @@ class CI_DB_odbc_forge extends CI_DB_forge {
 	{
 		// Not supported (in most databases at least)
 	}
-
 }
