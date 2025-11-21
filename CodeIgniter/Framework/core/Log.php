@@ -130,8 +130,6 @@ class CI_Log
 	{
 		$config = get_config();
 
-		isset(self::$func_overload) or self::$func_overload = (! is_php('8.0') && extension_loaded('mbstring') && @ini_get('mbstring.func_overload'));
-
 		$this->_log_path = ($config['log_path'] !== '') ? $config['log_path'] : APPPATH . 'logs/';
 		$this->_file_ext = (isset($config['log_file_extension']) && $config['log_file_extension'] !== '')
 			? ltrim($config['log_file_extension'], '.') : 'php';

@@ -139,7 +139,7 @@ class CI_CodeIgniter
 
         $encoding = 'mbstring.internal_encoding';
 
-        ! is_php('5.6') && ! ini_get($encoding) && ini_set($encoding, $charset);
+        ! ini_get($encoding) && ini_set($encoding, $charset);
 
         $this->iconv();
     }

@@ -667,9 +667,8 @@ class CI_Security
 		static $_entities;
 
 		isset($charset) or $charset = $this->charset;
-		$flag = is_php('5.4')
-			? ENT_COMPAT | ENT_HTML5
-			: ENT_COMPAT;
+
+		$flag = ENT_COMPAT | ENT_HTML5;
 
 		if (!isset($_entities)) {
 			$_entities = array_map('strtolower', get_html_translation_table(HTML_ENTITIES, $flag, $charset));
