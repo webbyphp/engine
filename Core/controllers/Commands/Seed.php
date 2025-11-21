@@ -63,7 +63,6 @@ class Seed extends ConsoleController
 		if (!is_cli()) {
 			exit('Direct access is not allowed. This is a command line tool, use the terminal');
 		}
-	
 	}
 
 	/**
@@ -75,83 +74,88 @@ class Seed extends ConsoleController
 	{
 		try {
 			shut_up();
-				$this->use->database();
+			$this->use->database();
 			speak_up();
-		} catch(\Exception $e) {
-			echo $this->error("\n\t" . $e->getMessage() . "\n"); exit;
+		} catch (\Exception $e) {
+			echo $this->error("\n\t" . $e->getMessage() . "\n");
+			exit;
 		}
 	}
 
-    /**
-     * Seeder Requirements
-     *
-     * @return void
-     */
-	private function seederRequirements() 
+	/**
+	 * Seeder Requirements
+	 *
+	 * @return void
+	 */
+	private function seederRequirements()
 	{
 
 		try {
 
-			if ( ! file_exists($path = self::PATH)) {
-				
+			if (! file_exists($path = self::PATH)) {
+
 				mkdir($path, 0777);
-				
-				file_put_contents($path . DS ."index.html", '');
-				
+
+				file_put_contents($path . DS . "index.html", '');
+
 				echo $this->success($path . "directory created");
 			}
 
 			$this->seederFiles = array_values(
 				array_diff(
-					scandir($path), ['.', '..', 'index.html']
+					scandir($path),
+					['.', '..', 'index.html']
 				)
 			);
-
 		} catch (\Exception $e) {
-			echo $this->error("Error: ". $e->getMessage());
+			echo $this->error("Error: " . $e->getMessage());
 		}
 	}
 
-    /**
-     * Find Seeders
-     *
-     * @param string $path
-     * @return mixed
-     */
+	/**
+	 * Find Seeders
+	 *
+	 * @param string $path
+	 * @return mixed
+	 */
 	protected function findSeeders($path = null)
 	{
 		if ($path != null) {
 			return $this->seederFiles = array_values(
 				array_diff(
-					scandir($path), ['.', '..', 'index.html']
+					scandir($path),
+					['.', '..', 'index.html']
 				)
 			);
 		}
 
 		return $this->seederFiles = array_values(
 			array_diff(
-				scandir(self::PATH), ['.', '..', 'index.html']
+				scandir(self::PATH),
+				['.', '..', 'index.html']
 			)
 		);
 	}
 
 	/**
-     * Set Database to run migration on
-     *
-     * @param string $database
-     * @return void
-     */
+	 * Set Database to run migration on
+	 *
+	 * @param string $database
+	 * @return void
+	 */
 	public function useDB($database = 'default')
 	{
 		$this->useDb = $database;
 	}
 
-    /**
-     * Seeder command entry point
-     *
-     * @return void
-     */
-	public function index() {/* $this->run();*/}
+	/**
+	 * Seeder command entry point
+	 *
+	 * @return void
+	 */
+	public function index()
+	{/* $this->run();*/
+	}
 
 	/**
 	 * Get and prepare seeder
@@ -161,14 +165,15 @@ class Seed extends ConsoleController
 	 */
 	public function getSeeder($seeder)
 	{
-		
+
 		$seeder = $this->prepare($seeder);
 
 		// Get the seeder file
 		$seederFile = self::PATH . DS . $seeder . EXT;
 
 		if (!file_exists($seederFile)) {
-			echo $this->error("\n[{$seeder}] file does not exists\n"); exit;
+			echo $this->error("\n[{$seeder}] file does not exists\n");
+			exit;
 		}
 
 		if (file_exists($seederFile)) {
@@ -192,15 +197,14 @@ class Seed extends ConsoleController
 		if (method_exists($this->seeder, 'use') && is_callable([$this->seeder, 'use'])) {
 			$this->seederFiles = $this->seeder->use();
 		}
-		
 	}
 
 	/**
-     * Run Single Seeder
-     *
-     * @param  string $seeder
-     * @return void
-     */
+	 * Run Single Seeder
+	 *
+	 * @param  string $seeder
+	 * @return void
+	 */
 	public function single(string $seeder, $multiple = false)
 	{
 
@@ -209,13 +213,14 @@ class Seed extends ConsoleController
 		}
 
 		if (!$this->seederFiles) {
-			echo $this->error("\n\tNo Seeder File Available To Run\n"); exit;
+			echo $this->error("\n\tNo Seeder File Available To Run\n");
+			exit;
 		}
 
 		try {
 
 			$this->getSeeder($seeder);
-			
+
 			$startTime = microtime(true);
 
 			foreach ($this->seederFiles as $count => $file) {
@@ -226,26 +231,24 @@ class Seed extends ConsoleController
 
 				$this->call($file);
 
-				$this->info("[$file] done".PHP_EOL);
-
+				$this->info("[$file] done" . PHP_EOL);
 			}
 
 			$elapsedTime = round(microtime(true) - $startTime, THREE) * 1000;
 
 			$this->warning("Took $elapsedTime ms to run db:seed", ONE);
-
 		} catch (\Exception $e) {
-			$this->error("\n " . $e->getMessage() . "\n"); exit;
+			$this->error("\n " . $e->getMessage() . "\n");
+			exit;
 		}
-
 	}
 
-    /**
-     * Run Multiple Seeders
-     *
-     * @param string $filename
-     * @return void
-     */
+	/**
+	 * Run Multiple Seeders
+	 *
+	 * @param string $filename
+	 * @return void
+	 */
 	public function multiple(?array $files = [])
 	{
 
@@ -254,7 +257,8 @@ class Seed extends ConsoleController
 		}
 
 		if (!$this->seederFiles) {
-			echo $this->error("\n\tNo Seeder File Available To Run\n"); exit;
+			echo $this->error("\n\tNo Seeder File Available To Run\n");
+			exit;
 		}
 
 		try {
@@ -266,34 +270,33 @@ class Seed extends ConsoleController
 				echo $this->info("\nProcessing $file \n");
 
 				$file = str_ext($file, true);
-				
+
 				$this->call($file);
 
-				$this->info("[$file] done".PHP_EOL);
-
+				$this->info("[$file] done" . PHP_EOL);
 			}
 
 			$elapsedTime = round(microtime(true) - $startTime, THREE) * 1000;
 
 			$this->warning("Took $elapsedTime ms to run db:seed", ONE);
-
 		} catch (\Exception $e) {
-			$this->error("\n " . $e->getMessage() . "\n"); exit;
+			$this->error("\n " . $e->getMessage() . "\n");
+			exit;
 		}
 	}
 
 	private function prepare(string $seeder)
 	{
 		$seeder = ucfirst(str_replace(['Seeder', 'seeder'], '', $seeder));
-        return $seeder .= 'Seeder';
+		return $seeder .= 'Seeder';
 	}
 
 	/**
-     * Prepare and Call Seeder
-     *
-     * @param  string $seeder
-     * @return void
-     */
+	 * Prepare and Call Seeder
+	 *
+	 * @param  string $seeder
+	 * @return void
+	 */
 	public function call(string $seeder)
 	{
 
@@ -301,21 +304,22 @@ class Seed extends ConsoleController
 
 		// Get the seeder file
 		$seederFile = self::PATH . DS . $seeder . EXT;
-		
+
 		if (!file_exists($seederFile)) {
-			echo $this->error("[{$seeder}] file does not exists\n"); exit;
+			echo $this->error("[{$seeder}] file does not exists\n");
+			exit;
 		}
 
 		require_once $seederFile; // require class file
-		
+
 		$seederClass = (new TraverseClassFile)->getClassFullNameFromFile($seederFile);
-		
+
 		if (is_object(new $seederClass())) {
 			$this->seeder = new $seederClass();
 		}
 
 		try {
-			
+
 			if (!$this->seeder->tableExists()) {
 				throw new \Exception("[{$seeder}] table does not exist\n", ONE);
 			}
@@ -323,13 +327,11 @@ class Seed extends ConsoleController
 			if (!method_exists($this->seeder, 'run') || !is_callable([$this->seeder, 'run'])) {
 				throw new \Exception("[$seeder] Invalid seeder file", ONE);
 			}
-
 		} catch (\Exception $e) {
 			$this->error($e->getMessage());
 		}
 
 		$this->seeder->run();
-
 	}
 
 	/**
@@ -362,15 +364,16 @@ class Seed extends ConsoleController
 			$truncated = $this->db->truncate($tablename);
 
 			if ($truncated) {
-				$this->success("\n\t[{$tablename}] table truncated successfully \n"); exit;
+				$this->success("\n\t[{$tablename}] table truncated successfully \n");
+				exit;
 			}
-	
-			$this->error("\n\t[{$tablename}] could not be truncated \n"); exit;
-	
-		} catch	(Exception $ex) {
-			$this->error("\n\t" . $ex->getMessage() . "\n"); exit;
-		}
 
+			$this->error("\n\t[{$tablename}] could not be truncated \n");
+			exit;
+		} catch (Exception $ex) {
+			$this->error("\n\t" . $ex->getMessage() . "\n");
+			exit;
+		}
 	}
 
 	/**
@@ -382,10 +385,9 @@ class Seed extends ConsoleController
 	private function tableExists(string $tablename): bool
 	{
 		if ($this->db->table_exists($tablename) === false) {
-            return false;
+			return false;
 		}
 
-        return true;
+		return true;
 	}
-   
 }

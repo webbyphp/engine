@@ -78,9 +78,9 @@ class Maintenance extends ConsoleController
      */
     public function mode($useFile = 'status')
     {
-       
+
         $this->maintenanceLock($useFile);
-   
+
 
         // echo ConsoleColor::yellow("Application is now offline (maintenance mode ON)") . "\n";
         // $this->showBypassInfo();
@@ -161,12 +161,12 @@ class Maintenance extends ConsoleController
                 $estimatedTime = $argv[3] ?? '';
                 $this->enable($message, $estimatedTime);
                 break;
-                
+
             case 'disable':
             case 'off':
                 $this->disable();
                 break;
-                
+
             case 'status':
             default:
                 $this->showStatus();
@@ -196,7 +196,7 @@ class Maintenance extends ConsoleController
         $content .= "return " . var_export($data, true) . ";\n";
 
         $result = file_put_contents($this->maintenanceFile, $content);
-        
+
         if ($result !== false) {
             echo "Maintenance mode ENABLED\n";
             echo "Enabled at: " . $data['enabled_at'] . "\n";
@@ -206,7 +206,7 @@ class Maintenance extends ConsoleController
             }
             return true;
         }
-        
+
         echo "Failed to enable maintenance mode\n";
         return false;
     }
@@ -229,7 +229,7 @@ class Maintenance extends ConsoleController
             echo "App is now live!\n";
             return true;
         }
-        
+
         echo "Failed to disable maintenance mode\n";
         return false;
     }
@@ -270,7 +270,7 @@ class Maintenance extends ConsoleController
     public function showStatus(): void
     {
         $status = $this->getStatus();
-        
+
         if ($status['enabled']) {
             echo "Maintenance mode is ACTIVE\n";
             echo "Enabled at: " . ($status['enabled_at'] ?? 'Unknown') . "\n";
@@ -283,5 +283,4 @@ class Maintenance extends ConsoleController
             echo ConsoleColor::green("App is running normally\n");
         }
     }
-
 }

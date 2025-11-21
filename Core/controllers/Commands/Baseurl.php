@@ -50,12 +50,13 @@ class Baseurl extends ConsoleController
      *
      * @return bool
      */
-    private function prepareKey() {
+    private function prepareKey()
+    {
 
         $content = $this->dotenv->getContent();
 
         if (strstr($content, '# ' . $this->keyword)) {
-            $this->dotenv->setContent(str_replace('# '. $this->keyword, $this->keyword, $content));
+            $this->dotenv->setContent(str_replace('# ' . $this->keyword, $this->keyword, $content));
         }
 
         $this->dotenv->write();
@@ -86,7 +87,6 @@ class Baseurl extends ConsoleController
         if (!str_contains($baseUrl, 'http://') && !empty($baseUrl)) {
             echo ConsoleColor::yellow("\n\tTemporary base url: {$baseUrl}") . "\n" . "\n"; // exit;
         }
-        
     }
 
     /**
@@ -140,13 +140,12 @@ class Baseurl extends ConsoleController
         $baseUrl = $this->dotenv->getValue($this->keyword);
 
         $default = $this->defaultBaseUrl;
-        
+
         $baseUrl = str_replace('baseurl/default/', '', $this->args[1]);
 
         if ($default !== $baseUrl) {
             $this->dotenv->setValue($this->keyword, str_replace('"', '', "'{$default}'"));
         }
-
     }
 
     /**
@@ -163,7 +162,7 @@ class Baseurl extends ConsoleController
         $baseUrl = str_replace('baseurl/host/', '', $this->args[1]);
 
         $baseUrl = $this->fixBaseUrl($baseUrl, $default);
-        
+
         $this->checkValidUrl($baseUrl);
 
         if ($baseUrl !== $default && $baseUrl !== '') {
@@ -179,7 +178,5 @@ class Baseurl extends ConsoleController
         if (!$dotenv->wasChanged()) {
             exit;
         }
-        
     }
-
 }

@@ -12,7 +12,7 @@ class Routes extends ConsoleController
     public function __construct()
     {
         parent::__construct();
-        
+
         $this->onlydev();
     }
 
@@ -35,14 +35,14 @@ class Routes extends ConsoleController
 
         $routes = $this->router->routes;
 
-        $output .= ConsoleColor::green("| No.|  Route Name   |  Route Path    \n") ;
+        $output .= ConsoleColor::green("| No.|  Route Name   |  Route Path    \n");
 
         $output .= "\n";
 
         $count = 0;
         foreach ($routes as $route => $value) {
             $count++;
-            $output .= ConsoleColor::green("$count:") ." ". ConsoleColor::cyan($route) . " : " . ConsoleColor::yellow($value) ."\n\n";
+            $output .= ConsoleColor::green("$count:") . " " . ConsoleColor::cyan($route) . " : " . ConsoleColor::yellow($value) . "\n\n";
         }
 
         echo $output . "\n";

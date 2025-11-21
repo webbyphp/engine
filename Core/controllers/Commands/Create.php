@@ -11,7 +11,7 @@ class Create extends ConsoleController
      * 
      * @var string
      */
-    private const STUBPATH = COREPATH .'core'. DS . 'Console' . DS . 'Stubs'. DS;
+    private const STUBPATH = COREPATH . 'core' . DS . 'Console' . DS . 'Stubs' . DS;
 
     /**
      * Stub Path variable
@@ -262,20 +262,20 @@ class Create extends ConsoleController
     private function getStub($type, $stubType)
     {
 
-        $stublocation = $this->stubpath . $stubType .DS. $type . '.stub';
+        $stublocation = $this->stubpath . $stubType . DS . $type . '.stub';
 
         if (file_exists($stublocation)) {
             $contents = file_get_contents($stublocation);
             return $contents;
         } else {
 
-            $text = ($type === 'package_controller') 
+            $text = ($type === 'package_controller')
                 ? " Sorry, Controllers must be created manually in packages \n Even so, it's not advisable to create them here. \n"
-                : " Cannot find " . $type . " stub" ;
+                : " Cannot find " . $type . " stub";
             $output =   " \n";
             $output .=  ConsoleColor::white($text, 'light', 'red') . " \n";
             echo $output . "\n";
-            
+
             return false;
         }
     }
@@ -295,16 +295,16 @@ class Create extends ConsoleController
         $className = basename($filePath, '.php');
 
         $contents = ($stubType === $this->view) ? '' : "<?php \n\n";
-        
+
         if (!empty($this->namespace)) {
             $contents .= "namespace " . $this->namespace . "; \n\n";
         }
-        
+
         $fileContent = $this->fileContent($fileType, $className, $stubType);
         $contents .= $fileContent;
-        
+
         $exists = file_exists($filePath);
-        
+
         if ($exists) {
             $output =   " \n";
             $output .=  ConsoleColor::white($className . " exists already", 'light', 'red') . " \n";
@@ -392,9 +392,9 @@ class Create extends ConsoleController
                 return str_replace('{{TAP}}', $className, $fileContent);
             case 'default_migration':
             case 'anonymous_migration':
-                
+
                 $className = substr($className, strpos($className, "_") + 1);
-                $className = 'Migration_'. $className;
+                $className = 'Migration_' . $className;
 
                 return str_replace('{{MIGRATION}}', $className, $fileContent);
             case 'raw_seeder':
@@ -403,7 +403,7 @@ class Create extends ConsoleController
                 return str_replace('{{SEEDER}}', $className, $fileContent);
             default:
                 ConsoleColor::white(" Sorry no file was created", 'light', 'red');
-            // exit;
+                // exit;
         }
     }
 
@@ -416,7 +416,7 @@ class Create extends ConsoleController
      */
     private function createModuleDirectory($moduleName, $app)
     {
-        
+
         $module = 'module';
 
         if ($app == 'Package') {
@@ -539,7 +539,6 @@ class Create extends ConsoleController
             static::createHelpersDirectory($moduleDirectory);
             static::createViewsDirectory($moduleDirectory);
         }
-
     }
 
     /**
@@ -556,10 +555,10 @@ class Create extends ConsoleController
         if (!is_dir($config)) {
             mkdir($config, 0755, true) or die("Unable to create a config directory");
         }
-        
+
         $moduleName = str_last_word($directoryPath, '/');
 
-        ($exists) 
+        ($exists)
             ? $this->failureOutput($moduleName . " Config folder exists already ")
             : $this->successOutput($moduleName . " Config folder created successfully ");
     }
@@ -836,7 +835,7 @@ class Create extends ConsoleController
 
         $app = str_replace('-', '', $defaultApp);
         $app = ucfirst($app);
-        
+
         if (contains('--', $packageName)) {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Wrong package name: " . $packageName, 'light', 'red') . " \n";
@@ -876,7 +875,7 @@ class Create extends ConsoleController
 
         $app = str_replace('-', '', $defaultApp);
         $app = ucfirst($app);
-        
+
         if (contains('--', $moduleName)) {
             $output =   " \n";
             $output .=  ConsoleColor::white(" Wrong module name: " . $moduleName, 'light', 'red') . " \n";
@@ -884,9 +883,9 @@ class Create extends ConsoleController
             echo $output . "\n";
             exit;
         }
-        
+
         $moduleDirectory = $this->createModuleDirectory($moduleName, $app);
-        
+
         $exists = file_exists($moduleDirectory);
 
         if ($exists) {
@@ -923,17 +922,17 @@ class Create extends ConsoleController
 
         $moduleType = str_replace('-', '', $moduleType);
         $moduleType = ucfirst($moduleType);
-        
+
         $moduleDirectory = $this->createModuleDirectory($moduleName, $moduleType);
 
         $exists = file_exists($moduleDirectory);
-        $commandDirectory = $moduleDirectory .DS. $this->command;
+        $commandDirectory = $moduleDirectory . DS . $this->command;
 
         if ($exists && $moduleName != 'commands') {
             // $this->createSubDirectory($moduleDirectory, '--c');
             $this->createSubDirectory($moduleDirectory, '--command');
         } else {
-            $commandDirectory = $moduleDirectory .DS;
+            $commandDirectory = $moduleDirectory . DS;
         }
 
         $commandName = ucwords($commandName);
@@ -943,9 +942,9 @@ class Create extends ConsoleController
         }
 
         $commandName = $commandName . 'Command';
-        
-        if (file_exists($commandDirectory .DS. $commandName . $this->fileExtention)) {
-            $this->failureOutput(ucfirst($commandName). " Command exists already in the " . ucfirst($moduleName) . " module");
+
+        if (file_exists($commandDirectory . DS . $commandName . $this->fileExtention)) {
+            $this->failureOutput(ucfirst($commandName) . " Command exists already in the " . ucfirst($moduleName) . " module");
             return;
         }
 
@@ -970,7 +969,7 @@ class Create extends ConsoleController
 
         if ($commandDirectory && is_dir($commandDirectory)) {
             $filePath = $commandDirectory . DS . $commandName;
-            $created = $this->createFile($filePath, strtolower($defaultCommandStub.'_') .'command', $this->command); 
+            $created = $this->createFile($filePath, strtolower($defaultCommandStub . '_') . 'command', $this->command);
         }
 
         if ($created) {
@@ -993,8 +992,8 @@ class Create extends ConsoleController
 
         $commandName = ucwords($commandName) . 'Command';
         $commandType = str_replace('-', '', (string)$commandType);
-        $fileType = ($commandType) ? $commandType.'_command' : 'raw_command';
-        
+        $fileType = ($commandType) ? $commandType . '_command' : 'raw_command';
+
         $this->commands = 'Console/Commands';
 
         $commandDirectory = $this->createAppRootDirectory($this->commands);
@@ -1002,13 +1001,13 @@ class Create extends ConsoleController
         $location = 'App/' . $this->commands;
 
         if (file_exists($commandDirectory . DS . $commandName . $this->fileExtention)) {
-            $this->failureOutput(ucfirst($commandName). " Command exists already in the " . $location . " directory");
+            $this->failureOutput(ucfirst($commandName) . " Command exists already in the " . $location . " directory");
             return;
         }
 
         if ($commandDirectory && is_dir($commandDirectory)) {
             $filePath = $commandDirectory . DS . $commandName;
-            $created = $this->createFile($filePath, $fileType, $this->command); 
+            $created = $this->createFile($filePath, $fileType, $this->command);
         }
 
         if ($created) {
@@ -1016,7 +1015,7 @@ class Create extends ConsoleController
             return;
         }
     }
-    
+
     /**
      * Create Controller
      *
@@ -1042,7 +1041,7 @@ class Create extends ConsoleController
 
         $moduleType = str_replace('-', '', $moduleType);
         $moduleType = ucfirst($moduleType);
-        
+
         $moduleDirectory = $this->createModuleDirectory($moduleName, $moduleType);
 
         $exists = file_exists($moduleDirectory);
@@ -1051,21 +1050,21 @@ class Create extends ConsoleController
             $this->createSubDirectory($moduleDirectory, '--c');
         }
 
-        $controllerDirectory = $moduleDirectory .DS. $this->controller;
+        $controllerDirectory = $moduleDirectory . DS . $this->controller;
         $controllerName = ucwords($controllerName);
 
         if ($addController == '--add-suffix' || $addController == '-a') {
             $controllerName = Inflector::singularize($controllerName) . 'Controller';
         }
 
-        if (file_exists($controllerDirectory .DS. $controllerName . $this->fileExtention)) {
-            $this->failureOutput(ucfirst($controllerName). " Controller exists already in the " . ucfirst($moduleName) . " module");
+        if (file_exists($controllerDirectory . DS . $controllerName . $this->fileExtention)) {
+            $this->failureOutput(ucfirst($controllerName) . " Controller exists already in the " . ucfirst($moduleName) . " module");
             return;
         }
 
         if ($controllerDirectory && is_dir($controllerDirectory)) {
             $filePath = $controllerDirectory . DS . $controllerName;
-            $created = $this->createFile($filePath, strtolower($moduleType.'_') .'controller', $this->controller); 
+            $created = $this->createFile($filePath, strtolower($moduleType . '_') . 'controller', $this->controller);
         }
 
         if ($created) {
@@ -1092,14 +1091,14 @@ class Create extends ConsoleController
         if ($addController == '--add-suffix' || $addController == '-a') {
             $controllerName = Inflector::singularize($controllerName) . 'Controller';
         }
-        
+
         $this->controllers = 'Controllers';
 
         if ($addController == '--dir' && $location != 'Controllers') {
             $location = str_replace('_', ' ', $location);
             $location = ucwords($location);
             $location = str_replace(' ', '/', $location);
-            $this->controllers = 'Controllers' .DS. $location;
+            $this->controllers = 'Controllers' . DS . $location;
         }
 
         if (str_contains($location, '--dir') && $location != 'Controllers') {
@@ -1107,21 +1106,21 @@ class Create extends ConsoleController
             $location = str_replace('_', ' ', $location);
             $location = ucwords($location);
             $location = str_replace(' ', '/', $location);
-            $this->controllers = 'Controllers' .DS. $location;
+            $this->controllers = 'Controllers' . DS . $location;
         }
 
         $controllerDirectory = $this->createAppRootDirectory($this->controllers);
 
-        $location = 'App' .DS. $this->controllers;
+        $location = 'App' . DS . $this->controllers;
 
         if (file_exists($controllerDirectory . DS . $controllerName . $this->fileExtention)) {
-            $this->failureOutput(ucfirst($controllerName). " Controller exists already in the " . $location . " directory");
+            $this->failureOutput(ucfirst($controllerName) . " Controller exists already in the " . $location . " directory");
             return;
         }
 
         if ($controllerDirectory && is_dir($controllerDirectory)) {
             $filePath = $controllerDirectory . DS . $controllerName;
-            $created = $this->createFile($filePath, $fileType, $this->controller); 
+            $created = $this->createFile($filePath, $fileType, $this->controller);
         }
 
         if ($created) {
@@ -1139,13 +1138,13 @@ class Create extends ConsoleController
      * @param string $location
      * @return void
      */
-    public function createNonModuleModel($modelName = '', $modelType = '--easy', $removeModel = '', $location = 'Models') 
+    public function createNonModuleModel($modelName = '', $modelType = '--easy', $removeModel = '', $location = 'Models')
     {
 
         $created = '';
         $namespace = 'App\Models';
         $modelName = ucwords($modelName);
-        
+
         $this->model = 'Models';
         $this->namespace = $namespace;
 
@@ -1154,7 +1153,7 @@ class Create extends ConsoleController
             $location = ucwords($location);
             $location = str_replace(' ', '/', $location);
 
-            $this->model = 'Models' .DS. $location;
+            $this->model = 'Models' . DS . $location;
             $this->namespace = 'App\\' .  str_replace('/', '\\', $this->model);
             $location = $this->model;
         }
@@ -1184,7 +1183,7 @@ class Create extends ConsoleController
         }
 
         if ($created) {
-            $this->successOutput(ucfirst($modelName) . " " .ucfirst($modelType) . " Model created successfully in " . $location);
+            $this->successOutput(ucfirst($modelName) . " " . ucfirst($modelType) . " Model created successfully in " . $location);
             return;
         }
     }
@@ -1198,7 +1197,7 @@ class Create extends ConsoleController
      * @param string $removeModel
      * @return void
      */
-    public function createModel($location = '', $modelName = '', $modelType = '--easy', $removeModel = '') 
+    public function createModel($location = '', $modelName = '', $modelType = '--easy', $removeModel = '')
     {
 
         $module = explode(':', $location);
@@ -1227,7 +1226,7 @@ class Create extends ConsoleController
 
         $modelDirectory = $moduleDirectory . DS . $this->model;
         $modelName = ucwords($modelName);
-        
+
         if ($removeModel == '--remove-suffix') {
             $modelName = str_replace(['Model', 'model'], '', $modelName);
         } else {
@@ -1246,7 +1245,7 @@ class Create extends ConsoleController
         }
 
         if ($created) {
-            $this->successOutput(ucfirst(substr($modelName, 0, -5)) . " " .ucfirst($modelType) . " Model created successfully ");
+            $this->successOutput(ucfirst(substr($modelName, 0, -5)) . " " . ucfirst($modelType) . " Model created successfully ");
             return;
         }
     }
@@ -1304,7 +1303,7 @@ class Create extends ConsoleController
         }
 
         $serviceName = Inflector::singularize($serviceName) . 'Service';
-        
+
 
         if (file_exists($serviceDirectory . DS . $serviceName . $this->fileExtention)) {
             $this->failureOutput(ucfirst($serviceName) . " exists already in the " . ucfirst($moduleName ?: $this->service) . " module");
@@ -1360,7 +1359,7 @@ class Create extends ConsoleController
         }
 
         $actionDirectory = $moduleDirectory . DS . $this->action;
-        
+
         if ($module[0] === 'empty') {
             $actionDirectory = $this->createAppRootDirectory($this->action);
         }
@@ -1522,7 +1521,7 @@ class Create extends ConsoleController
         // if ($helperType === '--static') {
         //     $helperName = substr($helperName, 0, -7);
         // }
-        
+
         if ($created) {
             $this->successOutput(ucfirst(substr($helperName, 0, -7)) . " " . ucfirst($helperType) . " Helper created successfully ");
             return;
@@ -1537,7 +1536,7 @@ class Create extends ConsoleController
      * @param string $defaultType
      * @return void
      */
-    public function createForm($location = '', $formName = '', $defaultType = '--form') 
+    public function createForm($location = '', $formName = '', $defaultType = '--form')
     {
         $module = explode(':', $location);
         $moduleName = '';
@@ -1566,7 +1565,7 @@ class Create extends ConsoleController
         $formDirectory = $moduleDirectory . DS . $this->form;
         $formName = ucwords($formName);
         $formName = Inflector::singularize($formName) . 'Forms';
-        
+
         if (file_exists($formDirectory . DS . $formName . $this->fileExtention)) {
             $this->failureOutput(ucfirst($formName) . " exists already in the " . ucfirst($moduleName) . " module");
             return;
@@ -1592,7 +1591,7 @@ class Create extends ConsoleController
      * @param string $defaultType
      * @return void
      */
-    public function createRule($location = '', $ruleName = '', $defaultType = '--rule') 
+    public function createRule($location = '', $ruleName = '', $defaultType = '--rule')
     {
         $module = explode(':', $location);
         $moduleName = '';
@@ -1646,7 +1645,7 @@ class Create extends ConsoleController
      * @param string $defaultType
      * @return void
      */
-    public function createMiddleware($name = '', $defaultType = '--web') 
+    public function createMiddleware($name = '', $defaultType = '--web')
     {
         $middlewareName = $name;
         $created = '';
@@ -1664,8 +1663,8 @@ class Create extends ConsoleController
             $middlewareName = ucfirst(substr($middlewareName, 0, -10));
         }
 
-        $middlewareName = ($middlewareName == 'Api') 
-            ? ucwords($middlewareName) . 'Middleware'  
+        $middlewareName = ($middlewareName == 'Api')
+            ? ucwords($middlewareName) . 'Middleware'
             : Inflector::singularize($middlewareName) . 'Middleware';
 
         if (file_exists($middlewareDirectory . DS . $middlewareName . $this->fileExtention)) {
@@ -1676,14 +1675,13 @@ class Create extends ConsoleController
         if ($middlewareDirectory && is_dir($middlewareDirectory)) {
             $filePath = $middlewareDirectory . DS . $middlewareName;
             $defaultType = str_replace('-', '', $defaultType);
-            $created = $this->createFile($filePath, strtolower($defaultType).'_middleware', $this->middleware);
+            $created = $this->createFile($filePath, strtolower($defaultType) . '_middleware', $this->middleware);
         }
 
         if ($created) {
             $this->successOutput(ucfirst(substr($middlewareName, 0, -10)) . " Middleware created successfully ");
             return;
         }
-
     }
 
     /**
@@ -1773,9 +1771,9 @@ class Create extends ConsoleController
         $migrationDirectory = ROOTPATH . 'database/migrations';
 
         $migrationType = config_item('migration_type');
-            
+
         if ($migrationType == 'timestamp') {
-            $migrationName = date('YmdHis') .'_'. ucfirst($migrationName);
+            $migrationName = date('YmdHis') . '_' . ucfirst($migrationName);
         } else {
             $migrationName = 'Migration_' . ucfirst($migrationName);
         }
@@ -1788,7 +1786,7 @@ class Create extends ConsoleController
         if ($migrationDirectory && is_dir($migrationDirectory)) {
             $filePath = $migrationDirectory . DS . $migrationName;
             $defaultType = str_replace('-', '', $defaultType);
-            $created = $this->createFile($filePath, strtolower($defaultType).'_migration', $this->migration);
+            $created = $this->createFile($filePath, strtolower($defaultType) . '_migration', $this->migration);
         }
 
         if ($created) {
@@ -1820,7 +1818,7 @@ class Create extends ConsoleController
         if ($seederDirectory && is_dir($seederDirectory)) {
             $filePath = $seederDirectory . DS . $seederName;
             $seederType = str_replace('-', '', $seederType);
-            $created = $this->createFile($filePath, strtolower($seederType).'_seeder', $this->seeder);
+            $created = $this->createFile($filePath, strtolower($seederType) . '_seeder', $this->seeder);
         }
 
         if ($created) {
@@ -1885,7 +1883,7 @@ class Create extends ConsoleController
         if (!is_dir($directory)) {
             mkdir($directory, 0755, true);
         }
-        
+
         if ($viewDirectory && is_dir($viewDirectory)) {
             $filePath = $viewDirectory . DS . $viewFile;
             $defaultType = str_replace('-', '', $defaultType);
@@ -1896,7 +1894,6 @@ class Create extends ConsoleController
             $this->successOutput(ucfirst($filename) . " View created successfully ");
             return;
         }
-
     }
 
     public function createJsonDb($name = '')
@@ -1907,7 +1904,7 @@ class Create extends ConsoleController
         $db = new \Base\Json\Db;
 
         $created = $db->createDatabase($databaseName);
-        
+
         if ($created === 'exists') {
             $this->warnOutput(ucfirst($databaseName) . " Database exists already ");
             return;
@@ -1922,7 +1919,5 @@ class Create extends ConsoleController
             $this->successOutput(ucfirst($databaseName) . " Database created successfully ");
             return;
         }
-
     }
-
 }

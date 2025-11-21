@@ -11,7 +11,7 @@ class Session extends ConsoleController
     public function __construct()
     {
         parent::__construct();
-        
+
         $this->onlydev();
 
         $this->prune = new Prune;
@@ -32,12 +32,9 @@ class Session extends ConsoleController
                 $this->prune->fileSessions();
             }
 
-            echo $this->success(ucwords($path). " sessions pruned successfully");
-
+            echo $this->success(ucwords($path) . " sessions pruned successfully");
         } catch (\Exception $e) {
             echo $this->error(ucwords($path) . " session failed to prune, please check for path permissions");
         }
-        
     }
-
 }

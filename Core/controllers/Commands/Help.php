@@ -1,19 +1,19 @@
  <?php
 
-use Base\Console\ConsoleColor;
-use Base\Console\Commands\Help as ConsoleHelp;
-use Base\Controllers\ConsoleController;
+    use Base\Console\ConsoleColor;
+    use Base\Console\Commands\Help as ConsoleHelp;
+    use Base\Controllers\ConsoleController;
 
-class Help extends ConsoleController
-{
-    public function __construct()
+    class Help extends ConsoleController
     {
-        parent::__construct();
-        $this->onlydev();
-    }
+        public function __construct()
+        {
+            parent::__construct();
+            $this->onlydev();
+        }
 
-    public function index()
-    {
-        ConsoleHelp::showHelp();
+        public function index()
+        {
+            ConsoleHelp::showHelp();
+        }
     }
-}

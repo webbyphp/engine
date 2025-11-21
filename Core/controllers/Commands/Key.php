@@ -17,7 +17,7 @@ class Key extends ConsoleController
     public function __construct()
     {
         parent::__construct();
-        
+
         $this->onlydev();
     }
 
@@ -41,7 +41,8 @@ class Key extends ConsoleController
      *
      * @return bool
      */
-    private function check() {
+    private function check()
+    {
 
         $exists = false;
 
@@ -50,7 +51,6 @@ class Key extends ConsoleController
         }
 
         return $exists;
-
     }
 
     /**
@@ -58,18 +58,19 @@ class Key extends ConsoleController
      *
      * @return bool
      */
-    private function prepareKey() {
+    private function prepareKey()
+    {
 
         $dotenv = new DotEnvWriter();
 
         $content = $dotenv->getContent();
 
         if (strstr($content, '#' . $this->keyword)) {
-            $dotenv->setContent(str_replace('#'. $this->keyword, $this->keyword, $content));
+            $dotenv->setContent(str_replace('#' . $this->keyword, $this->keyword, $content));
         }
-        
+
         if (strstr($content, '# ' . $this->keyword)) {
-            $dotenv->setContent(str_replace('# '. $this->keyword, $this->keyword, $content));
+            $dotenv->setContent(str_replace('# ' . $this->keyword, $this->keyword, $content));
         }
 
         $dotenv->write();
@@ -109,9 +110,9 @@ class Key extends ConsoleController
         $dotenv = new DotEnvWriter();
 
         $keyValue = $dotenv->getValue($this->keyword);
-        
+
         $key = $this->createkey();
-        
+
         if (!empty($keyValue)) {
             echo ConsoleColor::yellow("Key exists already") . "\n";
             exit();
@@ -140,7 +141,7 @@ class Key extends ConsoleController
         $key = $this->createkey();
 
         $dotenv->setValue($this->keyword, $key);
-        
+
         if ($dotenv->wasChanged()) {
             echo ConsoleColor::green("Key regenerated successfully") . "\n";
             exit();
@@ -148,7 +149,5 @@ class Key extends ConsoleController
 
         echo ConsoleColor::red("Key could not generate you have to do it manually in .env file") . "\n";
         exit();
-
     }
-
 }

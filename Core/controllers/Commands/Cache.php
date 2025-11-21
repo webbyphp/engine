@@ -11,7 +11,7 @@ class Cache extends ConsoleController
     public function __construct()
     {
         parent::__construct();
-        
+
         $this->onlydev();
 
         $this->cache = new Cached;
@@ -25,7 +25,7 @@ class Cache extends ConsoleController
     public function clearpath($path)
     {
         try {
-            
+
             $parentDirectory = 'web' . DS;
             $cachePath = $path;
 
@@ -39,12 +39,10 @@ class Cache extends ConsoleController
 
             $this->cache->setCachePath($cachePath)->clearAllCache(); //->deleteCacheItem('arrayz'));
 
-            echo $this->success(ucwords($path). " caches pruned successfully");
-
+            echo $this->success(ucwords($path) . " caches pruned successfully");
         } catch (\Exception $e) {
             echo $this->error(ucwords($path) . " caches failed to prune, please check for path permissions");
         }
-        
     }
 
     /**
@@ -55,8 +53,8 @@ class Cache extends ConsoleController
     public function clearCachedConfig()
     {
         try {
-            
-            $cachePath = ROOTPATH .'config'. DS;
+
+            $cachePath = ROOTPATH . 'config' . DS;
             $filename = 'cached_config.php';
             $cacheFile = $cachePath . $filename;
             $cacheFileName = 'Cached Config:';
@@ -68,11 +66,9 @@ class Cache extends ConsoleController
                 unlink($cacheFile);
             }
 
-            echo $this->success(ucwords($cacheFileName). " {$filename} pruned successfully");
-
+            echo $this->success(ucwords($cacheFileName) . " {$filename} pruned successfully");
         } catch (\Exception $e) {
             echo $this->error(ucwords($cacheFileName) . " {$filename} failed to prune, please check for path permissions");
         }
     }
-
 }
