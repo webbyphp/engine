@@ -228,7 +228,7 @@ class CI_CodeIgniter
     /**
      * Sets the ICONV constants.
      *
-     * @param  boolean $enabled
+     * @param  bool $enabled
      * @return void
      */
     protected function iconv($enabled = false)

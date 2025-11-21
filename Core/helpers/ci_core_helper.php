@@ -90,8 +90,8 @@ if (! function_exists('uri')) {
     /**
      *  Fetch URI string or Segment Array
      *
-     *  @param     boolean    $array
-     *  @param     boolean    $rsegment
+     *  @param     bool    $array
+     *  @param     bool    $rsegment
      *  @return    array|string
      */
     function uri($array = false, $rsegment = false)
@@ -413,7 +413,7 @@ if (! function_exists('is_ajax_request')) {
     /**
      * Check whether request is an ajax request
      *
-     * @return boolean
+     * @return bool
      */
     function is_ajax_request()
     {
@@ -545,7 +545,7 @@ if (! function_exists('old_checkbox')) {
      *
      * @param string $field
      * @param string $value
-     * @param boolean $default
+     * @param bool $default
      * @return string
      */
     function old_checkbox($field, $value = '')
@@ -967,7 +967,7 @@ if (! function_exists('use_model')) {
      *
      * @param string|array $model
      * @param string $name
-     * @param boolean $db_conn
+     * @param bool $db_conn
      * @return mixed
      */
     function use_model($model, $name = '', $db_conn = false)
@@ -1042,7 +1042,7 @@ if (! function_exists('use_rule')) {
      * It can be used in controllers or models
      *
      * @param string|array $rule
-     * @param boolean $return_array
+     * @param bool $return_array
      * @return void
      */
     function use_rule($rule = [], $return_array = false)
@@ -1094,8 +1094,8 @@ if (! function_exists('use_language')) {
      *
      * @param string $langfile
      * @param string $idiom
-     * @param boolean $return
-     * @param boolean $add_suffix
+     * @param bool $return
+     * @param bool $add_suffix
      * @param string $alt_path
      * @return void|array
      */
@@ -1111,7 +1111,7 @@ if (! function_exists('trans')) {
      * from the language file
      *
      * @param string $line
-     * @param boolean $log_errors
+     * @param bool $log_errors
      * @return string
      */
     function trans($line, $log_errors = true)
@@ -1125,7 +1125,7 @@ if (! function_exists('__')) {
      * alias to the function above
      *
      * @param string $line
-     * @param boolean $log_errors
+     * @param bool $log_errors
      * @return string
      */
     function __($line, $log_errors = true)

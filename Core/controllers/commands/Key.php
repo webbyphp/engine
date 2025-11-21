@@ -81,7 +81,7 @@ class Key extends ConsoleController
      * Create key
      *
      * @param string $key
-     * @param boolean $use_bytes
+     * @param bool $use_bytes
      * @return string
      */
     private function createkey($key = '', $use_bytes = false)

@@ -200,13 +200,13 @@ class Migration extends ConsoleController
 			->get(self::TABLE)->first_row();
 	}
 
-    /**
-     * Executed Migrations
-     *
-     * @param boolean $latest
-	 * @param boolean $single
-     * @return mixed
-     */
+	/**
+	 * Executed Migrations
+	 *
+	 * @param bool $latest
+	 * @param bool $single
+	 * @return mixed
+	 */
 	private function executedMigrations($latest = true, $single = false)
 	{
 		

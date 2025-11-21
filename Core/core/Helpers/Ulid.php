@@ -67,7 +67,7 @@ class Ulid
      * Use String function
      *
      * @param string $value
-     * @param boolean $lowercase
+     * @param bool $lowercase
      * @return self
      */
     public static function useString(string $value, bool $lowercase = false): self
@@ -133,7 +133,7 @@ class Ulid
     /**
      * Generate Id
      *
-     * @param boolean $lowercase
+     * @param bool $lowercase
      * @return self
      */
     public static function generate(bool $lowercase = false): self

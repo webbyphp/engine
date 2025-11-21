@@ -939,7 +939,7 @@ class CI_DB_json_driver extends CI_DB_driver
     /**
      * Flushes indexes they won't be reused on next action
      *
-     * @param boolean $flushWhere
+     * @param bool $flushWhere
      * @return void
      */
     private function flushIndexes($flushWhere = false)

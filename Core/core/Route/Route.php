@@ -215,7 +215,7 @@ class Route
 	/**
 	 * Constructor function
 	 *
-	 * @param boolean $namespace
+	 * @param bool $namespace
 	 */
 	public function __construct($namespace = null)
 	{
@@ -1124,7 +1124,7 @@ class Route
 	 * Creates resource routes
 	 *
 	 * @param string $name i.e. module/controller name
-	 * @param boolean $hasController
+	 * @param bool $hasController
 	 * @return void
 	 */
 	public static function webResource($name, $hasController = true)
@@ -1151,7 +1151,7 @@ class Route
 	 * Alias to method above
 	 *
 	 * @param string $name
-	 * @param boolean $hasController
+	 * @param bool $hasController
 	 * @return void
 	 */
 	public static function uselinks($name, $hasController = true)
@@ -1163,7 +1163,7 @@ class Route
 	 * Alias to method above
 	 *
 	 * @param string $name
-	 * @param boolean $hasController
+	 * @param bool $hasController
 	 * @return void
 	 */
 	public static function web($name, $hasController = true)
@@ -1218,7 +1218,7 @@ class Route
 	 * Creates resource routes
 	 *
 	 * @param string $name i.e. module/controller name
-	 * @param boolean $hasController
+	 * @param bool $hasController
 	 * @return void
 	 */
 	public static function apiResource($name, $hasController = true)
@@ -1243,7 +1243,7 @@ class Route
 	 * Alias to method above
 	 *
 	 * @param string $name
-	 * @param boolean $hasController
+	 * @param bool $hasController
 	 * @return void
 	 */
 	public static function api($name, $hasController = true)
@@ -1255,7 +1255,7 @@ class Route
 	 * Singleton Resource method
 	 *
 	 * @param string $name i.e. module/controller name
-	 * @param boolean $hasController
+	 * @param bool $hasController
 	 * @return void
 	 */
 	public static function singleton($name, $hasController = true)
@@ -1280,7 +1280,7 @@ class Route
 	 *
 	 * @param string $name
 	 * @param array $method
-	 * @param boolean $hasController
+	 * @param bool $hasController
 	 * @return void
 	 */
 	public static function partial($name, $method = [], $hasController = true)
@@ -1302,7 +1302,7 @@ class Route
 	 *
 	 * @param string $route
 	 * @param string $signature
-	 * @param boolean $hasController
+	 * @param bool $hasController
 	 * @return void
 	 */
 	public static function unique($route, $signature, $hasController = true)
@@ -1589,7 +1589,7 @@ class Route
 	 *
 	 * @param  string $module
 	 * @param string $controller
-	 * @param boolean $hasController
+	 * @param bool $hasController
 	 * @return string
 	 */
 	private static function setMOC($module, $controller, $hasController)

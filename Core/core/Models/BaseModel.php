@@ -3794,7 +3794,7 @@ class BaseModel extends Model implements \ArrayAccess
      * Get query row function
      *
      * @param object $query
-     * @param boolean $last
+     * @param bool $last
      * @return mixed
      */
     public function getRowResult($query, $last = false)
@@ -4213,7 +4213,7 @@ class BaseModel extends Model implements \ArrayAccess
      * Insert Batch data into table
      *
      * @param array $data
-     * @param boolean $escape
+     * @param bool $escape
      * @param integer $size
      * @return integer
      */
@@ -4655,7 +4655,7 @@ class BaseModel extends Model implements \ArrayAccess
     /**
      * Distinct function
      *
-     * @param boolean $value
+     * @param bool $value
      * @return static
      */
     public function distinct($value = true)
@@ -4698,7 +4698,7 @@ class BaseModel extends Model implements \ArrayAccess
      *
      * @param mixed $key
      * @param mixed $value
-     * @param boolean $escape
+     * @param bool $
      * @return static
      */
     public function where($key, $value = null, $escape = true)
@@ -4712,7 +4712,7 @@ class BaseModel extends Model implements \ArrayAccess
      *
      * @param mixed $key
      * @param mixed $value
-     * @param boolean $escape
+     * @param bool $
      * @return static
      */
     public function orWhere($key, $value = null, $escape = true)
@@ -4846,7 +4846,7 @@ class BaseModel extends Model implements \ArrayAccess
      *
      * @param mixed $key
      * @param string $value
-     * @param boolean $escape
+     * @param bool $ape
      * @return static
      */
     public function having($key, $value = '', $escape = true)
@@ -4860,7 +4860,7 @@ class BaseModel extends Model implements \ArrayAccess
      *
      * @param mixed $key
      * @param string $value
-     * @param boolean $escape
+     * @param bool $ape
      * @return static
      */
     public function orHaving($key, $value = '', $escape = true)
@@ -4976,7 +4976,7 @@ class BaseModel extends Model implements \ArrayAccess
      *
      * @param mixed $key
      * @param string $value
-     * @param boolean $escape
+     * @param bool $escape
      * @return static
      */
     public function set($key, $value = '', $escape = true)

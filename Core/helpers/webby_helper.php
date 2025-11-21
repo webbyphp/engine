@@ -817,7 +817,7 @@ if (! function_exists('str_humanize')) {
      * string and you can capitalize it 
      *
      * @param string $str
-     * @param boolean $capitalize
+     * @param bool $capitalize
      * @return string
      */
     function str_humanize($str, $capitalize = false)
@@ -907,7 +907,7 @@ if (! function_exists('str_censor')) {
      *
      * @param string $text
      * @param string|array $words_to_censor
-     * @param boolean $replacement
+     * @param bool $replacement
      * @return string
      */
     function str_censor($text, $words_to_censor, $replacement = false)
@@ -962,7 +962,7 @@ if (! function_exists('starts_with')) {
      *
      *  @param     string          $haystack
      *  @param     string|array    $needles
-     *  @return    boolean
+     *  @return    bool
      */
     function starts_with($haystack, $needles)
     {
@@ -986,7 +986,7 @@ if (! function_exists('ends_with')) {
      *
      *  @param string $haystack
      *  @param string|array $needles
-     *  @return boolean
+     *  @return bool
      */
     function ends_with($haystack, $needles)
     {
@@ -1034,7 +1034,7 @@ if (! function_exists('has_element')) {
      *
      * @param string|mixed $element
      * @param array $array
-     * @return boolean
+     * @return bool
      */
     function has_element($element, $array)
     {
@@ -1104,7 +1104,7 @@ if (! function_exists('add_array')) {
      * @param array|string $array
      * @param mixed $element
      * @param string|null $symbol
-     * @param boolean $return_string
+     * @param bool $return_string
      * @return array|string
      */
     function add_array(array|string $array, mixed $element, ?string $symbol = null, bool $return_string = false): array|string
@@ -1211,7 +1211,7 @@ if (! function_exists('remove_from_array')) {
      * @param array $array
      * @param string $element
      * @param string $symbol
-     * @param boolean $return_string
+     * @param bool $return_string
      * @return mixed
      */
     function remove_from_array(
@@ -1301,7 +1301,7 @@ if (! function_exists('arrayfy')) {
      * as an array or generator
      *
      * @param object|array $object
-     * @param boolean $asGenerator
+     * @param bool $asGenerator
      * @param int $threshold
      * @return \Generator|array
      */
@@ -1494,7 +1494,7 @@ if (! function_exists('to_generator')) {
      * to a generator
      *
      * @param mixed $data
-     * @param integer $threshold
+     * @param int $threshold
      * @return \Generator|array|object
      */
     function to_generator($data, $threshold = 1000)
@@ -2154,7 +2154,7 @@ if (! function_exists('time_ago')) {
      * Time ago
      *
      * @param mixed $datetime
-     * @param boolean $show_ago
+     * @param bool $show_ago
      * @return string
      */
     function time_ago($datetime, $show_ago = false)
@@ -2556,7 +2556,7 @@ if (! function_exists('is_email')) {
      * Check if email is valid
      *
      * @param string $email
-     * @return boolean
+     * @return bool
      */
     function is_email($email)
     {
@@ -2575,7 +2575,7 @@ if (! function_exists('is_domain')) {
      *
      * @param string $email
      * @param string $domain
-     * @return boolean
+     * @return bool
      */
     function is_domain($email, $domain)
     {
@@ -2592,7 +2592,7 @@ if (! function_exists('is_email_injected')) {
      * validate against any email injection attempts
      *
      * @param string $email
-     * @return boolean
+     * @return bool
      */
     function is_email_injected($email)
     {
@@ -2621,7 +2621,7 @@ if (! function_exists('is_email_valid')) {
      * checks whether the email address is valid
      *
      * @param string $email
-     * @return boolean
+     * @return bool
      */
     function is_email_valid($email)
     {

@@ -50,7 +50,7 @@ class ConsoleColor
      * Logs a string to console.
      * @param  string  $str        Input String
      * @param  string  $color      Text Color
-     * @param  boolean $newline    Append EOF?
+     * @param  bool $newline    Append EOF?
      * @param  string  $background Background Color
      * @return string              Formatted output
      */

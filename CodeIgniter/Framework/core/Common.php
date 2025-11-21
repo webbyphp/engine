@@ -125,7 +125,7 @@ if (! function_exists('is')) {
 	 *
 	 *  @param     string     $key
 	 *  @param     string     $value
-	 *  @return    boolean
+	 *  @return    bool
 	 */
 	function is($key, $value = null)
 	{
