@@ -262,21 +262,6 @@ if (extension_loaded('iconv')) {
 	define('ICONV_ENABLED', false);
 }
 
-if (is_php('5.6')) {
-	ini_set('php.internal_encoding', $charset);
-}
-
-/*
- * ------------------------------------------------------
- *  Load compatibility features
- * ------------------------------------------------------
- */
-
-require_once(BASEPATH . 'core/compat/mbstring.php');
-require_once(BASEPATH . 'core/compat/hash.php');
-require_once(BASEPATH . 'core/compat/password.php');
-require_once(BASEPATH . 'core/compat/standard.php');
-
 /*
  * ------------------------------------------------------
  *  Instantiate the UTF-8 class
@@ -484,7 +469,7 @@ if ($e404) {
 			$error_method = 'index';
 		}
 
-		$error_class = ucfirst($error_class);
+		$error_class = ucfirst($error_class ?? '');
 
 		if (!class_exists($error_class, false)) {
 			if (file_exists(COREPATH . 'controllers/' . $RTR->directory . $error_class . '.php')) {
