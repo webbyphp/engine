@@ -144,8 +144,6 @@ class CI_Session_files_driver extends CI_Session_driver implements CI_Session_dr
 			. $name // we'll use the session cookie name as a prefix to avoid collisions
 			. ($this->_config['match_ip'] ? md5($_SERVER['REMOTE_ADDR']) : '');
 
-		$this->php5_validate_id();
-
 		return $this->_success;
 	}
 

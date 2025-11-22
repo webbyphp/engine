@@ -126,8 +126,6 @@ class CI_Session_database_driver extends CI_Session_driver implements CI_Session
 			return $this->_failure;
 		}
 
-		$this->php5_validate_id();
-
 		return $this->_success;
 	}
 

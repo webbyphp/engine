@@ -101,29 +101,8 @@ abstract class CI_Session_driver
 	{
 		$this->_config = &$params;
 
-		if (is_php('7')) {
-			$this->_success = true;
-			$this->_failure = false;
-		} else {
-			$this->_success = 0;
-			$this->_failure = -1;
-		}
-	}
-
-	// ------------------------------------------------------------------------
-
-	/**
-	 * PHP 5.x validate ID
-	 *
-	 * Enforces session.use_strict_mode
-	 *
-	 * @return	void
-	 */
-	public function php5_validate_id()
-	{
-		if ($this->_success === 0 && isset($_COOKIE[$this->_config['cookie_name']]) && !$this->validateId($_COOKIE[$this->_config['cookie_name']])) {
-			unset($_COOKIE[$this->_config['cookie_name']]);
-		}
+		$this->_success = true;
+		$this->_failure = false;
 	}
 
 	// ------------------------------------------------------------------------
