@@ -169,7 +169,7 @@ class CI_Session_files_driver extends CI_Session_driver implements CI_Session_dr
 				return $this->_failure;
 			}
 
-			if (flock($this->_file_handle, LOCK_EX) === false) {
+			if (flock($this->_file_handle, LOCK_SH) === false) {
 				log_message('error', "Session: Unable to obtain lock for file '" . $this->_file_path . $session_id . "'.");
 				fclose($this->_file_handle);
 				$this->_file_handle = null;
@@ -207,6 +207,7 @@ class CI_Session_files_driver extends CI_Session_driver implements CI_Session_dr
 		}
 
 		$this->_fingerprint = md5($session_data);
+		flock($this->_file_handle, LOCK_UN);
 		return $session_data;
 	}
 
@@ -226,6 +227,13 @@ class CI_Session_files_driver extends CI_Session_driver implements CI_Session_dr
 		// If the two IDs don't match, we have a session_regenerate_id() call
 		// and we need to close the old handle and open a new one
 		if ($session_id !== $this->_session_id && ($this->close() === $this->_failure or $this->read($session_id) === $this->_failure)) {
+			return $this->_failure;
+		}
+
+		if (flock($this->_file_handle, LOCK_EX) === false) {
+			log_message('error', "Session: Unable to obtain lock for file '" . $this->_file_path . $session_id . "'.");
+			fclose($this->_file_handle);
+			$this->_file_handle = null;
 			return $this->_failure;
 		}
 
@@ -257,6 +265,7 @@ class CI_Session_files_driver extends CI_Session_driver implements CI_Session_dr
 		}
 
 		$this->_fingerprint = md5($session_data);
+		flock($this->_file_handle, LOCK_UN);
 		return $this->_success;
 	}
 
@@ -272,7 +281,7 @@ class CI_Session_files_driver extends CI_Session_driver implements CI_Session_dr
 	public function close()
 	{
 		if (is_resource($this->_file_handle)) {
-			flock($this->_file_handle, LOCK_UN);
+
 			fclose($this->_file_handle);
 
 			$this->_file_handle = $this->_file_new = $this->_session_id = null;
