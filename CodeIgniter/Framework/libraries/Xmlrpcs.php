@@ -228,10 +228,9 @@ class CI_Xmlrpcs extends CI_Xmlrpc
 		//-------------------------------------
 
 		$parser = xml_parser_create($this->xmlrpc_defencoding);
-		$parser_object = new XML_RPC_Message('filler');
-		$pname = (string) $parser;
+		$parser_object = new XML_RPC_Message('default_method');
 
-		$parser_object->xh[$pname] = [
+		$parser_object->xh = [
 			'isf' => 0,
 			'isf_reason' => '',
 			'params' => [],
@@ -240,10 +239,10 @@ class CI_Xmlrpcs extends CI_Xmlrpc
 			'method' => ''
 		];
 
-		xml_set_object($parser, $parser_object);
 		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, true);
-		xml_set_element_handler($parser, 'open_tag', 'closing_tag');
-		xml_set_character_data_handler($parser, 'character_data');
+		xml_set_element_handler($parser, [$parser_object, 'open_tag'], [$parser_object, 'closing_tag']);
+		xml_set_character_data_handler($parser, [$parser_object, 'character_data']);
+
 		//xml_set_default_handler($parser, 'default_handler');
 
 		//-------------------------------------
@@ -261,19 +260,19 @@ class CI_Xmlrpcs extends CI_Xmlrpc
 					xml_get_current_line_number($parser)
 				)
 			);
-		} elseif ($parser_object->xh[$pname]['isf']) {
+		} elseif ($parser_object->xh['isf']) {
 			return new XML_RPC_Response(0, $this->xmlrpcerr['invalid_return'], $this->xmlrpcstr['invalid_return']);
 		} else {
 
-			$m = new XML_RPC_Message($parser_object->xh[$pname]['method']);
+			$m = new XML_RPC_Message($parser_object->xh['method']);
 			$plist = '';
 
-			for ($i = 0, $c = count($parser_object->xh[$pname]['params']); $i < $c; $i++) {
-				if ($this->debug === true) {
-					$plist .= $i . ' - ' . print_r(get_object_vars($parser_object->xh[$pname]['params'][$i]), true) . ";\n";
+			for ($i = 0, $c = count($parser_object->xh['params']); $i < $c; $i++) {
+				if ($this->debug === TRUE) {
+					$plist .= $i . ' - ' . print_r(get_object_vars($parser_object->xh['params'][$i]), true) . ";\n";
 				}
 
-				$m->addParam($parser_object->xh[$pname]['params'][$i]);
+				$m->addParam($parser_object->xh['params'][$i]);
 			}
 
 			if ($this->debug === true) {
@@ -482,6 +481,7 @@ class CI_Xmlrpcs extends CI_Xmlrpc
 		return new XML_RPC_Response(0, $this->xmlrpcerr['unknown_method'], $this->xmlrpcstr['unknown_method']);
 
 		$parameters = $m->output_parameters();
+
 		$calls = $parameters[0];
 
 		$result = [];
@@ -516,8 +516,8 @@ class CI_Xmlrpcs extends CI_Xmlrpc
 	 */
 	public function multicall_error($err)
 	{
-		$str = is_string($err) ? $this->xmlrpcstr["multicall_{$err}"] : $err->faultString();
-		$code = is_string($err) ? $this->xmlrpcerr["multicall_{$err}"] : $err->faultCode();
+		$str = is_string($err) ? $this->xmlrpcstr["multicall_$err"] : $err->faultString();
+		$code = is_string($err) ? $this->xmlrpcerr["multicall_$err"] : $err->faultCode();
 
 		$struct['faultCode'] = new XML_RPC_Values($code, 'int');
 		$struct['faultString'] = new XML_RPC_Values($str, 'string');
