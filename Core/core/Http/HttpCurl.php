@@ -801,7 +801,7 @@ class HttpCurl
         }
 
         // Success
-        curl_close($this->session);
+        unset($this->session);
         $this->lastResponse = $this->processResponse($this->lastResponseRaw);
         $this->reset();
         $this->hasError = false;
@@ -849,7 +849,7 @@ class HttpCurl
         $this->errorString = curl_error($this->session);
         $this->hasError = true;
 
-        curl_close($this->session);
+        unset($this->session);
         $this->reset();
     }
 

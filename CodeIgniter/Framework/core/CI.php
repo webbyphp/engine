@@ -133,14 +133,8 @@ class CI_CodeIgniter
      */
     protected function charset()
     {
-        ini_set('default_charset', $charset = strtoupper(config_item('charset')));
-
+        $charset = strtoupper(config_item('charset')); // Define $charset
         defined('MB_ENABLED') || define('MB_ENABLED', extension_loaded('mbstring'));
-
-        $encoding = 'mbstring.internal_encoding';
-
-        ! ini_get($encoding) && ini_set($encoding, $charset);
-
         $this->iconv();
     }
 
