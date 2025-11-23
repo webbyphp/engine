@@ -26,6 +26,11 @@ defined('COREPATH') or exit('No direct script access allowed');
 class Base_Profiler extends \CI_Profiler
 {
 
+
+    protected $_compile_;
+
+    protected $_ci_cached_vars;
+
     protected $_available_sections = [
         'benchmarks',
         'get',
@@ -212,9 +217,9 @@ class Base_Profiler extends \CI_Profiler
         $output = [];
 
         // hack to make eloquent not throw error for now
-        // but checks if file actually exists, or CI will throw an error
-        if (file_exists(filename: APPROOT . '/Models/Eloquent/Assets/Action.php')) {
-            ci()->use->model('Eloquent/Assets/Action');
+        // but checks if file actually exists, or WebbyPHP will throw an error
+        if (file_exists(filename: APPROOT . '/Models/Eloquent/Action.php')) {
+            ci()->use->model('Eloquent/Action');
         }
 
         if (! class_exists('Illuminate\Database\Capsule\Manager', false)) {
@@ -228,7 +233,10 @@ class Base_Profiler extends \CI_Profiler
 
 
             $total = 0; // total query time
+            shush();
             $queries = Illuminate\Database\Capsule\Manager::getQueryLog();
+            speak_up();
+
             foreach ($queries as $q) {
                 $time = number_format($q['time'] / 1000, 4);
                 $total += $q['time'] / 1000;
@@ -580,6 +588,37 @@ class Base_Profiler extends \CI_Profiler
             }
         }
 
-        return ci()->use->view('errors/profiling/profiler_template', ['sections' => $this->_sections], true);
+        $profiler_view = 'errors/profiling/' . config_item('profiler_view') . PHPEXT ?: 'errors/profiling/' . 'default-view.php';
+
+        return ci()->use->view($profiler_view, [
+            'sections' => $this->_sections,
+            'config' =>  [
+                'benchmarks' => true,
+                'get' => true,
+                'memory_usage' => true,
+                'post' => true,
+                'uri_string' => true,
+                'controller_info' => true,
+                'queries' => true,
+                'eloquent' => true,
+                'http_headers' => true,
+                'config' => true,
+                'files' => true,
+                'console' => true,
+                'userdata' => true,
+                'view_data' => true,
+                'session_data' => true
+            ],
+            /**
+             * The location of the profiler bar. Valid locations are:
+             * bottom-left
+             * bottom-right
+             * top-left
+             * top-right
+             * bottom
+             * top
+             */
+            'profiler_bar_location' => config_item('profiler_bar_location') ?: 'bottom'
+        ], true);
     }
 }
