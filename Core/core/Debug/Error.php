@@ -2,73 +2,89 @@
 
 namespace Base\Debug;
 
+use Exception;
+
+/**
+ * Temporarily suppresses PHP warnings 
+ * and notices.This class implements a 
+ * standard error suppression logic.
+ */
 class Error
 {
-
-	private static int $suppressCount = 0;
-
-	private static bool $originalLevel = false;
+	/**
+	 * Reference count for suppressions.
+	 * @var int
+	 */
+	private static $suppressCount = 0;
 
 	/**
-	 * Reference-counted warning suppression
-	 *
-	 * @param bool $end Whether to restore warnings
+	 * Original error reporting level storage.
+	 * @var false|int
 	 */
-	public static function suppressWarnings(bool $end = false): void
+	private static $originalLevel = false;
+
+	/**
+	 * Start suppressing common warnings and notices.
+	 */
+	public static function startSuppression()
 	{
-		if ($end) {
+		if (self::$suppressCount == 0) {
+			// Store the current level and 
+			// set the new suppressed level.
+			// Exclude common non-fatal errors.
+			self::$originalLevel = error_reporting(E_ALL & ~(
+				E_WARNING |
+				E_NOTICE |
+				E_USER_WARNING |
+				E_USER_NOTICE |
+				E_DEPRECATED |
+				E_USER_DEPRECATED |
+				2048 // E_STRICT - which has been deprecated
+			));
+		}
+		self::$suppressCount++;
+	}
 
-			if (self::$suppressCount) {
-
-				--self::$suppressCount;
-				if (!self::$suppressCount) {
-					error_reporting(self::$originalLevel);
-				}
+	/**
+	 * Refresh the previous error level.
+	 */
+	public static function stopSuppression()
+	{
+		if (self::$suppressCount > 0) {
+			self::$suppressCount--;
+			if (self::$suppressCount == 0) {
+				// Restore only when the count reaches zero.
+				error_reporting(self::$originalLevel);
+				self::$originalLevel = false; // Reset state
 			}
-		} else {
-
-			if (!self::$suppressCount) {
-				self::$originalLevel =
-					error_reporting(E_ALL & ~(
-						E_WARNING |
-						E_NOTICE |
-						E_USER_WARNING |
-						E_USER_NOTICE |
-						E_DEPRECATED |
-						E_USER_DEPRECATED |
-						2048 // E_STRICT - which has been deprecated
-					));
-			}
-
-			++self::$suppressCount;
 		}
 	}
 
 	/**
-	 * Restore error level to previous value
-	 */
-	public static function restoreWarnings(): void
-	{
-		self::suppressWarnings(true);
-	}
-
-	/**
-	 * Call the callback given by the first parameter, suppressing any warnings.
+	 * Call a callback function with warnings suppressed.
 	 *
-	 * @param callable $callback Function to call
-	 * @param mixed ...$args Optional arguments for the function call
-	 * @return mixed
+	 * @param callable $callback The function to call.
+	 * @param array $args Optional arguments for the function.
+	 * @return mixed The result of the callback.
 	 */
-	public static function quietCall(callable $callback, ...$args)
+	public static function silenced(callable $callback, $args = [])
 	{
-		self::suppressWarnings();
+		self::startSuppression();
+
+		$returnValue = null;
 
 		try {
-			$rv = $callback(...$args);
-		} finally {
-			self::restoreWarnings();
+			// Handle variadic arguments by calling 
+			// the function with the array
+			$returnValue = call_user_func_array($callback, $args);
+		} catch (Exception $exp) {
+			// Ensure restoration even if an 
+			// exception occurs within the callback
+			self::stopSuppression();
+			throw $exp;
 		}
 
-		return $rv;
+		self::stopSuppression();
+		return $returnValue;
 	}
 }

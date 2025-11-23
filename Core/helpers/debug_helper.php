@@ -1,42 +1,39 @@
 <?php
 defined('COREPATH') or exit('No direct script access allowed');
 
-use Base\Debug\Debug;
 use Base\Debug\Error;
+use Base\Debug\DumpFormatter;
 
-if (! function_exists(__NAMESPACE__ . '\\suppressWarnings')) {
+if (! function_exists(__NAMESPACE__ . '\\startSuppression')) {
 
     if (! function_exists('shut_up')) {
         /**
-         * Reference-counted warning suppression
-         *
-         * @param bool $end Whether to restore warnings
+         * Start error suppresion
          */
-        function shut_up($end = false)
+        function shut_up()
         {
-            Error::suppressWarnings($end);
+            Error::startSuppression();
         }
     }
 
     if (! function_exists('shush')) {
         /**
          * Alias of shut_up function
-         * @param bool $end Whether to restore warnings
          */
-        function shush($end = false)
+        function shush()
         {
-            shut_up($end);
+            shut_up();
         }
     }
 
 
     if (! function_exists('speak_up')) {
         /**
-         * Restore error level to previous value
+         * Stop error suppression
          */
         function speak_up()
         {
-            Error::restoreWarnings();
+            Error::stopSuppression();
         }
     }
 
@@ -50,7 +47,7 @@ if (! function_exists(__NAMESPACE__ . '\\suppressWarnings')) {
          */
         function keep_quiet(callable $callback, ...$args)
         {
-            return Error::quietCall($callback, ...$args);
+            return Error::silenced($callback, ...$args);
         }
     }
 }
@@ -87,7 +84,7 @@ if (! function_exists('console')) {
     }
 }
 
-if (! function_exists('dump')) {
+if (! function_exists('dumper')) {
     /**
      * Simple debug output with 
      * var_dump() function
@@ -95,7 +92,7 @@ if (! function_exists('dump')) {
      * @param mixed $dump
      * @return void
      */
-    function dump($dump)
+    function dumper($dump)
     {
         strict_dev();
         echo '<pre>';
@@ -104,21 +101,14 @@ if (! function_exists('dump')) {
     }
 }
 
-if (! function_exists('dd')) {
-    function dd()
-    {
-        strict_dev();
-        array_map(function ($x) {
-            Debug::var_dump($x);
-        }, func_get_args());
-        die;
-    }
-}
 
 if (! function_exists('dr')) {
     /**
+     * 
+     * Dump response for APIs
+     * 
      * Debug output for APIs
-     *
+     * 
      * @param mixed $dump
      * @return void
      */
@@ -133,18 +123,146 @@ if (! function_exists('dr')) {
     }
 }
 
-if (! function_exists('pp')) {
+if (! function_exists('ddd')) {
     /**
-     * Pretty Print debug output
-     *
+     * Dump Pretty Print debug output
+     * with line of called file
+     * 
      * @param mixed $dump
      * @return void
      */
-    function pp($dump)
+    function ddd(...$vars)
     {
         strict_dev();
-        echo highlight_string("<?php\n\$printing_pretty ::: === \n" . var_export($dump, true) . "; \n::: ===\n//> ");
-        echo '<style>body{background:#002;font-weight:bold;font-size:16px;}</style><script>document.getElementsByTagName("code")[0].getElementsByTagName("span")[1].remove() ;document.getElementsByTagName("code")[0].getElementsByTagName("span")[document.getElementsByTagName("code")[0].getElementsByTagName("span").length - 1].remove() ; </script>';
+
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $file = str_replace('\\', '/', $backtrace[0]['file'] ?? 'Unknown File');
+        $rootpath = str_replace('\\', '/', ROOTPATH);
+        $relative_path = str_replace($rootpath, '', $file);
+
+        if (strpos($relative_path, '/') === 0) {
+            $relative_path = ltrim($relative_path, '/');
+        }
+
+        $line = $backtrace[0]['line'] ?? 'Unknown Line';
+        $location = htmlspecialchars($relative_path) . ':' . htmlspecialchars($line);
+
+        // Get variable names from source code
+        $variable_names = [];
+        if (isset($backtrace[0]['file']) && isset($backtrace[0]['line'])) {
+            $source = file($backtrace[0]['file']);
+            if (isset($source[$backtrace[0]['line'] - 1])) {
+                $call_line = $source[$backtrace[0]['line'] - 1];
+                // Extract all arguments inside pp()
+                if (preg_match('/pp\s*\((.*)\)\s*;?/', $call_line, $matches)) {
+                    $args = $matches[1];
+                    // Split by comma but not inside parentheses or brackets
+                    $variable_names = preg_split('/,(?![^(\[]*[\)\]])/', $args);
+                    $variable_names = array_map('trim', $variable_names);
+                }
+            }
+        }
+
+        // If we couldn't extract names, create default ones
+        if (count($variable_names) !== count($vars)) {
+            $variable_names = array_map(function ($i) {
+                return "arg" . ($i + 1);
+            }, array_keys($vars));
+        }
+
+        echo '
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #18171B;
+            color: #E1E1E1;
+            font-family: "SF Mono", Monaco, "Inconsolata", "Fira Mono", "Droid Sans Mono", "Source Code Pro", monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 20px;
+        }
+        .pp-header {
+            background: #1E1E1E;
+            border-left: 4px solid #F57F17;
+            border-radius: 4px 4px 0 0;
+            padding: 12px 20px;
+            margin: 20px 0 0 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .pp-location {
+            color: #999;
+            font-size: 12px;
+        }
+        .pp-location::before {
+            content: " "; // locate
+        }
+        .pp-container {
+            background: #1E1E1E;
+            border-left: 4px solid #F57F17;
+            border-radius: 0 0 4px 4px;
+            padding: 0 20px 15px 20px;
+            margin: 0 0 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .pp-dump {
+            margin: 15px 0;
+            padding: 15px;
+            background: #252526;
+            border-radius: 4px;
+            border-left: 3px solid #3794FF;
+        }
+        .pp-variable {
+            color: #4FC1FF;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .pp-type {
+            color: #4EC9B0;
+            font-style: italic;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+        .pp-content {
+            color: #D4D4D4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            padding-left: 10px;
+        }
+        .pp-string { color: #CE9178; }
+        .pp-number { color: #B5CEA8; }
+        .pp-keyword { color: #569CD6; }
+        .pp-null { color: #569CD6; font-style: italic; }
+        .pp-bool { color: #569CD6; }
+        .pp-object { color: #4EC9B0; font-weight: bold; }
+        .pp-property { color: #9CDCFE; }
+        .pp-operator { color: #D4D4D4; }
+        .pp-array-key { color: #CE9178; }
+        .pp-visibility { color: #C586C0; font-size: 11px; }
+        .pp-indent { display: inline-block; width: 20px; }
+        .pp-array-bracket { color: #FFD700; font-weight: bold; }
+        .pp-count { color: #858585; font-size: 11px; margin-left: 5px; }
+    </style>
+    ';
+
+        echo '<div class="pp-header">';
+        echo '<div class="pp-location">' . $location . '</div>';
+        echo '</div>';
+        echo '<div class="pp-container">';
+
+        foreach ($vars as $index => $var) {
+            $varName = $variable_names[$index] ?? "arg" . ($index + 1);
+            $type = gettype($var);
+            $typeDisplay = DumpFormatter::getTypeDisplay($var);
+
+            echo '<div class="pp-dump">';
+            echo '<div class="pp-variable">' . htmlspecialchars($varName) .
+                '<span class="pp-type">' . $typeDisplay . '</span></div>';
+            echo '<div class="pp-content">' . DumpFormatter::format($var, 0) . '</div>';
+            echo '</div>';
+        }
+
+        echo '</div>';
         die();
     }
 }
