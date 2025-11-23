@@ -387,7 +387,7 @@ class CI_Trackback
 			}
 		}
 
-		return ctype_digit($tb_id) ? $tb_id : false;
+		return ctype_digit((string) $tb_id) ? $tb_id : false;
 	}
 
 	// --------------------------------------------------------------------
