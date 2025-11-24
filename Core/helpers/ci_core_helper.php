@@ -84,27 +84,390 @@ if (! function_exists('void_url')) {
     }
 }
 
-// ------------------------------------------------------------------------
-
 if (! function_exists('uri')) {
+
     /**
      *  Fetch URI string or Segment Array
      *
-     *  @param     bool    $array
-     *  @param     bool    $rsegment
-     *  @return    array|string
+     * @param mixed ...$args
+     * @return object|array|string
      */
-    function uri($array = false, $rsegment = false)
+    function uri(...$args)
     {
-        $preffix = ($rsegment !== false) ? 'r' : '';
 
-        if ($array !== false) {
-            return app('uri')->{$preffix . 'segment_array'}();
+        if (
+            count($args) === 1 && is_bool($args[0]) && $args[0] === true
+            || count($args) === 2 && is_bool($args[0]) && is_bool($args[1])
+        ) {
+
+            $use_rsegment = ($args[1] ?? false) === true;
+            $prefix = $use_rsegment ? 'r' : '';
+
+            if ($args[0] === true) {
+                return ci()->uri->{$prefix . 'segment_array'}();
+            }
+
+            return ci()->uri->{$prefix . 'uri_string'}();
         }
 
-        return app('uri')->{$preffix . 'uri_string'}();
+        $input = $args[0] ?? null;
+        $uri_string = is_string($input) ? $input : null;
+
+        // Detect native URI extension (PHP 8.5+)
+        $has_native = PHP_VERSION_ID >= 80500 && extension_loaded('uri');
+
+        if ($has_native) {
+
+            return new class($uri_string) {
+
+                private \Uri\Rfc3986\Uri $native;
+
+                public function __construct(?string $uriString = null)
+                {
+                    global $input;
+
+                    $uriString ??= $_SERVER['REQUEST_URI'] ?? '/';
+
+                    // Build full absolute URI if needed
+                    if (!str_contains($uriString, '://')) {
+                        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                        $host   = $_SERVER['HTTP_HOST'] ?? parse_url(base_url(), PHP_URL_HOST);
+                        $uriString = $scheme . '://' . $host . $uriString;
+                    }
+
+                    // Handle relative paths passed explicitly
+                    if (is_string($input) && !str_contains($input, '://') && $input !== '') {
+                        $uriString = rtrim(base_url(), '/') . '/' . ltrim($input, '/');
+                    }
+
+                    $this->native = new \Uri\Rfc3986\Uri($uriString);
+                }
+
+                // Forward all native methods 
+                public function __call($name, $args)
+                {
+                    return $this->native->{$name}(...$args);
+                }
+
+                // Fluent CI3-specific methods 
+                public function segment(int $n): ?string
+                {
+                    $segments = $this->segments();
+                    return $segments[$n - 1] ?? null;
+                }
+
+                public function segments(): array
+                {
+                    return array_values(array_filter(explode('/', trim($this->native->getPath() ?: '/', '/'))));
+                }
+
+                public function rsegment(int $n): ?string
+                {
+                    $rsegment = get_instance()->uri->rsegment_array();
+                    return $rsegment[$n - 1] ?? null;
+                }
+
+                public function queryArray(): array
+                {
+                    parse_str($this->native->getQuery() ?: '', $query);
+                    return $query;
+                }
+
+                public function withQuery(array|string $params): self
+                {
+                    $query = is_array($params)
+                        ? http_build_query($params, '', '&', PHP_QUERY_RFC3986)
+                        : $params;
+                    $clone = clone $this;
+                    $clone->native = $this->native->withQuery($query);
+                    return $clone;
+                }
+
+                public function withPath(string $path): self
+                {
+                    $clone = clone $this;
+                    $clone->native = $this->native->withPath($path);
+                    return $clone;
+                }
+
+                public function withScheme(string $scheme): self
+                {
+                    $clone = clone $this;
+                    $clone->native = $this->native->withScheme(strtolower($scheme));
+                    return $clone;
+                }
+
+                public function withHost(string $host): self
+                {
+                    $clone = clone $this;
+                    $clone->native = $this->native->withHost(idn_to_ascii($host) ?: $host);
+                    return $clone;
+                }
+
+                // public function withPort(?int $port): self
+                // {
+                //     $clone = clone $this;
+                //     $clone->native = $port === null ? $this->native->withoutPort() : $this->native->withPort($port);
+                //     return $clone;
+                // }
+
+                public function withFragment(string $fragment): self
+                {
+                    $clone = clone $this;
+                    $clone->native = $this->native->withFragment($fragment);
+                    return $clone;
+                }
+
+                public function withoutQuery(): self
+                {
+                    return $this->withQuery('');
+                }
+
+                public function withoutFragment(): self
+                {
+                    return $this->withFragment('');
+                }
+
+                public function withSegment(int $n, string $value): self
+                {
+                    $segment = $this->segments();
+                    $segment[$n - 1] = $value;
+                    return $this->withPath('/' . implode('/', $segment));
+                }
+
+                public function appendSegment(string $segment): self
+                {
+                    return $this->withPath(rtrim($this->native->getPath(), '/') . '/' . ltrim($segment, '/'));
+                }
+
+                public function addQuery(array $params): self
+                {
+                    return $this->withQuery(array_merge($this->queryArray(), $params));
+                }
+
+                public function removeQueryParam(string $key): self
+                {
+                    $query = $this->queryArray();
+                    unset($query[$key]);
+                    return $this->withQuery($query);
+                }
+
+                public function path(): string
+                {
+                    return $this->native->getPath() ?: '/';
+                }
+
+                public function relative(): string
+                {
+                    $base = rtrim(base_url(), '/');
+                    $full = $this->native->toString();
+                    return str_starts_with($full, $base)
+                        ? '/' . ltrim(substr($full, strlen($base)), '/')
+                        : $full;
+                }
+
+                public function isHttps(): bool
+                {
+                    return $this->native->getScheme() === 'https';
+                }
+
+                public function toString(): string
+                {
+                    return  $this->native->toString();
+                }
+
+                public function __toString(): string
+                {
+                    return $this->toString();
+                }
+            };
+        }
+
+        return new class() {
+
+            private $uri;
+
+            private array $components;
+
+            public function __construct(?string $uri = null)
+            {
+                $this->uri = $uri ?? ($_SERVER['REQUEST_URI'] ?? '/');
+
+                if (!str_contains($this->uri, '://') && isset($_SERVER['HTTP_HOST'])) {
+                    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                    $this->uri = $scheme . '://' . $_SERVER['HTTP_HOST'] . $this->uri;
+                }
+
+                if (is_string($uri) && !str_contains($uri, '://') && $uri !== '') {
+                    $this->uri = rtrim(base_url(), '/') . '/' . ltrim($uri, '/');
+                }
+
+                $this->components = parse_url($this->uri) ?: [];
+                $this->components['path'] ??= '/';
+            }
+
+            // Core
+            public function segment(int $n): ?string
+            {
+                $segment = $this->segments();
+                return $segment[$n - 1] ?? null;
+            }
+
+            public function segments(): array
+            {
+                return array_values(array_filter(explode('/', trim($this->components['path'] ?? '/', '/'))));
+            }
+
+            public function rsegment(int $n): ?string
+            {
+                $rsegment = ci()->uri->rsegment_array();
+                return $rsegment[$n - 1] ?? null;
+            }
+
+            public function queryArray(): array
+            {
+                parse_str($this->components['query'] ?? '', $query);
+                return $query;
+            }
+
+            // Fluent modifiers
+            public function withQuery(array|string $params): self
+            {
+                $query = is_array($params) ? http_build_query($params, '', '&', PHP_QUERY_RFC3986) : $params;
+                return $this->cloneWith(['query' => $query]);
+            }
+
+            public function withPath(string $path): self
+            {
+                $path = trim($path, '/');
+                return $this->cloneWith(['path' => '/' . $path]);
+            }
+
+            public function withScheme(string $scheme): self
+            {
+                return $this->cloneWith(['scheme' => strtolower($scheme)]);
+            }
+
+            public function withHost(string $host): self
+            {
+                return $this->cloneWith(['host' => idn_to_ascii($host) ?: $host]);
+            }
+
+            public function withPort(?int $port): self
+            {
+                $components = $this->components;
+                unset($components['port']);
+                if ($port !== null) $components['port'] = $port;
+                return $this->cloneWith($components);
+            }
+
+            public function withFragment(string $fragment): self
+            {
+                return $this->cloneWith(['fragment' => $fragment]);
+            }
+
+            public function withoutQuery(): self
+            {
+                return $this->cloneWith(['query' => null]);
+            }
+
+            public function withoutFragment(): self
+            {
+                return $this->cloneWith(['fragment' => null]);
+            }
+
+            public function withSegment(int $n, string $value): self
+            {
+                $segment = $this->segments();
+                $segment[$n - 1] = $value;
+                return $this->withPath('/' . implode('/', $segment));
+            }
+
+            public function appendSegment(string $segment): self
+            {
+                return $this->withPath(rtrim($this->components['path'], '/') . '/' . ltrim($segment, '/'));
+            }
+
+            public function prependSegment(string $segment): self
+            {
+                return $this->withPath('/' . trim($segment, '/') . $this->components['path']);
+            }
+
+            public function replaceQuery(array $params): self
+            {
+                return $this->withoutQuery()->withQuery($params);
+            }
+
+            public function addQuery(array $params): self
+            {
+                return $this->withQuery(array_merge($this->queryArray(), $params));
+            }
+
+            public function removeQueryParam(string $key): self
+            {
+                $query = $this->queryArray();
+                unset($query[$key]);
+                return $this->withQuery($query);
+            }
+
+            // Utilities
+            public function path(): string
+            {
+                return $this->components['path'] ?? '/';
+            }
+
+            public function relative(): string
+            {
+                $baseUrl = rtrim(base_url(), '/');
+                $uri = str_starts_with($this->uri, $baseUrl) ? '/' . ltrim(substr($this->uri, strlen($baseUrl)), '/') : $this->uri;
+                return urldecode($uri);
+            }
+
+            public function isHttps(): bool
+            {
+                return ($this->components['scheme'] ?? 'http') === 'https';
+            }
+
+            public function toString(): string
+            {
+                $uri = $this->rebuild();
+                return urldecode($uri);
+            }
+
+            public function toRawString(): string
+            {
+                return $this->rebuild();
+            }
+
+            public function __toString(): string
+            {
+                return $this->rebuild();
+            }
+
+            private function cloneWith(array $override): self
+            {
+                $clone = clone $this;
+                $clone->components = array_merge($clone->components, $override);
+                foreach (['query', 'fragment'] as $k) if (array_key_exists($k, $override) && $override[$k] === null) unset($clone->components[$k]);
+                $clone->uri = $clone->rebuild();
+                return $clone;
+            }
+
+            private function rebuild(): string
+            {
+                $scheme = $this->components['scheme'] ?? 'http';
+                $host = $this->components['host'] ?? parse_url(base_url(), PHP_URL_HOST);
+                $port = isset($this->components['port']) ? ':' . $this->components['port'] : '';
+                $path = $this->components['path'] ?? '/';
+                $query = $this->components['query'] ?? null ? '?' . $this->components['query'] : '';
+                $fragment = $this->components['fragment'] ?? null ? '#' . $this->components['fragment'] : '';
+                return "$scheme://$host$port$path$query$fragment";
+            }
+        };
     }
 }
+
+// ------------------------------------------------------------------------
 
 if (! function_exists('action')) {
     /**
