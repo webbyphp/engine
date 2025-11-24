@@ -665,7 +665,11 @@ class CI_Input
 	 */
 	public function cookie($index = null, $xss_clean = false)
 	{
-		return $this->_fetch_from_array($_COOKIE, $index, $xss_clean);
+		$prefix = isset($_COOKIE[$index])
+			? ''
+			: config_item('cookie_prefix');
+
+		return $this->_fetch_from_array($_COOKIE, $prefix . $index, $xss_clean);
 	}
 
 	// --------------------------------------------------------------------
@@ -820,20 +824,6 @@ class CI_Input
 			log_message('error', $name . ' cookie sent with SameSite=None, but without Secure attribute.');
 		}
 
-		if (!is_php('7.3')) {
-			$maxage = $expire - time();
-			if ($maxage < 1) {
-				$maxage = 0;
-			}
-
-			$cookie_header = 'Set-Cookie: ' . $prefix . $name . '=' . rawurlencode($value);
-			$cookie_header .= ($expire === 0 ? '' : '; Expires=' . gmdate('D, d-M-Y H:i:s T', $expire)) . '; Max-Age=' . $maxage;
-			$cookie_header .= '; Path=' . $path . ($domain !== '' ? '; Domain=' . $domain : '');
-			$cookie_header .= ($secure ? '; Secure' : '') . ($httponly ? '; HttpOnly' : '') . '; SameSite=' . $samesite;
-			header($cookie_header);
-			return;
-		}
-
 		// using setcookie with array option to add cookie 'samesite' attribute
 		$setcookie_options = [
 			'expires' => $expire,
@@ -843,6 +833,7 @@ class CI_Input
 			'httponly' => $httponly,
 			'samesite' => $samesite,
 		];
+
 		setcookie($prefix . $name, $value, $setcookie_options);
 	}
 

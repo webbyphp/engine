@@ -106,6 +106,6 @@ if (! function_exists('delete_cookie')) {
 	 */
 	function delete_cookie($name, $domain = '', $path = '/', $prefix = '')
 	{
-		set_cookie($name, '', '', $domain, $path, $prefix);
+		set_cookie($name, '', 0, $domain, $path, $prefix);
 	}
 }

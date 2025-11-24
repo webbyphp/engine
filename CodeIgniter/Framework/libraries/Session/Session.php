@@ -129,27 +129,20 @@ class CI_Session
 		// unless it is being currently created or regenerated
 		elseif (isset($_COOKIE[$this->_config['cookie_name']]) && $_COOKIE[$this->_config['cookie_name']] === session_id()) {
 			$expires = empty($this->_config['cookie_lifetime']) ? 0 : time() + $this->_config['cookie_lifetime'];
-			if (is_php('7.3')) {
-				setcookie(
-					$this->_config['cookie_name'],
-					session_id(),
-					[
-						'expires' => $expires,
-						'path' => $this->_config['cookie_path'],
-						'domain' => $this->_config['cookie_domain'],
-						'secure' => $this->_config['cookie_secure'],
-						'httponly' => true,
-						'samesite' => $this->_config['cookie_samesite']
-					]
-				);
-			} else {
-				$header = 'Set-Cookie: ' . $this->_config['cookie_name'] . '=' . session_id();
-				$header .= empty($expires) ? '' : '; Expires=' . gmdate('D, d-M-Y H:i:s T', $expires) . '; Max-Age=' . $this->_config['cookie_lifetime'];
-				$header .= '; Path=' . $this->_config['cookie_path'];
-				$header .= ($this->_config['cookie_domain'] !== '' ? '; Domain=' . $this->_config['cookie_domain'] : '');
-				$header .= ($this->_config['cookie_secure'] ? '; Secure' : '') . '; HttpOnly; SameSite=' . $this->_config['cookie_samesite'];
-				header($header);
-			}
+
+			setcookie(
+				$this->_config['cookie_name'],
+				session_id(),
+				[
+					'expires' => $expires,
+					'path' => $this->_config['cookie_path'],
+					'domain' => $this->_config['cookie_domain'],
+					'secure' => $this->_config['cookie_secure'],
+					'httponly' => true,
+					'samesite' => $this->_config['cookie_samesite']
+				]
+			);
+
 
 			if (!$this->_config['cookie_secure'] && $this->_config['cookie_samesite'] === 'None') {
 				log_message('error', "Session: '" . $this->_config['cookie_name'] . "' cookie sent with SameSite=None, but without Secure attribute.'");
@@ -175,12 +168,8 @@ class CI_Session
 	 */
 	protected function _ci_load_classes($driver)
 	{
-		// PHP 7 compatibility
-		interface_exists('SessionUpdateTimestampHandlerInterface', false) or require_once(BASEPATH . 'libraries/Session/SessionUpdateTimestampHandlerInterface.php');
 
-		require_once(BASEPATH . 'libraries/Session/CI_Session_driver_interface.php');
-		$wrapper = is_php('8.0') ? 'PHP8SessionWrapper' : 'OldSessionWrapper';
-		require_once(BASEPATH . 'libraries/Session/' . $wrapper . '.php');
+		require_once(BASEPATH . 'libraries/Session/PHP8SessionWrapper.php');
 
 		$prefix = config_item('subclass_prefix');
 
@@ -259,8 +248,9 @@ class CI_Session
 		isset($params['cookie_domain']) or $params['cookie_domain'] = config_item('cookie_domain');
 		isset($params['cookie_secure']) or $params['cookie_secure'] = (bool) config_item('cookie_secure');
 
-		isset($params['cookie_samesite']) or $params['cookie_samesite'] = config_item('sess_samesite');
-		if (!isset($params['cookie_samesite']) && is_php('7.3')) {
+		isset($params['cookie_samesite']) or $params['cookie_samesite'] = config_item('cookie_samesite');
+
+		if (!isset($params['cookie_samesite'])) {
 			$params['cookie_samesite'] = ini_get('session.cookie_samesite');
 		}
 
@@ -271,24 +261,15 @@ class CI_Session
 			$params['cookie_samesite'] = 'Lax';
 		}
 
-		if (is_php('7.3')) {
-			session_set_cookie_params([
-				'lifetime' => $params['cookie_lifetime'],
-				'path'     => $params['cookie_path'],
-				'domain'   => $params['cookie_domain'],
-				'secure'   => $params['cookie_secure'],
-				'httponly' => true,
-				'samesite' => $params['cookie_samesite']
-			]);
-		} else {
-			session_set_cookie_params(
-				$params['cookie_lifetime'],
-				$params['cookie_path'] . '; SameSite=' . $params['cookie_samesite'],
-				$params['cookie_domain'],
-				$params['cookie_secure'],
-				true // HttpOnly; Yes, this is intentional and not configurable for security reasons
-			);
-		}
+		session_set_cookie_params([
+			'lifetime' => $params['cookie_lifetime'],
+			'path'     => $params['cookie_path'],
+			'domain'   => $params['cookie_domain'],
+			'secure'   => $params['cookie_secure'],
+			'httponly' => true,
+			'samesite' => $params['cookie_samesite']
+		]);
+
 
 		if (empty($expiration)) {
 			$params['expiration'] = (int) ini_get('session.gc_maxlifetime');
@@ -309,8 +290,7 @@ class CI_Session
 		ini_set('session.use_cookies', 1);
 		ini_set('session.use_only_cookies', 1);
 
-		// $this->_configure_sid_length();
-		$this->_polyfill_configure_sid_length();
+		$this->_configure_sid_length();
 	}
 
 	// ------------------------------------------------------------------------
@@ -332,66 +312,20 @@ class CI_Session
 	 */
 	protected function _configure_sid_length()
 	{
-		if (PHP_VERSION_ID < 70100) {
-			$hash_function = ini_get('session.hash_function');
-			if (ctype_digit($hash_function)) {
-				if ($hash_function !== '1') {
-					ini_set('session.hash_function', 1);
-				}
-
-				$bits = 160;
-			} elseif (!in_array($hash_function, hash_algos(), true)) {
-				ini_set('session.hash_function', 1);
-				$bits = 160;
-			} elseif (($bits = strlen(hash($hash_function, 'dummy', false)) * 4) < 160) {
-				ini_set('session.hash_function', 1);
-				$bits = 160;
-			}
-
-			$bits_per_character = (int) ini_get('session.hash_bits_per_character');
-			$sid_length         = (int) ceil($bits / $bits_per_character);
-		} else {
-			$bits_per_character = (int) ini_get('session.sid_bits_per_character');
-			$sid_length         = (int) ini_get('session.sid_length');
-			if (($bits = $sid_length * $bits_per_character) < 160) {
-				// Add as many more characters as necessary to reach at least 160 bits
-				$sid_length += (int) ceil((160 % $bits) / $bits_per_character);
-				ini_set('session.sid_length', $sid_length);
-			}
-		}
-
-		// Yes, 4,5,6 are the only known possible values as of 2016-10-27
-		switch ($bits_per_character) {
-			case 4:
-				$this->_sid_regexp = '[0-9a-f]';
-				break;
-			case 5:
-				$this->_sid_regexp = '[0-9a-v]';
-				break;
-			case 6:
-				$this->_sid_regexp = '[0-9a-zA-Z,-]';
-				break;
-		}
-
-		$this->_sid_regexp .= '{' . $sid_length . '}';
-	}
-
-	protected function _polyfill_configure_sid_length()
-	{
 		$bits_per_character = (int) ini_get('session.sid_bits_per_character');
-        $sid_length        = (int) ini_get('session.sid_length');
+		$sid_length        = (int) ini_get('session.sid_length');
 
-        // We force the PHP defaults.
-        if (PHP_VERSION_ID < 90000) {
-            if ($bits_per_character !== 4) {
-                ini_set('session.sid_bits_per_character', '4');
-            }
-            if ($sid_length !== 32) {
-                ini_set('session.sid_length', '32');
-            }
-        }
+		// We force the PHP defaults.
+		if (PHP_VERSION_ID < 90000) {
+			if ($bits_per_character !== 4) {
+				ini_set('session.sid_bits_per_character', '4');
+			}
+			if ($sid_length !== 32) {
+				ini_set('session.sid_length', '32');
+			}
+		}
 
-        $this->_sid_regexp = '[0-9a-f]{32}';
+		$this->_sid_regexp = '[0-9a-f]{32}';
 	}
 
 	// ------------------------------------------------------------------------

@@ -51,6 +51,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 abstract class CI_Session_driver
 {
 
+	/**
+	 * Config values
+	 * 
+	 * @var string|array
+	 */
 	protected $_config;
 
 	/**
@@ -117,16 +122,6 @@ abstract class CI_Session_driver
 	 */
 	protected function _cookie_destroy()
 	{
-		if (!is_php('7.3')) {
-			$header = 'Set-Cookie: ' . $this->_config['cookie_name'] . '=';
-			$header .= '; Expires=' . gmdate('D, d-M-Y H:i:s T', 1) . '; Max-Age=-1';
-			$header .= '; Path=' . $this->_config['cookie_path'];
-			$header .= ($this->_config['cookie_domain'] !== '' ? '; Domain=' . $this->_config['cookie_domain'] : '');
-			$header .= ($this->_config['cookie_secure'] ? '; Secure' : '') . '; HttpOnly; SameSite=' . $this->_config['cookie_samesite'];
-			header($header);
-			return;
-		}
-
 		return setcookie(
 			$this->_config['cookie_name'],
 			'',
