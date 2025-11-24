@@ -99,15 +99,6 @@ set_error_handler('_error_handler');
 set_exception_handler('_exception_handler');
 register_shutdown_function('_shutdown_handler');
 
-if (config_item('beautiful_error_handler')) {
-
-	// Require Beautiful ErrorHandler
-	require_once __DIR__ . DS . "ErrorHandler.php";
-
-	// Use Beautiful Error Handler
-	new CI_ErrorHandler;
-}
-
 /*
  * ------------------------------------------------------
  *  Set the subclass_prefix
