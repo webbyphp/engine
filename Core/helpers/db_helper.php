@@ -32,9 +32,8 @@ if (! function_exists('use_table')) {
         $model = match ($with) {
             'EasyModel' => new \Base\Models\EasyModel,
             'BaseModel' => new \Base\Models\BaseModel,
-            'OrmModel'  => new \Base\Models\OrmModel,
             'Model'     => new \Base\Models\Model,
-            default     => new \Base\Models\EasyModel, // Default to EasyModel
+            default     => new \Base\Models\Model, // Default to Model
         };
 
         if (!empty($table)) {
