@@ -97,6 +97,13 @@ class Base_Loader extends \CI_Loader
 	protected $_ci_form_paths = [];
 
 	/**
+	 * Holds current module controller
+	 * 
+	 * @var 
+	 */
+	protected $controller;
+
+	/**
 	 * Constructor
 	 *
 	 * Set the path to the Service/Action files
@@ -177,7 +184,10 @@ class Base_Loader extends \CI_Loader
 		return $this;
 	}
 
-	/** Load a module helper **/
+	/** 
+	 * Load a module helper 
+	 * @return mixed
+	 */
 	public function helper($helper = [])
 	{
 		if (is_array($helper)) return $this->helpers($helper);
@@ -792,7 +802,7 @@ class Base_Loader extends \CI_Loader
 	public function actions(array $actions)
 	{
 		foreach ($actions as $action => $alias) {
-			(is_int($action)) ? $this->action($alias) : $this->action($action, null, $alias);
+			(is_int($action)) ? $this->action($alias) : $this->action($action);
 		}
 		return $this;
 	}
