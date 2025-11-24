@@ -1308,7 +1308,7 @@ class CI_Image_lib
 	 *
 	 * @param	string
 	 * @param	string
-	 * @return	resource
+	 * @return	resource|bool
 	 */
 	public function image_create_gd($path = '', $image_type = '')
 	{
@@ -1401,6 +1401,10 @@ class CI_Image_lib
 				if (! function_exists('imagewebp')) {
 					$this->set_error(['imglib_unsupported_imagecreate', 'imglib_webp_not_supported']);
 
+					return false;
+				}
+				if (! @imagewebp($resource, $this->full_dst_path)) {
+					$this->set_error('imglib_save_failed');
 					return false;
 				}
 				break;
@@ -1670,7 +1674,7 @@ class CI_Image_lib
 	/**
 	 * Set error message
 	 *
-	 * @param	string
+	 * @param	string|array
 	 * @return	void
 	 */
 	public function set_error($msg)

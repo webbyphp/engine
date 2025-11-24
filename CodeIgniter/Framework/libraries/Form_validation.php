@@ -2219,15 +2219,8 @@ class CI_Form_validation
 
 		// Apparently, FILTER_VALIDATE_URL doesn't reject digit-only names for some reason ...
 		// See https://github.com/bcit-ci/CodeIgniter/issues/5755
-		if (ctype_digit($str)) {
+		if (ctype_digit((string) $str)) {
 			return false;
-		}
-
-		// PHP 7 accepts IPv6 addresses within square brackets as hostnames,
-		// but it appears that the PR that came in with https://bugs.php.net/bug.php?id=68039
-		// was never merged into a PHP 5 branch ... https://3v4l.org/8PsSN
-		if (preg_match('/^\[([^\]]+)\]/', $str, $matches) && !is_php('7') && filter_var($matches[1], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false) {
-			$str = 'ipv6.host' . substr($str, strlen($matches[1]) + 2);
 		}
 
 		return (filter_var('http://' . $str, FILTER_VALIDATE_URL) !== false);

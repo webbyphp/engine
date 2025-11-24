@@ -301,7 +301,7 @@ class CI_Email
 	/**
 	 * Recipients
 	 *
-	 * @var	string[]
+	 * @var	string|array
 	 */
 	protected $_recipients		= [];
 
@@ -397,9 +397,6 @@ class CI_Email
 	{
 		$this->charset = config_item('charset');
 		$this->initialize($config);
-		$this->_safe_mode = (! is_php('5.4') && ini_get('safe_mode'));
-
-		isset(self::$func_overload) or self::$func_overload = (! is_php('8.0') && extension_loaded('mbstring') && @ini_get('mbstring.func_overload'));
 
 		log_message('info', 'Email Class Initialized');
 	}
@@ -2000,9 +1997,8 @@ class CI_Email
 			 *
 			 * We want the negotiation, so we'll force it below ...
 			 */
-			$method = is_php('5.6')
-				? STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT
-				: STREAM_CRYPTO_METHOD_TLS_CLIENT;
+			$method = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+				
 			$crypto = stream_socket_enable_crypto($this->_smtp_connect, true, $method);
 
 			if ($crypto !== true) {
