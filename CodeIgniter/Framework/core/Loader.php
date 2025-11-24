@@ -48,7 +48,7 @@
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/libraries/loader.html
  */
-#[AllowDynamicProperties]
+
 class CI_Loader
 {
 
