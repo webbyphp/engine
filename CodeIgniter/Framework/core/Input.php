@@ -279,7 +279,7 @@ class CI_Input
 	 * @param bool $asArray if true, the data will be returned as an array
 	 * @return array|object
 	 */
-	public function all($asArray = false)	
+	public function all($asArray = false)
 	{
 		$this->post(null, true);
 
@@ -288,7 +288,6 @@ class CI_Input
 		}
 
 		return $this->data = (object)$this->data;
-
 	}
 
 	// --------------------------------------------------------------------
@@ -540,7 +539,7 @@ class CI_Input
 		}
 
 		$this->tempfile = $file['tmp_name'];
-		$this->filepath = ($path) ? realpath($path) : realpath(WRITABLEPATH.'uploads');
+		$this->filepath = ($path) ? realpath($path) : realpath(WRITABLEPATH . 'uploads');
 		$this->extension = pathinfo($file['name'], PATHINFO_EXTENSION);
 		$this->originalName = $file['name'];
 		$this->originalMimeType = $file['type'];
@@ -734,14 +733,14 @@ class CI_Input
 
 		$contentType = $this->getContentType() ?? '';
 
-        if (strcasecmp($contentType, 'application/json') == 0) {
-            return $this->input_stream($index, $xss_clean);
-        } elseif ($this->method() === 'POST') {
-            return $_POST;
+		if (strcasecmp($contentType, 'application/json') == 0) {
+			return $this->input_stream($index, $xss_clean);
+		} elseif ($this->method() === 'POST') {
+			return $_POST;
 			// pass a "GET" to $index to make this a get content
-        } elseif (strtoupper($this->method()) === $index) {
-            return $_GET;
-        }
+		} elseif (strtoupper($this->method()) === $index) {
+			return $_GET;
+		}
 
 		return $this->input_stream($index, $xss_clean);
 	}
@@ -750,9 +749,9 @@ class CI_Input
 	 * Get Content Type
 	 */
 	public function getContentType()
-    {
-        return isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : null;
-    }
+	{
+		return isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : null;
+	}
 
 	// ------------------------------------------------------------------------
 
@@ -1311,14 +1310,14 @@ class CI_Input
 	}
 
 	/**
-     * Checks request type.
-     *
-     * @param string $type HTTP verb
-	*/
-    public function is(string $type): bool
-    {
-        return is($type); // is() function from Common.php
-    }
+	 * Checks request type.
+	 *
+	 * @param string $type HTTP verb
+	 */
+	public function is(string $type): bool
+	{
+		return is($type); // is() function from Common.php
+	}
 
 	// --------------------------------------------------------------------
 
@@ -1354,107 +1353,107 @@ class CI_Input
 	}
 
 	// ---------------------------HTMX Methods-----------------------------
-	
-	/**
-     * Indicates that the request is triggered by Htmx.
-     */
-    public function isHtmx(): bool
-    {
-        return $this->hxHeaderToBool('HX-Request');
-    }
-
-    /**
-     * Indicates that the request is via an element using hx-boost.
-     */
-    public function isBoosted(): bool
-    {
-        return $this->hxHeaderToBool('HX-Boosted');
-    }
-
-    /**
-     * True if the request is for history restoration
-     * after a miss in the local history cache.
-     */
-    public function isHistoryRestoreRequest(): bool
-    {
-        return $this->hxHeaderToBool('HX-History-Restore-Request');
-    }
-
-    /**
-     * The current (htmx) URL of the browser.
-     */
-    public function currentHxUrl(): ?string
-    {
-        return $this->hxHeader('HX-Current-Url');
-    }
-
-    /**
-     * The user response to an hx-prompt.
-     */
-    public function hxPrompt(): ?string
-    {
-        return $this->hxHeader('HX-Prompt');
-    }
-
-    /**
-     * The id of the target element if it exists.
-     */
-    public function hxTarget(): ?string
-    {
-        return $this->hxHeader('HX-Target');
-    }
-
-    /**
-     * The id of the triggered element if it exists.
-     */
-    public function hxTrigger(): ?string
-    {
-        return $this->hxHeader('HX-Trigger');
-    }
-
-    /**
-     * The name of the triggered element if it exists.
-     */
-    public function hxTriggerName(): ?string
-    {
-        return $this->hxHeader('HX-Trigger-Name');
-    }
-
-    /**
-     * The value of the header is a JSON serialized
-     * version of the event that triggered the request.
-     *
-     * @see https://htmx.org/extensions/event-header/
-     */
-    public function getTriggeringEvent(bool $toArray = true): array|object|null
-    {
-        if (! $this->getRequestHeader('Triggering-Event')) {
-            return null;
-        }
-
-        return json_decode($this->getRequestHeader('Triggering-Event'), $toArray);
-    }
-	 
-    /**
-     * Get an Htmx header value
-     */
-    private function hxHeader(string $header): ?string
-    {
-        if (!$this->getRequestHeader($header)) {
-            return null;
-        }
-
-        return $this->getRequestHeader($header);
-    }
 
 	/**
-     * Cast Htmx header to bool
-     */
-    private function hxHeaderToBool(string $header): bool
-    {
-        return $this->getRequestHeader($header)
-            && $this->getRequestHeader($header) === 'true';
-    }
+	 * Indicates that the request is triggered by Htmx.
+	 */
+	public function isHtmx(): bool
+	{
+		return $this->hxHeaderToBool('HX-Request');
+	}
+
+	/**
+	 * Indicates that the request is via an element using hx-boost.
+	 */
+	public function isBoosted(): bool
+	{
+		return $this->hxHeaderToBool('HX-Boosted');
+	}
+
+	/**
+	 * True if the request is for history restoration
+	 * after a miss in the local history cache.
+	 */
+	public function isHistoryRestoreRequest(): bool
+	{
+		return $this->hxHeaderToBool('HX-History-Restore-Request');
+	}
+
+	/**
+	 * The current (htmx) URL of the browser.
+	 */
+	public function currentHxUrl(): ?string
+	{
+		return $this->hxHeader('HX-Current-Url');
+	}
+
+	/**
+	 * The user response to an hx-prompt.
+	 */
+	public function hxPrompt(): ?string
+	{
+		return $this->hxHeader('HX-Prompt');
+	}
+
+	/**
+	 * The id of the target element if it exists.
+	 */
+	public function hxTarget(): ?string
+	{
+		return $this->hxHeader('HX-Target');
+	}
+
+	/**
+	 * The id of the triggered element if it exists.
+	 */
+	public function hxTrigger(): ?string
+	{
+		return $this->hxHeader('HX-Trigger');
+	}
+
+	/**
+	 * The name of the triggered element if it exists.
+	 */
+	public function hxTriggerName(): ?string
+	{
+		return $this->hxHeader('HX-Trigger-Name');
+	}
+
+	/**
+	 * The value of the header is a JSON serialized
+	 * version of the event that triggered the request.
+	 *
+	 * @see https://htmx.org/extensions/event-header/
+	 */
+	public function getTriggeringEvent(bool $toArray = true): array|object|null
+	{
+		if (! $this->getRequestHeader('Triggering-Event')) {
+			return null;
+		}
+
+		return json_decode($this->getRequestHeader('Triggering-Event'), $toArray);
+	}
+
+	/**
+	 * Get an Htmx header value
+	 */
+	private function hxHeader(string $header): ?string
+	{
+		if (!$this->getRequestHeader($header)) {
+			return null;
+		}
+
+		return $this->getRequestHeader($header);
+	}
+
+	/**
+	 * Cast Htmx header to bool
+	 */
+	private function hxHeaderToBool(string $header): bool
+	{
+		return $this->getRequestHeader($header)
+			&& $this->getRequestHeader($header) === 'true';
+	}
 
 	// ------------------------------------------------------------------------
 
@@ -1470,9 +1469,9 @@ class CI_Input
 	{
 
 		if ($this->has($name)) {
-            return $this->index($name, true);
-        } elseif (
-			$name === 'raw_input_stream' 
+			return $this->index($name, true);
+		} elseif (
+			$name === 'raw_input_stream'
 			|| $name === 'rawInputStream'
 			|| $name === 'getContent'
 		) {
@@ -1481,8 +1480,7 @@ class CI_Input
 		} elseif ($name === 'ip_address' || $name === 'ipAddress') {
 			return $this->ipAddress();
 		} else {
-            return null;
-        }
+			return null;
+		}
 	}
-	
 }
