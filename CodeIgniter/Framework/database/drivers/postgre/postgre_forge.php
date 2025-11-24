@@ -75,6 +75,13 @@ class CI_DB_postgre_forge extends CI_DB_forge
 	 */
 	protected $_null = 'null';
 
+	/**
+	 * CREATE TABLE IF statement
+	 *
+	 * @var	string
+	 */
+	protected $_create_table_if	= 'CREATE TABLE IF NOT EXISTS';
+
 	// --------------------------------------------------------------------
 
 	/**
