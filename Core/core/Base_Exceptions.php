@@ -21,7 +21,7 @@ class Base_Exceptions extends \CI_Exceptions
 		E_USER_ERROR		=>	'User Error',
 		E_USER_WARNING		=>	'User Warning',
 		E_USER_NOTICE		=>	'User Notice',
-		2048                => 'Runtime Notice', // php8.4
+		2048                => 'Runtime Notice', // php8.4 deprecated
 		E_DEPRECATED => "Deprecated"
 	];
 
@@ -63,11 +63,13 @@ class Base_Exceptions extends \CI_Exceptions
 			$templates_path = VIEWPATH . 'errors' . DIRECTORY_SEPARATOR;
 		}
 
-		$is_json_request = get_instance()->request->server('CONTENT_TYPE');
+		$ci = CI_Instance::create();
 
-		if (str_contains($is_json_request ?? '', 'application/json')) {
+		$isJsonRequest = $ci->request->server('CONTENT_TYPE');
 
-			get_instance()->output->json([
+		if (str_contains($isJsonRequest ?? '', 'application/json')) {
+
+			$ci->output->json([
 				"Severity: "    => $severity ?? 'Error',
 				"Message: "     => (is_array($message) ? implode("\n\t", $message) : $message),
 			], 500);
@@ -170,11 +172,13 @@ class Base_Exceptions extends \CI_Exceptions
 			$_error->log_exception($num, $message, $filepath, $line);
 		}
 
-		$is_json_request = get_instance()->request->server('CONTENT_TYPE');
+		$ci = CI_Instance::create();
 
-		if (str_contains($is_json_request ?? '', 'application/json')) {
+		$isJsonRequest = $ci->request->server('CONTENT_TYPE');
 
-			get_instance()->output->json([
+		if (str_contains($isJsonRequest ?? '', 'application/json')) {
+
+			$ci->output->json([
 				"Severity: "    => $severity ?? 'Error',
 				"Message: "     => $message,
 				"Filename: "    => $filepath,
@@ -245,11 +249,13 @@ class Base_Exceptions extends \CI_Exceptions
 			$_error->log_exception($severity, $message, $file, $line);
 		}
 
-		$is_json_request = get_instance()->request->server('CONTENT_TYPE');
+		$ci = CI_Instance::create();
 
-		if (str_contains($is_json_request ?? '', 'application/json')) {
+		$isJsonRequest = $ci->request->server('CONTENT_TYPE');
 
-			get_instance()->output->json([
+		if (str_contains($isJsonRequest ?? '', 'application/json')) {
+
+			$ci->output->json([
 				"Severity: "    => $severity ?? 'Error',
 				"Message: "     => $message,
 				"Filename: "    => $filepath,
