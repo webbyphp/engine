@@ -16,6 +16,7 @@ namespace Base\Route;
 
 use Closure;
 use Base\Helpers\Inflector;
+use Base\Route\HelperRoute;
 
 class Route
 {
@@ -123,7 +124,7 @@ class Route
 	/**
 	 * From variable
 	 *
-	 * @var array
+	 * @var array|string
 	 */
 	protected static $from;
 
@@ -1095,28 +1096,68 @@ class Route
 
 	/**
 	 * Simple route to get views
-	 * from the Views folder
+	 * from the Views directory
 	 *
 	 * @param  $name  view name to use as route
 	 * @return void
 	 */
-	public static function view($name = '')
+	public static function withview($name = '')
 	{
 		static::any($name, static::routeView() . $name);
 	}
 
 	/**
-	 * Simple route to get views
-	 * from the Views folder
+	 * Register a view route
 	 * 
-	 * This is an alias to Route::view();
+	 * from the Views directory 
+	 * using a given uri and view name
 	 * 
-	 * @param  $name  view name to use as route
+	 * Different from the useView() method
+	 * 
+	 * @param string $uri The URI pattern (e.g., 'about', 'profile/(:num)')
+	 * @param string $view The view file path
+	 * @param array $data Data to pass to the view
 	 * @return void
 	 */
-	public static function page($name = '')
+	public static function view($uri = '', $view = '', $data = [])
 	{
-		static::view($name);
+		HelperRoute::view($uri, $view, $data);
+	}
+
+	/**
+	 * Handle a view to be used in a custom route
+	 * 
+	 * @param mixed $view
+	 * @param mixed $data
+	 * @return void
+	 */
+	public static function useView($view = '', $data = [])
+	{
+		HelperRoute::with($view, $data);
+	}
+
+	/**
+	 * Route that allows custom implementation
+	 * 
+	 * Register a custom closure route
+	 * @param string $uri The URI pattern
+	 * @param Closure $callback The callback to execute
+	 */
+	public static function page($uri = '', ?Closure $callback = null)
+	{
+		HelperRoute::closure($uri, $callback);
+	}
+
+	/**
+	 * Register a JSON route
+	 * 
+	 * @param string $uri The URI pattern
+	 * @param mixed $data Data to return (array or Closure)
+	 * @param int $status HTTP status code
+	 */
+	public static function json($uri, $data = [], $status = 200)
+	{
+		HelperRoute::json($uri, $data, $status);
 	}
 
 	/**
