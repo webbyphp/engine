@@ -44,14 +44,16 @@ class Base_Exceptions extends \CI_Exceptions
 	private function redirectTo404Handler($router): void
 	{
 		$missingRoute = ucfirst($router->class) . '/' . $router->method;
-		$redirectUrl = sprintf(
-			'%s%s?url=%s',
-			$router->config->config['base_url'],
-			$router->routes['404_override'],
-			urlencode($missingRoute)
-		);
 
-		header('Location: ' . $redirectUrl, true, 302);
+		// $redirectUrl = sprintf(
+		// 	'%s%s?url=%s',
+		// 	$router->config->config['base_url'],
+		// 	$router->routes['404_override'],
+		// 	urldecode($missingRoute)
+		// );
+
+		$handleError404Url = $router->config->config['base_url'] . $router->routes['route_not_found'];
+		header('Location: ' . $handleError404Url, true, 302);
 		exit;
 	}
 
@@ -99,7 +101,7 @@ class Base_Exceptions extends \CI_Exceptions
 
 			$RTR = $GLOBALS['RTR'];
 
-			if ($status_code == 404) {
+			if (!function_exists('get_instance')) {
 				$this->redirectTo404Handler($RTR);
 			}
 
