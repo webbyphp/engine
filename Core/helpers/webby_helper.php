@@ -1717,44 +1717,6 @@ if (! function_exists('chunk_list')) {
 /* ------------------------------- Date | Time | Format Functions ---------------------------------*/
 
 if (! function_exists('now')) {
-    // /**
-    //  * Current timestamp
-    //  * 
-    //  * @return string 
-    //  */
-    // function now(string|bool $format = true)
-    // {
-    //     if ($format === true) {
-    //         return NOW;
-    //     }
-
-    //     $now = new DateTime();
-    //     return $now->format($format);
-
-    // }
-
-    //  /**
-    //  * Get the current date and time.
-    //  * 
-    //  * @param string|bool $format The format string, or `true` to return a Unix timestamp.
-    //  * @return int|DateTimeImmutable|string The Unix timestamp, an object, or a formatted string.
-    //  */
-    // function now(string|bool $format = true): int|DateTimeImmutable|string
-    // {
-    //     $now = new DateTimeImmutable('now');
-
-    //     if ($format === true) {
-    //         return $now->getTimestamp();
-    //     }
-
-    //     if (is_string($format)) {
-    //         return $now->format($format);
-    //     }
-
-    //     // Default case: return the DateTimeImmutable object
-    //     return $now;
-    // }
-
     /**
      * Get the current date and time, optionally adjusting for a timezone or returning a specific format.
      * 
@@ -1777,12 +1739,12 @@ if (! function_exists('now')) {
             try {
                 $dtz = new DateTimeZone($param);
                 $timezone = $param;
-                $currentDt = new DateTimeImmutable('now', $dtz);
+                $current_date = new DateTimeImmutable('now', $dtz);
                 // If the parameter was just a timezone string, return the object for that timezone
-                return $currentDt;
+                return $current_date;
             } catch (Exception $e) {
                 // If it's not a valid timezone, assume it's a format string
-                // The current $timezone (PHP's default) will be used for the currentDt creation below
+                // The current $timezone (PHP's default) will be used for the current_date creation below
             }
         }
 
@@ -1799,26 +1761,26 @@ if (! function_exists('now')) {
         }
 
         // Create the DateTimeImmutable object for the determined timezone
-        $currentDt = new DateTimeImmutable('now', new DateTimeZone($timezone));
+        $current_date = new DateTimeImmutable('now', new DateTimeZone($timezone));
 
         // Handle return based on $param or array settings
         if ($param === true || (is_array($param) && isset($param['timestamp']) && $param['timestamp'] === true)) {
             // Return Unix timestamp
-            return $currentDt->getTimestamp();
+            return $current_date->getTimestamp();
         }
 
         if (is_string($param) && !empty($param) && is_valid_date_format($param)) {
             // Return formatted string
-            return $currentDt->format($param);
+            return $current_date->format($param);
         }
 
         if (is_array($param) && isset($param['format']) && is_string($param['format'])) {
             // Return formatted string from array
-            return $currentDt->format($param['format']);
+            return $current_date->format($param['format']);
         }
 
         // Default: return the DateTimeImmutable object
-        return $currentDt;
+        return $current_date;
     }
 
     // Helper function to loosely check if a string is a date format
