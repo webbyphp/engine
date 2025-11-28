@@ -21,1791 +21,1791 @@ use Base\Route\HelperRoute;
 class Route
 {
 
-	/**
-	 * Routes array
-	 *
-	 * @var array
-	 */
-	protected static $routes = [];
+    /**
+     * Routes array
+     *
+     * @var array
+     */
+    protected static $routes = [];
 
-	/**
-	 * Router array
-	 *
-	 * @var array
-	 */
-	protected static $router = [];
+    /**
+     * Router array
+     *
+     * @var array
+     */
+    protected static $router = [];
 
-	/**
-	 * Temporary routes array
-	 *
-	 * @var array
-	 */
-	protected static $temporaryRoutes = [];
+    /**
+     * Temporary routes array
+     *
+     * @var array
+     */
+    protected static $temporaryRoutes = [];
 
-	/**
-	 * Default Routes array
-	 *
-	 * @var array
-	 */
-	protected static $defaultRoutes = [];
-
-
-	/**
-	 * Default Controller variable
-	 *
-	 * @var string
-	 */
-	protected static $defaultController = 'app';
-
-	/**
-	 * Defined Controller variable
-	 *
-	 * @var string
-	 */
-	protected static $definedController = null;
+    /**
+     * Default Routes array
+     *
+     * @var array
+     */
+    protected static $defaultRoutes = [];
 
 
-	/**
-	 * Available Routes array
-	 *
-	 * @var array
-	 */
-	protected static $availableRoutes = [];
+    /**
+     * Default Controller variable
+     *
+     * @var string
+     */
+    protected static $defaultController = 'app';
 
-	/**
-	 * Api Routes array
-	 *
-	 * @var array
-	 */
-	protected static $apiRoutes = [];
+    /**
+     * Defined Controller variable
+     *
+     * @var string
+     */
+    protected static $definedController = null;
 
-	/**
-	 * Route Regex variable
-	 *
-	 * @var string
-	 */
-	protected static $routeRegex = '([a-zA-Z0-9\-_]+)';
 
-	/**
-	 * Route Namespace variable
-	 *
-	 * @var string
-	 */
-	protected static $namespace = '';
+    /**
+     * Available Routes array
+     *
+     * @var array
+     */
+    protected static $availableRoutes = [];
 
-	/**
-	 * Route Subdomain variable
-	 *
-	 * @var string
-	 */
-	protected static $subdomain = '';
+    /**
+     * Api Routes array
+     *
+     * @var array
+     */
+    protected static $apiRoutes = [];
 
-	/**
-	 * Route Prefix variable
-	 *
-	 * @var mixed
-	 */
-	protected static $prefix = null;
+    /**
+     * Route Regex variable
+     *
+     * @var string
+     */
+    protected static $routeRegex = '([a-zA-Z0-9\-_]+)';
 
-	/**
-	 * Route Group variable
-	 *
-	 * @var mixed
-	 */
-	protected static $group = null;
+    /**
+     * Route Namespace variable
+     *
+     * @var string
+     */
+    protected static $namespace = '';
 
-	/**
-	 * Named routes
-	 *
-	 * @var array
-	 */
-	protected static $namedRoutes  = [];
+    /**
+     * Route Subdomain variable
+     *
+     * @var string
+     */
+    protected static $subdomain = '';
 
-	/**
-	 * From variable
-	 *
-	 * @var array|string
-	 */
-	protected static $from;
+    /**
+     * Route Prefix variable
+     *
+     * @var mixed
+     */
+    protected static $prefix = null;
 
-	/**
-	 * Options variable
-	 *
-	 * @var array
-	 */
-	protected static $options  = [];
+    /**
+     * Route Group variable
+     *
+     * @var mixed
+     */
+    protected static $group = null;
 
-	/**
-	 * Nested Group variable
-	 *
-	 * @var string
-	 */
-	protected static $nestedGroup = '';
+    /**
+     * Named routes
+     *
+     * @var array
+     */
+    protected static $namedRoutes  = [];
 
-	/**
-	 * Nested Depth variable
-	 *
-	 * @var int
-	 */
-	protected static $nestedDepth  = 0;
+    /**
+     * From variable
+     *
+     * @var array|string
+     */
+    protected static $from;
 
-	/**
-	 * Set Http status
-	 *
-	 * @var boolean
-	 */
-	public static $trueHttp = false;
+    /**
+     * Options variable
+     *
+     * @var array
+     */
+    protected static $options  = [];
 
-	/**
-	 * Constants for route files
-	 */
-	const WEB_ROUTE = 'web';
-	const RESTFUL_ROUTE = 'api';
-	const CONSOLE_ROUTE = 'console';
+    /**
+     * Nested Group variable
+     *
+     * @var string
+     */
+    protected static $nestedGroup = '';
 
-	/**
-	 * Uri variable
-	 *
-	 * @var string
-	 */
-	public $uri = '';
+    /**
+     * Nested Depth variable
+     *
+     * @var int
+     */
+    protected static $nestedDepth  = 0;
 
-	/**
-	 * refer to this class
-	 *
-	 * @var object
-	 */
-	protected static $self = null;
+    /**
+     * Set Http status
+     *
+     * @var boolean
+     */
+    public static $trueHttp = false;
 
-	/**
-	 * Current route middlewares
-	 *
-	 * @var array
-	 */
-	protected static $currentMiddlewares = [];
+    /**
+     * Constants for route files
+     */
+    const WEB_ROUTE = 'web';
+    const RESTFUL_ROUTE = 'api';
+    const CONSOLE_ROUTE = 'console';
 
-	/**
-	 * Route middlewares mapping
-	 *
-	 * @var array
-	 */
-	protected static $routeMiddlewares = [];
+    /**
+     * Uri variable
+     *
+     * @var string
+     */
+    public $uri = '';
 
-	/**
-	 * Middleware groups
-	 *
-	 * @var array
-	 */
-	protected static $middlewareGroups = [
-		'web' => [
-			'LogRequestMiddleware',
-		],
-		'api' => [
-			'cors',
-			'JsonOnlyMiddleware',
-			'api_auth',
-			'ratelimit'
-		],
-		'admin' => [
-			'auth',
-			'admin',
-			'LogRequestMiddleware'
-		]
-	];
+    /**
+     * refer to this class
+     *
+     * @var object
+     */
+    protected static $self = null;
 
-	/**
-	 * Constructor function
-	 *
-	 * @param bool $namespace
-	 */
-	public function __construct($namespace = null)
-	{
-		if ($namespace) {
-			static::$namespace = $namespace;
-		}
-	}
+    /**
+     * Current route middlewares
+     *
+     * @var array
+     */
+    protected static $currentMiddlewares = [];
+
+    /**
+     * Route middlewares mapping
+     *
+     * @var array
+     */
+    protected static $routeMiddlewares = [];
+
+    /**
+     * Middleware groups
+     *
+     * @var array
+     */
+    protected static $middlewareGroups = [
+        'web' => [
+            'LogRequestMiddleware',
+        ],
+        'api' => [
+            'cors',
+            'JsonOnlyMiddleware',
+            'api_auth',
+            'ratelimit'
+        ],
+        'admin' => [
+            'auth',
+            'admin',
+            'LogRequestMiddleware'
+        ]
+    ];
+
+    /**
+     * Constructor function
+     *
+     * @param bool $namespace
+     */
+    public function __construct($namespace = null)
+    {
+        if ($namespace) {
+            static::$namespace = $namespace;
+        }
+    }
 
 	// --------------------------- Utility functions ----------------------------------
 
-	/**
-	 * Get path to display Route::view()
-	 *
-	 * @return string
-	 */
-	private static function routeView()
-	{
-		return $GLOBALS['CFG']->config['view']['route_views_through'];
-	}
+    /**
+     * Get path to display Route::view()
+     *
+     * @return string
+     */
+    private static function routeView()
+    {
+        return $GLOBALS['CFG']->config['view']['route_views_through'];
+    }
 
-	/**
-	 * Replace dot to slash
-	 *
-	 * @param string $string
-	 * @return string
-	 */
-	public static function toSlash($string): string
-	{
-		$string = is_array($string) ? $string : dotToslash($string);
+    /**
+     * Replace dot to slash
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function toSlash($string): string
+    {
+        $string = is_array($string) ? $string : dotToslash($string);
 
-		if (strstr($string, '.')) {
-			$string = str_replace('.', '/', $string);
-		}
+        if (strstr($string, '.')) {
+            $string = str_replace('.', '/', $string);
+        }
 
-		return $string;
-	}
+        return $string;
+    }
 
-	/**
-	 * Get CodeIgniter Router Instance
-	 *
-	 * @return object
-	 */
-	public static function getRouter()
-	{
-		return static::$router = ci()->router;
-	}
+    /**
+     * Get CodeIgniter Router Instance
+     *
+     * @return object
+     */
+    public static function getRouter()
+    {
+        return static::$router = ci()->router;
+    }
 
-	/**
-	 * Get Uri
-	 *
-	 * @return self|string
-	 */
-	private function getUri()
-	{
-		return $this->uri;
-	}
+    /**
+     * Get Uri
+     *
+     * @return self|string
+     */
+    private function getUri()
+    {
+        return $this->uri;
+    }
 
-	/**
-	 * Set route
-	 *
-	 * @param mixed $uri
-	 * @return self
-	 */
-	public function setRoute($uri = null)
-	{
-		$uri = $this->toSlash($uri);
+    /**
+     * Set route
+     *
+     * @param mixed $uri
+     * @return self
+     */
+    public function setRoute($uri = null)
+    {
+        $uri = $this->toSlash($uri);
 
-		if (!empty($uri)) {
-			$this->uri = ci()->config->site_url($uri);
-		}
+        if (!empty($uri)) {
+            $this->uri = ci()->config->site_url($uri);
+        }
 
-		if ($uri === null) {
-			$this->uri = ci()->config->site_url('');
-		}
+        if ($uri === null) {
+            $this->uri = ci()->config->site_url('');
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * To method
-	 *
-	 * @param string $uri
-	 * @param string|bool $param
-	 * @return mixed
-	 */
-	public function to($uri = '', $param = '')
-	{
-		$uri = $this->toSlash($uri);
+    /**
+     * To method
+     *
+     * @param string $uri
+     * @param string|bool $param
+     * @return mixed
+     */
+    public function to($uri = '', $param = '')
+    {
+        $uri = $this->toSlash($uri);
 
-		if (!empty($param) && !is_bool($param)) {
-			$uri = $uri . '/' . $param;
-		}
+        if (!empty($param) && !is_bool($param)) {
+            $uri = $uri . '/' . $param;
+        }
 
-		$this->uri = ci()->config->site_url($uri);
+        $this->uri = ci()->config->site_url($uri);
 
-		if (empty($this->uri) || is_null($this->uri)) {
-			return $this->uri = '';
-		}
+        if (empty($this->uri) || is_null($this->uri)) {
+            return $this->uri = '';
+        }
 
-		if ($param === true) {
-			redirect($uri);
-		}
+        if ($param === true) {
+            redirect($uri);
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Back method
-	 *
-	 * @param string $uri
-	 * @return mixed
-	 */
-	public function back($uri = '')
-	{
-		$uri = $this->toSlash($uri);
+    /**
+     * Back method
+     *
+     * @param string $uri
+     * @return mixed
+     */
+    public function back($uri = '')
+    {
+        $uri = $this->toSlash($uri);
 
-		$referer = $_SESSION['_webby_previous_url'] ?? ci()->input->server('HTTP_REFERER', FILTER_SANITIZE_URL);
+        $referer = $_SESSION['_webby_previous_url'] ?? ci()->input->server('HTTP_REFERER', FILTER_SANITIZE_URL);
 
-		$referer ??= site_url('/');
+        $referer ??= site_url('/');
 
-		if (empty($uri)) {
-			$this->uri = $referer;
-			return $this;
-		}
+        if (empty($uri)) {
+            $this->uri = $referer;
+            return $this;
+        }
 
-		$referer = site_url($uri);
+        $referer = site_url($uri);
 
-		return redirect($referer);
-	}
+        return redirect($referer);
+    }
 
-	/**
-	 * Set Referrer
-	 *
-	 * @param string $value
-	 * @return mixed
-	 * 
-	 * @Todo To be implemented
-	 */
-	public function setReferrer($value)
-	{
-		$value = $this->toSlash($value);
+    /**
+     * Set Referrer
+     *
+     * @param string $value
+     * @return mixed
+     * 
+     * @Todo To be implemented
+     */
+    public function setReferrer($value)
+    {
+        $value = $this->toSlash($value);
 
-		$_SESSION['_webby_previous_url'] = $value;
+        $_SESSION['_webby_previous_url'] = $value;
 
-		return $_SESSION['_webby_previous_url'];
+        return $_SESSION['_webby_previous_url'];
 
-		// if () {
+        // if () {
 
-		// } 
+        // } 
 
-	}
+    }
 
-	/**
-	 * Redirect routes
-	 *
-	 * @return self
-	 */
-	public function redirect()
-	{
-		if (!empty($this->getUri())) {
-			redirect($this->getUri());
-		}
+    /**
+     * Redirect routes
+     *
+     * @return self
+     */
+    public function redirect()
+    {
+        if (!empty($this->getUri())) {
+            redirect($this->getUri());
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Set a name for defined route
-	 * 
-	 * @param string $name
-	 * @return string|mixed
-	 */
-	public static function name($name)
-	{
+    /**
+     * Set a name for defined route
+     * 
+     * @param string $name
+     * @return string|mixed
+     */
+    public static function name($name)
+    {
 
-		if (isset(self::$namedRoutes[$name])) {
-			return self::$namedRoutes[$name];
-		} else {
-			static::$namedRoutes[$name] = static::$from;
-		}
+        if (isset(self::$namedRoutes[$name])) {
+            return self::$namedRoutes[$name];
+        } else {
+            static::$namedRoutes[$name] = static::$from;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	/**
-	 * Get a route with a given name
-	 *
-	 * @return string
-	 */
-	public function named($name = '')
-	{
-		if (!empty($name) && array_key_exists($name, Route::getNamedRoutes())) {
-			$name = static::name($name);
-		}
+    /**
+     * Get a route with a given name
+     *
+     * @return string
+     */
+    public function named($name = '')
+    {
+        if (!empty($name) && array_key_exists($name, Route::getNamedRoutes())) {
+            $name = static::name($name);
+        }
 
-		return $name;
-	}
+        return $name;
+    }
 
-	/**
-	 * Get the name of the defined route.
-	 *
-	 * @return string The name of the route.
-	 */
-	public static function getName($name = '')
-	{
-		return (new static)->named($name);
-	}
+    /**
+     * Get the name of the defined route.
+     *
+     * @return string The name of the route.
+     */
+    public static function getName($name = '')
+    {
+        return (new static)->named($name);
+    }
 
-	/**
-	 * Retrieves the named routes.
-	 *
-	 * @return array The named routes.
-	 */
-	public static function getNamedRoutes()
-	{
-		return static::$namedRoutes;
-	}
+    /**
+     * Retrieves the named routes.
+     *
+     * @return array The named routes.
+     */
+    public static function getNamedRoutes()
+    {
+        return static::$namedRoutes;
+    }
 
-	/**
-	 * With method
-	 *
-	 * @param string $key
-	 * @param string $value
-	 * @return mixed
-	 */
-	public function with($key, $value = null)
-	{
+    /**
+     * With method
+     *
+     * @param string $key
+     * @param string $value
+     * @return mixed
+     */
+    public function with($key, $value = null)
+    {
 
-		ci()->use->library('session');
+        ci()->use->library('session');
 
-		if (is_array($key)) {
-			ci()->session->set_flashdata($key);
-		}
+        if (is_array($key)) {
+            ci()->session->set_flashdata($key);
+        }
 
-		if (!is_null($value) && is_string($key)) {
-			ci()->session->set_flashdata($key, $value);
-		}
+        if (!is_null($value) && is_string($key)) {
+            ci()->session->set_flashdata($key, $value);
+        }
 
-		$uri = $this->getUri();
+        $uri = $this->getUri();
 
-		if (!empty($uri)) {
-			return $this->redirect();
-		}
+        if (!empty($uri)) {
+            return $this->redirect();
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * With Success
-	 *
-	 * @param string $message
-	 * @return mixed
-	 */
-	public function withSuccess($message)
-	{
-		return $this->with('success_message', $message);
-	}
+    /**
+     * With Success
+     *
+     * @param string $message
+     * @return mixed
+     */
+    public function withSuccess($message)
+    {
+        return $this->with('success_message', $message);
+    }
 
-	/**
-	 * With Error
-	 *
-	 * @param string $message
-	 * @return mixed
-	 */
-	public function withError($message)
-	{
-		return $this->with('error_message', $message);
-	}
+    /**
+     * With Error
+     *
+     * @param string $message
+     * @return mixed
+     */
+    public function withError($message)
+    {
+        return $this->with('error_message', $message);
+    }
 
-	/**
-	 * With Input
-	 * Grab all input fields and
-	 * set to session to be accessed again
-	 * 
-	 * @return mixed
-	 * 
-	 */
-	public function withInput($post = [], $redirect = false)
-	{
-		ci()->use->library('session');
+    /**
+     * With Input
+     * Grab all input fields and
+     * set to session to be accessed again
+     * 
+     * @return mixed
+     * 
+     */
+    public function withInput($post = [], $redirect = false)
+    {
+        ci()->use->library('session');
 
-		if (empty($post)) {
-			$post = ci()->input->post();
-		}
+        if (empty($post)) {
+            $post = ci()->input->post();
+        }
 
-		ci()->session->set_tempdata('old', $post, 10);
-		ci()->session->set_tempdata('form_error', form_error_array(), 10);
+        ci()->session->set_tempdata('old', $post, 10);
+        ci()->session->set_tempdata('form_error', form_error_array(), 10);
 
-		if ($redirect && !empty($this->getUri())) {
-			return $this->redirect();
-		}
+        if ($redirect && !empty($this->getUri())) {
+            return $this->redirect();
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
 	// ---------------------------- Route Energized -------------------------------
 
-	/**
-	 * Get all defined routes
-	 *
-	 * @return string
-	 */
-	public function allRoutes()
-	{
-		return self::getRouter()->routes;
-	}
+    /**
+     * Get all defined routes
+     *
+     * @return string
+     */
+    public function allRoutes()
+    {
+        return self::getRouter()->routes;
+    }
 
-	/**
-	 * Get currently defined routes in the
-	 * routes directory
-	 *
-	 * @return array
-	 */
-	public static function getRoutes()
-	{
-		return static::$routes;
-	}
+    /**
+     * Get currently defined routes in the
+     * routes directory
+     *
+     * @return array
+     */
+    public static function getRoutes()
+    {
+        return static::$routes;
+    }
 
-	/**
-	 * Default routes
-	 *
-	 * @return mixed
-	 */
-	public static function defaultRoutes()
-	{
-		return static::$defaultRoutes = $GLOBALS['default_routes'];
-	}
+    /**
+     * Default routes
+     *
+     * @return mixed
+     */
+    public static function defaultRoutes()
+    {
+        return static::$defaultRoutes = $GLOBALS['default_routes'];
+    }
 
-	/**
-	 * Available routes
-	 *
-	 * @return mixed
-	 */
-	public static function availableRoutes()
-	{
-		return static::$availableRoutes = $GLOBALS['available_routes'];
-	}
+    /**
+     * Available routes
+     *
+     * @return mixed
+     */
+    public static function availableRoutes()
+    {
+        return static::$availableRoutes = $GLOBALS['available_routes'];
+    }
 
-	/**
-	 * API routes
-	 *
-	 * @return mixed
-	 */
-	public static function apiRoutes()
-	{
-		return static::$apiRoutes = $GLOBALS['api_routes'];
-	}
+    /**
+     * API routes
+     *
+     * @return mixed
+     */
+    public static function apiRoutes()
+    {
+        return static::$apiRoutes = $GLOBALS['api_routes'];
+    }
 
-	/**
-	 * Assign middleware to the last created route
-	 *
-	 * @param mixed ...$middlewares
-	 * @return static
-	 */
-	public static function middleware(...$middlewares)
-	{
+    /**
+     * Assign middleware to the last created route
+     *
+     * @param mixed ...$middlewares
+     * @return static
+     */
+    public static function middleware(...$middlewares)
+    {
 
-		if (!empty(static::$from)) {
-			// Store middlewares for this route
-			if (!isset(static::$routeMiddlewares[static::$from])) {
-				static::$routeMiddlewares[static::$from] = [];
-			}
-			static::$routeMiddlewares[static::$from] = array_merge(
-				static::$routeMiddlewares[static::$from],
-				$middlewares
-			);
-		}
+        if (!empty(static::$from)) {
+            // Store middlewares for this route
+            if (!isset(static::$routeMiddlewares[static::$from])) {
+                static::$routeMiddlewares[static::$from] = [];
+            }
+            static::$routeMiddlewares[static::$from] = array_merge(
+                static::$routeMiddlewares[static::$from],
+                $middlewares
+            );
+        }
 
-		return new static;
-	}
+        return new static;
+    }
 
-	/**
-	 * Register a middleware group
-	 *
-	 * @param string $name
-	 * @param array $middlewares
-	 * @return void
-	 */
-	public static function registerMiddlewareGroup($name, array $middlewares)
-	{
-		static::$middlewareGroups[$name] = $middlewares;
-	}
+    /**
+     * Register a middleware group
+     *
+     * @param string $name
+     * @param array $middlewares
+     * @return void
+     */
+    public static function registerMiddlewareGroup($name, array $middlewares)
+    {
+        static::$middlewareGroups[$name] = $middlewares;
+    }
 
-	/**
-	 * Get middleware group
-	 *
-	 * @param string $name
-	 * @return array
-	 */
-	public static function getMiddlewareGroup($name)
-	{
-		return static::$middlewareGroups[$name] ?? [];
-	}
+    /**
+     * Get middleware group
+     *
+     * @param string $name
+     * @return array
+     */
+    public static function getMiddlewareGroup($name)
+    {
+        return static::$middlewareGroups[$name] ?? [];
+    }
 
-	/**
-	 * Apply middleware group to routes
-	 *
-	 * @param string $group
-	 * @param Closure $callback
-	 * @return void
-	 */
-	public static function middlewareGroup($group, Closure $callback)
-	{
-		$middlewares = static::getMiddlewareGroup($group);
-		static::$currentMiddlewares = array_merge(static::$currentMiddlewares, $middlewares);
+    /**
+     * Apply middleware group to routes
+     *
+     * @param string $group
+     * @param Closure $callback
+     * @return void
+     */
+    public static function middlewareGroup($group, Closure $callback)
+    {
+        $middlewares = static::getMiddlewareGroup($group);
+        static::$currentMiddlewares = array_merge(static::$currentMiddlewares, $middlewares);
 
-		call_user_func($callback);
+        call_user_func($callback);
 
-		// Remove the middlewares after callback
-		static::$currentMiddlewares = array_diff(static::$currentMiddlewares, $middlewares);
-	}
+        // Remove the middlewares after callback
+        static::$currentMiddlewares = array_diff(static::$currentMiddlewares, $middlewares);
+    }
 
-	public static function getRouteMiddlewares(?string $route = '')
-	{
+    public static function getRouteMiddlewares(?string $route = '')
+    {
 
-		// Direct match
-		if (isset(static::$routeMiddlewares[$route])) {
-			return static::$routeMiddlewares[$route];
-		}
+        // Direct match
+        if (isset(static::$routeMiddlewares[$route])) {
+            return static::$routeMiddlewares[$route];
+        }
 
-		// Try to match with regex patterns
-		foreach (static::$routeMiddlewares as $pattern => $middlewares) {
-			// Convert route pattern to regex
-			$regex = static::convertRouteToRegex($pattern);
+        // Try to match with regex patterns
+        foreach (static::$routeMiddlewares as $pattern => $middlewares) {
+            // Convert route pattern to regex
+            $regex = static::convertRouteToRegex($pattern);
 
-			if (preg_match($regex, $route)) {
-				return $middlewares;
-			}
-		}
+            if (preg_match($regex, $route)) {
+                return $middlewares;
+            }
+        }
 
-		return [];
-	}
+        return [];
+    }
 
-	/**
-	 * Convert route pattern to regex for matching
-	 *
-	 * @param string $pattern
-	 * @return string
-	 */
-	protected static function convertRouteToRegex($pattern)
-	{
-		$hasCurly = strpos($pattern, '{');
-		$defaultKey = $pattern;
+    /**
+     * Convert route pattern to regex for matching
+     *
+     * @param string $pattern
+     * @return string
+     */
+    protected static function convertRouteToRegex($pattern)
+    {
+        $hasCurly = strpos($pattern, '{');
+        $defaultKey = $pattern;
 
-		// Escape forward slashes
-		$pattern = str_replace('/', '\/', $pattern);
+        // Escape forward slashes
+        $pattern = str_replace('/', '\/', $pattern);
 
-		// Replace (:num) with regex
-		$pattern = str_replace(['(:num)', '{id}', '{num}'], '([0-9]+)', $pattern);
+        // Replace (:num) with regex
+        $pattern = str_replace(['(:num)', '{id}', '{num}'], '([0-9]+)', $pattern);
 
-		// Replace (:alpha) with regex
-		$pattern = str_replace(['(:alpha)', '{alpha}'], '([a-zA-Z]+)', $pattern);
+        // Replace (:alpha) with regex
+        $pattern = str_replace(['(:alpha)', '{alpha}'], '([a-zA-Z]+)', $pattern);
 
-		// Replace (:alphanum) with regex
-		$pattern = str_replace(['(:alphanum)', '{alphanum}'], '([a-zA-Z0-9]+)', $pattern);
+        // Replace (:alphanum) with regex
+        $pattern = str_replace(['(:alphanum)', '{alphanum}'], '([a-zA-Z0-9]+)', $pattern);
 
-		$pattern = ($hasCurly && !(strpos($defaultKey, '{id}')))
-			? preg_replace('/\{(.+?)\}/', '(:any)', $pattern)
-			: $pattern;
+        $pattern = ($hasCurly && !(strpos($defaultKey, '{id}')))
+            ? preg_replace('/\{(.+?)\}/', '(:any)', $pattern)
+            : $pattern;
 
-		// Replace (:any) with regex
-		$pattern = str_replace('(:any)', '([^\/]+)', $pattern);
+        // Replace (:any) with regex
+        $pattern = str_replace('(:any)', '([^\/]+)', $pattern);
 
-		return '/^' . $pattern . '$/';
-	}
+        return '/^' . $pattern . '$/';
+    }
 
-	/**
-	 * Get all route middlewares
-	 *
-	 * @return array
-	 */
-	public static function getAllRouteMiddlewares()
-	{
-		return static::$routeMiddlewares;
-	}
+    /**
+     * Get all route middlewares
+     *
+     * @return array
+     */
+    public static function getAllRouteMiddlewares()
+    {
+        return static::$routeMiddlewares;
+    }
 
 	/* --------------------------------------------------------------
      * BASIC ROUTING
      * ------------------------------------------------------------ */
 
-	/**
-	 * Create and Generate All Routes
-	 *
-	 * @param string $from
-	 * @param string|Closure $to
-	 * @param array $options
-	 * @param callable|null $nested
-	 * @return void
-	 */
-	protected static function createRoute($from, $to, $options = [], ?Closure $nested = null)
-	{
-		$parameterfy = false;
+    /**
+     * Create and Generate All Routes
+     *
+     * @param string $from
+     * @param string|Closure $to
+     * @param array $options
+     * @param callable|null $nested
+     * @return void
+     */
+    protected static function createRoute($from, $to, $options = [], ?Closure $nested = null)
+    {
+        $parameterfy = false;
 
-		// Handle closure callbacks
-		if ($to instanceof Closure) {
-			static::$routes[$from] = function () use ($to) {
-				$CI = get_instance();
-				$result = $to();
-				if (is_string($result)) {
-					$CI->output->set_output($result);
-				}
-				return $result;
-			};
+        // Handle closure callbacks
+        if ($to instanceof Closure) {
+            static::$routes[$from] = function () use ($to) {
+                $CI = get_instance();
+                $result = $to();
+                if (is_string($result)) {
+                    $CI->output->set_output($result);
+                }
+                return $result;
+            };
 
-			// Store the route pattern
-			static::$from = $from;
+            // Store the route pattern
+            static::$from = $from;
 
-			// Add current middlewares if in a middleware group
-			if (!empty(static::$currentMiddlewares)) {
-				static::$routeMiddlewares[$from] = static::$currentMiddlewares;
-			}
+            // Add current middlewares if in a middleware group
+            if (!empty(static::$currentMiddlewares)) {
+                static::$routeMiddlewares[$from] = static::$currentMiddlewares;
+            }
 
-			return;
-		}
+            return;
+        }
 
-		// Allow for array based routes and other symbol routes
-		if (!is_array($to) && strstr($to, '.')) {
-			$to = str_replace('.', '/', $to);
-		}
+        // Allow for array based routes and other symbol routes
+        if (!is_array($to) && strstr($to, '.')) {
+            $to = str_replace('.', '/', $to);
+        }
 
-		if (is_array($to)) {
-			$to = $to[0] . '/' . strtolower($to[1]);
-			$parameterfy = true;
-		} elseif (
-			preg_match('/^([a-zA-Z\_\-0-9\/]+)->([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)
-		) {
-			$to = $matches[1] . '/' . $matches[2];
-			$parameterfy = true;
-		} elseif (
-			preg_match('/^([a-zA-Z\_\-0-9\/]+)::([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)
-		) {
-			$to = $matches[1] . '/' . $matches[2];
-			$parameterfy = true;
-		} elseif (
-			preg_match('/^([a-zA-Z\_\-0-9\/]+)@([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)
-		) {
-			$to = $matches[1] . '/' . $matches[2];
-			$parameterfy = true;
-		}
+        if (is_array($to)) {
+            $to = $to[0] . '/' . strtolower($to[1]);
+            $parameterfy = true;
+        } elseif (
+            preg_match('/^([a-zA-Z\_\-0-9\/]+)->([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)
+        ) {
+            $to = $matches[1] . '/' . $matches[2];
+            $parameterfy = true;
+        } elseif (
+            preg_match('/^([a-zA-Z\_\-0-9\/]+)::([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)
+        ) {
+            $to = $matches[1] . '/' . $matches[2];
+            $parameterfy = true;
+        } elseif (
+            preg_match('/^([a-zA-Z\_\-0-9\/]+)@([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)
+        ) {
+            $to = $matches[1] . '/' . $matches[2];
+            $parameterfy = true;
+        }
 
-		// If $to still contains ->|@|:: 
-		// replace them with /
-		if (preg_match("/(->|@|::)/i", $to)) {
-			$to = str_replace(['->', '::', '@'], ['/', '/', '/'], $to);
-		}
+        // If $to still contains ->|@|:: 
+        // replace them with /
+        if (preg_match("/(->|@|::)/i", $to)) {
+            $to = str_replace(['->', '::', '@'], ['/', '/', '/'], $to);
+        }
 
-		$from = ltrim($from, '/'); // trim preceding slash
+        $from = ltrim($from, '/'); // trim preceding slash
 
-		// Do we have a namespace?
-		if (static::$namespace) {
-			$from = static::$namespace . '/' . $from;
-		}
+        // Do we have a namespace?
+        if (static::$namespace) {
+            $from = static::$namespace . '/' . $from;
+        }
 
-		// Account for parameters in the URL if we need to
-		if ($parameterfy) {
-			$to = static::parameterfy($from, $to);
-		}
+        // Account for parameters in the URL if we need to
+        if ($parameterfy) {
+            $to = static::parameterfy($from, $to);
+        }
 
-		// Apply our routes
-		static::$temporaryRoutes[$from] = $to;
+        // Apply our routes
+        static::$temporaryRoutes[$from] = $to;
 
-		$prefix = is_null(static::$prefix) || empty(static::$prefix) ? '' : static::$prefix . '/';
-		$group = is_null(static::$group) || empty(static::$group) ? '' : static::$group . '/';
+        $prefix = is_null(static::$prefix) || empty(static::$prefix) ? '' : static::$prefix . '/';
+        $group = is_null(static::$group) || empty(static::$group) ? '' : static::$group . '/';
 
-		static::$from = $from;
+        static::$from = $from;
 
-		$from = static::$nestedGroup . $prefix . $group . $from;
+        $from = static::$nestedGroup . $prefix . $group . $from;
 
-		// Are we saving the name for this one?
-		if (isset($options['as']) && !empty($options['as'])) {
-			static::$namedRoutes[$options['as']] = $from;
-		}
+        // Are we saving the name for this one?
+        if (isset($options['as']) && !empty($options['as'])) {
+            static::$namedRoutes[$options['as']] = $from;
+        }
 
-		static::$routes[$from] = $to;
+        static::$routes[$from] = $to;
 
-		// Add current middlewares if in a middleware group
-		if (!empty(static::$currentMiddlewares)) {
-			if (!isset(static::$routeMiddlewares[$from])) {
-				static::$routeMiddlewares[$from] = [];
-			}
-			static::$routeMiddlewares[$from] = array_merge(
-				static::$routeMiddlewares[$from],
-				static::$currentMiddlewares
-			);
-		}
+        // Add current middlewares if in a middleware group
+        if (!empty(static::$currentMiddlewares)) {
+            if (!isset(static::$routeMiddlewares[$from])) {
+                static::$routeMiddlewares[$from] = [];
+            }
+            static::$routeMiddlewares[$from] = array_merge(
+                static::$routeMiddlewares[$from],
+                static::$currentMiddlewares
+            );
+        }
 
-		// Store middlewares from options
-		if (isset($options['middleware'])) {
-			$middlewares = is_array($options['middleware'])
-				? $options['middleware']
-				: [$options['middleware']];
+        // Store middlewares from options
+        if (isset($options['middleware'])) {
+            $middlewares = is_array($options['middleware'])
+                ? $options['middleware']
+                : [$options['middleware']];
 
-			if (!isset(static::$routeMiddlewares[$from])) {
-				static::$routeMiddlewares[$from] = [];
-			}
-			static::$routeMiddlewares[$from] = array_merge(
-				static::$routeMiddlewares[$from],
-				$middlewares
-			);
-		}
+            if (!isset(static::$routeMiddlewares[$from])) {
+                static::$routeMiddlewares[$from] = [];
+            }
+            static::$routeMiddlewares[$from] = array_merge(
+                static::$routeMiddlewares[$from],
+                $middlewares
+            );
+        }
 
-		// Do we have a nested function?
-		if ($nested && is_callable($nested) && static::$nestedDepth === 0) {
-			static::$nestedGroup    .= rtrim($from, '/') . '/';
-			static::$nestedDepth     += 1;
-			call_user_func($nested);
+        // Do we have a nested function?
+        if ($nested && is_callable($nested) && static::$nestedDepth === 0) {
+            static::$nestedGroup    .= rtrim($from, '/') . '/';
+            static::$nestedDepth     += 1;
+            call_user_func($nested);
 
-			static::$nestedGroup = '';
-		}
-	}
+            static::$nestedGroup = '';
+        }
+    }
 
-	/**
-	 * Execute a closure route
-	 *
-	 * @param string $route
-	 * @return mixed
-	 */
-	protected static function executeClosure($route)
-	{
-		if (isset(static::$routes[$route]) && static::$routes[$route] instanceof Closure) {
-			return call_user_func(static::$routes[$route]);
-		}
-		return null;
-	}
+    /**
+     * Execute a closure route
+     *
+     * @param string $route
+     * @return mixed
+     */
+    protected static function executeClosure($route)
+    {
+        if (isset(static::$routes[$route]) && static::$routes[$route] instanceof Closure) {
+            return call_user_func(static::$routes[$route]);
+        }
+        return null;
+    }
 
-	/**
-	 * Retrieves the HTTP host from 
-	 * the $_SERVER['HTTP_HOST'] variable.
-	 *
-	 * @return string The HTTP host without the port number.
-	 */
-	public function getHttpHost()
-	{
-		[$httpHost,] = explode(':', $_SERVER['HTTP_HOST']);
-		return $httpHost;
-	}
+    /**
+     * Retrieves the HTTP host from 
+     * the $_SERVER['HTTP_HOST'] variable.
+     *
+     * @return string The HTTP host without the port number.
+     */
+    public function getHttpHost()
+    {
+        [$httpHost,] = explode(':', $_SERVER['HTTP_HOST']);
+        return $httpHost;
+    }
 
-	/**
-	 * Examines the HTTP_HOST to get a best match for the subdomain. It
-	 * won't be perfect, but should work for our needs.
-	 *
-	 * It's especially not perfect since it's possible to register a domain
-	 * with a period (.) as part of the domain name.
-	 * 
-	 * Borrowed from CodeIgniter 4 RouteCollection.php
-	 * @return mixed
-	 */
-	private static function getCurrentSubdomain()
-	{
-		// We have to ensure that an http scheme exists
-		// on the URL else parse_url will mis-interpret
-		// 'host' as the 'path'.
-		// $url = $_SERVER['HTTP_HOST'];
+    /**
+     * Examines the HTTP_HOST to get a best match for the subdomain. It
+     * won't be perfect, but should work for our needs.
+     *
+     * It's especially not perfect since it's possible to register a domain
+     * with a period (.) as part of the domain name.
+     * 
+     * Borrowed from CodeIgniter 4 RouteCollection.php
+     * @return mixed
+     */
+    private static function getCurrentSubdomain()
+    {
+        // We have to ensure that an http scheme exists
+        // on the URL else parse_url will mis-interpret
+        // 'host' as the 'path'.
+        // $url = $_SERVER['HTTP_HOST'];
 
-		$isCLI = PHP_SAPI === 'cli' or defined('STDIN');
+        $isCLI = PHP_SAPI === 'cli' or defined('STDIN');
 
-		$url = !($isCLI) ? $_SERVER['HTTP_HOST'] : '';
+        $url = !($isCLI) ? $_SERVER['HTTP_HOST'] : '';
 
-		if (strpos($url, 'http') !== 0) {
-			$url = 'http://' . $url;
-		}
+        if (strpos($url, 'http') !== 0) {
+            $url = 'http://' . $url;
+        }
 
-		$parsedUrl = parse_url($url);
+        $parsedUrl = parse_url($url);
 
-		if (($parsedUrl === false) && $isCLI) {
-			return [];
-		}
+        if (($parsedUrl === false) && $isCLI) {
+            return [];
+        }
 
-		$host = explode('.', $parsedUrl['host']);
+        $host = explode('.', $parsedUrl['host']);
 
-		if ($host[0] === 'www') {
-			unset($host[0]);
-		}
+        if ($host[0] === 'www') {
+            unset($host[0]);
+        }
 
-		// Get rid of any domains, which will be the last
-		unset($host[count($host)]);
+        // Get rid of any domains, which will be the last
+        unset($host[count($host)]);
 
-		// Account for .co.uk, .co.nz, etc. domains
-		if (end($host) === 'co') {
-			$host = array_slice($host, 0, -1);
-		}
+        // Account for .co.uk, .co.nz, etc. domains
+        if (end($host) === 'co') {
+            $host = array_slice($host, 0, -1);
+        }
 
-		// If we only have 1 part left, then we don't have a sub-domain.
-		if (count($host) === 1) {
-			// Set it to false so we don't make it back here again.
-			return false;
-		}
+        // If we only have 1 part left, then we don't have a sub-domain.
+        if (count($host) === 1) {
+            // Set it to false so we don't make it back here again.
+            return false;
+        }
 
-		return array_shift($host);
-	}
+        return array_shift($host);
+    }
 
 	/* --------------------------------------------------------------
      * HTTP VERB ROUTING
      * ------------------------------------------------------------ */
 
-	/**
-	 * Route any HTTP request
-	 *
-	 * @param string $from The URI pattern to match
-	 * @param string|array|callable $to The destination of the route
-	 * @param array $options An array of options for the route
-	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
-	 * @return self The Route class instance
-	 */
-	public static function any($from, $to, $options = [], ?Closure $nested = null)
-	{
-		static::createRoute($from, $to, $options, $nested);
-
-		static::$options = $options;
-		// Return a new instance of the Route class
-		return new static;
-	}
-
-	/**
-	 * Route a GET request
-	 *
-	 * @param string $from The URI pattern to match
-	 * @param string|array|callable $to The destination of the route
-	 * @param array $options An array of options for the route
-	 * @param callable|null $nested A callable function to group nested routes, or boolean to check if it's nested
-	 * @return self The Route class instance
-	 */
-	public static function get($from, $to, $options = [], ?Closure $nested = null)
-	{
-		// Check if the current request method is GET
-		if (static::methodIs('GET')) {
-			// Create the route
-			static::createRoute($from, $to, $options, $nested);
-		}
-
-		static::$options = $options;
-		// Return a new instance of the Route class
-		return new static;
-	}
-
-	/**
-	 * Route a POST request
-	 *
-	 * @param string $from The URI pattern to match
-	 * @param string|array|callable $to The destination of the route
-	 * @param array $options An array of options for the route
-	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
-	 * @return self The Route class instance
-	 */
-	public static function post($from, $to, $options = [], ?Closure $nested = null)
-	{
-		if (static::methodIs('POST')) {
-			static::createRoute($from, $to, $options, $nested);
-		}
-
-		static::$options = $options;
-		// Return a new instance of the Route class
-		return new static;
-	}
-
-	/**
-	 * Route a PUT request
-	 *
-	 * @param string $from The URI pattern to match
-	 * @param string|array|callable $to The destination of the route
-	 * @param array $options An array of options for the route
-	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
-	 * @return self The Route class instance
-	 */
-	public static function put($from, $to, $options = [], ?Closure $nested = null)
-	{
-		if (static::methodIs('PUT')) {
-			static::createRoute($from, $to, $options, $nested);
-		}
-
-		static::$options = $options;
-		// Return a new instance of the Route class
-		return new static;
-	}
-
-	/**
-	 * Route a DELETE request
-	 *
-	 * @param string $from The URI pattern to match
-	 * @param string|array|callable $to The destination of the route
-	 * @param array $options An array of options for the route
-	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
-	 * @return self The Route class instance
-	 */
-	public static function delete($from, $to, $options = [], ?Closure $nested = null)
-	{
-		if (static::methodIs('DELETE')) {
-			static::createRoute($from, $to, $options, $nested);
-		}
-
-		static::$options = $options;
-		// Return a new instance of the Route class
-		return new static;
-	}
-
-	/**
-	 * Route a PATCH request
-	 *
-	 * @param string $from The URI pattern to match
-	 * @param string|array|callable $to The destination of the route
-	 * @param array $options An array of options for the route
-	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
-	 * @return self The Route class instance
-	 */
-	public static function patch($from, $to, $options = [], ?Closure $nested = null)
-	{
-		if (static::methodIs('PATCH')) {
-			static::createRoute($from, $to, $options, $nested);
-		}
-
-		static::$options = $options;
-		// Return a new instance of the Route class
-		return new static;
-	}
-
-	/**
-	 * Route a HEAD request
-	 *
-	 * @param string $from The URI pattern to match
-	 * @param string|array|callable $to The destination of the route
-	 * @param array $options An array of options for the route
-	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
-	 * @return self The Route class instance
-	 */
-	public static function head($from, $to, $options = [], ?Closure $nested = null)
-	{
-		if (
-			isset($_SERVER['REQUEST_METHOD']) &&
-			$_SERVER['REQUEST_METHOD'] == 'HEAD'
-		) {
-			static::createRoute($from, $to, $options, $nested);
-		}
-
-		static::$options = $options;
-		// Return a new instance of the Route class
-		return new static;
-	}
-
-	/**
-	 * Route an OPTIONS request
-	 *
-	 * @param string $from The URI pattern to match
-	 * @param string|array|callable $to The destination of the route
-	 * @param array $options An array of options for the route
-	 * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
-	 * @return self The Route class instance
-	 */
-	public static function options($from, $to, $options = [], ?Closure $nested = null)
-	{
-		if (
-			isset($_SERVER['REQUEST_METHOD']) &&
-			$_SERVER['REQUEST_METHOD'] == 'OPTIONS'
-		) {
-			static::createRoute($from, $to, $options, $nested);
-		}
-
-		static::$options = $options;
-		// Return a new instance of the Route class
-		return new static;
-	}
-
-	/**
-	 * Cli route
-	 *
-	 * @param string $from
-	 * @param string $to
-	 * @param array $options
-	 * @param callable|null $nested
-	 * @return void
-	 */
-	public static function cli($from, $to, $options = [], ?Closure $nested = null)
-	{
-		if (is_cli()) {
-			static::createRoute($from, $to, $options, $nested);
-		}
-	}
-
-	/**
-	 * Simple route to get views
-	 * from the Views directory
-	 *
-	 * @param  $name  view name to use as route
-	 * @return void
-	 */
-	public static function withview($name = '')
-	{
-		static::any($name, static::routeView() . $name);
-	}
-
-	/**
-	 * Register a view route
-	 * 
-	 * from the Views directory 
-	 * using a given uri and view name
-	 * 
-	 * Different from the useView() method
-	 * 
-	 * @param string $uri The URI pattern (e.g., 'about', 'profile/(:num)')
-	 * @param string $view The view file path
-	 * @param array $data Data to pass to the view
-	 * @return void
-	 */
-	public static function view($uri = '', $view = '', $data = [])
-	{
-		HelperRoute::view($uri, $view, $data);
-	}
-
-	/**
-	 * Handle a view to be used in a custom route
-	 * 
-	 * @param mixed $view
-	 * @param mixed $data
-	 * @return void
-	 */
-	public static function useView($view = '', $data = [])
-	{
-		HelperRoute::with($view, $data);
-	}
-
-	/**
-	 * Route that allows custom implementation
-	 * 
-	 * Register a custom closure route
-	 * @param string $uri The URI pattern
-	 * @param Closure $callback The callback to execute
-	 */
-	public static function page($uri = '', ?Closure $callback = null)
-	{
-		HelperRoute::closure($uri, $callback);
-	}
-
-	/**
-	 * Register a JSON route
-	 * 
-	 * @param string $uri The URI pattern
-	 * @param mixed $data Data to return (array or Closure)
-	 * @param int $status HTTP status code
-	 */
-	public static function json($uri, $data = [], $status = 200)
-	{
-		HelperRoute::json($uri, $data, $status);
-	}
-
-	/**
-	 * Web Resource method
-	 * Creates resource routes
-	 *
-	 * @param string $name i.e. module/controller name
-	 * @param bool $hasController
-	 * @return void
-	 */
-	public static function webResource($name, $hasController = true)
-	{
-		$name = str_replace('/', '.', $name);
-		$name = explode('.', $name);
-		$module = $name[0];
-		$controller = !isset($name[1]) ? $module : $name[1];
-
-		$moc = static::setMOC($module, $controller, $hasController);
-
-		$name = str_replace('.', '/', implode('.', $name));
-
-		static::get($name . '/index', $moc . '/index');
-		static::get($name . '/create', $moc . '/create');
-		static::post($name . '/store', $moc . '/store');
-		static::get($name . '/show/(:any)', $moc . '/show/$1');
-		static::get($name . '/edit/(:any)', $moc . '/edit/$1');
-		static::put($name . '/update/(:any)', $moc . '/update/$1');
-		static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
-	}
-
-	/**
-	 * Alias to method above
-	 *
-	 * @param string $name
-	 * @param bool $hasController
-	 * @return void
-	 */
-	public static function uselinks($name, $hasController = true)
-	{
-		static::webResource($name, $hasController);
-	}
-
-	/**
-	 * Alias to method above
-	 *
-	 * @param string $name
-	 * @param bool $hasController
-	 * @return void
-	 */
-	public static function web($name, $hasController = true)
-	{
-		static::webResource($name, $hasController);
-	}
-
-	/**
-	 * Send routes outside of application
-	 *
-	 * @param string $name
-	 * @param string $to
-	 * @param string $route
-	 * @return void
-	 */
-	public static function outside($name, $to = '', $route = '')
-	{
-
-		$parameterfy = false;
-
-		if (is_array($to)) {
-			$to = $to[0] . '/' . strtolower($to[1]);
-			$parameterfy = true;
-		} elseif (preg_match('/^([a-zA-Z\_\-0-9\/]+)->([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)) {
-			$to = $matches[1] . '/' . $matches[2];
-			$parameterfy = true;
-		} elseif (preg_match('/^([a-zA-Z\_\-0-9\/]+)::([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)) {
-			$to = $matches[1] . '/' . $matches[2];
-			$parameterfy = true;
-		} elseif (preg_match('/^([a-zA-Z\_\-0-9\/]+)@([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)) {
-			$to = $matches[1] . '/' . $matches[2];
-			$parameterfy = true;
-		}
-
-		// Account for parameters in the URL if we need to
-		if ($parameterfy) {
-			$to = static::parameterfy($name, $to);
-		}
-
-		if (empty($route)) {
-			$route = config_item('default_outside_route');
-		}
-
-		// Apply our routes
-		static::$temporaryRoutes[$name] = $to;
-
-		static::$routes[$name] = $route . '/' . $to;
-	}
-
-	/**
-	 * Api Resource method
-	 * Creates resource routes
-	 *
-	 * @param string $name i.e. module/controller name
-	 * @param bool $hasController
-	 * @return void
-	 */
-	public static function apiResource($name, $hasController = true)
-	{
-		$name = str_replace('/', '.', $name);
-		$name = explode('.', $name);
-		$module = $name[0];
-		$controller = !isset($name[1]) ? $module : $name[1];
-
-		$moc = static::setMOC($module, $controller, $hasController);
-
-		$name = str_replace('.', '/', implode('.', $name));
-
-		static::get($name . '/index', $moc . '/index');
-		static::post($name . '/store', $moc . '/store');
-		static::get($name . '/show/(:any)', $moc . '/show/$1');
-		static::put($name . '/update/(:any)', $moc . '/update/$1');
-		static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
-	}
-
-	/**
-	 * Alias to method above
-	 *
-	 * @param string $name
-	 * @param bool $hasController
-	 * @return void
-	 */
-	public static function api($name, $hasController = true)
-	{
-		static::apiResource($name, $hasController);
-	}
-
-	/**
-	 * Singleton Resource method
-	 *
-	 * @param string $name i.e. module/controller name
-	 * @param bool $hasController
-	 * @return void
-	 */
-	public static function singleton($name, $hasController = true)
-	{
-		$name = str_replace('/', '.', $name);
-		$name = explode('.', $name);
-		$module = $name[0];
-		$controller = !isset($name[1]) ? $module : $name[1];
-
-		$moc = static::setMOC($module, $controller, $hasController);
-
-		$name = str_replace('.', '/', implode('.', $name));
-
-		static::get($name . '/show/(:any)', $moc . '/show/$1');
-		static::get($name . '/edit/(:any)', $moc . '/edit/$1');
-		static::put($name . '/update/(:any)', $moc . '/update/$1');
-	}
-
-	/**
-	 * Partial Web Resource which 
-	 * Creates partial resource routes
-	 *
-	 * @param string $name
-	 * @param array $method
-	 * @param bool $hasController
-	 * @return void
-	 */
-	public static function partial($name, $method = [], $hasController = true)
-	{
-		$name = str_replace('/', '.', $name);
-		$name = explode('.', $name);
-		$module = $name[0];
-		$controller = !isset($name[1]) ? $module : $name[1];
-
-		$moc = static::setMOC($module, $controller, $hasController);
-
-		$name = str_replace('.', '/', implode('.', $name));
-
-		static::setRouteSignature($name, $method, $moc);
-	}
-
-	/**
-	 * Unique Route Signature
-	 *
-	 * @param string $route
-	 * @param string $signature
-	 * @param bool $hasController
-	 * @return void
-	 */
-	public static function unique($route, $signature, $hasController = true)
-	{
-		[$name, $as] = $route;
-
-		$name = str_replace('/', '.', $name);
-		$name = explode('.', $name);
-		$module = $name[0];
-		$controller = !isset($name[1]) ? $module : $name[1];
-
-		$moc = static::setMOC($module, $controller, $hasController);
-
-		$name = str_replace('.', '/', implode('.', $name));
-
-		static::any($name . $as, $moc . $signature);
-	}
-
-	/**
-	 * Set True http routes
-	 *
-	 * @param string $route
-	 * @param string $httpMethod
-	 * @param string $signature
-	 * @return void
-	 */
-	public static function http($httpMethod, $route, $signature)
-	{
-		static::setRouteHttpMethod($route, $httpMethod, $signature);
-	}
-
-	/**
-	 * Creates Semi HTTP-verb based routing for a module/controller.
-	 *
-	 * @param  string $name The name of the controller to route to.
-	 * @param  array $options A list of possible ways to customize the routing.
-	 * @param  mixed $nested A nested value to be passed into the routes.
-	 * @param  bool $hasController A flag to indicate if the controller exists.
-	 * @return void
-	 */
-	public static function resource($name, $options = [], $nested = null, $hasController = true)
-	{
-		if (empty($name)) {
-			return;
-		}
-
-		$nestOffset = '';
-
-		// In order to allow customization of the route the
-		// resources are sent to, we need to have a new name
-		// to store the values in.
-		$givenName = $name;
-
-		// If a new controller is specified, then we replace the
-		// $name value with the name of the new controller.
-		if (isset($options['controller'])) {
-			$givenName = $options['controller'];
-		}
-
-		// If a new module was specified, simply put that path
-		// in front of the controller.
-		if (isset($options['module'])) {
-			$givenName = $options['module'] . '/' . $givenName;
-		}
-
-		// In order to allow customization of allowed id values
-		// we need someplace to store them.
-		$id = static::$routeRegex;
-
-		if (isset($options['constraint'])) {
-			$id = $options['constraint'];
-		}
-
-		// If the 'offset' option is passed in, it means that all of our
-		// parameter placeholders in the $to ($1, $2, etc), need to be
-		// offset by that amount. This is useful when we're using an API
-		// with versioning in the URL.
-		$offset = isset($options['offset']) ? (int)$options['offset'] : 0;
-
-		if (static::$nestedDepth) {
-			$nestOffset = '/$1';
-			$offset++;
-		}
-
-		$newName = str_replace('/', '.', $givenName);
-		$newName = explode('.', $newName);
-		$module = $newName[0];
-		$controller = !isset($newName[1]) ? $module : $newName[1];
-
-		$moc = static::setMOC($module, $controller, $hasController);
-
-		$newName = str_replace('.', '/', implode('.', $newName));
-
-		static::get($name, $moc . '/index' . $nestOffset, $options, $nested);
-		static::get($name    . '/create', $moc . '/create' . $nestOffset, $options, $nested);
-		static::post($name   . '/store', $moc . '/store' . $nestOffset, $options, $nested);
-		static::get($name    . '/' . '(:any)', $moc . '/show' . $nestOffset . '/$' . (1 + $offset), $options, $nested);
-		static::get($name    . '/' . '(:any)' . '/edit', $moc . '/edit' . $nestOffset . '/$' . (1 + $offset), $options, $nested);
-		static::put($name    . '/' . '(:any)' . '/update', $moc . '/update' . $nestOffset . '/$' . (1 + $offset), $options, $nested);
-		static::delete($name . '/' . '(:any)' . '/delete', $moc . '/delete' . $nestOffset . '/$' . (1 + $offset), $options, $nested);
-	}
+    /**
+     * Route any HTTP request
+     *
+     * @param string $from The URI pattern to match
+     * @param string|array|callable $to The destination of the route
+     * @param array $options An array of options for the route
+     * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+     * @return self The Route class instance
+     */
+    public static function any($from, $to, $options = [], ?Closure $nested = null)
+    {
+        static::createRoute($from, $to, $options, $nested);
+
+        static::$options = $options;
+        // Return a new instance of the Route class
+        return new static;
+    }
+
+    /**
+     * Route a GET request
+     *
+     * @param string $from The URI pattern to match
+     * @param string|array|callable $to The destination of the route
+     * @param array $options An array of options for the route
+     * @param callable|null $nested A callable function to group nested routes, or boolean to check if it's nested
+     * @return self The Route class instance
+     */
+    public static function get($from, $to, $options = [], ?Closure $nested = null)
+    {
+        // Check if the current request method is GET
+        if (static::methodIs('GET')) {
+            // Create the route
+            static::createRoute($from, $to, $options, $nested);
+        }
+
+        static::$options = $options;
+        // Return a new instance of the Route class
+        return new static;
+    }
+
+    /**
+     * Route a POST request
+     *
+     * @param string $from The URI pattern to match
+     * @param string|array|callable $to The destination of the route
+     * @param array $options An array of options for the route
+     * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+     * @return self The Route class instance
+     */
+    public static function post($from, $to, $options = [], ?Closure $nested = null)
+    {
+        if (static::methodIs('POST')) {
+            static::createRoute($from, $to, $options, $nested);
+        }
+
+        static::$options = $options;
+        // Return a new instance of the Route class
+        return new static;
+    }
+
+    /**
+     * Route a PUT request
+     *
+     * @param string $from The URI pattern to match
+     * @param string|array|callable $to The destination of the route
+     * @param array $options An array of options for the route
+     * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+     * @return self The Route class instance
+     */
+    public static function put($from, $to, $options = [], ?Closure $nested = null)
+    {
+        if (static::methodIs('PUT')) {
+            static::createRoute($from, $to, $options, $nested);
+        }
+
+        static::$options = $options;
+        // Return a new instance of the Route class
+        return new static;
+    }
+
+    /**
+     * Route a DELETE request
+     *
+     * @param string $from The URI pattern to match
+     * @param string|array|callable $to The destination of the route
+     * @param array $options An array of options for the route
+     * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+     * @return self The Route class instance
+     */
+    public static function delete($from, $to, $options = [], ?Closure $nested = null)
+    {
+        if (static::methodIs('DELETE')) {
+            static::createRoute($from, $to, $options, $nested);
+        }
+
+        static::$options = $options;
+        // Return a new instance of the Route class
+        return new static;
+    }
+
+    /**
+     * Route a PATCH request
+     *
+     * @param string $from The URI pattern to match
+     * @param string|array|callable $to The destination of the route
+     * @param array $options An array of options for the route
+     * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+     * @return self The Route class instance
+     */
+    public static function patch($from, $to, $options = [], ?Closure $nested = null)
+    {
+        if (static::methodIs('PATCH')) {
+            static::createRoute($from, $to, $options, $nested);
+        }
+
+        static::$options = $options;
+        // Return a new instance of the Route class
+        return new static;
+    }
+
+    /**
+     * Route a HEAD request
+     *
+     * @param string $from The URI pattern to match
+     * @param string|array|callable $to The destination of the route
+     * @param array $options An array of options for the route
+     * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+     * @return self The Route class instance
+     */
+    public static function head($from, $to, $options = [], ?Closure $nested = null)
+    {
+        if (
+            isset($_SERVER['REQUEST_METHOD']) &&
+            $_SERVER['REQUEST_METHOD'] == 'HEAD'
+        ) {
+            static::createRoute($from, $to, $options, $nested);
+        }
+
+        static::$options = $options;
+        // Return a new instance of the Route class
+        return new static;
+    }
+
+    /**
+     * Route an OPTIONS request
+     *
+     * @param string $from The URI pattern to match
+     * @param string|array|callable $to The destination of the route
+     * @param array $options An array of options for the route
+     * @param callable|bool $nested A callable function to group nested routes, or boolean to check if it's nested
+     * @return self The Route class instance
+     */
+    public static function options($from, $to, $options = [], ?Closure $nested = null)
+    {
+        if (
+            isset($_SERVER['REQUEST_METHOD']) &&
+            $_SERVER['REQUEST_METHOD'] == 'OPTIONS'
+        ) {
+            static::createRoute($from, $to, $options, $nested);
+        }
+
+        static::$options = $options;
+        // Return a new instance of the Route class
+        return new static;
+    }
+
+    /**
+     * Cli route
+     *
+     * @param string $from
+     * @param string $to
+     * @param array $options
+     * @param callable|null $nested
+     * @return void
+     */
+    public static function cli($from, $to, $options = [], ?Closure $nested = null)
+    {
+        if (is_cli()) {
+            static::createRoute($from, $to, $options, $nested);
+        }
+    }
+
+    /**
+     * Simple route to get views
+     * from the Views directory
+     *
+     * @param  $name  view name to use as route
+     * @return void
+     */
+    public static function withview($name = '')
+    {
+        static::any($name, static::routeView() . $name);
+    }
+
+    /**
+     * Register a view route
+     * 
+     * from the Views directory 
+     * using a given uri and view name
+     * 
+     * Different from the useView() method
+     * 
+     * @param string $uri The URI pattern (e.g., 'about', 'profile/(:num)')
+     * @param string $view The view file path
+     * @param array $data Data to pass to the view
+     * @return void
+     */
+    public static function view($uri = '', $view = '', $data = [])
+    {
+        HelperRoute::view($uri, $view, $data);
+    }
+
+    /**
+     * Handle a view to be used in a custom route
+     * 
+     * @param mixed $view
+     * @param mixed $data
+     * @return void
+     */
+    public static function useView($view = '', $data = [])
+    {
+        HelperRoute::with($view, $data);
+    }
+
+    /**
+     * Route that allows custom implementation
+     * 
+     * Register a custom closure route
+     * @param string $uri The URI pattern
+     * @param Closure $callback The callback to execute
+     */
+    public static function page($uri = '', ?Closure $callback = null)
+    {
+        HelperRoute::closure($uri, $callback);
+    }
+
+    /**
+     * Register a JSON route
+     * 
+     * @param string $uri The URI pattern
+     * @param mixed $data Data to return (array or Closure)
+     * @param int $status HTTP status code
+     */
+    public static function json($uri, $data = [], $status = 200)
+    {
+        HelperRoute::json($uri, $data, $status);
+    }
+
+    /**
+     * Web Resource method
+     * Creates resource routes
+     *
+     * @param string $name i.e. module/controller name
+     * @param bool $hasController
+     * @return void
+     */
+    public static function webResource($name, $hasController = true)
+    {
+        $name = str_replace('/', '.', $name);
+        $name = explode('.', $name);
+        $module = $name[0];
+        $controller = !isset($name[1]) ? $module : $name[1];
+
+        $moc = static::setMOC($module, $controller, $hasController);
+
+        $name = str_replace('.', '/', implode('.', $name));
+
+        static::get($name . '/index', $moc . '/index');
+        static::get($name . '/create', $moc . '/create');
+        static::post($name . '/store', $moc . '/store');
+        static::get($name . '/show/(:any)', $moc . '/show/$1');
+        static::get($name . '/edit/(:any)', $moc . '/edit/$1');
+        static::put($name . '/update/(:any)', $moc . '/update/$1');
+        static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
+    }
+
+    /**
+     * Alias to method above
+     *
+     * @param string $name
+     * @param bool $hasController
+     * @return void
+     */
+    public static function uselinks($name, $hasController = true)
+    {
+        static::webResource($name, $hasController);
+    }
+
+    /**
+     * Alias to method above
+     *
+     * @param string $name
+     * @param bool $hasController
+     * @return void
+     */
+    public static function web($name, $hasController = true)
+    {
+        static::webResource($name, $hasController);
+    }
+
+    /**
+     * Send routes outside of application
+     *
+     * @param string $name
+     * @param string $to
+     * @param string $route
+     * @return void
+     */
+    public static function outside($name, $to = '', $route = '')
+    {
+
+        $parameterfy = false;
+
+        if (is_array($to)) {
+            $to = $to[0] . '/' . strtolower($to[1]);
+            $parameterfy = true;
+        } elseif (preg_match('/^([a-zA-Z\_\-0-9\/]+)->([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)) {
+            $to = $matches[1] . '/' . $matches[2];
+            $parameterfy = true;
+        } elseif (preg_match('/^([a-zA-Z\_\-0-9\/]+)::([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)) {
+            $to = $matches[1] . '/' . $matches[2];
+            $parameterfy = true;
+        } elseif (preg_match('/^([a-zA-Z\_\-0-9\/]+)@([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)) {
+            $to = $matches[1] . '/' . $matches[2];
+            $parameterfy = true;
+        }
+
+        // Account for parameters in the URL if we need to
+        if ($parameterfy) {
+            $to = static::parameterfy($name, $to);
+        }
+
+        if (empty($route)) {
+            $route = config_item('default_outside_route');
+        }
+
+        // Apply our routes
+        static::$temporaryRoutes[$name] = $to;
+
+        static::$routes[$name] = $route . '/' . $to;
+    }
+
+    /**
+     * Api Resource method
+     * Creates resource routes
+     *
+     * @param string $name i.e. module/controller name
+     * @param bool $hasController
+     * @return void
+     */
+    public static function apiResource($name, $hasController = true)
+    {
+        $name = str_replace('/', '.', $name);
+        $name = explode('.', $name);
+        $module = $name[0];
+        $controller = !isset($name[1]) ? $module : $name[1];
+
+        $moc = static::setMOC($module, $controller, $hasController);
+
+        $name = str_replace('.', '/', implode('.', $name));
+
+        static::get($name . '/index', $moc . '/index');
+        static::post($name . '/store', $moc . '/store');
+        static::get($name . '/show/(:any)', $moc . '/show/$1');
+        static::put($name . '/update/(:any)', $moc . '/update/$1');
+        static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
+    }
+
+    /**
+     * Alias to method above
+     *
+     * @param string $name
+     * @param bool $hasController
+     * @return void
+     */
+    public static function api($name, $hasController = true)
+    {
+        static::apiResource($name, $hasController);
+    }
+
+    /**
+     * Singleton Resource method
+     *
+     * @param string $name i.e. module/controller name
+     * @param bool $hasController
+     * @return void
+     */
+    public static function singleton($name, $hasController = true)
+    {
+        $name = str_replace('/', '.', $name);
+        $name = explode('.', $name);
+        $module = $name[0];
+        $controller = !isset($name[1]) ? $module : $name[1];
+
+        $moc = static::setMOC($module, $controller, $hasController);
+
+        $name = str_replace('.', '/', implode('.', $name));
+
+        static::get($name . '/show/(:any)', $moc . '/show/$1');
+        static::get($name . '/edit/(:any)', $moc . '/edit/$1');
+        static::put($name . '/update/(:any)', $moc . '/update/$1');
+    }
+
+    /**
+     * Partial Web Resource which 
+     * Creates partial resource routes
+     *
+     * @param string $name
+     * @param array $method
+     * @param bool $hasController
+     * @return void
+     */
+    public static function partial($name, $method = [], $hasController = true)
+    {
+        $name = str_replace('/', '.', $name);
+        $name = explode('.', $name);
+        $module = $name[0];
+        $controller = !isset($name[1]) ? $module : $name[1];
+
+        $moc = static::setMOC($module, $controller, $hasController);
+
+        $name = str_replace('.', '/', implode('.', $name));
+
+        static::setRouteSignature($name, $method, $moc);
+    }
+
+    /**
+     * Unique Route Signature
+     *
+     * @param string $route
+     * @param string $signature
+     * @param bool $hasController
+     * @return void
+     */
+    public static function unique($route, $signature, $hasController = true)
+    {
+        [$name, $as] = $route;
+
+        $name = str_replace('/', '.', $name);
+        $name = explode('.', $name);
+        $module = $name[0];
+        $controller = !isset($name[1]) ? $module : $name[1];
+
+        $moc = static::setMOC($module, $controller, $hasController);
+
+        $name = str_replace('.', '/', implode('.', $name));
+
+        static::any($name . $as, $moc . $signature);
+    }
+
+    /**
+     * Set True http routes
+     *
+     * @param string $route
+     * @param string $httpMethod
+     * @param string $signature
+     * @return void
+     */
+    public static function http($httpMethod, $route, $signature)
+    {
+        static::setRouteHttpMethod($route, $httpMethod, $signature);
+    }
+
+    /**
+     * Creates Semi HTTP-verb based routing for a module/controller.
+     *
+     * @param  string $name The name of the controller to route to.
+     * @param  array $options A list of possible ways to customize the routing.
+     * @param  mixed $nested A nested value to be passed into the routes.
+     * @param  bool $hasController A flag to indicate if the controller exists.
+     * @return void
+     */
+    public static function resource($name, $options = [], $nested = null, $hasController = true)
+    {
+        if (empty($name)) {
+            return;
+        }
+
+        $nestOffset = '';
+
+        // In order to allow customization of the route the
+        // resources are sent to, we need to have a new name
+        // to store the values in.
+        $givenName = $name;
+
+        // If a new controller is specified, then we replace the
+        // $name value with the name of the new controller.
+        if (isset($options['controller'])) {
+            $givenName = $options['controller'];
+        }
+
+        // If a new module was specified, simply put that path
+        // in front of the controller.
+        if (isset($options['module'])) {
+            $givenName = $options['module'] . '/' . $givenName;
+        }
+
+        // In order to allow customization of allowed id values
+        // we need someplace to store them.
+        $id = static::$routeRegex;
+
+        if (isset($options['constraint'])) {
+            $id = $options['constraint'];
+        }
+
+        // If the 'offset' option is passed in, it means that all of our
+        // parameter placeholders in the $to ($1, $2, etc), need to be
+        // offset by that amount. This is useful when we're using an API
+        // with versioning in the URL.
+        $offset = isset($options['offset']) ? (int)$options['offset'] : 0;
+
+        if (static::$nestedDepth) {
+            $nestOffset = '/$1';
+            $offset++;
+        }
+
+        $newName = str_replace('/', '.', $givenName);
+        $newName = explode('.', $newName);
+        $module = $newName[0];
+        $controller = !isset($newName[1]) ? $module : $newName[1];
+
+        $moc = static::setMOC($module, $controller, $hasController);
+
+        $newName = str_replace('.', '/', implode('.', $newName));
+
+        static::get($name, $moc . '/index' . $nestOffset, $options, $nested);
+        static::get($name    . '/create', $moc . '/create' . $nestOffset, $options, $nested);
+        static::post($name   . '/store', $moc . '/store' . $nestOffset, $options, $nested);
+        static::get($name    . '/' . '(:any)', $moc . '/show' . $nestOffset . '/$' . (1 + $offset), $options, $nested);
+        static::get($name    . '/' . '(:any)' . '/edit', $moc . '/edit' . $nestOffset . '/$' . (1 + $offset), $options, $nested);
+        static::put($name    . '/' . '(:any)' . '/update', $moc . '/update' . $nestOffset . '/$' . (1 + $offset), $options, $nested);
+        static::delete($name . '/' . '(:any)' . '/delete', $moc . '/delete' . $nestOffset . '/$' . (1 + $offset), $options, $nested);
+    }
 
 	/* --------------------------------------------------------------
      * UTILITY FUNCTIONS
      * ------------------------------------------------------------ */
 
-	/**
-	 * Extract the URL parameters 
-	 * from $from and copy to $to
-	 *
-	 * @param string $from
-	 * @param string $to
-	 * @return string
-	 */
-	private static function parameterfy($from, $to)
-	{
-		if (preg_match_all('/\/\((.*?)\)/', $from, $matches)) {
+    /**
+     * Extract the URL parameters 
+     * from $from and copy to $to
+     *
+     * @param string $from
+     * @param string $to
+     * @return string
+     */
+    private static function parameterfy($from, $to)
+    {
+        if (preg_match_all('/\/\((.*?)\)/', $from, $matches)) {
 
-			$params = '';
+            $params = '';
 
-			foreach ($matches[1] as $i => $match) {
-				$i = $i + 1;
-				$params .= "/\$$i";
-			}
+            foreach ($matches[1] as $i => $match) {
+                $i = $i + 1;
+                $params .= "/\$$i";
+            }
 
-			$to .= $params;
-		}
+            $to .= $params;
+        }
 
-		return $to;
-	}
+        return $to;
+    }
 
-	/**
-	 * Sets a default route closure to be executed 
-	 * when no specific route is matched.
-	 *
-	 * @param Closure|null $callable The closure to execute.
-	 *  If null, the closure is not executed.
-	 * 
-	 * @return void
-	 */
-	public static function default(?Closure $callable = null)
-	{
-		// Check if the current SUBDOMAIN is not false.
-		// If it is not false, we immediately return 
-		// and do not execute the closure.
-		if (SUBDOMAIN !== false) {
-			return;
-		}
+    /**
+     * Sets a default route closure to be executed 
+     * when no specific route is matched.
+     *
+     * @param Closure|null $callable The closure to execute.
+     *  If null, the closure is not executed.
+     * 
+     * @return void
+     */
+    public static function default(?Closure $callable = null)
+    {
+        // Check if the current SUBDOMAIN is not false.
+        // If it is not false, we immediately return 
+        // and do not execute the closure.
+        if (SUBDOMAIN !== false) {
+            return;
+        }
 
-		call_user_func($callable);
-		static::$group = null;
-		static::$prefix = null;
-		static::$subdomain = null;
-	}
+        call_user_func($callable);
+        static::$group = null;
+        static::$prefix = null;
+        static::$subdomain = null;
+    }
 
-	/**
-	 * Set subdomain for routes.
-	 *
-	 * @param string $subdomain The subdomain to set.
-	 * @param string|null $definedController The default controller to set. null by default.
-	 * @return static Returns a new instance of the class.
-	 */
-	public static function domain(string $subdomain, ?string $definedController = null)
-	{
+    /**
+     * Set subdomain for routes.
+     *
+     * @param string $subdomain The subdomain to set.
+     * @param string|null $definedController The default controller to set. null by default.
+     * @return static Returns a new instance of the class.
+     */
+    public static function domain(string $subdomain, ?string $definedController = null)
+    {
 
-		[$name,] = explode('.', $subdomain);
+        [$name,] = explode('.', $subdomain);
 
-		static::$subdomain = $name;
+        static::$subdomain = $name;
 
-		$currentDomain = (new static)->getCurrentSubdomain();
+        $currentDomain = (new static)->getCurrentSubdomain();
 
-		if (preg_match('/\{.*\}/', static::$subdomain)) {
-			static::$subdomain = "*";
-		}
+        if (preg_match('/\{.*\}/', static::$subdomain)) {
+            static::$subdomain = "*";
+        }
 
-		if (($currentDomain === static::$subdomain) && ($definedController !== null)) {
-			static::$definedController = $definedController;
-		}
+        if (($currentDomain === static::$subdomain) && ($definedController !== null)) {
+            static::$definedController = $definedController;
+        }
 
-		if ((static::$subdomain === '*') && ($definedController !== null)) {
-			static::$definedController = $definedController;
-			$currentDomain = Route::dynamic();
-		}
+        if ((static::$subdomain === '*') && ($definedController !== null)) {
+            static::$definedController = $definedController;
+            $currentDomain = Route::dynamic();
+        }
 
-		if ((static::$subdomain === '*') && ($definedController === null) && SUBDOMAIN !== false) {
-			$currentDomain = static::$subdomain = Route::dynamic();
-		}
+        if ((static::$subdomain === '*') && ($definedController === null) && SUBDOMAIN !== false) {
+            $currentDomain = static::$subdomain = Route::dynamic();
+        }
 
-		if ($currentDomain === static::$subdomain) {
-			static::$defaultController = static::$subdomain;
-		}
+        if ($currentDomain === static::$subdomain) {
+            static::$defaultController = static::$subdomain;
+        }
 
-		// Returns a new instance of the class.
-		return new static;
-	}
+        // Returns a new instance of the class.
+        return new static;
+    }
 
-	/**
-	 * Retrieve the current subdomain dynamically.
-	 *
-	 * @return string The current subdomain.
-	 */
-	protected static function dynamic()
-	{
-		// Create a new instance of the class 
-		// and get the current subdomain.
-		return (new static)->getCurrentSubdomain();
-	}
+    /**
+     * Retrieve the current subdomain dynamically.
+     *
+     * @return string The current subdomain.
+     */
+    protected static function dynamic()
+    {
+        // Create a new instance of the class 
+        // and get the current subdomain.
+        return (new static)->getCurrentSubdomain();
+    }
 
-	/**
-	 * Prefix routes
-	 *
-	 * @param  string  $name  The prefix to add to the routes.
-	 * @param  Closure $callback
-	 */
-	public static function prefix($name, Closure $callback)
-	{
-		static::$prefix = $name;
-		call_user_func($callback);
-		static::$prefix = null;
-		static::$subdomain = null;
-	}
+    /**
+     * Prefix routes
+     *
+     * @param  string  $name  The prefix to add to the routes.
+     * @param  Closure $callback
+     */
+    public static function prefix($name, Closure $callback)
+    {
+        static::$prefix = $name;
+        call_user_func($callback);
+        static::$prefix = null;
+        static::$subdomain = null;
+    }
 
-	/**
-	 * Group routes
-	 *
-	 * @param string $from
-	 * @param Closure $to
-	 * 
-	 */
-	public static function group(?Closure $callable = null)
-	{
+    /**
+     * Group routes
+     *
+     * @param string $from
+     * @param Closure $to
+     * 
+     */
+    public static function group(?Closure $callable = null)
+    {
 
-		$currentDomain = (new static)->getCurrentSubdomain();
+        $currentDomain = (new static)->getCurrentSubdomain();
 
-		if (static::$subdomain !== $currentDomain) {
-			return;
-		}
+        if (static::$subdomain !== $currentDomain) {
+            return;
+        }
 
-		static::$group = '';
-		call_user_func($callable);
-		static::$group = null;
-		static::$prefix = null;
-		static::$subdomain = null;
-	}
+        static::$group = '';
+        call_user_func($callable);
+        static::$group = null;
+        static::$prefix = null;
+        static::$subdomain = null;
+    }
 
-	/**
-	 * Group Module routes
-	 *
-	 * @param string $from
-	 * @param Closure $to
-	 * 
-	 */
-	public static function module($name, ?Closure $callable = null)
-	{
-		static::prefix($name, $callable);
-	}
+    /**
+     * Group Module routes
+     *
+     * @param string $from
+     * @param Closure $to
+     * 
+     */
+    public static function module($name, ?Closure $callable = null)
+    {
+        static::prefix($name, $callable);
+    }
 
-	/**
-	 * Easily block access to any number of routes by setting
-	 * that route to an empty path ('').
-	 *
-	 * Example:
-	 *     Route::block('posts', 'photos/(:num)');
-	 *
-	 *     // Same as...
-	 *     $route['posts']          = '';
-	 *     $route['photos/(:num)']  = '';
-	 */
-	public static function block()
-	{
-		$paths = func_get_args();
+    /**
+     * Easily block access to any number of routes by setting
+     * that route to an empty path ('').
+     *
+     * Example:
+     *     Route::block('posts', 'photos/(:num)');
+     *
+     *     // Same as...
+     *     $route['posts']          = '';
+     *     $route['photos/(:num)']  = '';
+     */
+    public static function block()
+    {
+        $paths = func_get_args();
 
-		if (!is_array($paths)) {
-			return;
-		}
+        if (!is_array($paths)) {
+            return;
+        }
 
-		foreach ($paths as $path) {
-			static::createRoute($path, '');
-		}
-	}
+        foreach ($paths as $path) {
+            static::createRoute($path, '');
+        }
+    }
 
-	/**
-	 * Set MoC (Module on Controller)
-	 *
-	 * @param  string $module
-	 * @param string $controller
-	 * @param bool $hasController
-	 * @return string
-	 */
-	private static function setMOC($module, $controller, $hasController)
-	{
-		$moc = ucfirst($module) . '/' . ucfirst($controller);
+    /**
+     * Set MoC (Module on Controller)
+     *
+     * @param  string $module
+     * @param string $controller
+     * @param bool $hasController
+     * @return string
+     */
+    private static function setMOC($module, $controller, $hasController)
+    {
+        $moc = ucfirst($module) . '/' . ucfirst($controller);
 
-		if ($hasController && $controller) {
-			$controller = ucfirst(Inflector::singularize($controller)) . "Controller";
-			$moc = ucfirst($module) . '/' . $controller;
-		}
+        if ($hasController && $controller) {
+            $controller = ucfirst(Inflector::singularize($controller)) . "Controller";
+            $moc = ucfirst($module) . '/' . $controller;
+        }
 
-		return $moc;
-	}
+        return $moc;
+    }
 
-	/**
-	 * Set Route Signature
-	 * Used for special cases
-	 *
-	 * @param $name
-	 * @param mixed $method
-	 * @param mixed $moc
-	 * @return void
-	 */
-	private static function setRouteSignature($name, $method, $moc)
-	{
-		if (in_array('index', $method)) {
-			static::get($name . '/index', $moc . '/index');
-		}
+    /**
+     * Set Route Signature
+     * Used for special cases
+     *
+     * @param $name
+     * @param mixed $method
+     * @param mixed $moc
+     * @return void
+     */
+    private static function setRouteSignature($name, $method, $moc)
+    {
+        if (in_array('index', $method)) {
+            static::get($name . '/index', $moc . '/index');
+        }
 
-		if (in_array('create', $method)) {
-			static::get($name . '/create', $moc . '/create');
-		}
+        if (in_array('create', $method)) {
+            static::get($name . '/create', $moc . '/create');
+        }
 
-		if (in_array('store', $method)) {
-			static::post($name . '/store', $moc . '/store');
-		}
+        if (in_array('store', $method)) {
+            static::post($name . '/store', $moc . '/store');
+        }
 
-		if (in_array('show', $method)) {
-			static::get($name . '/show/(:any)', $moc . '/show/$1');
-		}
+        if (in_array('show', $method)) {
+            static::get($name . '/show/(:any)', $moc . '/show/$1');
+        }
 
-		if (in_array('edit', $method)) {
-			static::get($name . '/edit/(:any)', $moc . '/edit/$1');
-		}
+        if (in_array('edit', $method)) {
+            static::get($name . '/edit/(:any)', $moc . '/edit/$1');
+        }
 
-		if (in_array('update', $method)) {
-			static::put($name . '/update/(:any)', $moc . '/update/$1');
-		}
+        if (in_array('update', $method)) {
+            static::put($name . '/update/(:any)', $moc . '/update/$1');
+        }
 
-		if (in_array('delete', $method)) {
-			static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
-		}
-	}
+        if (in_array('delete', $method)) {
+            static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
+        }
+    }
 
-	/**
-	 * Set Route Using HTTP Method
-	 * Used to mimic old $routes with HTTP Methods
-	 *
-	 * Example : $route['some-route-here']['GET'] = 'Module/Controller/method/parameter'
-	 * 
-	 * @param $name
-	 * @param mixed $method
-	 * @param mixed $signature
-	 * @return void
-	 */
-	private static function setRouteHttpMethod($name, $httpMethod, $signature)
-	{
-		$httpMethods = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
-		$httpMethod = strtoupper($httpMethod);
+    /**
+     * Set Route Using HTTP Method
+     * Used to mimic old $routes with HTTP Methods
+     *
+     * Example : $route['some-route-here']['GET'] = 'Module/Controller/method/parameter'
+     * 
+     * @param $name
+     * @param mixed $method
+     * @param mixed $signature
+     * @return void
+     */
+    private static function setRouteHttpMethod($name, $httpMethod, $signature)
+    {
+        $httpMethods = ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
+        $httpMethod = strtoupper($httpMethod);
 
-		if (in_array($httpMethod, $httpMethods)) {
-			static::{strtolower($httpMethod)}($name, $signature);
-		}
-	}
-	/**
-	 * Clear out the routing table
-	 * @return mixed
-	 */
-	public static function clear()
-	{
-		static::$routes = [];
-	}
+        if (in_array($httpMethod, $httpMethods)) {
+            static::{strtolower($httpMethod)}($name, $signature);
+        }
+    }
+    /**
+     * Clear out the routing table
+     * @return mixed
+     */
+    public static function clear()
+    {
+        static::$routes = [];
+    }
 
-	/**
-	 * Resets the class to a first-load state. Mainly useful during testing.
-	 *
-	 * @return void
-	 */
-	public static function reset()
-	{
-		static::$routes = [];
-		static::$namedRoutes = [];
-		static::$nestedDepth = 0;
-		static::$group = null;
-		static::$prefix = null;
-		static::$subdomain = null;
-		static::$defaultController = null;
-	}
+    /**
+     * Resets the class to a first-load state. Mainly useful during testing.
+     *
+     * @return void
+     */
+    public static function reset()
+    {
+        static::$routes = [];
+        static::$namedRoutes = [];
+        static::$nestedDepth = 0;
+        static::$group = null;
+        static::$prefix = null;
+        static::$subdomain = null;
+        static::$defaultController = null;
+    }
 
-	/**
-	 * Return the routes array
-	 *
-	 * Used as a helper in HMVC Routing
-	 * 
-	 * @param array $route
-	 * @return array
-	 */
-	public static function build(array $route = [])
-	{
+    /**
+     * Return the routes array
+     *
+     * Used as a helper in HMVC Routing
+     * 
+     * @param array $route
+     * @return array
+     */
+    public static function build(array $route = [])
+    {
 
-		if (empty($route)) {
-			$route = static::availableRoutes();
-		}
+        if (empty($route)) {
+            $route = static::availableRoutes();
+        }
 
-		$defaultController = $routes['default_controller'] ?? null;
+        $defaultController = $route['default_controller'] ?? null;
 
-		$assignedController = static::$definedController
-			?? $defaultController
-			?? static::$defaultController;
+        $assignedController = static::$definedController
+            ?? $defaultController
+            ?? static::$defaultController;
 
-		$routes = array_merge(
-			$route,
-			static::$routes,
-		);
+        $routes = array_merge(
+            $route,
+            static::$routes,
+        );
 
-		$routes['default_controller'] = $assignedController ?? $route['default_controller'];
+        $routes['default_controller'] = $assignedController ?? $route['default_controller'];
 
-		return $routes;
-	}
+        return $routes;
+    }
 
-	/**
-	 * Alias to above function
-	 *
-	 * @param array $route
-	 * @return array
-	 */
-	public static function include(array $route = [])
-	{
-		return static::build($route);
-	}
+    /**
+     * Alias to above function
+     *
+     * @param array $route
+     * @return array
+     */
+    public static function include(array $route = [])
+    {
+        return static::build($route);
+    }
 
-	/**
-	 * Include other route files
-	 *
-	 * @param string $routeFile
-	 * @return void
-	 */
-	public static function import(string $routeFile, $outsourced = false): void
-	{
-		if (!$outsourced) {
-			include_once(ROOTPATH . 'routes' . DS . $routeFile . PHPEXT);
-		}
+    /**
+     * Include other route files
+     *
+     * @param string $routeFile
+     * @return void
+     */
+    public static function import(string $routeFile, $outsourced = false): void
+    {
+        if (!$outsourced) {
+            include_once(ROOTPATH . 'routes' . DS . $routeFile . PHPEXT);
+        }
 
-		if ($outsourced) {
-			include_once($routeFile);
-		}
-	}
+        if ($outsourced) {
+            include_once($routeFile);
+        }
+    }
 
-	/**
-	 * Verify Http Method
-	 * 
-	 * And check whether it is to be 
-	 * strictly true http method or not
-	 *
-	 * @param string $method
-	 * @return mixed
-	 */
-	protected static function methodIs($method)
-	{
-		return (static::$trueHttp === false)
-			? $method
-			: (isset($_SERVER['REQUEST_METHOD']) &&
-				($_SERVER['REQUEST_METHOD'] == $method ||
-					($_SERVER['REQUEST_METHOD'] == 'POST' &&
-						isset($_POST['_method']) &&
-						strtolower($_POST['_method']) == strtolower($method))));
-	}
+    /**
+     * Verify Http Method
+     * 
+     * And check whether it is to be 
+     * strictly true http method or not
+     *
+     * @param string $method
+     * @return mixed
+     */
+    protected static function methodIs($method)
+    {
+        return (static::$trueHttp === false)
+            ? $method
+            : (isset($_SERVER['REQUEST_METHOD']) &&
+                ($_SERVER['REQUEST_METHOD'] == $method ||
+                    ($_SERVER['REQUEST_METHOD'] == 'POST' &&
+                        isset($_POST['_method']) &&
+                        strtolower($_POST['_method']) == strtolower($method))));
+    }
 }

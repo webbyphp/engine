@@ -1,9 +1,20 @@
 <?php
 
+/**
+ * HelperRoute - A supporting routing class WebbyPHP Route
+ * 
+ * This class enhances routing 
+ * entirely and handles requests directly
+ * 
+ * Built for serving simple views and JSON responses
+ * 
+ */
+
 namespace Base\Route;
 
 use ArgumentCountError;
 use Closure;
+use ReflectionFunction;
 
 class HelperRoute
 {
@@ -290,13 +301,25 @@ class HelperRoute
      * @param Closure $callback The callback
      * @param array $params Route parameters
      */
-    protected static function handleClosure($callback, $params)
+    protected static function handleClosure($callback, $params = [])
     {
-        if (empty($params)) {
-            throw new ArgumentCountError('Route::page or Route::json expects at least 1 parameter to be passed. E.g Route::page("uri/(:num)")');
+        if (! $callback instanceof Closure) {
+            return call_user_func_array($callback, $params);
         }
 
-        call_user_func_array($callback, $params);
+        $reference = new ReflectionFunction($callback);
+        $provided = count($params);
+        $required = $reference->getNumberOfRequiredParameters();
+
+        if ($required > $provided) {
+            throw new ArgumentCountError(
+                "Route::page(...) or Route::json(...) closure expects at least $required parameter(s), " .
+                    "but only $provided value(s) were passed from the URL. " .
+                    "Add more segments like {id} or (:num) to your route."
+            );
+        }
+
+        return call_user_func_array($callback, $params);
     }
 
     /**
