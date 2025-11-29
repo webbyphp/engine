@@ -10,6 +10,7 @@ use Base\Json\Helpers\Helper;
  * This content is released under the MIT License (MIT)
  *
  * Copyright (c) 2019 - 2022, CodeIgniter Foundation
+ * Copyright (c) 2020 - present, WebbyPHP Framework
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,9 +35,10 @@ use Base\Json\Helpers\Helper;
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
  * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (https://bcit.ca/)
  * @copyright	Copyright (c) 2019 - 2022, CodeIgniter Foundation (https://codeigniter.com/)
+ * @copyright   Copyright (c) 2020 - present, WebbyPHP Framework (https://webbyphp.top)
  * @license	https://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
- * @since	Version 1.3.0
+ * @since	WebbyPHP Version 3.0.0
  * @filesource
  */
 
@@ -51,7 +53,8 @@ use Base\Json\Helpers\Helper;
  * @subpackage	Drivers
  * @category	Database
  * @author		EllisLab Dev Team
- * @link		https://codeigniter.com/userguide3/database/
+ * @author		Kwame Oteng Appiah-Nti
+ * @link		TBA
  */
 class CI_DB_json_driver extends CI_DB_driver
 {

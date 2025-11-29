@@ -46,6 +46,19 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @subpackage	Libraries
  * @category	Sessions
  * @author	Andrey Andreev
+ * @link	https://codeigniter.com/userguide3/libraries/sessions.html
+ */
+defined('BASEPATH') or exit('No direct script access allowed');
+
+/**
+ * OldSessionWrapper
+ *
+ * PHP 8 Session handler compatibility wrapper, pre-PHP8 version
+ *
+ * @package	CodeIgniter
+ * @subpackage	Libraries
+ * @category	Sessions
+ * @author	Andrey Andreev
  * @author  Developer Kwame
  * @link	https://codeigniter.com/userguide3/libraries/sessions.html
  */
@@ -100,5 +113,4 @@ class CI_SessionWrapper implements SessionHandlerInterface, SessionUpdateTimesta
 	{
 		return $this->driver->validateId($id);
 	}
-	
 }

@@ -1,10 +1,14 @@
 <?php
 
 /**
- * Simple Service Container for WebbyPHP and CodeIgniter 3
- * Provides modern dependency injection while 
- * maintaining CI3 compatibility
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 class CI_ServiceContainer
 {
     /**

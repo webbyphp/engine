@@ -1,16 +1,12 @@
 <?php
 
 /**
- * Modern Error Handler for WebbyPHP or CodeIgniter 3
- * 
- * Inspired by https://github.com/brqt/
- * 
- * Enhanced implementation with better integration, 
- * performance optimization, and additional features 
- * for an improved developer experience.
- * 
- * @author Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
- * 
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 class CI_ErrorHandler

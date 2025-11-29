@@ -1,16 +1,14 @@
 <?php
 
 /**
- * CodeIgniter Instance
+ * This file is part of WebbyPHP Framework.
  *
- * A static helper for the CodeIgniter::instance method.
- * 
- * Had to expand on it due to Webby's work around
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  *
- * @package Webby
- * @author  Rougin Gutib <rougingutib@gmail.com>
- * @author  Oteng Kwame Appiah-Nti <developerkwame@gmail.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 class CI_Instance
 {
     /**

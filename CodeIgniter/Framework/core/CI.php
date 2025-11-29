@@ -1,18 +1,12 @@
 <?php
 
 /**
- * CodeIgniter Object and Instance
+ * This file is part of WebbyPHP Framework.
  *
- * Greatly inspired by CoreIgniter and Rougin/SparkPlug
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  *
- * Had to expand on it due to Webby's work around
- *
- * I think this wil be useful :)
- *
- * @author  Rougin Gutib <rougingutib@gmail.com>
- * @author  Oteng Kwame Appiah-Nti <developerkwame@gmail.com>
- * @license MIT
- * @version 1.0.0
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 class CI_CodeIgniter
@@ -21,7 +15,7 @@ class CI_CodeIgniter
     /**
      * Version of this library
      */
-    const VERSION = '1.0.0';
+    const VERSION = '3.0.0';
 
     /**
      * Internal storage of CodeIgniter 
