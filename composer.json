@@ -1,13 +1,25 @@
 {
     "name": "webbyphp/engine",
-    "description": "",
-    "keywords": ["composer", "codeigniter", "webby", "webbyphp", "sylynder"],
+    "keywords": [
+        "composer",
+        "codeigniter",
+        "webby",
+        "webbyphp",
+        "sylynder"
+    ],
     "license": "MIT",
-    "authors": [{
-        "name": "otengkwame",
-        "email": "developerkwame@gmail.com",
-        "role": "Software Engineer"
-    }],
+    "homepage": "https://webbyphp.top",
+    "support": {
+        "issues": "https://github.com/webbyphp/engine/issues",
+        "source": "https://github.com/webbyphp/engine"
+    },
+    "authors": [
+        {
+            "name": "otengkwame",
+            "email": "developerkwame@gmail.com",
+            "role": "Software Engineer"
+        }
+    ],
     "require": {
         "php": "^8.3"
     },
@@ -19,5 +31,6 @@
             "CodeIgniter/Framework"
         ]
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "prefer-stable": true
 }
