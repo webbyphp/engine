@@ -294,6 +294,21 @@ class CI_Router
 
 		$class ??= '';
 
+		// Trim '/index' from the end if present
+		$defaultController = preg_replace('#/index$#', '', $this->default_controller);
+
+		// Check if default controller is not 'app' or 'app/index'
+		// AND if the route value contains 'prefix-route'
+		if (
+			$this->default_controller !== 'app'
+			&& $this->default_controller !== 'app/index'
+			&& str_contains($this->routes[$defaultController], 'prefix-route')
+		) {
+			$baseUrl = $this->config->config['base_url'];
+			// Redirect to the set default_controller with the base_url
+			header('Location: ' . $baseUrl . $this->default_controller);
+		}
+
 		if (! file_exists(COREPATH . 'controllers/' . $this->directory . ucfirst($class) . '.php')) {
 			// This will trigger 404 later
 			return;

@@ -2,6 +2,8 @@
 defined('COREPATH') or exit('No direct script access allowed');
 
 use Base\Route\Route;
+use Base\Route\HelperRoute;
+
 /*
 | -------------------------------------------------------------------------
 | URI ROUTING
@@ -73,6 +75,10 @@ $default = [
 
 $GLOBALS['default_routes'] = $default;
 $GLOBALS['available_routes'] = $route;
+
+// Initialize HelperRoute - this checks for matches
+HelperRoute::init();
+$route = array_merge($route ?? [], HelperRoute::getRoutes());
 
 /**
  * Build routes
