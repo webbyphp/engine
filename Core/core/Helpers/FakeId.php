@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * PseudoCrypt by KevBurns (http://blog.kevburnsjr.com/php-unique-hash)
  * Reference/source: http://stackoverflow.com/a/1464155/933782
  * 
@@ -38,7 +47,8 @@
  * if a string is passed instead of
  * an integer a fix has been made and 
  * also changed "self::" to "static::"
- * @author Kwame Oteng Appiah-Nti (Developer Kwame)
+ * @author Kwame Oteng Appiah-Nti
+ * 
  */
 
 namespace Base\Helpers;
@@ -250,8 +260,7 @@ class FakeId
      *
      * @param int|string $str
      * @return mixed
-     * @author Kwame Oteng Appiah-Nti 
-     * (Developer Kwame)
+     * @author Kwame Oteng Appiah-Nti (Developer Kwame)
      */
     private static function fixStr($str, $toDecimal = false)
     {

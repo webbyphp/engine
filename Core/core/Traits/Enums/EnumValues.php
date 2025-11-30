@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Base\Traits\Enums;
 
 /**
@@ -32,7 +41,7 @@ trait EnumValues
             }
         }
 
-        return arrayz($cases)->pluck('value')->get();
+        return rayz($cases)->pluck('value')->get();
     }
 
     /**
@@ -43,6 +52,6 @@ trait EnumValues
      */
     public static function hasValue(string $value)
     {
-        return arrayz(self::getValues())->contains('value', $value);
+        return rayz(self::getValues())->contains('value', $value);
     }
 }

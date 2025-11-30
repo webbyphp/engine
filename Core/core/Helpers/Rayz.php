@@ -1,13 +1,22 @@
 <?php
 
 /**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * Handle and Manipulate Arrays
  * Query Arrays like CI3 Model
  * 
  * Credit: https://github.com/nobitadore/Arrayz
  * Improved for WebbyPHP
  * 
- * Version - 1.0.0
+ * Version - 3.0.0
  */
 
 namespace Base\Helpers;

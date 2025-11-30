@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * A Template engine for WebbyPHP
  * 
  * It is based on Laravel's Blade templating engine 
@@ -14,14 +23,12 @@
  * 
  * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  * @license MIT
- * @version 1.0.0
+ * @version 3.0.0
  * 
  */
 
 namespace Base\View;
 
-use Exception;
-use ParseError;
 use Base\HMVC\Modules;
 
 class Plates

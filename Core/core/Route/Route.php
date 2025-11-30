@@ -1,14 +1,25 @@
 <?php
 
 /**
- * Intelligent, Elegant routing for Webby
+ * This file is part of WebbyPHP Framework.
  *
- * Inspired by Jamie Rumblelow's Pigeon Route and Bonfire Route
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
+ * Intelligent, Elegant routing for WebbyPHP
+ *
+ * Inspired by Jamie Rumblelow's Pigeon Route,
+ * Bonfire Route and Laravel Route
  * 
  * I decided to implement it and made
- * much modification to work with Webby
+ * much modification to work with WebbyPHP
  * 
- * @author Kwame Oteng Appiah-Nti (Developer Kwame)
+ * @author Jamie Rumblelow
+ * @author Kwame Oteng Appiah-Nti
  * 
  */
 

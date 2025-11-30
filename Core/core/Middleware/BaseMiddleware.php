@@ -1,12 +1,18 @@
 <?php
 
 /**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * Base Middleware Class
  * 
  * Provides foundation for all middleware implementations
- *
- * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
- * @license MIT
  */
 
 namespace Base\Middleware;

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Base\Taps;
 
 use Base\Taps\MakeTap;
@@ -8,7 +17,6 @@ use Base\Taps\MakeTap;
  * The ToTap class extends 
  * the MakeTap Abstract class.
  *
- * @author Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  */
 class ToTap extends MakeTap
 {

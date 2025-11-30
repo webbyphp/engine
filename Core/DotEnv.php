@@ -1,43 +1,15 @@
 <?php
-defined('COREPATH') or exit('No direct script access allowed');
 
 /**
- * CodeIgniter
+ * This file is part of WebbyPHP Framework.
  *
- * An open source application development framework for PHP
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  *
- * This content is released under the MIT License (MIT)
- *
- * Copyright (c) 2014-2019 British Columbia Institute of Technology
- * Copyright (c) 2019-2020 CodeIgniter Foundation
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- * @package    CodeIgniter
- * @author     CodeIgniter Dev Team
- * @copyright  2019-2020 CodeIgniter Foundation
- * @license    https://opensource.org/licenses/MIT	MIT License
- * @link       https://codeigniter.com
- * @since      Version 4.0.0 
- * @used-for   Version 3.1.11
- * @filesource
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
+defined('COREPATH') or exit('No direct script access allowed');
 
 /**
  * Environment-specific configuration
@@ -78,13 +50,11 @@ class DotEnv
 	{
 		$vars = $this->parse();
 
-		if ($vars === null)
-		{
+		if ($vars === null) {
 			return false;
 		}
 
-		foreach ($vars as $name => $value)
-		{
+		foreach ($vars as $name => $value) {
 			$this->setVariable($name, $value);
 		}
 
@@ -101,14 +71,12 @@ class DotEnv
 	public function parse(): ?array
 	{
 		// We don't want to enforce the presence of a .env file, they should be optional.
-		if (! is_file($this->path))
-		{
+		if (! is_file($this->path)) {
 			return null;
 		}
 
 		// Ensure the file is readable
-		if (! is_readable($this->path))
-		{
+		if (! is_readable($this->path)) {
 			throw new \InvalidArgumentException("The .env file is not readable: {$this->path}");
 		}
 
@@ -116,17 +84,14 @@ class DotEnv
 
 		$lines = file($this->path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-		foreach ($lines as $line)
-		{
+		foreach ($lines as $line) {
 			// Is it a comment?
-			if (strpos(trim($line), '#') === 0)
-			{
+			if (strpos(trim($line), '#') === 0) {
 				continue;
 			}
 
 			// If there is an equal sign, then we know we are assigning a variable.
-			if (strpos($line, '=') !== false)
-			{
+			if (strpos($line, '=') !== false) {
 				list($name, $value) = $this->normaliseVariable($line);
 				$vars[$name]        = $value;
 			}
@@ -147,16 +112,13 @@ class DotEnv
 	 */
 	protected function setVariable(string $name, string $value = '')
 	{
-		if (! getenv($name, true))
-		{
+		if (! getenv($name, true)) {
 			putenv("$name=$value");
 		}
-		if (empty($_ENV[$name]))
-		{
+		if (empty($_ENV[$name])) {
 			$_ENV[$name] = $value;
 		}
-		if (empty($_SERVER[$name]))
-		{
+		if (empty($_SERVER[$name])) {
 			$_SERVER[$name] = $value;
 		}
 	}
@@ -175,8 +137,7 @@ class DotEnv
 	public function normaliseVariable(string $name, string $value = ''): array
 	{
 		// Split our compound string into it's parts.
-		if (strpos($name, '=') !== false)
-		{
+		if (strpos($name, '=') !== false) {
 			list($name, $value) = explode('=', $name, 2);
 		}
 
@@ -212,18 +173,16 @@ class DotEnv
 	 */
 	protected function sanitizeValue(string $value): string
 	{
-		if (! $value)
-		{
+		if (! $value) {
 			return $value;
 		}
 
 		// Does it begin with a quote?
-		if (strpbrk($value[0], '"\'') !== false)
-		{
+		if (strpbrk($value[0], '"\'') !== false) {
 			// value starts with a quote
 			$quote        = $value[0];
 			$regexPattern = sprintf(
-					'/^
+				'/^
 					%1$s          # match a quote at the start of the value
 					(             # capturing sub-pattern used
 								  (?:          # we do not need to capture this
@@ -234,21 +193,19 @@ class DotEnv
 					)             # end of the capturing sub-pattern
 					%1$s          # and the closing quote
 					.*$           # and discard any string after the closing quote
-					/mx', $quote
+					/mx',
+				$quote
 			);
 			$value        = preg_replace($regexPattern, '$1', $value);
 			$value        = str_replace("\\$quote", $quote, $value);
 			$value        = str_replace('\\\\', '\\', $value);
-		}
-		else
-		{
+		} else {
 			$parts = explode(' #', $value, 2);
 
 			$value = trim($parts[0]);
 
 			// Unquoted values cannot contain whitespace
-			if (preg_match('/\s+/', $value) > 0)
-			{
+			if (preg_match('/\s+/', $value) > 0) {
 				throw new \InvalidArgumentException('.env values containing spaces must be surrounded by quotes.');
 			}
 		}
@@ -273,8 +230,7 @@ class DotEnv
 	 */
 	protected function resolveNestedVariables(string $value): string
 	{
-		if (strpos($value, '$') !== false)
-		{
+		if (strpos($value, '$') !== false) {
 			$loader = $this;
 
 			$value = preg_replace_callback(
@@ -282,8 +238,7 @@ class DotEnv
 				function ($matchedPatterns) use ($loader) {
 					$nestedVariable = $loader->getVariable($matchedPatterns[1]);
 
-					if (is_null($nestedVariable))
-					{
+					if (is_null($nestedVariable)) {
 						return $matchedPatterns[0];
 					}
 
@@ -328,8 +283,7 @@ class DotEnv
 	 */
 	protected function getVariable(string $name)
 	{
-		switch (true)
-		{
+		switch (true) {
 			case array_key_exists($name, $_ENV):
 				return $_ENV[$name];
 			case array_key_exists($name, $_SERVER):

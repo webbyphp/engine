@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * WebbyInstance class
  *
  * Creates a CodeIgniter 3 or WebbyPHP instance without overhead like URL processing, etc.
@@ -13,7 +22,7 @@ class WebbyInstance
     /**
      * Version of the library
      */
-    const VERSION = '1.0.0';
+    const VERSION = '3.0.0';
 
     /**
      * Internal storage of CodeIgniter 3 

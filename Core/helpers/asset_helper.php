@@ -1,5 +1,24 @@
 <?php
+
+/**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 defined('COREPATH') or exit('No direct script access allowed');
+
+/**
+ *  Asset Helper functions
+ *
+ *  @package		Webby
+ *	@subpackage		Helpers
+ *	@category		Helpers
+ *	@author			Kwame Oteng Appiah-Nti
+ */
 
 /* ------------------------------- Path Functions ---------------------------------*/
 

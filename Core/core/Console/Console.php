@@ -1,11 +1,20 @@
 <?php
 
 /**
- * Webby Console
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
+ * WebbyPHP Console
  * 
- * The CLI Engine for Webby
+ * The CLI Engine for WebbyPHP
  * 
- * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com> (Developer Kwame)
+ * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  * 
  */
 

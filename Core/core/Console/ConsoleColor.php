@@ -1,6 +1,15 @@
 <?php
 
 /**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * Originally Created By Jesse Donat
  * 
  * Console Color
@@ -11,8 +20,8 @@
  * https://gist.github.com/donatj/1315354
  * 
  * @author Jesse Donat
- * @author Kwame Oteng Appiah-Nti <developerkwame@gmail.com> (Developer Kwame)
- * @version 1.0.0
+ * @author Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ * @version 3.0.0
  */
 
 namespace Base\Console;

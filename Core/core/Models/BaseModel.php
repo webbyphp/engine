@@ -1,14 +1,19 @@
 <?php
 
 /**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * BaseModel with Laravel-like ORM Features
  * 
  * An advanced Model providing Laravel Eloquent-like functionality
- * for CodeIgniter 3 or Webby Framework with PHP 8.3 support
- * 
- * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com> (Developer Kwame)
- * @license MIT
- * @version 1.0.0
+ * for CodeIgniter 3 or WebbyPHP Framework with PHP 8.3 support
  */
 
 namespace Base\Models;
@@ -2859,19 +2864,6 @@ class BaseModel extends Model implements \ArrayAccess
     public function updateBy($idOrRow = null, $optionalValue = null, $attributes = [])
     {
 
-        // if (!empty($idOrRow)) {
-        //     static::fill($idOrRow);
-        // }
-        // dd($idOrRow, $optionalValue, $attributes);
-        // if (is_array($idOrRow) || is_array($optionalValue)) {
-
-        //     if (!empty($attributes)) {
-        //         static::fill($attributes);
-        //     }
-        //     dd('ss');
-        //     return static::save($optionalValue);
-        // }
-        // dd('ss');
         if ($optionalValue == null) {
             if (is_array($idOrRow)) {
                 $this->db->where($idOrRow);

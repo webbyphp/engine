@@ -1,11 +1,20 @@
 <?php
 
 /**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * Check Class File and get it's content 
  * 
  * Credit: https://stackoverflow.com/questions/7153000/get-class-name-from-file
  * 
- * Version - 1.0.0
+ * @since WebbyPHP Version - 3.0.0
  */
 
 namespace Base\Helpers;

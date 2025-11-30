@@ -1,27 +1,15 @@
 <?php
-defined('COREPATH') or exit('No direct script access allowed');
 
-/*
-	Provides several additional logging features designed to work 
-	with the Profiler.
-	
-	Inspired by Lonnie Ezell's  Myth\Forensics\Console
-	
-	Package: 
-		Sprint/Myth/Forensics
-		
-	Author: 
-		Lonnie Ezell (http://lonnieezell.com)
-		
-	License:
-	MIT
-	* @package     Sprint
-	* @author      Lonnie Ezell
-	* @copyright   Copyright 2014-2015, New Myth Media, LLC (http://newmythmedia.com)
-	* @license     http://opensource.org/licenses/MIT  (MIT)
-	* @link        http://sprintphp.com
-	* @since       Version 1.0
-*/
+/**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+defined('COREPATH') or exit('No direct script access allowed');
 
 class ConsoleProfiler
 {

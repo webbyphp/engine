@@ -1,187 +1,155 @@
 <?php
 
+declare(strict_types=1);
 /**
- * UUID Helper
+ * This file is part of WebbyPHP Framework.
  *
- * This implements the abilities to create UUID's for Webby.
- * Code has been borrowed from the following comments on php.net
- * and has been optimized for Webby use.
- * 
- * http://www.php.net/manual/en/function.uniqid.php#94959
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  *
- * Modified to static functions to use in Webby
- * by Kwame Oteng Appiah-Nti
- * 
- * @category Helpers
- * @author Dan Storm
- * @link http://catalystcode.net/
- * @license GNU LPGL
- * @version 2.1
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Base\Helpers;
 
-class Uuid
+/**
+ * UUID Generator Class
+ * Supports UUID versions 3, 4, 5, and 7
+ */
+final class Uuid
 {
-
-	public static function v3($name, $namespace = null)
+	/**
+	 * Generate a version 3 (MD5 hash) UUID
+	 */
+	public static function v3(string $name, ?string $namespace = null): string|false
 	{
-		if (is_null($namespace)) {
-			$namespace = self::v4();
-		}
+		$namespace ??= self::v4();
 
-		if (empty($name)) {
+		if (empty($name) || !self::isValid($namespace)) {
 			return false;
 		}
 
-		if (!self::is_valid($namespace)) {
-			return false;
-		}
-
-		// Get hexadecimal components of namespace
 		$nhex = str_replace(['-', '{', '}'], '', $namespace);
+		$nstr = hex2bin($nhex);
 
-		// Binary Value
-		$nstr = '';
-
-		// Convert Namespace UUID to bits
-		for ($i = 0; $i < strlen($nhex); $i += 2) {
-			$nstr .= chr(hexdec($nhex[$i] . $nhex[$i + 1]));
+		if ($nstr === false) {
+			return false;
 		}
 
-		// Calculate hash value
 		$hash = md5($nstr . $name);
 
 		return sprintf(
 			'%08s-%04s-%04x-%04x-%12s',
-
-			// 32 bits for "time_low"
 			substr($hash, 0, 8),
-
-			// 16 bits for "time_mid"
 			substr($hash, 8, 4),
-
-			// 16 bits for "time_hi_and_version",
-			// four most significant bits holds version number 3
 			(hexdec(substr($hash, 12, 4)) & 0x0fff) | 0x3000,
-
-			// 16 bits, 8 bits for "clk_seq_hi_res",
-			// 8 bits for "clk_seq_low",
-			// two most significant bits holds zero and one for variant DCE1.1
 			(hexdec(substr($hash, 16, 4)) & 0x3fff) | 0x8000,
-
-			// 48 bits for "node"
 			substr($hash, 20, 12)
 		);
 	}
 
-	public static function v4($trim = false)
+	/**
+	 * Generate a version 4 (random) UUID
+	 */
+	public static function v4(bool $trim = false): string
 	{
+		try {
+			$data = random_bytes(16);
+		} catch (\Exception $e) {
+			// Fallback to mt_rand if random_bytes fails
+			$data = '';
+			for ($i = 0; $i < 16; $i++) {
+				$data .= chr(mt_rand(0, 255));
+			}
+		}
 
-		$format = ($trim == false) ? '%04x%04x-%04x-%04x-%04x-%04x%04x%04x' : '%04x%04x%04x%04x%04x%04x%04x%04x';
+		$data[6] = chr((ord($data[6]) & 0x0f) | 0x40);
+		$data[8] = chr((ord($data[8]) & 0x3f) | 0x80);
 
-		return sprintf(
-			$format,
+		$hex = bin2hex($data);
 
-			// 32 bits for "time_low"
-			mt_rand(0, 0xffff),
-			mt_rand(0, 0xffff),
-
-			// 16 bits for "time_mid"
-			mt_rand(0, 0xffff),
-
-			// 16 bits for "time_hi_and_version",
-			// four most significant bits holds version number 4
-			mt_rand(0, 0x0fff) | 0x4000,
-
-			// 16 bits, 8 bits for "clk_seq_hi_res",
-			// 8 bits for "clk_seq_low",
-			// two most significant bits holds zero and one for variant DCE1.1
-			mt_rand(0, 0x3fff) | 0x8000,
-
-			// 48 bits for "node"
-			mt_rand(0, 0xffff),
-			mt_rand(0, 0xffff),
-			mt_rand(0, 0xffff)
-		);
+		return $trim
+			? $hex
+			: sprintf(
+				'%08s-%04s-%04s-%04s-%12s',
+				substr($hex, 0, 8),
+				substr($hex, 8, 4),
+				substr($hex, 12, 4),
+				substr($hex, 16, 4),
+				substr($hex, 20, 12)
+			);
 	}
 
-	public static function v5($name, $namespace = null)
+	/**
+	 * Generate a version 5 (SHA-1 hash) UUID
+	 */
+	public static function v5(string $name, ?string $namespace = null): string|false
 	{
-		if (is_null($namespace)) {
-			$namespace = self::v4();
-		}
+		$namespace ??= self::v4();
 
-		if (empty($name)) {
+		if (empty($name) || !self::isValid($namespace)) {
 			return false;
 		}
 
-		if (!self::is_valid($namespace)) {
-			return false;
-		}
-
-		// Get hexadecimal components of namespace
 		$nhex = str_replace(['-', '{', '}'], '', $namespace);
+		$nstr = hex2bin($nhex);
 
-		// Binary Value
-		$nstr = '';
-
-		// Convert Namespace UUID to bits
-		for ($i = 0; $i < strlen($nhex); $i += 2) {
-			$nstr .= chr(hexdec($nhex[$i] . $nhex[$i + 1]));
+		if ($nstr === false) {
+			return false;
 		}
 
-		// Calculate hash value
 		$hash = sha1($nstr . $name);
 
 		return sprintf(
 			'%08s-%04s-%04x-%04x-%12s',
-
-			// 32 bits for "time_low"
 			substr($hash, 0, 8),
-
-			// 16 bits for "time_mid"
 			substr($hash, 8, 4),
-
-			// 16 bits for "time_hi_and_version",
-			// four most significant bits holds version number 5
 			(hexdec(substr($hash, 12, 4)) & 0x0fff) | 0x5000,
-
-			// 16 bits, 8 bits for "clk_seq_hi_res",
-			// 8 bits for "clk_seq_low",
-			// two most significant bits holds zero and one for variant DCE1.1
 			(hexdec(substr($hash, 16, 4)) & 0x3fff) | 0x8000,
-
-			// 48 bits for "node"
 			substr($hash, 20, 12)
 		);
 	}
 
-	public static function v7()
+	/**
+	 * Generate a version 7 (timestamp-based) UUID
+	 */
+	public static function v7(): string
 	{
-		// random bytes
-		$value = random_bytes(16);
+		$bytes = random_bytes(16);
+		$timestamp = (int)(microtime(true) * 1000);
 
-		// current timestamp in ms
-		$timestamp = intval(microtime(true) * 1000);
+		// Set timestamp bytes (48 bits)
+		$bytes[0] = chr(($timestamp >> 40) & 0xFF);
+		$bytes[1] = chr(($timestamp >> 32) & 0xFF);
+		$bytes[2] = chr(($timestamp >> 24) & 0xFF);
+		$bytes[3] = chr(($timestamp >> 16) & 0xFF);
+		$bytes[4] = chr(($timestamp >> 8) & 0xFF);
+		$bytes[5] = chr($timestamp & 0xFF);
 
-		// timestamp
-		$value[0] = chr(($timestamp >> 40) & 0xFF);
-		$value[1] = chr(($timestamp >> 32) & 0xFF);
-		$value[2] = chr(($timestamp >> 24) & 0xFF);
-		$value[3] = chr(($timestamp >> 16) & 0xFF);
-		$value[4] = chr(($timestamp >> 8) & 0xFF);
-		$value[5] = chr($timestamp & 0xFF);
+		// Set version (7) and variant bits
+		$bytes[6] = chr((ord($bytes[6]) & 0x0F) | 0x70);
+		$bytes[8] = chr((ord($bytes[8]) & 0x3F) | 0x80);
 
-		// version and variant
-		$value[6] = chr((ord($value[6]) & 0x0F) | 0x70);
-		$value[8] = chr((ord($value[8]) & 0x3F) | 0x80);
+		$hex = bin2hex($bytes);
 
-		return bin2hex($value);
+		return sprintf(
+			'%08s-%04s-%04s-%04s-%12s',
+			substr($hex, 0, 8),
+			substr($hex, 8, 4),
+			substr($hex, 12, 4),
+			substr($hex, 16, 4),
+			substr($hex, 20, 12)
+		);
 	}
 
-	public static function is_valid($uuid)
+	/**
+	 * Validate UUID format
+	 */
+	public static function isValid(string $uuid): bool
 	{
-		return preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $uuid) === 1;
+		return (bool)preg_match(
+			'/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i',
+			$uuid
+		);
 	}
 }

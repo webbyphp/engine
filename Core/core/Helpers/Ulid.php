@@ -1,18 +1,12 @@
 <?php
 
 /**
- * ULID Helper
+ * This file is part of WebbyPHP Framework.
  *
- * This implements the abilities to create ULID's for Webby.
- * Code has been borrowed from https://github.com/robinvdvleuten/php-ulid
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
  *
- * Modified to use in Webby
- * by Kwame Oteng Appiah-Nti
- * 
- * @category Helpers
- * @author Robin van der Vleuten <robin@webstronauts.co>
- * @link https://github.com/robinvdvleuten/php-ulid
- * @license MIT
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Base\Helpers;

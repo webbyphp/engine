@@ -3,13 +3,14 @@
 namespace Base\Helpers;
 
 /**
- * PSR-4 Autoloader for Webby App Directory
- * 
- * @author  Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
- * Inspired by Nick Tsai <myintaer@gmail.com>
- * @see https://github.com/yidas/codeigniter-psr4-autoload
- * 
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
+
 class Autoloader
 {
     /**

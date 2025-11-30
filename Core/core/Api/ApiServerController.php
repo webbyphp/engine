@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Base\Api;
 
 use stdClass;
@@ -8,20 +17,6 @@ use Base\Helpers\Format;
 use Base\Http\HttpStatus;
 use Base\Controllers\Controller;
 
-/**
- * CodeIgniter Api Server Controller
- * 
- * A fully REST API server implementation for CodeIgniter 3 
- * using one library, one config file and one controller.
- *
- * @link  https://github.com/chriskacerguis/ci-apiserver
- *
- * Note: Breaking modifications have been 
- * done to work with WebbyPHP
- * @since 3.0.0 
- * @author Kwame Oteng Appiah-Nti (Developer Kwame)
- * 
- */
 class ApiServerController extends Controller
 {
     /**

@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Base\Controllers;
 
 use Base\Middleware\MiddlewareRunner;
@@ -374,8 +383,6 @@ class Controller extends \Base_Controller
 		// Get route middlewares
 		$route = $routeWithMiddleware[0] ?? '';
 		$routeMiddlewares = \Base\Route\Route::getRouteMiddlewares($route);
-
-		// dd($currentRoute, $routeMiddlewares, $definedRoutes);
 
 		// Get middlewares from middleware() method
 		$definedMiddlewares = $this->middleware();

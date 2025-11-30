@@ -1,15 +1,19 @@
 <?php
 
 /**
+ * This file is part of WebbyPHP Framework.
+ *
+ * (c) Kwame Oteng Appiah-Nti <developerkwame@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
  * Schema
  *
  * Expressive table definitions
  *
- * @author      Jamie Rumbelow <http://jamierumbelow.net>
- * @author      Kwame Oteng Appiah-Nti <http://developerkwame.com>
- * @version     1.0.0
- * @copyright   (c)2011 Jamie Rumbelow
- * @copyright   (c)2022 Kwame Oteng Appiah-Nti
  */
 
 namespace Base\Migrations;
