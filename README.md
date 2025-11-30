@@ -136,7 +136,7 @@ There are lots of future plans for WebbyPHP
 * [x] Enable easy engine folder upgrade (Currently folder will have to be replaced when an update is available) (Done on 30th October 2022 18:22 PM)
 * [x] Move sylynder/codeigniter repo to sylynder/engine repo (Done on 31st December 2022 15:08 PM)
 * [x] Move sylynder/engine repo to webbyphp/repo (Done on November 2025)
-* [-] Write version three (v3) to support PHP8.5
+* [x] Write version three (v3) to support PHP8.5 (works but needs other scenarios from users)
 * [x] Make version three compatible with legacy CodeIgniter 3 projects
 * [ ] Create composer ready repo for beginner developers with difficulties 
 * [ ] Build a WHATstack starter kit
@@ -168,6 +168,6 @@ There are lots of future plans for WebbyPHP
 
 ## License
 
-We are using the MIT License (MIT). Please see our LICENSE.md file. If you want to know more about the license go to [LICENSE]((https://choosealicense.com/licenses/mit/)) for more information.
+We are using the MIT License (MIT). Please see our LICENSE file. If you want to know more about the license go to [LICENSE]((https://choosealicense.com/licenses/mit/)) for more information.
 
 [link-contributors]: https://github.com/webbyphp/engine/contributors
