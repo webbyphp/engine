@@ -64,6 +64,31 @@ class Console
     }
 
     /**
+     * Display CLI banner
+     */
+    public static function displayBanner(): void
+    {
+        static $displayed = false;
+
+        if ($displayed) {
+            return;
+        }
+
+        $banner = <<<BANNER
+    
+                    ╦ ╦┌─┐┌┐ ┌┐ ┬ ┬  ╔═╗╦  ╦
+                    ║║║├┤ ├┴┐├┴┐└┬┘  ║  ║  ║
+                    ╚╩╝└─┘└─┘└─┘ ┴   ╚═╝╩═╝╩
+    
+        BANNER;
+
+        echo ConsoleColor::cyan($banner);
+        echo ConsoleColor::dim("\t\t\tv" . WEBBY_VERSION . "\n\n");
+
+        $displayed = true;
+    }
+
+    /**
      * Webby Cli welcome message
      *
      * @return string
