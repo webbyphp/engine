@@ -15,7 +15,7 @@
     },
     "authors": [
         {
-            "name": "otengkwame",
+            "name": "Kwame Oteng Appiah-Nti",
             "email": "developerkwame@gmail.com",
             "role": "Software Engineer"
         }
@@ -31,6 +31,6 @@
             "CodeIgniter/Framework"
         ]
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
