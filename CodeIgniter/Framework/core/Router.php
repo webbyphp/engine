@@ -302,7 +302,7 @@ class CI_Router
 		if (
 			$this->default_controller !== 'app'
 			&& $this->default_controller !== 'app/index'
-			&& str_contains($this->routes[$defaultController], 'prefix-route')
+			&& str_contains($this->routes[$defaultController] ?? 'app', 'prefix-route')
 		) {
 			$baseUrl = $this->config->config['base_url'];
 			// Redirect to the set default_controller with the base_url
