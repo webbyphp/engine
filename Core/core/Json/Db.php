@@ -55,7 +55,7 @@ class Db extends \CI_DB_json_driver
         $path = $this->path . DIRECTORY_SEPARATOR . $name;
 
         if (!is_dir($path)) {
-            return mkdir($path, config_item('json_db_dir_permissions'), true);
+            return mkdir($path, config_item('json_db_dir_permissions') ?: 0755, true);
         }
 
         return true;
