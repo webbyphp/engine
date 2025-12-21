@@ -1384,7 +1384,7 @@ if (! function_exists('objectify')) {
 
         if (is_array($array)) {
             $array = json_encode($array, JSON_THROW_ON_ERROR);
-            return json_decode($array, null, 512, JSON_THROW_ON_ERROR);
+            return json_decode($array, true, 512, JSON_THROW_ON_ERROR);
         }
 
         return (object)[]; // return empty object if condition not met

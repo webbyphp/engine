@@ -1218,7 +1218,7 @@ class CI_DB_json_driver extends CI_DB_driver
                 // $content = array_map(function($record) {
                 //     return (object) $record;
                 // }, $content);
-                $content = objectify($content, true);
+                $content = objectify($content, false);
                 break;
         }
 
