@@ -40,7 +40,7 @@ class Console
     private static $pestColorAlways = '--colors=always ';
     private static $pestTestCoverate = '--coverage ';
 
-    private const WEBBY_CLI_VERSION = '2.12.4';
+    private const WEBBY_CLI_VERSION = '3.0.1';
 
     private const DEFAULT_HOST = "localhost";
 

@@ -13,7 +13,7 @@ if (! defined('DS')) define('DS', DIRECTORY_SEPARATOR);
  * Define Webby Version
  * --------------------------------------------------------------------
  */
-define('WEBBY_VERSION', '3.0.0');
+define('WEBBY_VERSION', '3.0.1');
 
 /*
  * --------------------------------------------------------------------

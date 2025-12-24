@@ -70,7 +70,7 @@ const CI_VERSION = '3.1.11';
  * @var	string
  *
  */
-const WEBBY_ENGINE_VERSION = '3.0.0';
+const WEBBY_ENGINE_VERSION = '3.0.1';
 
 /*
  * ------------------------------------------------------
