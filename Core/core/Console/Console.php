@@ -83,7 +83,7 @@ class Console
         BANNER;
 
         echo ConsoleColor::cyan($banner);
-        echo ConsoleColor::dim("\t\t\tv" . WEBBY_VERSION . "\n\n");
+        echo ConsoleColor::dim("\t\t\tv" . self::WEBBY_CLI_VERSION . "\n\n");
 
         $displayed = true;
     }
